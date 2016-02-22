@@ -22,7 +22,7 @@ progress. Put an x between the brackets for a checkmark: [x] -->
 - [ ] Display general background of books
 - [ ] Search for books based on author, title, genre, era, and language
 - [ ] See connections between books
-- [ ] Publish book analysis
+- [ ] Publish book analyses
 
 ## Design Docs
 * [View Wireframes][views]

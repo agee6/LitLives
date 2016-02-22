@@ -13,7 +13,7 @@
 ![DisplayPage]
 
 
-[new-user]: ./wireframes/Login.png
+[new-user]: ./wireframes/LoginPage.png
 [SplashPage]: ./wireframes/SplashPage.png
 [UserPage]: ./wireframes/UserPage.png
 [DisplayPage]: ./wireframes/DisplayPage.png

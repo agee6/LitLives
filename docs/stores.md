@@ -1,19 +1,16 @@
 # Flux Stores
 
-### NoteStore
+### BookStores
 
 Holds all persisted note data.
 
 ##### Actions:
-- `receiveAllNotes`
-- `receiveSingleNote`
-- `removeNote`
+- `receiveAllBooks`
+- `receiveSingleBook`
+- `removeBooks`
 
-##### Listeners:
-- `NotesIndex` (passes to `NoteIndexItem` via props)
-- `NoteDetail`
 
-### NoteFormStore
+### AuthorStore
 
 Holds un-persisted note data to send to the API.
 
@@ -33,7 +30,7 @@ Holds all persisted notebook data.
 - `removeNotebook`
 
 ##### Listeners:
-- `NotebookIndex`
+- `BooksIndex`
 
 ### NotebookFormStore
 

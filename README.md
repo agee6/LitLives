@@ -1,23 +1,30 @@
 # FresherNote
 
-[Heroku link][heroku] **NB:** This should be a link to your production site
+[Heroku link][heroku] **NB:** This link is not yet live. 
 
 [heroku]: http://www.herokuapp.com
 
 ## Minimum Viable Product
 
-FresherNote is a web application inspired by Evernote built using Ruby on Rails
-and React.js. FresherNote allows users to:
+LitLives is an application for understanding the connections in literature to other pieces of literature and other elements of the real world, as well as for reviewing and finding new books to read.:
 
 <!-- This is a Markdown checklist. Use it to keep track of your
 progress. Put an x between the brackets for a checkmark: [x] -->
 
 - [ ] Create an account
 - [ ] Log in / Log out
-- [ ] Create, read, edit, and delete notes
-- [ ] Organize notes within Notebooks
-- [ ] Tag notes with multiple tags
-- [ ] Apply complex styling to notes while editing
+- [ ] Add books to the read books bookshelf
+- [ ] Add books to the to read bookshelf
+- [ ] Review books
+- [ ] Read reviews
+- [ ] Rate books
+- [ ] See overall ratings for any book
+- [ ] Display general background of books
+- [ ] Search for books based on author, title, genre, era, and language
+- [ ] See connections between books
+- [ ] Publish Book analysis
+- 
+- 
 
 ## Design Docs
 * [View Wireframes][views]

@@ -24,19 +24,12 @@ death date  | date      |
 country     | string    | 
 era_id      | integer   | foreign key, indexed
 
-## ratings
-column name | data type | detail
-------------|-----------|-----------------------
-id          | integer   | not null, primary key
-value       | integer   | not null
-user_id     | integer   | not null, indexed, foreign key
-book_id     | integer   | not null, indexed, foreign key
-
 ## reviews
 column name | data type | detail
 ------------|-----------|-----------------------
 id          | integer   | not null, primary key
 review      | text      | not null
+rating      | integer   | not null, 
 user_id     | integer   | not null, indexed, foreign key
 book_id     | integer   | not null, indexed, foreign key
 

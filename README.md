@@ -67,7 +67,7 @@ progress. Put an x between the brackets for a checkmark: [x] -->
   - [ ] `Books Index`
   - [ ] `Book Index Item`
   - [ ] `Bookshelves`
-  - 
+
 ### Phase 4: Flush out basic models and components for vanilla use case (authors, era, reviews, etc.) (1.5 days)
   
 **Objective:** Books link to authors and reviews, reviews back to authors and so forth with era and genre. 

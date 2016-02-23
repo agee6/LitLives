@@ -15,14 +15,10 @@ progress. Put an x between the brackets for a checkmark: [x] -->
 - [ ] Log in / Log out
 - [ ] Add books to the read books bookshelf
 - [ ] Add books to the to read bookshelf
-- [ ] Review books
+- [ ] Review and rate books
 - [ ] Read reviews
-- [ ] Rate books
 - [ ] See overall ratings for any book
-- [ ] Display general background of books
-- [ ] Search for books based on author, title, genre, era, and language
-- [ ] See connections between books
-- [ ] Publish book analyses
+- [ ] Display a book
 
 ## Design Docs
 * [View Wireframes][views]
@@ -111,8 +107,8 @@ progress. Put an x between the brackets for a checkmark: [x] -->
 - [ ] Add modals, transitions, and other styling flourishes.
 
 ### Bonus Features (TBD)
-- [ ] amazing info graphics on each books
-- [ ] amazing info graphics combinding books 
+- [ ] amazing info graphics on each book
+- [ ] amazing info graphics combing books 
 - [ ] more models such as country, language, et. 
 
 

@@ -7,8 +7,16 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+  <% if logged_in? %>
+  <%= current_user.username %>
+  <%= button_to "Close", session_url, method: :delete %>
+  <% end %>
 
 <%= yield %>
+
+<footer>
+  This is the footer for the page
+</footer> 
 
 </body>
 </html>

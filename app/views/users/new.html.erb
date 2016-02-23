@@ -1,0 +1,28 @@
+<h1 class="SignUpTitle">Join the literature party</h1>
+<h3 class="quote">"There is no surer foundation for a beautfiul</br>
+  friendship than a mutaul taste in literature"</br>
+  -P.G. Wodehouse</h3>
+  <form action=" <%= users_url %>" method="POST">
+    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+
+    <label for="user_username">User Name</label>
+ <input type="text"
+        name="user[username]"
+        id="user_username"
+        value="<%= @user.username %>">
+ <br>
+
+ <label for="user_password">Password</label>
+ <input type="password"
+        name="user[password]"
+        id="user_password"
+        value="<%= @user.password %>">
+ <br>
+
+ <input type="submit">
+</form>
+<img src="/assets/images/BookByFire.jpeg">
+<h6>already a user?<h6>
+  <%= link_to "Sign In!", new_session_url %>
+
+<h2>We already know it is going to be a beautiful thing, because you can always trust P.G. Wodehose</h2>

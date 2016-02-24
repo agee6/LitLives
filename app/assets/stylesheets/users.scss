@@ -1,3 +1,67 @@
 // Place all the styles related to the Users controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.image {
+   position: relative;
+   width: 100%; /* for IE 6 */
+   background-image: url('BooksAtNight.jpg');
+   background-size: cover;
+   height: 800px;
+   border-radius: 10px;
+}
+.SignUp {
+
+  // color: #ebd9c6;
+}
+.SignInForm {
+  background: -webkit-linear-gradient(bottom, #CCCCCC, #EEEEEE 175px);
+  background: -moz-linear-gradient(bottom, #CCCCCC, #EEEEEE 175px);
+  background: linear-gradient(bottom, #CCCCCC, #EEEEEE 175px);
+  margin: auto;
+  width: 300px;
+  position: relative;
+  font-family: Tahoma, Geneva, sans-serif;
+  font-size: 14px;
+
+  font-style: italic;
+  line-height: 24px;
+  font-weight: bold;
+  color: #09C;
+  text-decoration: none;
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid #999;
+  border: inset 1px solid #333;
+  -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+  opacity: 0.4;
+}
+
+// h2 {
+//    position: absolute;
+//    top: 200px;
+//    left: 0;
+//    width: 100%;
+// }
+
+.quote {
+  font-style: italic;
+  text-align: right;
+  color: #ebd9c6;
+  margin: 10px;
+  padding: 10px;
+}
+.saying {
+  color: #ebd9c6;
+  margin: 10px;
+  padding: 10px;
+  position: absolute;
+  bottom: 50px;
+}
+.FormLabel {
+  float:left; 
+}
+.FormInput {
+  float: right;
+}

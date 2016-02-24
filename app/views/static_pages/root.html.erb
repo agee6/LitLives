@@ -1,0 +1,10 @@
+<section class="splash">
+  <div class=SplashTitleArea>
+    <h1 class="SplashTitle">Enter the world of literature </h1>
+  </div>
+  <%= button_to "Create Account", new_user_url, method: :get, class:"SplashButton", id:"SignUp"  %>
+  <%= button_to "Sign In", new_session_url, method: :get, class:"SplashButton", id:"login"%>
+  <%= button_to "Visitor", books_url, method: :get,  class:"SplashButton", id:"visitor" %>
+
+
+</section>

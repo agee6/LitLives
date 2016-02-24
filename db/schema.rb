@@ -11,10 +11,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160223164014) do
+ActiveRecord::Schema.define(version: 20160224004554) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "authors", force: :cascade do |t|
+    t.string   "pen_name",   null: false
+    t.string   "legal_name"
+    t.string   "last_name"
+    t.date     "birth_date"
+    t.date     "death_date"
+    t.string   "country"
+    t.string   "language"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "authors", ["pen_name"], name: "index_authors_on_pen_name", using: :btree
 
   create_table "books", force: :cascade do |t|
     t.string   "title",      null: false
@@ -25,6 +39,45 @@ ActiveRecord::Schema.define(version: 20160223164014) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "bookshelf_spots", force: :cascade do |t|
+    t.integer  "bookshelf_id", null: false
+    t.integer  "book_id",      null: false
+    t.string   "read",         null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "bookshelf_spots", ["book_id"], name: "index_bookshelf_spots_on_book_id", using: :btree
+  add_index "bookshelf_spots", ["bookshelf_id"], name: "index_bookshelf_spots_on_bookshelf_id", using: :btree
+  add_index "bookshelf_spots", ["read"], name: "index_bookshelf_spots_on_read", using: :btree
+
+  create_table "bookshelves", force: :cascade do |t|
+    t.integer  "user_id",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "bookshelves", ["user_id"], name: "index_bookshelves_on_user_id", using: :btree
+
+  create_table "genre_instances", force: :cascade do |t|
+    t.integer  "book_id",    null: false
+    t.integer  "genre_id",   null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "genre_instances", ["book_id"], name: "index_genre_instances_on_book_id", using: :btree
+  add_index "genre_instances", ["genre_id"], name: "index_genre_instances_on_genre_id", using: :btree
+
+  create_table "genres", force: :cascade do |t|
+    t.string   "name",        null: false
+    t.text     "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "genres", ["name"], name: "index_genres_on_name", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "username",        null: false

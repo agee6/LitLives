@@ -1,0 +1,41 @@
+// Place all the styles related to the StaticPages controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+.splash {
+   position: absolute;
+   width: 100%; /* for IE 6 */
+   background-image: url('BookSplash.jpg');
+   background-size: cover;
+   height: 700px;
+
+   border-radius: 10px;
+}
+.SplashTitle {
+  text-align: center;
+  font-size: 48px;
+  font-family: fantasy;
+  margin: 10px;
+
+}
+.SplashTitleArea{
+  background-color: #d7b48e;
+  opacity: 0.5;
+  margin: 100px;
+}
+
+.SplashButton#SignUp {
+  float: left;
+}
+
+.SplashButton#login {
+  float: right;
+}
+
+.SplashButton{
+  height: 50px;
+  width: 200px;
+  background-color: #d7b48e;
+  border-radius: 8px;
+  margin: 100px;
+  padding: 10px;
+}

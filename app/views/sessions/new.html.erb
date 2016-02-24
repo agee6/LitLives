@@ -1,24 +1,43 @@
-<h1>Welcome back</h1>
-<h3>"The road goes ever on and on"</br>
-  -J.R.R. Tolkien</h3>
 
 
-<form action=" <%= session_url %>" method="POST">
-  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
 
-  <label for="user_username">User Name</label>
-<input type="text"
-      name="user[username]"
-      id="user_username"
-      value="<%= @user.username %>">
-<br>
+  <section class="session-image" >
+    <h1 class="session-title">Welcome back, friend</h1>
 
-<label for="user_password">Password</label>
-<input type="password"
-      name="user[password]"
-      id="user_password"
-      value="<%= @user.password %>">
-<br>
+      <h3 class="quote SignUp">The road goes ever on and on"</br>
+        -J.R.R. Tolkien</h3>
+        <form class="SignInForm" action=" <%= session_url %>" method="POST">
+          <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
 
-<input type="submit">
-</form>
+          <label class="SignUp FormLabel" for="user_username">User Name</label>
+       <input type="text"
+              name="user[username]"
+              id="user_username"
+              value="<%= @user.username %>"
+              required
+              title="Username cannot be blank"
+              placeholder="put in a valid username"
+              class="SignUp FormInput">
+       <br>
+
+       <label class="SignUp FormLabel" for="user_password">Password</label>
+       <input type="password"
+              name="user[password]"
+              id="user_password"
+              value="<%= @user.password %>"
+              required
+              title="password can not be blank"
+              placeholder="password must be 6 digits long"
+              class="SignUp FormInput">
+       <br>
+
+       <input class="SignUp" type="submit" value="Open The Book!">
+       <div ="SignUp">
+         <p class="SignUp">already a user?<p>
+           <%= link_to "Sign In!", new_user_url, class: "SignUp" %>
+       </div>
+
+      </form>
+
+
+  <section>

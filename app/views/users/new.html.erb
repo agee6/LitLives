@@ -1,40 +1,49 @@
-<section class="image" >
+<section class="image" id="NewUser" style="overflow:hidden;">
+
+
 
     <h3 class="quote SignUp">"There is no surer foundation for a beautfiul</br>
-      friendship than a mutaul taste in literature"</br>
+      friendship than a mutual taste in literature"</br>
       -P.G. Wodehouse</h3>
-      <form class="SignInForm" action=" <%= users_url %>" method="POST">
+      <form class="SignInForm" id="SignUpForm" action=" <%= users_url %>" method="POST">
         <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
 
-        <label class="FormLabel SignUp" for="user_username">User Name</label>
-     <input type="text"
-            name="user[username]"
-            id="user_username"
-            value="<%= @user.username %>"
-            required
-            title="Username cannot be blank"
-            placeholder="put in a valid username"
-            class="SignUp FormInput">
-     <br>
+        <label class="FormLabel SignUp" for="user_username">Username:</label>
+       <input type="text"
+              name="user[username]"
+              id="user_username"
+              value="<%= @user.username %>"
+              required
 
-     <label class=FormLabel for="user_password">Password</label>
-     <input type="password"
-            name="user[password]"
-            id="user_password"
-            value="<%= @user.password %>"
-            class="SignUp FormInput"
-            required
-            title="password can not be blank"
-            placeholder="password must be 6 digits long">
-     <br>
+              title="Username cannot be blank"
+              placeholder="put in a valid username"
+              class="SignUp FormInput">
+       <br>
 
-     <input class="SignUp" type="submit" value="Open The Book!">
-     <div ="SignUp">
-       <p class="SignUp">already a user?<p>
-         <%= link_to "Sign In!", new_session_url, class: "SignUp" %>
-     </div>
+       <label class=FormLabel for="user_password">Password:</label>
+       <input type="password"
+              name="user[password]"
+              id="user_password"
+              value="<%= @user.password %>"
+              class="SignUp FormInput"
+              required
+              pattern=".{6, }"
+              
+              title="password can not be blank"
+              placeholder="password must be 6 digits long">
+       <br>
+
+       <input class="SignUpButton" type="submit" value="Begin Exploring">
+       <!-- <button id=popup onclick="div_show()">Begin The Adventure</button> -->
+       <div ="SignUp FormFooter" id="FormFooter">
+       </br>
+         already a user? <%= link_to "Sign In!", new_session_url, class: "SignUp" %>
+       </div>
 
     </form>
+
+    <!-- <button id="popup" onclick="div_show()">Popup</button> -->
+
     <h2 class="saying">We already know it is going to be a beautiful thing, because you can always trust P.G. Wodehouse</h2>
 
 

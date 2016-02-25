@@ -1,4 +1,16 @@
 
 body {
-  background-color: #996633;
+  background-color: #e4cdb4;
+}
+.logo{
+  background-image: url("Drawing.png");
+  background-size: cover;
+  width: 45px;
+  height: 40px;
+}
+.logo:hover{
+  cursor: pointer;
+}
+footer {
+  position: absolute; 
 }

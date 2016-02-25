@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
 
   root to: "static_pages#root"
+  get '/popup', to: "static_pages#popup"
+
 
   resource :session, only: [:create, :destroy, :new]
   resources :users, only: [:create, :new]

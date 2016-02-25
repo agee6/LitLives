@@ -1,7 +1,7 @@
 
 
 
-  <section class="session-image" >
+  <section class="image" id="NewSession" >
     <h1 class="session-title">Welcome back, friend</h1>
 
       <h3 class="quote SignUp">The road goes ever on and on"</br>
@@ -32,9 +32,9 @@
        <br>
 
        <input class="SignUp" type="submit" value="Open The Book!">
-       <div ="SignUp">
-         <p class="SignUp">already a user?<p>
-           <%= link_to "Sign In!", new_user_url, class: "SignUp" %>
+       <div ="SignUp FormFooter" id="FormFooter">
+       </br>
+           Not a user yet? <%= link_to "Sign up!", new_user_url, class: "SignUp" %>
        </div>
 
       </form>

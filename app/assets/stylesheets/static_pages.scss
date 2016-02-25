@@ -10,16 +10,17 @@
 
    border-radius: 10px;
 }
-.SplashTitle {
+#SplashTitle {
   text-align: center;
   font-size: 48px;
   font-family: fantasy;
   margin: 10px;
+  opacity: 150%;
 
 }
 .SplashTitleArea{
   background-color: #d7b48e;
-  opacity: 0.5;
+  opacity: 0.6;
   margin: 100px;
 }
 
@@ -35,6 +36,7 @@
   height: 50px;
   width: 200px;
   background-color: #d7b48e;
+  border-color: #d7b48e;
   border-radius: 8px;
   margin: 100px;
   padding: 10px;

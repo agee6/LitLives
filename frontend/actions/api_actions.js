@@ -1,5 +1,6 @@
 var AppDispatcher = require('../dispatcher/dispatcher');
-var BenchConstants = require('../constants/bench_constants');
+var BookSearchConstants = require('../constants/bench_constants');
+
 
 var ApiActions = {
   receiveAll: function(benches){
@@ -7,7 +8,13 @@ var ApiActions = {
       actionType: BenchConstants.BENCHES_RECEIVED,
       benches: benches
     });
+  },
+  RecieveActions: function(book_list){
+    AppDispatcher.dispatch({
+      actionType: BookSearchConstants.SearchResultsREcieved,
+      results: book_list.items
+    });
   }
-}
+};
 
 module.exports = ApiActions;

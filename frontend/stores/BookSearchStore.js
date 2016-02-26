@@ -5,17 +5,21 @@ var AppDispatcher = require('../dispatcher/dispatcher');
 var BookSearchStore = new Store(AppDispatcher);
 
 var resetSearchResults = function(results){
+  _searchResults = [];
   _searchResults = results.slice(0);
 };
 
 BookSearchStore.all = function () {
   return _searchResults.slice(0);
 };
+BookSearchStore.empty = function(){
+  _searchResults = [];
+}; 
 
 BookSearchStore.__onDispatch = function (payload) {
   switch(payload.actionType) {
-    case BenchConstants.SearchResultsRecieved:
-      var result = resetBenches(payload.benches);
+    case BookSearchConstants.SearchResultsRecieved:
+      var result = resetSearchResults(payload.results);
       BookSearchStore.__emitChange();
       break;
   }

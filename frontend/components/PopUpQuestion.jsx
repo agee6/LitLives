@@ -1,18 +1,20 @@
 var React = require('react');
+var BookSearchBar = require('./BookSearchBar.jsx');
 
 var PopUpQuestion = React.createClass({
 
   render: function(){
     return(
-      <section id="popupbody" style="overflow:hidden;">
+      <section id="popupbody">
         <div id="pop-outer">
           <div id="popup-q">
             <form action="#" id="popup-form" method="post">
-              <img id="close" src="/assets/closeButton.png">
+              <img id="close" src="/assets/closeButton.png"></img>
                 <h2>What book are you reading now</h2>
-                <hr>
+                <div id="searchDiv">
                   <BookSearchBar />
-                </form>
+                </div>
+            </form>
           </div>
         </div>
       </section>

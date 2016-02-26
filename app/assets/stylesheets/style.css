@@ -7,10 +7,93 @@ body {
   background-size: cover;
   width: 45px;
   height: 40px;
+
+}
+.searchGuesses{
+  background-color: white;
+  position: relative;
+
 }
 .logo:hover{
   cursor: pointer;
 }
 footer {
-  position: absolute; 
+  position: absolute;
 }
+ul {
+  list-style-type: none;
+}
+.headerButton {
+  float: right;
+  height: 30px;
+  width: 70px;
+  background-color: blue;
+  border-color: #e4cdb4;
+  position: absolute;
+  top: 10px;
+  right: 40px;
+  margin-left: 100px;
+  margin-right: 100px;
+
+
+}
+.searchGuess:hover {
+  cursor: pointer;
+  background-color: #e4cdb4;
+  
+
+}
+#username {
+  float: left;
+  position: absolute;
+  top: -10px;
+  left: 100px;
+
+
+}
+#image1 {
+  background-image: url("PandP.jpg");
+  background-color: #e4cdb4;
+  background-size: cover;
+  float: left;
+  height: 500px;
+  width: 320px;
+  margin: 20px;
+
+}
+#image2 {
+  background-image: url("HP.jpg");
+  float: left;
+  background-size: cover;
+  height: 500px;
+  width: 320px;
+  margin: 20px;
+}
+#image3 {
+  background-image: url("GreatGatsby.jpg");
+  float: left;
+  background-size: cover;
+  height: 500px;
+  width: 320px;
+  margin: 20px;
+}
+#image4 {
+  background-image: url("The_Fault_in_Our_Stars.jpg");
+  float:left;
+  background-size: cover;
+  height: 500px;
+  width: 320px;
+  margin: 20px;
+}
+#image5 {
+  background-image: url("TaleofTwoCities.jpg");
+  float:left;
+  background-size: cover;
+  height: 500px;
+  width: 320px;
+  margin: 20px;
+}
+
+/* * Copyright (c) 2012 Thibaut Courouble
+ * Licensed under the MIT License
+   ================================================== */

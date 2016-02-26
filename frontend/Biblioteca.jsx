@@ -5,12 +5,13 @@ var root = document.getElementById('content');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
+var Home = require('./components/Home.jsx')
 
 var App = React.createClass({
   render: function(){
     return (
       <div>
-        <header><h1>nada</h1></header>
+        
         {this.props.children}
       </div>
     );
@@ -19,7 +20,10 @@ var App = React.createClass({
 var routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Home}/>
-    
+
   </Route>
 );
-ReactDOM.render(<Router>{routes}</Router>, document.getElementById('reactContent'));
+
+document.addEventListener("DOMContentLoaded", function(){
+  ReactDOM.render(<Router>{routes}</Router>, document.getElementById('reactContent'));
+});

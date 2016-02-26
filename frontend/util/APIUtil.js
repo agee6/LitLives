@@ -1,10 +1,15 @@
 var ApiActions = require('../actions/api_actions');
-var FilterParamsStore = require('../stores/filter_params');
+
 
 var APIUtil = {
-  fetchBookResults: function(){
+  fetchBookResults: function(query){
+    var uri = "https://www.googleapis.com/books/v1/volumes?q="+query ;
+    console.log(uri); 
+    $.get(uri, {}, function(book_list){
+      ApiActions.RecieveActions(book_list);
 
-    console.log("dancing");
+    });
+
   },
   createBench: function(data){
     $.post('api/benches', { bench: data }, function(bench) {

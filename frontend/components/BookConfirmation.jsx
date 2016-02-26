@@ -1,10 +1,25 @@
-var React = require("react");
+var React = require('react');
+var History = require('react-router').History; 
 
 var BookConfirmation = React.createClass({
+  mixins: [History],
   getInitialState:function(){
     return({})
   },
   yesClick:function(){
+   
+    var chosen = this.props.selection.volumeInfo; 
+    var newBook = {title: chosen.title, 
+                    author: chosen.authors[0],
+                    description: chosen.description, 
+                    ISBN13: chosen.industryIdentifiers[0].identifier,
+                    ISBN10: chosen.industryIdentifiers[1].identifier, 
+                    publisher: chosen.publisher
+                  }
+                  debugger; 
+    APIUtil.addBook(newBook); 
+    var url = "/Desk"
+    this.history.push({pathname: url}); 
     //reroute to User Show with Book Display
   },
   noClick:function(){

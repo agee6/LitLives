@@ -24457,7 +24457,7 @@
 	    var guesses = this.state.searchResults.map(function (result, index) {
 	      return React.createElement(
 	        'li',
-	        { key: index, onClick: that.click, className: 'searchGuess' },
+	        { key: index, onClick: that.clickOption, className: 'searchGuess' },
 	        result.volumeInfo.title
 	      );
 	    });
@@ -24507,9 +24507,14 @@
 	var APIUtil = {
 	  fetchBookResults: function (query) {
 	    var uri = "https://www.googleapis.com/books/v1/volumes?q=" + query;
-	    console.log(uri);
 	    $.get(uri, {}, function (book_list) {
 	      ApiActions.RecieveActions(book_list);
+	    });
+	  },
+	  createBookShelfItem: function (bookItem) {
+	
+	    $.post('api/books', bookItem, function (payload) {
+	      console.log(payload.satus);
 	    });
 	  },
 	  createBench: function (data) {
@@ -31360,14 +31365,29 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var History = __webpack_require__(159).History;
 	
 	var BookConfirmation = React.createClass({
-	  displayName: "BookConfirmation",
+	  displayName: 'BookConfirmation',
 	
+	  mixins: [History],
 	  getInitialState: function () {
 	    return {};
 	  },
 	  yesClick: function () {
+	
+	    var chosen = this.props.selection.volumeInfo;
+	    var newBook = { title: chosen.title,
+	      author: chosen.authors[0],
+	      description: chosen.description,
+	      ISBN13: chosen.industryIdentifiers[0].identifier,
+	      ISBN10: chosen.industryIdentifiers[1].identifier,
+	      publisher: chosen.publisher
+	    };
+	    debugger;
+	    APIUtil.addBook(newBook);
+	    var url = "/Desk";
+	    this.history.push({ pathname: url });
 	    //reroute to User Show with Book Display
 	  },
 	  noClick: function () {
@@ -31376,38 +31396,38 @@
 	  render: function () {
 	    var chosen = this.props.selection.volumeInfo;
 	    return React.createElement(
-	      "section",
-	      { className: "BookConfirmation" },
+	      'section',
+	      { className: 'BookConfirmation' },
 	      React.createElement(
-	        "div",
+	        'div',
 	        null,
 	        React.createElement(
-	          "h3",
+	          'h3',
 	          null,
-	          "Is the following the correct book?"
+	          'Is the following the correct book?'
 	        ),
 	        React.createElement(
-	          "h2",
+	          'h2',
 	          null,
 	          chosen.title
 	        ),
 	        React.createElement(
-	          "h3",
+	          'h3',
 	          null,
-	          "by, ",
+	          'by, ',
 	          chosen.authors[0]
 	        ),
-	        React.createElement("img", { src: chosen.imageLinks.smallThumbnail })
+	        React.createElement('img', { src: chosen.imageLinks.smallThumbnail })
 	      ),
 	      React.createElement(
-	        "button",
-	        { className: "Confirmation", id: "Yes", onClick: this.yesClick },
-	        "Yes"
+	        'button',
+	        { className: 'Confirmation', id: 'Yes', onClick: this.yesClick },
+	        'Yes'
 	      ),
 	      React.createElement(
-	        "button",
-	        { className: "Confirmation", id: "No", onClick: this.noClick },
-	        "No, searchAgain"
+	        'button',
+	        { className: 'Confirmation', id: 'No', onClick: this.noClick },
+	        'No, searchAgain'
 	      )
 	    );
 	  }

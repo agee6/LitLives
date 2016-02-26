@@ -5,8 +5,15 @@ Rails.application.routes.draw do
 
 
   resource :session, only: [:create, :destroy, :new]
-  resources :users, only: [:create, :new]
-  resources :books, only: [:show, :index]
+  resources :users, only: [:create, :new, :show]
+  resources :books, only: [:index]
+  namespace :api, defaults: {format: :json} do 
+    resources :books, only: [:index, :show, :create, :destroy]
+    resources :authors, only: [:index, :show, :create, :destroy]
+    resources :reviews, only: [:index, :show, :create]
+  end
+
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

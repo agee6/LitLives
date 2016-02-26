@@ -11,7 +11,7 @@ var App = React.createClass({
   render: function(){
     return (
       <div>
-        
+
         {this.props.children}
       </div>
     );
@@ -20,6 +20,7 @@ var App = React.createClass({
 var routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Home}/>
+    
 
   </Route>
 );

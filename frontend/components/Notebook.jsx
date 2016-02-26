@@ -9,9 +9,8 @@ var Notebook = React.createClass({
       <YourReviews />
       <AuthorPage />
       <BookPage />
-      <Comment />
-      <Finish /> 
-
+      <Note />
+      <Finish />
     )
   }
 

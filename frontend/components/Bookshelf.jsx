@@ -7,9 +7,9 @@ var Bookshelf = React.createClass({
   render: function(){
 
     return(
-      <toReadShelf />
+      <ToReadShelf />
       <ReadShelf />
-      <button classname 
+      <button className="AddBooks">Add to shelf</button>
     )
   }
 })

@@ -1,7 +1,7 @@
 var React = require('react');
 var APIUtil = require('../util/APIUtil.js');
 var BookSearchStore = require('../stores/BookSearchStore.js');
-var BookConfirmation = require('./BookConfirmation.jsx'); 
+var BookConfirmation = require('./BookConfirmation.jsx');
 
 var BookSearchBar = React.createClass({
   getInitialState: function(){
@@ -39,7 +39,7 @@ var BookSearchBar = React.createClass({
   render: function(){
     var that = this;
     var guesses = this.state.searchResults.map(function(result, index){
-      return( <li key={index} onClick={that.click} className="searchGuess">{result.volumeInfo.title }</li>);
+      return( <li key={index} onClick={that.clickOption} className="searchGuess">{result.volumeInfo.title }</li>);
     })
     if (this.state.chosen){
 

@@ -1,5 +1,6 @@
 var React = require('react');
-var History = require('react-router').History; 
+var History = require('react-router').History;
+var APIUtil = require('../util/APIUtil.js');
 
 var BookConfirmation = React.createClass({
   mixins: [History],
@@ -17,8 +18,8 @@ var BookConfirmation = React.createClass({
                     ISBN10: chosen.industryIdentifiers[1].identifier,
                     publisher: chosen.publisher
                   }
-                  debugger;
-    APIUtil.addBook(newBook);
+        debugger;
+    APIUtil.createBook(newBook);
     var url = "/Desk"
     this.history.push({pathname: url});
     //reroute to User Show with Book Display

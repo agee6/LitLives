@@ -6,17 +6,16 @@ var APIUtil = {
     var uri = "https://www.googleapis.com/books/v1/volumes?q="+query ;
     $.get(uri, {}, function(book_list){
       ApiActions.RecieveActions(book_list);
-
     });
 
   },
-  createBookShelfItem: function(bookItem){
+  createBook: function(bookItem){
 
     $.post('api/books', bookItem, function(payload){
       console.log(payload.satus);
-    }); 
+    });
 
-  }, 
+  },
   createBench: function(data){
     $.post('api/benches', { bench: data }, function(bench) {
       ApiActions.receiveAll([bench]);

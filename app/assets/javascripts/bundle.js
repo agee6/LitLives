@@ -52,6 +52,7 @@
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
 	var Home = __webpack_require__(208);
+	var Desk = __webpack_require__(238);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -67,7 +68,8 @@
 	var routes = React.createElement(
 	  Route,
 	  { path: '/', component: App },
-	  React.createElement(IndexRoute, { component: Home })
+	  React.createElement(IndexRoute, { component: Home }),
+	  React.createElement(Desk, { path: '/Desk', component: Desk })
 	);
 	
 	document.addEventListener("DOMContentLoaded", function () {
@@ -24511,7 +24513,7 @@
 	      ApiActions.RecieveActions(book_list);
 	    });
 	  },
-	  createBookShelfItem: function (bookItem) {
+	  createBook: function (bookItem) {
 	
 	    $.post('api/books', bookItem, function (payload) {
 	      console.log(payload.satus);
@@ -31366,6 +31368,7 @@
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
+	var APIUtil = __webpack_require__(212);
 	
 	var BookConfirmation = React.createClass({
 	  displayName: 'BookConfirmation',
@@ -31386,7 +31389,7 @@
 	      publisher: chosen.publisher
 	    };
 	    debugger;
-	    APIUtil.addBook(newBook);
+	    APIUtil.createBook(newBook);
 	    var url = "/Desk";
 	    this.history.push({ pathname: url });
 	    //reroute to User Show with Book Display
@@ -31436,6 +31439,26 @@
 	
 	});
 	module.exports = BookConfirmation;
+
+/***/ },
+/* 238 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var Desk = React.createClass({
+	  displayName: 'Desk',
+	
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      'Banana'
+	    );
+	  }
+	});
+	module.exports = Desk;
 
 /***/ }
 /******/ ]);

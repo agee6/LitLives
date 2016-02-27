@@ -5,7 +5,8 @@ var root = document.getElementById('content');
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
-var Home = require('./components/Home.jsx')
+var Home = require('./components/Home.jsx');
+var Desk = require('./components/Desk.jsx');
 
 var App = React.createClass({
   render: function(){
@@ -20,7 +21,8 @@ var App = React.createClass({
 var routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Home}/>
-    
+    <Desk path="/Desk" component={Desk} />
+
 
   </Route>
 );

@@ -1,5 +1,4 @@
-class BooksController < ApplicationController
-
+class Api::BooksController < ApplicationController
   def create
     input_hash = {:user_id: current_user}
     creation_hash = book_params.merge(input_hash)
@@ -11,7 +10,7 @@ class BooksController < ApplicationController
       flash.now[:errors] = @book.errors.full_messages
       render json: @book.errors
     end
-    
+
 
   end
   def show

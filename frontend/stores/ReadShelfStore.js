@@ -4,7 +4,7 @@ var BookShelfConstants = require('../constants/bench_constants');
 var AppDispatcher = require('../dispatcher/dispatcher');
 var ReadShelfStore = new Store(AppDispatcher);
 
-var resetSearchResults = function(results){
+var resetShelf = function(results){
   _searchResults = [];
   _searchResults = results.slice(0);
 };

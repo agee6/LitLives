@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
     @user = User.find_by_credentials(params[:user][:username], params[:user][:password])
     if @user
       login(@user)
-      redirect_to books_url
+      redirect_to user_url(@user)
     else
       flash.now[:errors] = ["Invalid username and/or password"]
       @user = User.new()

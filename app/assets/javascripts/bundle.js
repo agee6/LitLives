@@ -31374,7 +31374,8 @@
 	  getInitialState: function () {
 	    return {};
 	  },
-	  yesClick: function () {
+	  yesClick: function (event) {
+	    event.preventDefault();
 	
 	    var chosen = this.props.selection.volumeInfo;
 	    var newBook = { title: chosen.title,
@@ -31390,7 +31391,8 @@
 	    this.history.push({ pathname: url });
 	    //reroute to User Show with Book Display
 	  },
-	  noClick: function () {
+	  noClick: function (event) {
+	    event.preventDefault();
 	    //closeWindow and reset state of parent
 	  },
 	  render: function () {

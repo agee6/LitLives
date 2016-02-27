@@ -6,23 +6,25 @@ var BookConfirmation = React.createClass({
   getInitialState:function(){
     return({})
   },
-  yesClick:function(){
-   
-    var chosen = this.props.selection.volumeInfo; 
-    var newBook = {title: chosen.title, 
+  yesClick:function(event){
+      event.preventDefault();
+
+    var chosen = this.props.selection.volumeInfo;
+    var newBook = {title: chosen.title,
                     author: chosen.authors[0],
-                    description: chosen.description, 
+                    description: chosen.description,
                     ISBN13: chosen.industryIdentifiers[0].identifier,
-                    ISBN10: chosen.industryIdentifiers[1].identifier, 
+                    ISBN10: chosen.industryIdentifiers[1].identifier,
                     publisher: chosen.publisher
                   }
-                  debugger; 
-    APIUtil.addBook(newBook); 
+                  debugger;
+    APIUtil.addBook(newBook);
     var url = "/Desk"
-    this.history.push({pathname: url}); 
+    this.history.push({pathname: url});
     //reroute to User Show with Book Display
   },
-  noClick:function(){
+  noClick:function(event){
+      event.preventDefault();
     //closeWindow and reset state of parent
   },
   render: function(){

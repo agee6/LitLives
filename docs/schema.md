@@ -5,24 +5,20 @@ column name | data type | details
 ------------|-----------|-----------------------
 id          | integer   | not null, primary key
 title       | string    | not null, indexed
-description | text      | not null
-author_id   | integer   | not null, foreign key, indexed
-yr          | integer   | not null,
-publishing  | string    | not null
-pages       | integer   | not null
-era_id      | integer   | foreign key, indexed
+description | text      | 
+author      | integer   | 
+yr          | integer   | 
+publishing  | string    | 
+pages       | integer   | 
+user_id     | string    | not null, indexed, foreign key
+genre       | string    |
+read        | string    | read, toRead, currentlyReadaing
+ISBN13      | string    | integer?
+ISBN10      | string    | integer? 
+language    | string    |
+country     | string    |
 
-## authors
-column name | data type | detail 
-------------|-----------|-----------------------
-id          | integer   | not null, primary key
-pen name    | string    | not null
-legal name  | string    | 
-last name   | string    | not null, indexed
-birth date  | date      | 
-death date  | date      |
-country     | string    | 
-era_id      | integer   | foreign key, indexed
+
 
 ## reviews
 column name | data type | detail
@@ -33,19 +29,6 @@ rating      | integer   | not null,
 user_id     | integer   | not null, indexed, foreign key
 book_id     | integer   | not null, indexed, foreign key
 
-## bookshelf
-column name | data type | detail
-------------|-----------|-----------------------
-id          | integer   | not null, primary key
-user_id     | integer   | not null, indexed, foreign key
-read        | boolean   | not null
-
-## bookshelf_spot
-column name | data type | detail
-------------|-----------|-----------------------
-id          | integer   | not null, primary key
-book_id     | integer   | not null, foreign key, indexed 
-bookshelf_id| integer   | not null, indexed, foreign key
 
 ## characters
 column name | data type | detail
@@ -54,7 +37,6 @@ id          | integer   | not null, primary key
 name        | string    | not null
 book_id     | integer   | not null, foreign key, indexed
 description | text      | not null
-era_id      | integer   | foreign key, indexed
 
 ## genres
 column name | data type | detail
@@ -72,12 +54,15 @@ start yr    | integer   | not null
 end yr      | integer   |
 description | text      | not null
 
-## genre_joins
-column name | data type | detail
+## comments
+column name | data type | details
 ------------|-----------|-----------------------
 id          | integer   | not null, primary key
-book_id     | integer   | not null, foreign key, indexed 
-genre_id    | integer   | not null, foreign key, indexed
+user_id     | integer   | not null, foreign key
+book_id     | integer   | not null, foreign key
+comments    | text      | not null
+page        | integer   | 
+
 
 ## tags
 column name | data type | details

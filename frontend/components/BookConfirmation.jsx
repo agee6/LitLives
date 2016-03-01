@@ -18,8 +18,9 @@ var BookConfirmation = React.createClass({
                     ISBN10: chosen.industryIdentifiers[1].identifier,
                     publisher: chosen.publisher
                   }
-        debugger;
+
     APIUtil.createBook(newBook);
+    BookSearchStore.resetCurrentBook(newBook);
     var url = "/Desk"
     this.history.push({pathname: url});
     //reroute to User Show with Book Display

@@ -24350,19 +24350,49 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(219);
+	var APIUtil = __webpack_require__(212);
 	
 	var InitialBookIndex = React.createClass({
-	  displayName: "InitialBookIndex",
+	  displayName: 'InitialBookIndex',
 	
+	
+	  getInitialState: function () {
+	    return { bookIndex: BookSearchStore.initialData() };
+	  },
+	  componentDidMount: function () {
+	    APIUtil.getInitialBookIndex();
+	    this.iIndex = BookSearchStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function () {},
+	  _onChange: function () {
+	    this.setState({ bookIndex: BookSearchStore.initialData() });
+	  },
+	  click: function (event) {
+	    event.preventDefault();
+	    var li = event.currentTarget;
+	    debugger;
+	    console.log(li);
+	  },
 	  render: function () {
+	    var bookOptions;
+	    var that = this;
+	
+	    bookOptions = this.state.bookIndex.map(function (book, index) {
+	      if (book.volumeInfo === undefined || book.volumeInfo.imageLinks === undefined) {
+	        return React.createElement('li', { key: index });
+	      } else {
+	        return React.createElement(
+	          'li',
+	          { key: index, 'data-book': book, className: 'InitialIndex', onClick: that.click },
+	          React.createElement('img', { src: book.volumeInfo.imageLinks.thumbnail })
+	        );
+	      }
+	    });
 	    return React.createElement(
-	      "ul",
-	      { className: "BookList" },
-	      React.createElement("li", { id: "image1" }),
-	      React.createElement("li", { id: "image2" }),
-	      React.createElement("li", { id: "image3" }),
-	      React.createElement("li", { id: "image4" }),
-	      React.createElement("li", { id: "image5" })
+	      'ul',
+	      { className: 'BookList' },
+	      bookOptions
 	    );
 	  }
 	});
@@ -24513,6 +24543,13 @@
 	      ApiActions.RecieveActions(book_list);
 	    });
 	  },
+	  getInitialBookIndex: function () {
+	
+	    var uri = "https://www.googleapis.com/books/v1/volumes?q=Best+Novels+all+time";
+	    $.get(uri, { maxResults: 20 }, function (book_list) {
+	      ApiActions.ReceiveInitial(book_list);
+	    });
+	  },
 	  createBook: function (bookItem) {
 	
 	    $.post('api/books', bookItem, function (payload) {
@@ -24538,7 +24575,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var AppDispatcher = __webpack_require__(214);
-	var BookSearchConstants = __webpack_require__(218);
+	var BookSearchConstants = __webpack_require__(239);
 	
 	var ApiActions = {
 	  receiveAll: function (benches) {
@@ -24548,8 +24585,16 @@
 	    });
 	  },
 	  RecieveActions: function (book_list) {
+	
 	    AppDispatcher.dispatch({
-	      actionType: BookSearchConstants.SearchResultsREcieved,
+	      actionType: BookSearchConstants.SearchResultsRecieved,
+	      results: book_list.items
+	    });
+	  },
+	  ReceiveInitial: function (book_list) {
+	
+	    AppDispatcher.dispatch({
+	      actionType: BookSearchConstants.InitialResultsRecieved,
 	      results: book_list.items
 	    });
 	  }
@@ -24874,22 +24919,15 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 218 */
-/***/ function(module, exports) {
-
-	var BenchConstants = {
-	  BENCHES_RECEIVED: "BENCHES_RECEIVED"
-	};
-	
-	module.exports = BenchConstants;
-
-/***/ },
+/* 218 */,
 /* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(220).Store;
 	var _searchResults = [];
-	var BookSearchConstants = __webpack_require__(218);
+	var _initialResults = [];
+	var _currentBook = null;
+	var BookSearchConstants = __webpack_require__(239);
 	var AppDispatcher = __webpack_require__(214);
 	var BookSearchStore = new Store(AppDispatcher);
 	
@@ -24904,15 +24942,34 @@
 	BookSearchStore.empty = function () {
 	  _searchResults = [];
 	};
+	BookSearchStore.initialData = function () {
+	  return _initialResults;
+	};
+	loadInitial = function (results) {
+	  _initialResults = results.slice();
+	};
+	BookSearchStore.resetCurrentBook = function (book) {
+	  _currentBook = book;
+	};
+	BookSearchStore.currentBook = function () {
+	  return _currentBook;
+	};
 	
 	BookSearchStore.__onDispatch = function (payload) {
+	
 	  switch (payload.actionType) {
 	    case BookSearchConstants.SearchResultsRecieved:
 	      var result = resetSearchResults(payload.results);
 	      BookSearchStore.__emitChange();
 	      break;
+	    case BookSearchConstants.InitialResultsRecieved:
+	
+	      var r2 = loadInitial(payload.results);
+	      BookSearchStore.__emitChange();
+	      break;
 	  }
 	};
+	window.BookSearchStore = BookSearchStore;
 	
 	module.exports = BookSearchStore;
 
@@ -31388,8 +31445,9 @@
 	      ISBN10: chosen.industryIdentifiers[1].identifier,
 	      publisher: chosen.publisher
 	    };
-	    debugger;
+	
 	    APIUtil.createBook(newBook);
+	    BookSearchStore.resetCurrentBook(newBook);
 	    var url = "/Desk";
 	    this.history.push({ pathname: url });
 	    //reroute to User Show with Book Display
@@ -31445,20 +31503,55 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	
+	var BookSearchStore = __webpack_require__(219);
+	var Notebook = __webpack_require__(240);
 	var Desk = React.createClass({
 	  displayName: 'Desk',
 	
 	
 	  render: function () {
 	    return React.createElement(
-	      'div',
-	      null,
-	      'Banana'
+	      'section',
+	      { className: 'Desk' },
+	      React.createElement(Notebook, { currentBook: BookSearchStore.currentBook() })
 	    );
 	  }
 	});
 	module.exports = Desk;
+
+/***/ },
+/* 239 */
+/***/ function(module, exports) {
+
+	var BookSearchConstants = {
+	  SearchResultsRecieved: "RESULTS_RECEIVED",
+	  InitialResultsRecieved: "INITIAL_RESULTS_RECIEVED"
+	};
+	window.BookSearchConstants = BookSearchConstants;
+	module.exports = BookSearchConstants;
+
+/***/ },
+/* 240 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var Notebook = React.createClass({
+	  displayName: "Notebook",
+	
+	
+	  render: function () {
+	
+	    return React.createElement(
+	      "section",
+	      { className: "Notebook" },
+	      React.createElement("img", { src: this.props.currentBook.volumeInfo.imageLinks.thumbnail })
+	    );
+	  }
+	
+	});
+	
+	module.exports = Notebook;
 
 /***/ }
 /******/ ]);

@@ -6,12 +6,12 @@ var Notebook = React.createClass({
   render: function(){
 
     return(
-      <YourReviews />
-      <AuthorPage />
-      <BookPage />
-      <Note />
-      <Finish />
+      <section className="Notebook">
+        <img src={this.props.currentBook.volumeInfo.imageLinks.thumbnail}></img>
+      </section>
     )
   }
 
 });
+
+module.exports = Notebook;

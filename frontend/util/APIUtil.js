@@ -9,6 +9,13 @@ var APIUtil = {
     });
 
   },
+  getInitialBookIndex: function(){
+
+    var uri = "https://www.googleapis.com/books/v1/volumes?q=Best+Novels+all+time"
+    $.get(uri, {maxResults: 20}, function(book_list){
+      ApiActions.ReceiveInitial(book_list);
+    });
+  },
   createBook: function(bookItem){
 
     $.post('api/books', bookItem, function(payload){

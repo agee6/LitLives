@@ -1,5 +1,5 @@
 var AppDispatcher = require('../dispatcher/dispatcher');
-var BookSearchConstants = require('../constants/bench_constants');
+var BookSearchConstants = require('../constants/BookSearchConstants');
 
 
 var ApiActions = {
@@ -10,8 +10,16 @@ var ApiActions = {
     });
   },
   RecieveActions: function(book_list){
+
     AppDispatcher.dispatch({
-      actionType: BookSearchConstants.SearchResultsREcieved,
+      actionType: BookSearchConstants.SearchResultsRecieved,
+      results: book_list.items
+    });
+  },
+  ReceiveInitial: function(book_list){
+  
+    AppDispatcher.dispatch({
+      actionType: BookSearchConstants.InitialResultsRecieved,
       results: book_list.items
     });
   }

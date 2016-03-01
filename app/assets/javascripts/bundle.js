@@ -24327,7 +24327,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var InitialBookIndex = __webpack_require__(209);
+	var InitialBookIndex = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./InitialBookIndex.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	var PopUpQuestion = __webpack_require__(235);
 	
 	var Home = React.createClass({
@@ -24346,60 +24346,7 @@
 	module.exports = Home;
 
 /***/ },
-/* 209 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(210);
-	var APIUtil = __webpack_require__(233);
-	
-	var InitialBookIndex = React.createClass({
-	  displayName: 'InitialBookIndex',
-	
-	
-	  getInitialState: function () {
-	    return { bookIndex: BookSearchStore.initialData() };
-	  },
-	  componentDidMount: function () {
-	    APIUtil.getInitialBookIndex();
-	    this.iIndex = BookSearchStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function () {},
-	  _onChange: function () {
-	    this.setState({ bookIndex: BookSearchStore.initialData() });
-	  },
-	  click: function (event) {
-	    event.preventDefault();
-	    var li = event.currentTarget;
-	    debugger;
-	    console.log(li);
-	  },
-	  render: function () {
-	    var bookOptions;
-	    var that = this;
-	
-	    bookOptions = this.state.bookIndex.map(function (book, index) {
-	      if (book.volumeInfo === undefined || book.volumeInfo.imageLinks === undefined) {
-	        return React.createElement('li', { key: index });
-	      } else {
-	        return React.createElement(
-	          'li',
-	          { key: index, 'data-book': book, className: 'InitialIndex', onClick: that.click },
-	          React.createElement('img', { src: book.volumeInfo.imageLinks.thumbnail })
-	        );
-	      }
-	    });
-	    return React.createElement(
-	      'ul',
-	      { className: 'BookList' },
-	      bookOptions
-	    );
-	  }
-	});
-	
-	module.exports = InitialBookIndex;
-
-/***/ },
+/* 209 */,
 /* 210 */
 /***/ function(module, exports, __webpack_require__) {
 

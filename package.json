@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "./node_modules/.bin/webpack"
   },
   "repository": {
     "type": "git",
@@ -20,11 +21,14 @@
     "url": "https://github.com/ageet/LitLives/issues"
   },
   "homepage": "https://github.com/agee6/LitLives#readme",
-  "devDependencies": {
+
     "babel-core": "^6.2.0",
     "babel-loader": "^6.2.0",
     "babel-preset-react": "^6.1.18",
-    "webpack": "^1.12.2"
+    "webpack": "^1.12.2",
+  "engines": {
+    "node": "4.1.1",
+    "npm": "2.1.x"
   },
   "dependencies": {
     "flux": "^2.1.1",

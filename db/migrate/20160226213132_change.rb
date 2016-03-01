@@ -1,7 +1,7 @@
 class Change < ActiveRecord::Migration
   def change
-  	drop_table :bookshelf_spots 
-  	drop_table :genre_instances
+
+  	
   	add_column :books, :user_id, :integer, null: false, index: true
   	add_column :books, :genre, :string
   	remove_column :books, :year

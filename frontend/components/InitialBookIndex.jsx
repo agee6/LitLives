@@ -13,16 +13,10 @@ var InitialBookIndex = React.createClass({
     this.iIndex = BookSearchStore.addListener(this._onChange);
   },
   componentWillUnmount: function(){
-    
+
   },
   _onChange: function(){
     this.setState({bookIndex:BookSearchStore.initialData()})
-  },
-  click: function(event){
-    event.preventDefault();
-    var li = event.currentTarget;
-    debugger;
-    console.log(li);
   },
   render: function(){
     var bookOptions;
@@ -32,7 +26,7 @@ var InitialBookIndex = React.createClass({
       if(book.volumeInfo === undefined || book.volumeInfo.imageLinks === undefined){
         return(<li key={index}></li>);
       }else{
-        return(<li key={index} data-book={book} className="InitialIndex" onClick={that.click}><img src={book.volumeInfo.imageLinks.thumbnail}></img></li>);
+        return(<IndexItem book={book.volumeInfo} );
       }
     });
     return(

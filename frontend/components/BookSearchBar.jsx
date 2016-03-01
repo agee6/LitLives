@@ -2,10 +2,20 @@ var React = require('react');
 var APIUtil = require('../util/APIUtil.js');
 var BookSearchStore = require('../stores/BookSearchStore.js');
 var BookConfirmation = require('./BookConfirmation.jsx');
+const customStyles = {
+  content : {
+    top                   : '50%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)'
+  }
+};
 
 var BookSearchBar = React.createClass({
   getInitialState: function(){
-    return{value: "", searchResults: [], chosen: false}
+    return{value: "", searchResults: [], chosen: false, modalIsOpen: false}
   },
   handleChange: function(event){
 
@@ -15,6 +25,13 @@ var BookSearchBar = React.createClass({
       APIUtil.fetchBookResults(this.state.value);
     }
 
+  },
+  openModal: function() {
+    this.setState({modalIsOpen: true});
+  },
+
+  closeModal: function() {
+    this.setState({modalIsOpen: false});
   },
   componentDidMount: function(){
     BookSearchStore.addListener(this._onChange);
@@ -33,6 +50,7 @@ var BookSearchBar = React.createClass({
   click: function(event){
     event.preventDefault();
     var theChosen = this.state.searchResults[0].volumeInfo.title;
+    this.openModal();
     this.setState({chosen: this.state.searchResults[0]});
 
   },
@@ -61,7 +79,23 @@ var BookSearchBar = React.createClass({
       <ul className="searchGuesses">
         {guesses}
       </ul>
-        {bookConfirmation}
+      <Modal
+         isOpen={this.state.modalIsOpen}
+         onRequestClose={this.closeModal}
+         style={customStyles} >
+
+         <h2>Hello</h2>
+         <button onClick={this.closeModal}>close</button>
+         <div>I am a modal</div>
+         <form>
+           <input />
+           <button>tab navigation</button>
+           <button>stays</button>
+           <button>inside</button>
+           <button>the modal</button>
+         </form>
+       </Modal>
+        
 
       </div>
     );

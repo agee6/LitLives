@@ -12,13 +12,20 @@ var BookConfirmation = React.createClass({
 
     var chosen = this.props.selection.volumeInfo;
     var newBook = {title: chosen.title,
-                    author: chosen.authors[0],
-                    description: chosen.description,
-                    ISBN13: chosen.industryIdentifiers[0].identifier,
-                    ISBN10: chosen.industryIdentifiers[1].identifier,
-                    publisher: chosen.publisher
-                  }
-
+                description: chosen.description,
+                publishing: chosen.publisher,
+                pages: chosen.pageCount,
+                language: chosen.language,
+                read: "reading",
+                image: chosen.imageLinks.thumbnail
+              }
+if(chosen.authors !== undefined){
+  newBook.author = chosen.authors[0];
+}
+if(chosen.industryIdentifiers !== undefined){
+  newBook.ISBN13 = chosen.industryIdentifiers[0].identifier;
+  newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
+}
     APIUtil.createBook(newBook);
     BookSearchStore.resetCurrentBook(newBook);
     var url = "/Desk"

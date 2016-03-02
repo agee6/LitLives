@@ -14,7 +14,7 @@ var InitialBookIndex = React.createClass({
     this.iIndex = BookSearchStore.addListener(this._onChange);
   },
   componentWillUnmount: function(){
-
+    this.iIndex.remove();  
   },
   _onChange: function(){
     this.setState({bookIndex:BookSearchStore.initialData()})

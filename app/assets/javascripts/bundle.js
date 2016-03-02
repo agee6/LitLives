@@ -52,10 +52,14 @@
 	var IndexRoute = ReactRouter.IndexRoute;
 	var Search = __webpack_require__(206);
 	var Desk = __webpack_require__(257);
+	var APIUtil = __webpack_require__(231);
 	
 	var App = React.createClass({
 	  displayName: 'App',
 	
+	  componentDidMount: function () {
+	    APIUtil.getUserBooks();
+	  },
 	  render: function () {
 	    return React.createElement(
 	      'div',
@@ -72,6 +76,7 @@
 	);
 	
 	document.addEventListener("DOMContentLoaded", function () {
+	
 	  ReactDOM.render(React.createElement(
 	    Router,
 	    null,
@@ -24103,7 +24108,9 @@
 	    APIUtil.getInitialBookIndex();
 	    this.iIndex = BookSearchStore.addListener(this._onChange);
 	  },
-	  componentWillUnmount: function () {},
+	  componentWillUnmount: function () {
+	    this.iIndex.remove();
+	  },
 	  _onChange: function () {
 	    this.setState({ bookIndex: BookSearchStore.initialData() });
 	  },
@@ -24144,6 +24151,9 @@
 	  _searchResults = [];
 	  _searchResults = results.slice(0);
 	};
+	var resetCurrentBook = function (book) {
+	  _currentBook = book;
+	};
 	
 	BookSearchStore.all = function () {
 	  return _searchResults.slice(0);
@@ -24154,7 +24164,7 @@
 	BookSearchStore.initialData = function () {
 	  return _initialResults;
 	};
-	loadInitial = function (results) {
+	var loadInitial = function (results) {
 	  _initialResults = results.slice();
 	};
 	BookSearchStore.resetCurrentBook = function (book) {
@@ -24172,8 +24182,11 @@
 	      BookSearchStore.__emitChange();
 	      break;
 	    case BookSearchConstants.InitialResultsRecieved:
-	
 	      var r2 = loadInitial(payload.results);
+	      BookSearchStore.__emitChange();
+	      break;
+	    case BookSearchConstants.ReceiveCurrentBook:
+	      var d2 = resetCurrentBook(payload.book);
 	      BookSearchStore.__emitChange();
 	      break;
 	  }
@@ -30689,9 +30702,10 @@
 
 	var BookSearchConstants = {
 	  SearchResultsRecieved: "RESULTS_RECEIVED",
-	  InitialResultsRecieved: "INITIAL_RESULTS_RECIEVED"
+	  InitialResultsRecieved: "INITIAL_RESULTS_RECIEVED",
+	  ReceiveCurrentBook: "RECEIVE_CURRENT_BOOK"
 	};
-	window.BookSearchConstants = BookSearchConstants;
+	
 	module.exports = BookSearchConstants;
 
 /***/ },
@@ -31004,6 +31018,11 @@
 	      newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
 	    }
 	    return newBook;
+	  },
+	  getUserBooks: function () {
+	    $.get('/api/books', {}, function (books) {
+	      ApiActions.recieveUserBooks(books);
+	    });
 	  }
 	};
 	
@@ -31015,14 +31034,10 @@
 
 	var AppDispatcher = __webpack_require__(228);
 	var BookSearchConstants = __webpack_require__(227);
+	var BookShelfConstants = __webpack_require__(262);
 	
 	var ApiActions = {
-	  receiveAll: function (benches) {
-	    AppDispatcher.dispatch({
-	      actionType: BenchConstants.BENCHES_RECEIVED,
-	      benches: benches
-	    });
-	  },
+	
 	  RecieveActions: function (book_list) {
 	
 	    AppDispatcher.dispatch({
@@ -31035,6 +31050,18 @@
 	    AppDispatcher.dispatch({
 	      actionType: BookSearchConstants.InitialResultsRecieved,
 	      results: book_list.items
+	    });
+	  },
+	  recieveUserBooks: function (books) {
+	    AppDispatcher.dispatch({
+	      actionType: BookShelfConstants.RecieveUserBooks,
+	      books: books
+	    });
+	  },
+	  updateCurrentBook: function (book) {
+	    AppDispatcher.dispatch({
+	      actionType: BookSearchConstants.ReceiveCurrentBook,
+	      book: book
 	    });
 	  }
 	};
@@ -31135,7 +31162,10 @@
 	  },
 	
 	  componentDidMount: function () {
-	    BookSearchStore.addListener(this._onChange);
+	    this.storeIndex = BookSearchStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function () {
+	    this.storeIndex.remove();
 	  },
 	  _onChange: function () {
 	    if (this.state.value.length > 0) {
@@ -33193,17 +33223,20 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(208);
 	var Notebook = __webpack_require__(258);
+	var BookShelf = __webpack_require__(267);
+	var BookSearchStore = __webpack_require__(208);
 	var Desk = React.createClass({
 	  displayName: 'Desk',
 	
 	
 	  render: function () {
+	
 	    return React.createElement(
 	      'section',
 	      { className: 'Desk' },
-	      React.createElement(Notebook, { currentBook: BookSearchStore.currentBook() })
+	      React.createElement(Notebook, null),
+	      React.createElement(BookShelf, null)
 	    );
 	  }
 	});
@@ -33215,18 +33248,31 @@
 
 	var React = __webpack_require__(1);
 	var BookPage = __webpack_require__(259);
+	var BookSearchStore = __webpack_require__(208);
 	
 	var Notebook = React.createClass({
 	  displayName: 'Notebook',
 	
+	  getInitialState: function () {
+	    return { currentBook: BookSearchStore.currentBook() };
+	  },
+	  componentDidMount: function () {
+	    this.storeIndex = BookSearchStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function () {
+	    this.storeIndex.remove();
+	  },
+	  _onChange: function () {
+	    this.setState({ currentBook: BookSearchStore.currentBook() });
+	  },
 	
 	  render: function () {
 	
 	    return React.createElement(
 	      'section',
 	      { className: 'Notebook' },
-	      React.createElement('img', { src: this.props.currentBook.image }),
-	      React.createElement(BookPage, null)
+	      React.createElement('img', { src: this.state.currentBook.image }),
+	      React.createElement(BookPage, { currentBook: this.state.currentBook, changeCurrentBook: this.changeCurrentBook })
 	    );
 	  }
 	
@@ -33239,81 +33285,290 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(208);
 	
 	var BookPage = React.createClass({
-	  displayName: 'BookPage',
+	  displayName: "BookPage",
 	
-	  getInitialState: function () {
-	    return { currentBook: BookSearchStore.currentBook() };
-	  },
-	  componentDidMount: function () {
-	    BookSearchStore.addListener(this._onChange);
-	  },
-	  _onChange: function () {
-	    this.setState({ currentBook: BookSearchStore.currentBook() });
-	  },
+	
 	  onClick: function (event) {
 	    event.preventDefault();
 	    alert("congrats!");
 	  },
 	  render: function () {
-	    var book = this.state.currentBook;
+	    var book = this.props.currentBook;
 	    return React.createElement(
-	      'section',
-	      { className: 'BookPage' },
+	      "section",
+	      { className: "BookPage" },
 	      React.createElement(
-	        'h1',
+	        "h1",
 	        null,
 	        book.title
 	      ),
 	      React.createElement(
-	        'div',
-	        { className: 'BookPage', id: 'ImageInLine' },
-	        React.createElement('img', { src: book.image })
+	        "div",
+	        { className: "BookPage", id: "ImageInLine" },
+	        React.createElement("img", { src: book.image })
 	      ),
 	      React.createElement(
-	        'h2',
+	        "h2",
 	        null,
-	        'by, ',
+	        "by, ",
 	        book.author
 	      ),
 	      React.createElement(
-	        'p',
+	        "p",
 	        null,
 	        book.description
 	      ),
 	      React.createElement(
-	        'footer',
-	        { className: 'BookPage', id: 'BookFooter' },
+	        "footer",
+	        { className: "BookPage", id: "BookFooter" },
 	        React.createElement(
-	          'p',
+	          "p",
 	          null,
-	          'Pages: ',
+	          "Pages: ",
 	          book.pages
 	        ),
 	        React.createElement(
-	          'p',
+	          "p",
 	          null,
-	          'language: ',
+	          "language: ",
 	          book.language
 	        ),
 	        React.createElement(
-	          'p',
+	          "p",
 	          null,
-	          'publisher: ',
+	          "publisher: ",
 	          book.publishing
 	        )
 	      ),
 	      React.createElement(
-	        'button',
-	        { className: 'BookPage', id: 'BookFinishedButton', onClick: this.onClick },
-	        'Finished Reading!'
+	        "button",
+	        { className: "BookPage", id: "BookFinishedButton", onClick: this.onClick },
+	        "Finished Reading!"
 	      )
 	    );
 	  }
 	});
 	module.exports = BookPage;
+
+/***/ },
+/* 260 */,
+/* 261 */,
+/* 262 */
+/***/ function(module, exports) {
+
+	var BookShelfConstants = {
+	  RecieveUserBooks: "RECEIVE_USER_BOOKS"
+	};
+	
+	module.exports = BookShelfConstants;
+
+/***/ },
+/* 263 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ShelfItem = __webpack_require__(264);
+	
+	var Shelf = React.createClass({
+	  displayName: 'Shelf',
+	
+	
+	  render: function () {
+	    var theshelf = [];
+	    var theshelf = this.props.books.map(function (book, index) {
+	      return React.createElement(ShelfItem, { key: index, bookTitle: book.title, book: book });
+	    }, this);
+	    return React.createElement(
+	      'section',
+	      { className: 'BookShelf', id: 'Shelf' },
+	      React.createElement(
+	        'ul',
+	        null,
+	        theshelf
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = Shelf;
+
+/***/ },
+/* 264 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(208);
+	var ApiActions = __webpack_require__(232);
+	
+	var ShelfItem = React.createClass({
+	  displayName: 'ShelfItem',
+	
+	  onClick: function (event) {
+	    event.preventDefault();
+	    ApiActions.updateCurrentBook(this.props.book);
+	  },
+	  render: function () {
+	    return React.createElement(
+	      'li',
+	      { className: 'ShelfItem', onClick: this.onClick },
+	      this.props.bookTitle
+	    );
+	  }
+	});
+	
+	module.exports = ShelfItem;
+
+/***/ },
+/* 265 */,
+/* 266 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(209).Store;
+	var _books = {};
+	var BookShelfConstants = __webpack_require__(262);
+	var AppDispatcher = __webpack_require__(228);
+	var BookShelfStore = new Store(AppDispatcher);
+	
+	var resetBooks = function (results) {
+	  _books = {};
+	  _books = results;
+	};
+	
+	BookShelfStore.all = function () {
+	
+	  return _books;
+	};
+	BookShelfStore.empty = function () {
+	  _books = {};
+	};
+	BookShelfStore.read = function () {
+	  if (_books.read === undefined) {
+	    return [];
+	  } else {
+	    return _books.read;
+	  }
+	};
+	BookShelfStore.toRead = function () {
+	  if (_books.toRead === undefined) {
+	    return [];
+	  } else {
+	    return _books.toRead;
+	  }
+	};
+	BookShelfStore.reading = function () {
+	  if (_books.toRead === undefined) {
+	    return [];
+	  } else {
+	    return _books.reading;
+	  }
+	};
+	
+	BookShelfStore.__onDispatch = function (payload) {
+	
+	  switch (payload.actionType) {
+	    case BookShelfConstants.RecieveUserBooks:
+	
+	      var result = resetBooks(payload.books);
+	      BookShelfStore.__emitChange();
+	      break;
+	    case BookShelfConstants.BooksAdded:
+	      var added = addBook(payload.book);
+	      BookShelfStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	window.BookShelfStore = BookShelfStore;
+	
+	module.exports = BookShelfStore;
+
+/***/ },
+/* 267 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var BookShelfStore = __webpack_require__(266);
+	var Shelf = __webpack_require__(263);
+	var Search = __webpack_require__(206);
+	var Modal = __webpack_require__(237);
+	
+	var customStyles = {
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    marginRight: '-50%',
+	    transform: 'translate(-50%, -50%)'
+	  }
+	};
+	
+	var BookShelf = React.createClass({
+	  displayName: 'BookShelf',
+	
+	
+	  getInitialState: function () {
+	    var reading = BookShelfStore.reading();
+	    var toRead = BookShelfStore.toRead();
+	    var allToRead = reading.concat(toRead);
+	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead, modalIsOpen: false };
+	  },
+	  openModal: function () {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
+	
+	  closeModal: function () {
+	    BookSearchStore.resetCurrentBook(null);
+	    this.setState({ modalIsOpen: false });
+	  },
+	  componentDidMount: function () {
+	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function () {
+	    BookShelfStore.removeListener(this.bookShelfIndex);
+	  },
+	  _onChange: function () {
+	    var reading = BookShelfStore.reading();
+	    var toRead = BookShelfStore.toRead();
+	    var allToRead = reading.concat(toRead);
+	    this.setState({ readBooks: BookShelfStore.read(), toReadBooks: allToRead });
+	  },
+	  click: function (event) {
+	    event.preventDefault();
+	    this.openModal();
+	  },
+	  render: function () {
+	
+	    return React.createElement(
+	      'section',
+	      { className: 'bookshelf' },
+	      React.createElement(Shelf, { books: this.state.toReadBooks }),
+	      React.createElement(Shelf, { books: this.state.readBooks }),
+	      React.createElement(
+	        'button',
+	        { className: 'AddBooks', onClick: this.click },
+	        'Add to shelf'
+	      ),
+	      React.createElement(
+	        Modal,
+	        {
+	          isOpen: this.state.modalIsOpen,
+	          onRequestClose: this.closeModal,
+	          style: customStyles },
+	        React.createElement(Search, { book: this.state.chosen, close: this.closeModal }),
+	        React.createElement(
+	          'button',
+	          { onClick: this.closeModal },
+	          'close'
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = BookShelf;
 
 /***/ }
 /******/ ]);

@@ -45,8 +45,13 @@ var APIUtil = {
         newBook.ISBN13 = chosen.industryIdentifiers[0].identifier;
         newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
       }
-      return newBook; 
-  }
+      return newBook;
+  },
+  getUserBooks: function(){
+    $.get('/api/books', {}, function(books){
+      ApiActions.recieveUserBooks(books); 
+    })
+  },
 };
 
 module.exports = APIUtil;

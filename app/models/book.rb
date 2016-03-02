@@ -1,6 +1,7 @@
 class Book < ActiveRecord::Base
   validates :user_id, presence: true
   validates :title, presence: true
+  validates :read, inclusion: {in: %w(read, toRead, reading)}
 
   belongs_to :user
 

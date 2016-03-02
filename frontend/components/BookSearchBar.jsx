@@ -19,7 +19,10 @@ var BookSearchBar = React.createClass({
   },
 
   componentDidMount: function(){
-    BookSearchStore.addListener(this._onChange);
+    this.storeIndex = BookSearchStore.addListener(this._onChange);
+  },
+  componentWillUnmount: function(){
+    this.storeIndex.remove(); 
   },
   _onChange: function(){
     if (this.state.value.length > 0){

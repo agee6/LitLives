@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user
   helper_method :logged_in?
+  helper_method :current_book?
 
   def current_user
     return nil if session[:session_token].nil?
@@ -14,6 +15,18 @@ class ApplicationController < ActionController::Base
   def logged_in?
     !!current_user
   end
+  def current_book?
+    if !logged_in?
+      return false
+    else
+      if current_user.current_book == nil
+        return false
+      else
+        return current_user.current_book
+      end
+    end
+  end
+  
 
   def login(user)
     user.reset_session_token

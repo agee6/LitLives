@@ -1,4 +1,4 @@
-
+/*
 body {
   background-color: #e4cdb4;
 }
@@ -40,7 +40,11 @@ ul {
 .searchGuess:hover {
   cursor: pointer;
   background-color: #e4cdb4;
-  
+
+
+}
+.initialIndex {
+  float: left;
 
 }
 #username {

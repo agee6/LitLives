@@ -6,6 +6,10 @@ class StaticPagesController < ApplicationController
   def popup
     render :popup
   end
+  def home
+    render :home
+  end
+  
 
 
 end

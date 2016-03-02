@@ -1,23 +1,14 @@
 var React = require('react');
-var BookSearchStore = require('../../stores/BookSearchStore.js');
+
 
 var BookPage = React.createClass({
-  getInitialState: function(){
-    return({currentBook:BookSearchStore.currentBook()})
-  },
-  componentDidMount: function(){
-    BookSearchStore.addListener(this._onChange);
 
-  },
-  _onChange: function(){
-    this.setState({currentBook: BookSearchStore.currentBook()});
-  },
   onClick: function(event){
     event.preventDefault();
     alert("congrats!");
   },
   render: function(){
-    var book = this.state.currentBook;
+    var book = this.props.currentBook;
     return(
       <section className="BookPage">
         <h1>{book.title}</h1>

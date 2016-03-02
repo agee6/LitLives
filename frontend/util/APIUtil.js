@@ -27,6 +27,25 @@ var APIUtil = {
     $.post('/api/reviews', { review: data }, function (bench) {
       ApiActions.receiveAll([bench]);
     });
+  },
+  makeBookObject: function(bookData){
+    var chosen = bookData.volumeInfo;
+    var newBook = {title: chosen.title,
+                description: chosen.description,
+                publishing: chosen.publisher,
+                pages: chosen.pageCount,
+                language: chosen.language,
+                read: "reading",
+                image: chosen.imageLinks.thumbnail
+              };
+      if(chosen.authors !== undefined){
+        newBook.author = chosen.authors[0];
+      }
+      if(chosen.industryIdentifiers !== undefined){
+        newBook.ISBN13 = chosen.industryIdentifiers[0].identifier;
+        newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
+      }
+      return newBook; 
   }
 };
 

@@ -1,6 +1,6 @@
 class Api::BooksController < ApplicationController
   def create
-    input_hash = {:user_id: current_user}
+    input_hash = {user_id: current_user}
     creation_hash = book_params.merge(input_hash)
     @book = Book.new(creation_hash)
 
@@ -14,6 +14,7 @@ class Api::BooksController < ApplicationController
 
   end
   def show
+
 
   end
   def index

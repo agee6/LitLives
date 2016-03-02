@@ -10,41 +10,25 @@ var BookConfirmation = React.createClass({
   yesClick:function(event){
       event.preventDefault();
 
-    var chosen = this.props.selection.volumeInfo;
-    var newBook = {title: chosen.title,
-                description: chosen.description,
-                publishing: chosen.publisher,
-                pages: chosen.pageCount,
-                language: chosen.language,
-                read: "reading",
-                image: chosen.imageLinks.thumbnail
-              }
-if(chosen.authors !== undefined){
-  newBook.author = chosen.authors[0];
-}
-if(chosen.industryIdentifiers !== undefined){
-  newBook.ISBN13 = chosen.industryIdentifiers[0].identifier;
-  newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
-}
-    APIUtil.createBook(newBook);
-    BookSearchStore.resetCurrentBook(newBook);
+    APIUtil.createBook(this.props.book);
     var url = "/Desk"
     this.history.push({pathname: url});
     //reroute to User Show with Book Display
   },
   noClick:function(event){
       event.preventDefault();
+      this.props.close();
     //closeWindow and reset state of parent
   },
   render: function(){
-    var chosen = this.props.selection.volumeInfo;
+    var chosen = this.props.book;
     return(
       <section className="BookConfirmation">
         <div>
           <h3>Is the following the correct book?</h3>
             <h2>{chosen.title}</h2>
-            <h3>by, {chosen.authors[0]}</h3>
-            <img src={chosen.imageLinks.smallThumbnail}></img>
+            <h3>by, {chosen.author}</h3>
+            <img src={chosen.image}></img>
 
         </div>
           <button className="Confirmation" id="Yes" onClick={this.yesClick}>Yes</button>

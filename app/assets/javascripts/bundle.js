@@ -47,11 +47,10 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
 	var ReactRouter = __webpack_require__(159);
-	var root = document.getElementById('content');
 	var Router = ReactRouter.Router;
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
-	var Home = __webpack_require__(206);
+	var Search = __webpack_require__(206);
 	var Desk = __webpack_require__(257);
 	
 	var App = React.createClass({
@@ -68,7 +67,7 @@
 	var routes = React.createElement(
 	  Route,
 	  { path: '/', component: App },
-	  React.createElement(IndexRoute, { component: Home }),
+	  React.createElement(IndexRoute, { component: Search }),
 	  React.createElement(Desk, { path: '/Desk', component: Desk })
 	);
 	
@@ -24020,22 +24019,69 @@
 
 	var React = __webpack_require__(1);
 	var InitialBookIndex = __webpack_require__(207);
-	var PopUpQuestion = __webpack_require__(234);
+	var SearchArea = __webpack_require__(234);
+	var BookSearchStore = __webpack_require__(208);
+	var BookConfirmation = __webpack_require__(236);
+	var Modal = __webpack_require__(237);
 	
-	var Home = React.createClass({
-	  displayName: 'Home',
+	var customStyles = {
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    marginRight: '-50%',
+	    transform: 'translate(-50%, -50%)'
+	  }
+	};
 	
+	var Search = React.createClass({
+	  displayName: 'Search',
+	
+	
+	  getInitialState: function () {
+	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
+	  },
+	  bookChosen: function () {
+	    this.openModal();
+	  },
+	  openModal: function () {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
+	
+	  closeModal: function () {
+	    BookSearchStore.resetCurrentBook(null);
+	    this.setState({ modalIsOpen: false });
+	  },
 	  render: function () {
 	
 	    return React.createElement(
 	      'div',
 	      { className: 'homePage' },
-	      React.createElement(PopUpQuestion, null),
-	      React.createElement(InitialBookIndex, null)
+	      React.createElement(SearchArea, { whenChosen: this.bookChosen }),
+	      React.createElement(InitialBookIndex, { whenChosen: this.bookChosen }),
+	      React.createElement(
+	        Modal,
+	        {
+	          isOpen: this.state.modalIsOpen,
+	          onRequestClose: this.closeModal,
+	          style: customStyles },
+	        React.createElement(BookConfirmation, { book: this.state.chosen, close: this.closeModal }),
+	        React.createElement(
+	          'h2',
+	          null,
+	          'Hello'
+	        ),
+	        React.createElement(
+	          'button',
+	          { onClick: this.closeModal },
+	          'close'
+	        )
+	      )
 	    );
 	  }
 	});
-	module.exports = Home;
+	module.exports = Search;
 
 /***/ },
 /* 207 */
@@ -24069,7 +24115,7 @@
 	      if (book.volumeInfo === undefined || book.volumeInfo.imageLinks === undefined) {
 	        return React.createElement('li', { key: index });
 	      } else {
-	        return React.createElement(IndexItem, { book: book.volumeInfo });
+	        return React.createElement(IndexItem, { key: index, book: book });
 	      }
 	    });
 	    return React.createElement(
@@ -30939,6 +30985,25 @@
 	    $.post('/api/reviews', { review: data }, function (bench) {
 	      ApiActions.receiveAll([bench]);
 	    });
+	  },
+	  makeBookObject: function (bookData) {
+	    var chosen = bookData.volumeInfo;
+	    var newBook = { title: chosen.title,
+	      description: chosen.description,
+	      publishing: chosen.publisher,
+	      pages: chosen.pageCount,
+	      language: chosen.language,
+	      read: "reading",
+	      image: chosen.imageLinks.thumbnail
+	    };
+	    if (chosen.authors !== undefined) {
+	      newBook.author = chosen.authors[0];
+	    }
+	    if (chosen.industryIdentifiers !== undefined) {
+	      newBook.ISBN13 = chosen.industryIdentifiers[0].identifier;
+	      newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
+	    }
+	    return newBook;
 	  }
 	};
 	
@@ -31007,31 +31072,10 @@
 
 	var React = __webpack_require__(1);
 	var BookSearchBar = __webpack_require__(235);
-	var Modal = __webpack_require__(237);
-	const customStyles = {
-	  content: {
-	    top: '50%',
-	    left: '50%',
-	    right: 'auto',
-	    bottom: 'auto',
-	    marginRight: '-50%',
-	    transform: 'translate(-50%, -50%)'
-	  }
-	};
 	
-	var PopUpQuestion = React.createClass({
-	  displayName: 'PopUpQuestion',
+	var SearchArea = React.createClass({
+	  displayName: 'SearchArea',
 	
-	  getInitialState: function () {
-	    return { modalIsOpen: false };
-	  },
-	  openModal: function () {
-	    this.setState({ modalIsOpen: true });
-	  },
-	
-	  closeModal: function () {
-	    this.setState({ modalIsOpen: false });
-	  },
 	
 	  render: function () {
 	    return React.createElement(
@@ -31053,56 +31097,9 @@
 	              'What book are you reading now'
 	            ),
 	            React.createElement(
-	              Modal,
-	              {
-	                isOpen: this.state.modalIsOpen,
-	                onRequestClose: this.closeModal,
-	                style: customStyles },
-	              React.createElement(
-	                'div',
-	                { id: 'searchDiv' },
-	                React.createElement(BookSearchBar, null)
-	              ),
-	              React.createElement(
-	                'h2',
-	                null,
-	                'Hello'
-	              ),
-	              React.createElement(
-	                'button',
-	                { onClick: this.closeModal },
-	                'close'
-	              ),
-	              React.createElement(
-	                'div',
-	                null,
-	                'I am a modal'
-	              ),
-	              React.createElement(
-	                'form',
-	                null,
-	                React.createElement('input', null),
-	                React.createElement(
-	                  'button',
-	                  null,
-	                  'tab navigation'
-	                ),
-	                React.createElement(
-	                  'button',
-	                  null,
-	                  'stays'
-	                ),
-	                React.createElement(
-	                  'button',
-	                  null,
-	                  'inside'
-	                ),
-	                React.createElement(
-	                  'button',
-	                  null,
-	                  'the modal'
-	                )
-	              )
+	              'div',
+	              { id: 'searchDiv' },
+	              React.createElement(BookSearchBar, { whenChosen: this.props.whenChosen })
 	            )
 	          )
 	        )
@@ -31111,7 +31108,7 @@
 	  }
 	});
 	
-	module.exports = PopUpQuestion;
+	module.exports = SearchArea;
 
 /***/ },
 /* 235 */
@@ -31121,22 +31118,12 @@
 	var APIUtil = __webpack_require__(231);
 	var BookSearchStore = __webpack_require__(208);
 	var BookConfirmation = __webpack_require__(236);
-	const customStyles = {
-	  content: {
-	    top: '50%',
-	    left: '50%',
-	    right: 'auto',
-	    bottom: 'auto',
-	    marginRight: '-50%',
-	    transform: 'translate(-50%, -50%)'
-	  }
-	};
 	
 	var BookSearchBar = React.createClass({
 	  displayName: 'BookSearchBar',
 	
 	  getInitialState: function () {
-	    return { value: "", searchResults: [], chosen: false, modalIsOpen: false };
+	    return { value: "", searchResults: [] };
 	  },
 	  handleChange: function (event) {
 	
@@ -31146,13 +31133,7 @@
 	      APIUtil.fetchBookResults(this.state.value);
 	    }
 	  },
-	  openModal: function () {
-	    this.setState({ modalIsOpen: true });
-	  },
 	
-	  closeModal: function () {
-	    this.setState({ modalIsOpen: false });
-	  },
 	  componentDidMount: function () {
 	    BookSearchStore.addListener(this._onChange);
 	  },
@@ -31169,8 +31150,9 @@
 	  click: function (event) {
 	    event.preventDefault();
 	    var theChosen = this.state.searchResults[0].volumeInfo.title;
-	    this.openModal();
-	    this.setState({ chosen: this.state.searchResults[0] });
+	    var chosen = APIUtil.makeBookObject(this.state.searchResults[0]);
+	    BookSearchStore.resetCurrentBook(chosen);
+	    this.props.whenChosen();
 	  },
 	  render: function () {
 	    var that = this;
@@ -31181,12 +31163,6 @@
 	        result.volumeInfo.title
 	      );
 	    });
-	    if (this.state.chosen) {
-	
-	      var bookConfirmation = React.createElement(BookConfirmation, { selection: this.state.chosen });
-	    } else {
-	      var bookConfirmation = React.createElement('div', null);
-	    }
 	
 	    return React.createElement(
 	      'div',
@@ -31210,53 +31186,6 @@
 	        'ul',
 	        { className: 'searchGuesses' },
 	        guesses
-	      ),
-	      React.createElement(
-	        Modal,
-	        {
-	          isOpen: this.state.modalIsOpen,
-	          onRequestClose: this.closeModal,
-	          style: customStyles },
-	        React.createElement(
-	          'h2',
-	          null,
-	          'Hello'
-	        ),
-	        React.createElement(
-	          'button',
-	          { onClick: this.closeModal },
-	          'close'
-	        ),
-	        React.createElement(
-	          'div',
-	          null,
-	          'I am a modal'
-	        ),
-	        React.createElement(
-	          'form',
-	          null,
-	          React.createElement('input', null),
-	          React.createElement(
-	            'button',
-	            null,
-	            'tab navigation'
-	          ),
-	          React.createElement(
-	            'button',
-	            null,
-	            'stays'
-	          ),
-	          React.createElement(
-	            'button',
-	            null,
-	            'inside'
-	          ),
-	          React.createElement(
-	            'button',
-	            null,
-	            'the modal'
-	          )
-	        )
 	      )
 	    );
 	  }
@@ -31282,34 +31211,18 @@
 	  yesClick: function (event) {
 	    event.preventDefault();
 	
-	    var chosen = this.props.selection.volumeInfo;
-	    var newBook = { title: chosen.title,
-	      description: chosen.description,
-	      publishing: chosen.publisher,
-	      pages: chosen.pageCount,
-	      language: chosen.language,
-	      read: "reading",
-	      image: chosen.imageLinks.thumbnail
-	    };
-	    if (chosen.authors !== undefined) {
-	      newBook.author = chosen.authors[0];
-	    }
-	    if (chosen.industryIdentifiers !== undefined) {
-	      newBook.ISBN13 = chosen.industryIdentifiers[0].identifier;
-	      newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
-	    }
-	    APIUtil.createBook(newBook);
-	    BookSearchStore.resetCurrentBook(newBook);
+	    APIUtil.createBook(this.props.book);
 	    var url = "/Desk";
 	    this.history.push({ pathname: url });
 	    //reroute to User Show with Book Display
 	  },
 	  noClick: function (event) {
 	    event.preventDefault();
+	    this.props.close();
 	    //closeWindow and reset state of parent
 	  },
 	  render: function () {
-	    var chosen = this.props.selection.volumeInfo;
+	    var chosen = this.props.book;
 	    return React.createElement(
 	      'section',
 	      { className: 'BookConfirmation' },
@@ -31330,9 +31243,9 @@
 	          'h3',
 	          null,
 	          'by, ',
-	          chosen.authors[0]
+	          chosen.author
 	        ),
-	        React.createElement('img', { src: chosen.imageLinks.smallThumbnail })
+	        React.createElement('img', { src: chosen.image })
 	      ),
 	      React.createElement(
 	        'button',

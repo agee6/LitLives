@@ -1,11 +1,11 @@
 var React = require('react');
-var BookSearchStore = require('../store/BookSearchStore.js');
+var BookSearchStore = require('../stores/BookSearchStore.js');
 
 var IndexItem = React.createClass({
   onClick: function(event){
     event.preventDefault();
     BookSearchStore.resetCurrentBook(this.props.book);
-    APIUtil.addBook({this.props.book}); 
+    APIUtil.createBook(this.props.book);
   },
   render: function(){
     return(
@@ -13,3 +13,4 @@ var IndexItem = React.createClass({
     );
   }
 })
+module.exports = IndexItem;

@@ -1,12 +1,12 @@
 Rails.application.routes.draw do
 
   root to: "static_pages#root"
-  get '/popup', to: "static_pages#popup"
+  get '/home', to: "static_pages#home"
 
 
   resource :session, only: [:create, :destroy, :new]
   resources :users, only: [:create, :new, :show]
-  namespace :api, defaults: {format: :json} do 
+  namespace :api, defaults: {format: :json} do
     resources :books, only: [:index, :show, :create, :destroy]
     resources :authors, only: [:index, :show, :create, :destroy]
     resources :reviews, only: [:index, :show, :create]

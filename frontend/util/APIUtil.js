@@ -18,18 +18,13 @@ var APIUtil = {
   },
   createBook: function(bookItem){
 
-    $.post('api/books', bookItem, function(payload){
+    $.post('/api/books', bookItem, function(payload){
       console.log(payload.satus);
     });
 
   },
-  createBench: function(data){
-    $.post('api/benches', { bench: data }, function(bench) {
-      ApiActions.receiveAll([bench]);
-    });
-  },
   createReview: function(data) {
-    $.post('api/reviews', { review: data }, function (bench) {
+    $.post('/api/reviews', { review: data }, function (bench) {
       ApiActions.receiveAll([bench]);
     });
   }

@@ -1,6 +1,7 @@
 var React = require('react');
 var BookSearchStore = require('../stores/BookSearchStore.js');
 var APIUtil = require('../util/APIUtil.js');
+var IndexItem = require('./IndexItem.jsx'); 
 
 
 var InitialBookIndex = React.createClass({
@@ -26,7 +27,7 @@ var InitialBookIndex = React.createClass({
       if(book.volumeInfo === undefined || book.volumeInfo.imageLinks === undefined){
         return(<li key={index}></li>);
       }else{
-        return(<IndexItem book={book.volumeInfo} );
+        return(<IndexItem book={book.volumeInfo} />);
       }
     });
     return(

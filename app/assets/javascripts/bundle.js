@@ -52,7 +52,7 @@
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
 	var Home = __webpack_require__(208);
-	var Desk = __webpack_require__(238);
+	var Desk = __webpack_require__(259);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -24327,8 +24327,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var InitialBookIndex = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./InitialBookIndex.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
-	var PopUpQuestion = __webpack_require__(235);
+	var InitialBookIndex = __webpack_require__(209);
+	var PopUpQuestion = __webpack_require__(236);
 	
 	var Home = React.createClass({
 	  displayName: 'Home',
@@ -24346,7 +24346,51 @@
 	module.exports = Home;
 
 /***/ },
-/* 209 */,
+/* 209 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(210);
+	var APIUtil = __webpack_require__(233);
+	var IndexItem = __webpack_require__(235);
+	
+	var InitialBookIndex = React.createClass({
+	  displayName: 'InitialBookIndex',
+	
+	
+	  getInitialState: function () {
+	    return { bookIndex: BookSearchStore.initialData() };
+	  },
+	  componentDidMount: function () {
+	    APIUtil.getInitialBookIndex();
+	    this.iIndex = BookSearchStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function () {},
+	  _onChange: function () {
+	    this.setState({ bookIndex: BookSearchStore.initialData() });
+	  },
+	  render: function () {
+	    var bookOptions;
+	    var that = this;
+	
+	    bookOptions = this.state.bookIndex.map(function (book, index) {
+	      if (book.volumeInfo === undefined || book.volumeInfo.imageLinks === undefined) {
+	        return React.createElement('li', { key: index });
+	      } else {
+	        return React.createElement(IndexItem, { book: book.volumeInfo });
+	      }
+	    });
+	    return React.createElement(
+	      'ul',
+	      { className: 'BookList' },
+	      bookOptions
+	    );
+	  }
+	});
+	
+	module.exports = InitialBookIndex;
+
+/***/ },
 /* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -31195,17 +31239,12 @@
 	  },
 	  createBook: function (bookItem) {
 	
-	    $.post('api/books', bookItem, function (payload) {
+	    $.post('/api/books', bookItem, function (payload) {
 	      console.log(payload.satus);
 	    });
 	  },
-	  createBench: function (data) {
-	    $.post('api/benches', { bench: data }, function (bench) {
-	      ApiActions.receiveAll([bench]);
-	    });
-	  },
 	  createReview: function (data) {
-	    $.post('api/reviews', { review: data }, function (bench) {
+	    $.post('/api/reviews', { review: data }, function (bench) {
 	      ApiActions.receiveAll([bench]);
 	    });
 	  }
@@ -31250,8 +31289,33 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var BookSearchBar = __webpack_require__(236);
-	var Modal = __webpack_require__(240);
+	var BookSearchStore = __webpack_require__(210);
+	
+	var IndexItem = React.createClass({
+	  displayName: 'IndexItem',
+	
+	  onClick: function (event) {
+	    event.preventDefault();
+	    BookSearchStore.resetCurrentBook(this.props.book);
+	    APIUtil.createBook(this.props.book);
+	  },
+	  render: function () {
+	    return React.createElement(
+	      'li',
+	      { className: 'InitialIndex', onClick: this.onClick },
+	      React.createElement('img', { src: this.props.book.volumeInfo.imageLinks.thumbnail })
+	    );
+	  }
+	});
+	module.exports = IndexItem;
+
+/***/ },
+/* 236 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var BookSearchBar = __webpack_require__(237);
+	var Modal = __webpack_require__(239);
 	const customStyles = {
 	  content: {
 	    top: '50%',
@@ -31358,13 +31422,13 @@
 	module.exports = PopUpQuestion;
 
 /***/ },
-/* 236 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var APIUtil = __webpack_require__(233);
 	var BookSearchStore = __webpack_require__(210);
-	var BookConfirmation = __webpack_require__(237);
+	var BookConfirmation = __webpack_require__(238);
 	const customStyles = {
 	  content: {
 	    top: '50%',
@@ -31509,7 +31573,7 @@
 	module.exports = BookSearchBar;
 
 /***/ },
-/* 237 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -31595,67 +31659,23 @@
 	module.exports = BookConfirmation;
 
 /***/ },
-/* 238 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(210);
-	var Notebook = __webpack_require__(239);
-	var Desk = React.createClass({
-	  displayName: 'Desk',
-	
-	
-	  render: function () {
-	    return React.createElement(
-	      'section',
-	      { className: 'Desk' },
-	      React.createElement(Notebook, { currentBook: BookSearchStore.currentBook() })
-	    );
-	  }
-	});
-	module.exports = Desk;
-
-/***/ },
 /* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
+	module.exports = __webpack_require__(240);
 	
-	var Notebook = React.createClass({
-	  displayName: "Notebook",
-	
-	
-	  render: function () {
-	
-	    return React.createElement(
-	      "section",
-	      { className: "Notebook" },
-	      React.createElement("img", { src: this.props.currentBook.volumeInfo.imageLinks.thumbnail })
-	    );
-	  }
-	
-	});
-	
-	module.exports = Notebook;
+
 
 /***/ },
 /* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(241);
-	
-
-
-/***/ },
-/* 241 */
-/***/ function(module, exports, __webpack_require__) {
-
 	/* WEBPACK VAR INJECTION */(function(process) {var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var ExecutionEnvironment = __webpack_require__(242);
-	var ModalPortal = React.createFactory(__webpack_require__(243));
-	var ariaAppHider = __webpack_require__(258);
-	var elementClass = __webpack_require__(259);
+	var ExecutionEnvironment = __webpack_require__(241);
+	var ModalPortal = React.createFactory(__webpack_require__(242));
+	var ariaAppHider = __webpack_require__(257);
+	var elementClass = __webpack_require__(258);
 	var renderSubtreeIntoContainer = __webpack_require__(158).unstable_renderSubtreeIntoContainer;
 	
 	var SafeHTMLElement = ExecutionEnvironment.canUseDOM ? window.HTMLElement : {};
@@ -31734,7 +31754,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 242 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -31779,14 +31799,14 @@
 
 
 /***/ },
-/* 243 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var div = React.DOM.div;
-	var focusManager = __webpack_require__(244);
-	var scopeTab = __webpack_require__(246);
-	var Assign = __webpack_require__(247);
+	var focusManager = __webpack_require__(243);
+	var scopeTab = __webpack_require__(245);
+	var Assign = __webpack_require__(246);
 	
 	
 	// so that our CSS is statically analyzable
@@ -31983,10 +32003,10 @@
 
 
 /***/ },
-/* 244 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(245);
+	var findTabbable = __webpack_require__(244);
 	var modalElement = null;
 	var focusLaterElement = null;
 	var needToFocus = false;
@@ -32057,7 +32077,7 @@
 
 
 /***/ },
-/* 245 */
+/* 244 */
 /***/ function(module, exports) {
 
 	/*!
@@ -32113,10 +32133,10 @@
 
 
 /***/ },
-/* 246 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(245);
+	var findTabbable = __webpack_require__(244);
 	
 	module.exports = function(node, event) {
 	  var tabbable = findTabbable(node);
@@ -32134,7 +32154,7 @@
 
 
 /***/ },
-/* 247 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32145,9 +32165,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseAssign = __webpack_require__(248),
-	    createAssigner = __webpack_require__(254),
-	    keys = __webpack_require__(250);
+	var baseAssign = __webpack_require__(247),
+	    createAssigner = __webpack_require__(253),
+	    keys = __webpack_require__(249);
 	
 	/**
 	 * A specialized version of `_.assign` for customizing assigned values without
@@ -32220,7 +32240,7 @@
 
 
 /***/ },
-/* 248 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32231,8 +32251,8 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseCopy = __webpack_require__(249),
-	    keys = __webpack_require__(250);
+	var baseCopy = __webpack_require__(248),
+	    keys = __webpack_require__(249);
 	
 	/**
 	 * The base implementation of `_.assign` without support for argument juggling,
@@ -32253,7 +32273,7 @@
 
 
 /***/ },
-/* 249 */
+/* 248 */
 /***/ function(module, exports) {
 
 	/**
@@ -32291,7 +32311,7 @@
 
 
 /***/ },
-/* 250 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32302,9 +32322,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var getNative = __webpack_require__(251),
-	    isArguments = __webpack_require__(252),
-	    isArray = __webpack_require__(253);
+	var getNative = __webpack_require__(250),
+	    isArguments = __webpack_require__(251),
+	    isArray = __webpack_require__(252);
 	
 	/** Used to detect unsigned integer values. */
 	var reIsUint = /^\d+$/;
@@ -32533,7 +32553,7 @@
 
 
 /***/ },
-/* 251 */
+/* 250 */
 /***/ function(module, exports) {
 
 	/**
@@ -32676,7 +32696,7 @@
 
 
 /***/ },
-/* 252 */
+/* 251 */
 /***/ function(module, exports) {
 
 	/**
@@ -32926,7 +32946,7 @@
 
 
 /***/ },
-/* 253 */
+/* 252 */
 /***/ function(module, exports) {
 
 	/**
@@ -33112,7 +33132,7 @@
 
 
 /***/ },
-/* 254 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33123,9 +33143,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var bindCallback = __webpack_require__(255),
-	    isIterateeCall = __webpack_require__(256),
-	    restParam = __webpack_require__(257);
+	var bindCallback = __webpack_require__(254),
+	    isIterateeCall = __webpack_require__(255),
+	    restParam = __webpack_require__(256);
 	
 	/**
 	 * Creates a function that assigns properties of source object(s) to a given
@@ -33170,7 +33190,7 @@
 
 
 /***/ },
-/* 255 */
+/* 254 */
 /***/ function(module, exports) {
 
 	/**
@@ -33241,7 +33261,7 @@
 
 
 /***/ },
-/* 256 */
+/* 255 */
 /***/ function(module, exports) {
 
 	/**
@@ -33379,7 +33399,7 @@
 
 
 /***/ },
-/* 257 */
+/* 256 */
 /***/ function(module, exports) {
 
 	/**
@@ -33452,7 +33472,7 @@
 
 
 /***/ },
-/* 258 */
+/* 257 */
 /***/ function(module, exports) {
 
 	var _element = typeof document !== 'undefined' ? document.body : null;
@@ -33499,7 +33519,7 @@
 
 
 /***/ },
-/* 259 */
+/* 258 */
 /***/ function(module, exports) {
 
 	module.exports = function(opts) {
@@ -33562,6 +33582,50 @@
 	  else this.add(className)
 	}
 
+
+/***/ },
+/* 259 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(210);
+	var Notebook = __webpack_require__(260);
+	var Desk = React.createClass({
+	  displayName: 'Desk',
+	
+	
+	  render: function () {
+	    return React.createElement(
+	      'section',
+	      { className: 'Desk' },
+	      React.createElement(Notebook, { currentBook: BookSearchStore.currentBook() })
+	    );
+	  }
+	});
+	module.exports = Desk;
+
+/***/ },
+/* 260 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var Notebook = React.createClass({
+	  displayName: "Notebook",
+	
+	
+	  render: function () {
+	
+	    return React.createElement(
+	      "section",
+	      { className: "Notebook" },
+	      React.createElement("img", { src: this.props.currentBook.volumeInfo.imageLinks.thumbnail })
+	    );
+	  }
+	
+	});
+	
+	module.exports = Notebook;
 
 /***/ }
 /******/ ]);

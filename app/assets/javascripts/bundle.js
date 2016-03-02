@@ -33214,23 +33214,106 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var BookPage = __webpack_require__(259);
 	
 	var Notebook = React.createClass({
-	  displayName: "Notebook",
+	  displayName: 'Notebook',
 	
 	
 	  render: function () {
 	
 	    return React.createElement(
-	      "section",
-	      { className: "Notebook" },
-	      React.createElement("img", { src: this.props.currentBook.volumeInfo.imageLinks.thumbnail })
+	      'section',
+	      { className: 'Notebook' },
+	      React.createElement('img', { src: this.props.currentBook.image }),
+	      React.createElement(BookPage, null)
 	    );
 	  }
 	
 	});
 	
 	module.exports = Notebook;
+
+/***/ },
+/* 259 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(208);
+	
+	var BookPage = React.createClass({
+	  displayName: 'BookPage',
+	
+	  getInitialState: function () {
+	    return { currentBook: BookSearchStore.currentBook() };
+	  },
+	  componentDidMount: function () {
+	    BookSearchStore.addListener(this._onChange);
+	  },
+	  _onChange: function () {
+	    this.setState({ currentBook: BookSearchStore.currentBook() });
+	  },
+	  onClick: function (event) {
+	    event.preventDefault();
+	    alert("congrats!");
+	  },
+	  render: function () {
+	    var book = this.state.currentBook;
+	    return React.createElement(
+	      'section',
+	      { className: 'BookPage' },
+	      React.createElement(
+	        'h1',
+	        null,
+	        book.title
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'BookPage', id: 'ImageInLine' },
+	        React.createElement('img', { src: book.image })
+	      ),
+	      React.createElement(
+	        'h2',
+	        null,
+	        'by, ',
+	        book.author
+	      ),
+	      React.createElement(
+	        'p',
+	        null,
+	        book.description
+	      ),
+	      React.createElement(
+	        'footer',
+	        { className: 'BookPage', id: 'BookFooter' },
+	        React.createElement(
+	          'p',
+	          null,
+	          'Pages: ',
+	          book.pages
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          'language: ',
+	          book.language
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          'publisher: ',
+	          book.publishing
+	        )
+	      ),
+	      React.createElement(
+	        'button',
+	        { className: 'BookPage', id: 'BookFinishedButton', onClick: this.onClick },
+	        'Finished Reading!'
+	      )
+	    );
+	  }
+	});
+	module.exports = BookPage;
 
 /***/ }
 /******/ ]);

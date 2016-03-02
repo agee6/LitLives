@@ -1,4 +1,5 @@
 var React = require('react');
+var BookPage = require('./NoteBook/BookPage.jsx'); 
 
 
 var Notebook = React.createClass({
@@ -7,7 +8,8 @@ var Notebook = React.createClass({
 
     return(
       <section className="Notebook">
-        <img src={this.props.currentBook.volumeInfo.imageLinks.thumbnail}></img>
+        <img src={this.props.currentBook.image}></img>
+        <BookPage />
       </section>
     )
   }

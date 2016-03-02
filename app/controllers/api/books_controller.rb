@@ -11,19 +11,21 @@ class Api::BooksController < ApplicationController
       render json: @book.errors
     end
 
-
   end
+
+
   def show
-
-
+    @book = Book.find_by_id(params[:id])
+    render json: @book
   end
+
   def index
-
-
+    render json: Book.sort_user_books(current_user.id)
   end
 
   private
   def book_params
-    params.permit(:user_id, :author, :genre, :title, :length, :publishing, :year, :read, :ISBN13, :ISBN10, :description)
+    params.permit(:author, :genre, :title, :publishing, :year, :read, :ISBN13, :ISBN10, :description, :pages, :image, :language)
   end
+
 end

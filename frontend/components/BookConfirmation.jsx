@@ -9,7 +9,7 @@ var BookConfirmation = React.createClass({
   },
   yesClick:function(event){
       event.preventDefault();
-
+      debugger; 
     APIUtil.createBook(this.props.book);
     var url = "/Desk"
     this.history.push({pathname: url});

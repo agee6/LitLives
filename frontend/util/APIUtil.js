@@ -11,15 +11,18 @@ var APIUtil = {
   },
   getInitialBookIndex: function(){
 
-    var uri = "https://www.googleapis.com/books/v1/volumes?q=Best+Novels+all+time"
+    var uri = "https://www.googleapis.com/books/v1/volumes?q=Best+Novels+all+time";
     $.get(uri, {maxResults: 20}, function(book_list){
-      ApiActions.ReceiveInitial(book_list);
+      var newBookList = book_list.items.map(function(book, index){
+        return(APIUtil.makeBookObject(book));
+      });
+      ApiActions.ReceiveInitial(newBookList);
     });
   },
   createBook: function(bookItem){
 
     $.post('/api/books', bookItem, function(payload){
-      console.log(payload.satus);
+      console.log(payload);
     });
 
   },
@@ -36,8 +39,10 @@ var APIUtil = {
                 pages: chosen.pageCount,
                 language: chosen.language,
                 read: "reading",
-                image: chosen.imageLinks.thumbnail
               };
+      if(chosen.imageLinks !== undefined){
+        newBook.image = chosen.imageLinks.thumbnail;
+      }
       if(chosen.authors !== undefined){
         newBook.author = chosen.authors[0];
       }
@@ -49,8 +54,8 @@ var APIUtil = {
   },
   getUserBooks: function(){
     $.get('/api/books', {}, function(books){
-      ApiActions.recieveUserBooks(books); 
-    })
+      ApiActions.recieveUserBooks(books);
+    });
   },
 };
 

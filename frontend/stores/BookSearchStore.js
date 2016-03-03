@@ -6,6 +6,7 @@ var BookSearchConstants = require('../constants/BookSearchConstants');
 var AppDispatcher = require('../dispatcher/dispatcher');
 var BookSearchStore = new Store(AppDispatcher);
 
+
 var resetSearchResults = function(results){
   _searchResults = [];
   _searchResults = results.slice(0);
@@ -25,6 +26,7 @@ BookSearchStore.initialData = function(){
   return _initialResults;
 };
 var loadInitial = function(results){
+
   _initialResults = results.slice();
 };
 BookSearchStore.resetCurrentBook = function(book){
@@ -49,7 +51,7 @@ BookSearchStore.__onDispatch = function (payload) {
     case BookSearchConstants.ReceiveCurrentBook:
       var d2 = resetCurrentBook(payload.book);
       BookSearchStore.__emitChange();
-      break; 
+      break;
   }
 };
 window.BookSearchStore = BookSearchStore;

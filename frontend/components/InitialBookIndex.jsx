@@ -14,7 +14,7 @@ var InitialBookIndex = React.createClass({
     this.iIndex = BookSearchStore.addListener(this._onChange);
   },
   componentWillUnmount: function(){
-    this.iIndex.remove();  
+    this.iIndex.remove();
   },
   _onChange: function(){
     this.setState({bookIndex:BookSearchStore.initialData()})
@@ -24,11 +24,7 @@ var InitialBookIndex = React.createClass({
     var that = this;
 
     bookOptions = this.state.bookIndex.map(function(book, index){
-      if(book.volumeInfo === undefined || book.volumeInfo.imageLinks === undefined){
-        return(<li key={index}></li>);
-      }else{
         return(<IndexItem key={index} book={book} />);
-      }
     });
     return(
       <ul className="BookList">

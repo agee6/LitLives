@@ -24119,11 +24119,7 @@
 	    var that = this;
 	
 	    bookOptions = this.state.bookIndex.map(function (book, index) {
-	      if (book.volumeInfo === undefined || book.volumeInfo.imageLinks === undefined) {
-	        return React.createElement('li', { key: index });
-	      } else {
-	        return React.createElement(IndexItem, { key: index, book: book });
-	      }
+	      return React.createElement(IndexItem, { key: index, book: book });
 	    });
 	    return React.createElement(
 	      'ul',
@@ -24165,6 +24161,7 @@
 	  return _initialResults;
 	};
 	var loadInitial = function (results) {
+	
 	  _initialResults = results.slice();
 	};
 	BookSearchStore.resetCurrentBook = function (book) {
@@ -30986,13 +30983,16 @@
 	
 	    var uri = "https://www.googleapis.com/books/v1/volumes?q=Best+Novels+all+time";
 	    $.get(uri, { maxResults: 20 }, function (book_list) {
-	      ApiActions.ReceiveInitial(book_list);
+	      var newBookList = book_list.items.map(function (book, index) {
+	        return APIUtil.makeBookObject(book);
+	      });
+	      ApiActions.ReceiveInitial(newBookList);
 	    });
 	  },
 	  createBook: function (bookItem) {
 	
 	    $.post('/api/books', bookItem, function (payload) {
-	      console.log(payload.satus);
+	      console.log(payload);
 	    });
 	  },
 	  createReview: function (data) {
@@ -31007,9 +31007,11 @@
 	      publishing: chosen.publisher,
 	      pages: chosen.pageCount,
 	      language: chosen.language,
-	      read: "reading",
-	      image: chosen.imageLinks.thumbnail
+	      read: "reading"
 	    };
+	    if (chosen.imageLinks !== undefined) {
+	      newBook.image = chosen.imageLinks.thumbnail;
+	    }
 	    if (chosen.authors !== undefined) {
 	      newBook.author = chosen.authors[0];
 	    }
@@ -31049,7 +31051,7 @@
 	
 	    AppDispatcher.dispatch({
 	      actionType: BookSearchConstants.InitialResultsRecieved,
-	      results: book_list.items
+	      results: book_list
 	    });
 	  },
 	  recieveUserBooks: function (books) {
@@ -31074,20 +31076,24 @@
 
 	var React = __webpack_require__(1);
 	var BookSearchStore = __webpack_require__(208);
+	var ApiActions = __webpack_require__(232);
+	var History = __webpack_require__(159).History;
 	
 	var IndexItem = React.createClass({
 	  displayName: 'IndexItem',
 	
+	  mixins: [History],
 	  onClick: function (event) {
 	    event.preventDefault();
-	    BookSearchStore.resetCurrentBook(this.props.book);
-	    APIUtil.createBook(this.props.book);
+	    ApiActions.updateCurrentBook(this.props.book);
+	    //APIUtil.createBook(this.props.book);
+	    this.history.push("/Desk");
 	  },
 	  render: function () {
 	    return React.createElement(
 	      'li',
 	      { className: 'InitialIndex', onClick: this.onClick },
-	      React.createElement('img', { src: this.props.book.volumeInfo.imageLinks.thumbnail })
+	      React.createElement('img', { src: this.props.book.image })
 	    );
 	  }
 	});
@@ -31240,7 +31246,7 @@
 	  },
 	  yesClick: function (event) {
 	    event.preventDefault();
-	
+	    debugger;
 	    APIUtil.createBook(this.props.book);
 	    var url = "/Desk";
 	    this.history.push({ pathname: url });

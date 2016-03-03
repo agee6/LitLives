@@ -14,9 +14,10 @@ var ApiActions = {
   },
   ReceiveInitial: function(book_list){
 
+
     AppDispatcher.dispatch({
       actionType: BookSearchConstants.InitialResultsRecieved,
-      results: book_list.items
+      results: book_list
     });
   },
   recieveUserBooks: function(books){

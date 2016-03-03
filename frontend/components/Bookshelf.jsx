@@ -1,7 +1,7 @@
 var React = require('react');
 var BookShelfStore = require('../stores/BookShelfStore.js');
 var Shelf = require('./BookShelf/Shelf.jsx');
-var Search = require('./Search.jsx')
+var BookSearch = require('./BookSearch.jsx')
 var Modal = require('react-modal');
 
 var customStyles = {
@@ -60,7 +60,7 @@ var BookShelf = React.createClass({
              onRequestClose={this.closeModal}
              style={customStyles} >
 
-            <Search book={this.state.chosen} close={this.closeModal}/>
+            <BookSearch book={this.state.chosen} close={this.closeModal}/>
 
              <button onClick={this.closeModal}>close</button>
 

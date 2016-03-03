@@ -40,11 +40,11 @@ BookSearchStore.currentBook = function(){
 BookSearchStore.__onDispatch = function (payload) {
 
   switch(payload.actionType) {
-    case BookSearchConstants.SearchResultsRecieved:
+    case BookSearchConstants.SearchResultsReceived:
       var result = resetSearchResults(payload.results);
       BookSearchStore.__emitChange();
       break;
-    case BookSearchConstants.InitialResultsRecieved:
+    case BookSearchConstants.InitialResultsReceived:
       var r2 = loadInitial(payload.results);
       BookSearchStore.__emitChange();
       break;

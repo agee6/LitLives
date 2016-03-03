@@ -5,7 +5,7 @@ var APIUtil = {
   fetchBookResults: function(query){
     var uri = "https://www.googleapis.com/books/v1/volumes?q="+query ;
     $.get(uri, {}, function(book_list){
-      ApiActions.RecieveActions(book_list);
+      ApiActions.ReceiveActions(book_list);
     });
 
   },
@@ -22,7 +22,7 @@ var APIUtil = {
   createBook: function(bookItem){
 
     $.post('/api/books', bookItem, function(payload){
-      console.log(payload);
+      ApiActions.ReceiveAddedBook(payload); 
     });
 
   },
@@ -54,7 +54,7 @@ var APIUtil = {
   },
   getUserBooks: function(){
     $.get('/api/books', {}, function(books){
-      ApiActions.recieveUserBooks(books);
+      ApiActions.receiveUserBooks(books);
     });
   },
 };

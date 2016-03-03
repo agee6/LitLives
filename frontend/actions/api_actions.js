@@ -5,10 +5,10 @@ var BookShelfConstants = require('../constants/BookShelfConstants');
 
 var ApiActions = {
 
-  RecieveActions: function(book_list){
+  ReceiveActions: function(book_list){
 
     AppDispatcher.dispatch({
-      actionType: BookSearchConstants.SearchResultsRecieved,
+      actionType: BookSearchConstants.SearchResultsReceived,
       results: book_list.items
     });
   },
@@ -16,15 +16,22 @@ var ApiActions = {
 
 
     AppDispatcher.dispatch({
-      actionType: BookSearchConstants.InitialResultsRecieved,
+      actionType: BookSearchConstants.InitialResultsReceived,
       results: book_list
     });
   },
-  recieveUserBooks: function(books){
+  receiveUserBooks: function(books){
     AppDispatcher.dispatch({
-      actionType: BookShelfConstants.RecieveUserBooks,
+      actionType: BookShelfConstants.ReceiveUserBooks,
       books: books
     });
+  },
+  ReceiveAddedBook: function(book){
+    AppDispatcher.dispatch({
+      actionType: BookShelfConstants.ReceiveAddedBook,
+      book: book
+    });
+
   },
   updateCurrentBook: function(book){
     AppDispatcher.dispatch({

@@ -1,5 +1,6 @@
 var BookShelfConstants = {
-  RecieveUserBooks: "RECEIVE_USER_BOOKS"
+  ReceiveUserBooks: "RECEIVE_USER_BOOKS",
+  ReceiveAddedBook: "RECIEVE_ADDED_BOOK"
 };
 
-module.exports = BookShelfConstants; 
+module.exports = BookShelfConstants;

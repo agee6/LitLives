@@ -24073,11 +24073,6 @@
 	          style: customStyles },
 	        React.createElement(BookConfirmation, { book: this.state.chosen, close: this.closeModal }),
 	        React.createElement(
-	          'h2',
-	          null,
-	          'Hello'
-	        ),
-	        React.createElement(
 	          'button',
 	          { onClick: this.closeModal },
 	          'close'
@@ -24174,11 +24169,11 @@
 	BookSearchStore.__onDispatch = function (payload) {
 	
 	  switch (payload.actionType) {
-	    case BookSearchConstants.SearchResultsRecieved:
+	    case BookSearchConstants.SearchResultsReceived:
 	      var result = resetSearchResults(payload.results);
 	      BookSearchStore.__emitChange();
 	      break;
-	    case BookSearchConstants.InitialResultsRecieved:
+	    case BookSearchConstants.InitialResultsReceived:
 	      var r2 = loadInitial(payload.results);
 	      BookSearchStore.__emitChange();
 	      break;
@@ -30698,8 +30693,8 @@
 /***/ function(module, exports) {
 
 	var BookSearchConstants = {
-	  SearchResultsRecieved: "RESULTS_RECEIVED",
-	  InitialResultsRecieved: "INITIAL_RESULTS_RECIEVED",
+	  SearchResultsReceived: "RESULTS_RECEIVED",
+	  InitialResultsReceived: "INITIAL_RESULTS_RECIEVED",
 	  ReceiveCurrentBook: "RECEIVE_CURRENT_BOOK"
 	};
 	
@@ -30976,7 +30971,7 @@
 	  fetchBookResults: function (query) {
 	    var uri = "https://www.googleapis.com/books/v1/volumes?q=" + query;
 	    $.get(uri, {}, function (book_list) {
-	      ApiActions.RecieveActions(book_list);
+	      ApiActions.ReceiveActions(book_list);
 	    });
 	  },
 	  getInitialBookIndex: function () {
@@ -30992,7 +30987,7 @@
 	  createBook: function (bookItem) {
 	
 	    $.post('/api/books', bookItem, function (payload) {
-	      console.log(payload);
+	      ApiActions.ReceiveAddedBook(payload);
 	    });
 	  },
 	  createReview: function (data) {
@@ -31023,7 +31018,7 @@
 	  },
 	  getUserBooks: function () {
 	    $.get('/api/books', {}, function (books) {
-	      ApiActions.recieveUserBooks(books);
+	      ApiActions.receiveUserBooks(books);
 	    });
 	  }
 	};
@@ -31040,24 +31035,30 @@
 	
 	var ApiActions = {
 	
-	  RecieveActions: function (book_list) {
+	  ReceiveActions: function (book_list) {
 	
 	    AppDispatcher.dispatch({
-	      actionType: BookSearchConstants.SearchResultsRecieved,
+	      actionType: BookSearchConstants.SearchResultsReceived,
 	      results: book_list.items
 	    });
 	  },
 	  ReceiveInitial: function (book_list) {
 	
 	    AppDispatcher.dispatch({
-	      actionType: BookSearchConstants.InitialResultsRecieved,
+	      actionType: BookSearchConstants.InitialResultsReceived,
 	      results: book_list
 	    });
 	  },
-	  recieveUserBooks: function (books) {
+	  receiveUserBooks: function (books) {
 	    AppDispatcher.dispatch({
-	      actionType: BookShelfConstants.RecieveUserBooks,
+	      actionType: BookShelfConstants.ReceiveUserBooks,
 	      books: books
+	    });
+	  },
+	  ReceiveAddedBook: function (book) {
+	    AppDispatcher.dispatch({
+	      actionType: BookShelfConstants.ReceiveAddedBook,
+	      book: book
 	    });
 	  },
 	  updateCurrentBook: function (book) {
@@ -31078,6 +31079,7 @@
 	var BookSearchStore = __webpack_require__(208);
 	var ApiActions = __webpack_require__(232);
 	var History = __webpack_require__(159).History;
+	var APIUtil = __webpack_require__(231);
 	
 	var IndexItem = React.createClass({
 	  displayName: 'IndexItem',
@@ -31086,7 +31088,7 @@
 	  onClick: function (event) {
 	    event.preventDefault();
 	    ApiActions.updateCurrentBook(this.props.book);
-	    //APIUtil.createBook(this.props.book);
+	    APIUtil.createBook(this.props.book);
 	    this.history.push("/Desk");
 	  },
 	  render: function () {
@@ -33365,7 +33367,8 @@
 /***/ function(module, exports) {
 
 	var BookShelfConstants = {
-	  RecieveUserBooks: "RECEIVE_USER_BOOKS"
+	  ReceiveUserBooks: "RECEIVE_USER_BOOKS",
+	  ReceiveAddedBook: "RECIEVE_ADDED_BOOK"
 	};
 	
 	module.exports = BookShelfConstants;
@@ -33433,7 +33436,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(209).Store;
-	var _books = {};
+	var _books = { read: [], toRead: [], reading: [] };
 	var BookShelfConstants = __webpack_require__(262);
 	var AppDispatcher = __webpack_require__(228);
 	var BookShelfStore = new Store(AppDispatcher);
@@ -33442,45 +33445,45 @@
 	  _books = {};
 	  _books = results;
 	};
+	var addBook = function (book) {
+	  if (book.read === "read") {
+	    _books.read.push(book);
+	  } else if (book.read === "toRead") {
+	    _books.toRead.push(book);
+	  } else {
+	    _books.reading.push(book);
+	  }
+	};
 	
 	BookShelfStore.all = function () {
 	
 	  return _books;
 	};
 	BookShelfStore.empty = function () {
-	  _books = {};
+	  _books = { read: [], toRead: [], reading: [] };
 	};
 	BookShelfStore.read = function () {
-	  if (_books.read === undefined) {
-	    return [];
-	  } else {
-	    return _books.read;
-	  }
+	
+	  return _books.read;
 	};
 	BookShelfStore.toRead = function () {
-	  if (_books.toRead === undefined) {
-	    return [];
-	  } else {
-	    return _books.toRead;
-	  }
+	
+	  return _books.toRead;
 	};
 	BookShelfStore.reading = function () {
-	  if (_books.toRead === undefined) {
-	    return [];
-	  } else {
-	    return _books.reading;
-	  }
+	
+	  return _books.reading;
 	};
 	
 	BookShelfStore.__onDispatch = function (payload) {
 	
 	  switch (payload.actionType) {
-	    case BookShelfConstants.RecieveUserBooks:
+	    case BookShelfConstants.ReceiveUserBooks:
 	
 	      var result = resetBooks(payload.books);
 	      BookShelfStore.__emitChange();
 	      break;
-	    case BookShelfConstants.BooksAdded:
+	    case BookShelfConstants.ReceiveAddedBook:
 	      var added = addBook(payload.book);
 	      BookShelfStore.__emitChange();
 	      break;
@@ -33498,7 +33501,7 @@
 	var React = __webpack_require__(1);
 	var BookShelfStore = __webpack_require__(266);
 	var Shelf = __webpack_require__(263);
-	var Search = __webpack_require__(206);
+	var BookSearch = __webpack_require__(268);
 	var Modal = __webpack_require__(237);
 	
 	var customStyles = {
@@ -33564,7 +33567,7 @@
 	          isOpen: this.state.modalIsOpen,
 	          onRequestClose: this.closeModal,
 	          style: customStyles },
-	        React.createElement(Search, { book: this.state.chosen, close: this.closeModal }),
+	        React.createElement(BookSearch, { book: this.state.chosen, close: this.closeModal }),
 	        React.createElement(
 	          'button',
 	          { onClick: this.closeModal },
@@ -33575,6 +33578,75 @@
 	  }
 	});
 	module.exports = BookShelf;
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var InitialBookIndex = __webpack_require__(207);
+	var SearchArea = __webpack_require__(234);
+	var BookSearchStore = __webpack_require__(208);
+	var BookConfirmation = __webpack_require__(236);
+	var Modal = __webpack_require__(237);
+	
+	var customStyles = {
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    marginRight: '-50%',
+	    transform: 'translate(-50%, -50%)'
+	  }
+	};
+	
+	var Search = React.createClass({
+	  displayName: 'Search',
+	
+	
+	  getInitialState: function () {
+	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
+	  },
+	  bookChosen: function () {
+	    this.openModal();
+	  },
+	  openModal: function () {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
+	
+	  closeModal: function () {
+	    BookSearchStore.resetCurrentBook(null);
+	    this.setState({ modalIsOpen: false });
+	  },
+	  render: function () {
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'homePage' },
+	      React.createElement(SearchArea, { whenChosen: this.bookChosen }),
+	      React.createElement(
+	        'button',
+	        { onClick: this.openModal },
+	        'Click Me!'
+	      ),
+	      React.createElement(
+	        Modal,
+	        {
+	          isOpen: this.state.modalIsOpen,
+	          onRequestClose: this.closeModal,
+	          style: customStyles },
+	        React.createElement(BookConfirmation, { book: this.state.chosen, close: this.closeModal }),
+	        React.createElement(
+	          'button',
+	          { onClick: this.closeModal },
+	          'close'
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = Search;
 
 /***/ }
 /******/ ]);

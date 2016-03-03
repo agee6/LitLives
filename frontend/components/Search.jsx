@@ -44,9 +44,8 @@ var Search = React.createClass({
              style={customStyles} >
 
             <BookConfirmation book={this.state.chosen} close={this.closeModal}/>
-             <h2>Hello</h2>
              <button onClick={this.closeModal}>close</button>
-             
+
            </Modal>
       </div>
     );

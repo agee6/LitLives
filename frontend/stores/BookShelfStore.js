@@ -1,5 +1,5 @@
 var Store = require('flux/utils').Store;
-var _books = {};
+var _books = {read: [], toRead: [], reading: []};
 var BookShelfConstants= require('../constants/BookShelfConstants');
 var AppDispatcher = require('../dispatcher/dispatcher');
 var BookShelfStore = new Store(AppDispatcher);
@@ -8,46 +8,49 @@ var resetBooks = function(results){
   _books = {};
   _books = results;
 };
+var addBook = function(book){
+  if(book.read === "read"){
+    _books.read.push(book);
+  }else if(book.read === "toRead"){
+    _books.toRead.push(book);
+  }else {
+    _books.reading.push(book); 
+  }
+
+};
 
 BookShelfStore.all = function () {
 
   return _books;
 };
 BookShelfStore.empty = function(){
-  _books = {};
+  _books = {read: [], toRead: [], reading: []};
 };
 BookShelfStore.read = function(){
-  if(_books.read === undefined){
-    return [];
-  }else{
+
   return _books.read;
-}
+
 };
 BookShelfStore.toRead = function(){
-  if(_books.toRead === undefined){
-    return [];
-  }else {
+
     return _books.toRead;
-  }
+
 };
 BookShelfStore.reading = function(){
-  if(_books.toRead === undefined){
-    return [];
-  }else {
+
     return _books.reading;
-  }
 
 };
 
 BookShelfStore.__onDispatch = function (payload) {
 
   switch(payload.actionType) {
-    case BookShelfConstants.RecieveUserBooks:
+    case BookShelfConstants.ReceiveUserBooks:
 
       var result = resetBooks(payload.books);
       BookShelfStore.__emitChange();
       break;
-    case BookShelfConstants.BooksAdded:
+    case BookShelfConstants.ReceiveAddedBook:
       var added = addBook(payload.book);
       BookShelfStore.__emitChange();
       break;

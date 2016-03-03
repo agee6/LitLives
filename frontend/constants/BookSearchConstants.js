@@ -1,6 +1,6 @@
 var BookSearchConstants = {
-  SearchResultsRecieved: "RESULTS_RECEIVED",
-  InitialResultsRecieved: "INITIAL_RESULTS_RECIEVED",
+  SearchResultsReceived: "RESULTS_RECEIVED",
+  InitialResultsReceived: "INITIAL_RESULTS_RECIEVED",
   ReceiveCurrentBook: "RECEIVE_CURRENT_BOOK"
 };
 

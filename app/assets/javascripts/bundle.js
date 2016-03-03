@@ -53,12 +53,20 @@
 	var Search = __webpack_require__(206);
 	var Desk = __webpack_require__(257);
 	var APIUtil = __webpack_require__(231);
+	var root = document.getElementById('reactContent');
+	var cb = root.getAttribute("data-has-book");
+	var History = __webpack_require__(159).History;
 	
 	var App = React.createClass({
 	  displayName: 'App',
 	
+	  mixins: [History],
 	  componentDidMount: function () {
 	    APIUtil.getUserBooks();
+	    if (cb !== "false") {
+	      debugger;
+	      this.history.push({ pathname: "/Desk" });
+	    }
 	  },
 	  render: function () {
 	    return React.createElement(
@@ -81,7 +89,7 @@
 	    Router,
 	    null,
 	    routes
-	  ), document.getElementById('reactContent'));
+	  ), root);
 	});
 
 /***/ },
@@ -30995,6 +31003,11 @@
 	      ApiActions.receiveAll([bench]);
 	    });
 	  },
+	  getCurrentBook: function () {
+	    $.get('/api/user', {}, function (book) {
+	      ApiActions.updateCurrentBook(book);
+	    });
+	  },
 	  makeBookObject: function (bookData) {
 	    var chosen = bookData.volumeInfo;
 	    var newBook = { title: chosen.title,
@@ -31011,8 +31024,12 @@
 	      newBook.author = chosen.authors[0];
 	    }
 	    if (chosen.industryIdentifiers !== undefined) {
-	      newBook.ISBN13 = chosen.industryIdentifiers[0].identifier;
-	      newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
+	      if (chosen.industryIdentifiers[0] !== undefined) {
+	        newBook.ISBN13 = chosen.industryIdentifiers[0].identifier;
+	      }
+	      if (chosen.industryIdentifiers[1] !== undefined) {
+	        newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
+	      }
 	    }
 	    return newBook;
 	  },
@@ -31248,7 +31265,7 @@
 	  },
 	  yesClick: function (event) {
 	    event.preventDefault();
-	    debugger;
+	
 	    APIUtil.createBook(this.props.book);
 	    var url = "/Desk";
 	    this.history.push({ pathname: url });
@@ -31283,7 +31300,17 @@
 	          'by, ',
 	          chosen.author
 	        ),
-	        React.createElement('img', { src: chosen.image })
+	        React.createElement('img', { src: chosen.image }),
+	        React.createElement(
+	          'form',
+	          null,
+	          React.createElement('input', { type: 'radio', name: 'fruit', value: 'apple' }),
+	          'Apple',
+	          React.createElement('input', { type: 'radio', name: 'fruit', value: 'orange' }),
+	          'Orange',
+	          React.createElement('input', { type: 'radio', name: 'fruit', value: 'watermelon' }),
+	          'Watermelon'
+	        )
 	      ),
 	      React.createElement(
 	        'button',
@@ -33503,6 +33530,7 @@
 	var Shelf = __webpack_require__(263);
 	var BookSearch = __webpack_require__(268);
 	var Modal = __webpack_require__(237);
+	var History = __webpack_require__(159).History;
 	
 	var customStyles = {
 	  content: {
@@ -33518,6 +33546,7 @@
 	var BookShelf = React.createClass({
 	  displayName: 'BookShelf',
 	
+	  mixins: [History],
 	
 	  getInitialState: function () {
 	    var reading = BookShelfStore.reading();
@@ -33537,7 +33566,7 @@
 	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
 	  },
 	  componentWillUnmount: function () {
-	    BookShelfStore.removeListener(this.bookShelfIndex);
+	    this.bookShelfIndex.remove();
 	  },
 	  _onChange: function () {
 	    var reading = BookShelfStore.reading();
@@ -33547,7 +33576,7 @@
 	  },
 	  click: function (event) {
 	    event.preventDefault();
-	    this.openModal();
+	    this.history.push({ pathname: "/" });
 	  },
 	  render: function () {
 	
@@ -33560,19 +33589,6 @@
 	        'button',
 	        { className: 'AddBooks', onClick: this.click },
 	        'Add to shelf'
-	      ),
-	      React.createElement(
-	        Modal,
-	        {
-	          isOpen: this.state.modalIsOpen,
-	          onRequestClose: this.closeModal,
-	          style: customStyles },
-	        React.createElement(BookSearch, { book: this.state.chosen, close: this.closeModal }),
-	        React.createElement(
-	          'button',
-	          { onClick: this.closeModal },
-	          'close'
-	        )
 	      )
 	    );
 	  }

@@ -9,7 +9,7 @@ var BookConfirmation = React.createClass({
   },
   yesClick:function(event){
       event.preventDefault();
-      debugger; 
+
     APIUtil.createBook(this.props.book);
     var url = "/Desk"
     this.history.push({pathname: url});
@@ -29,6 +29,11 @@ var BookConfirmation = React.createClass({
             <h2>{chosen.title}</h2>
             <h3>by, {chosen.author}</h3>
             <img src={chosen.image}></img>
+              <form>
+                <input type="radio" name="fruit" value="apple" />Apple
+                <input type="radio" name="fruit" value="orange" />Orange
+                <input type="radio" name="fruit" value="watermelon" />Watermelon
+              </form>
 
         </div>
           <button className="Confirmation" id="Yes" onClick={this.yesClick}>Yes</button>

@@ -22,13 +22,18 @@ var APIUtil = {
   createBook: function(bookItem){
 
     $.post('/api/books', bookItem, function(payload){
-      ApiActions.ReceiveAddedBook(payload); 
+      ApiActions.ReceiveAddedBook(payload);
     });
 
   },
   createReview: function(data) {
     $.post('/api/reviews', { review: data }, function (bench) {
       ApiActions.receiveAll([bench]);
+    });
+  },
+  getCurrentBook: function() {
+    $.get('/api/user', {}, function(book){
+      ApiActions.updateCurrentBook(book); 
     });
   },
   makeBookObject: function(bookData){
@@ -47,8 +52,12 @@ var APIUtil = {
         newBook.author = chosen.authors[0];
       }
       if(chosen.industryIdentifiers !== undefined){
-        newBook.ISBN13 = chosen.industryIdentifiers[0].identifier;
-        newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
+        if(chosen.industryIdentifiers[0] !== undefined){
+          newBook.ISBN13 = chosen.industryIdentifiers[0].identifier;
+        }
+        if(chosen.industryIdentifiers[1] !== undefined){
+          newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
+        }
       }
       return newBook;
   },

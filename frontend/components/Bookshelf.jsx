@@ -1,8 +1,9 @@
 var React = require('react');
 var BookShelfStore = require('../stores/BookShelfStore.js');
 var Shelf = require('./BookShelf/Shelf.jsx');
-var BookSearch = require('./BookSearch.jsx')
+var BookSearch = require('./BookSearch.jsx');
 var Modal = require('react-modal');
+var History = require('react-router').History;
 
 var customStyles = {
   content : {
@@ -16,6 +17,7 @@ var customStyles = {
 };
 
 var BookShelf = React.createClass({
+  mixins: [History],
 
   getInitialState: function(){
     var reading = BookShelfStore.reading();
@@ -35,7 +37,7 @@ var BookShelf = React.createClass({
     this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
   },
   componentWillUnmount: function(){
-    BookShelfStore.removeListener(this.bookShelfIndex);
+    this.bookShelfIndex.remove();
   },
   _onChange: function(){
     var reading = BookShelfStore.reading();
@@ -45,7 +47,7 @@ var BookShelf = React.createClass({
   },
   click: function(event){
     event.preventDefault();
-    this.openModal();
+    this.history.push({pathname: "/"})
   },
   render: function(){
 
@@ -55,16 +57,6 @@ var BookShelf = React.createClass({
         <Shelf books={this.state.toReadBooks} />
         <Shelf books={this.state.readBooks} />
         <button className="AddBooks" onClick={this.click}>Add to shelf</button>
-          <Modal
-             isOpen={this.state.modalIsOpen}
-             onRequestClose={this.closeModal}
-             style={customStyles} >
-
-            <BookSearch book={this.state.chosen} close={this.closeModal}/>
-
-             <button onClick={this.closeModal}>close</button>
-
-           </Modal>
 
       </section>
     )

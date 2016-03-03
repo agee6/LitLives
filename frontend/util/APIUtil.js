@@ -32,9 +32,22 @@ var APIUtil = {
     });
   },
   getCurrentBook: function() {
+
     $.get('/api/user', {}, function(book){
-      ApiActions.updateCurrentBook(book); 
+
+      ApiActions.updateCurrentBook(book);
     });
+  },
+  updateUser: function(params){
+
+    $.ajax({
+      url: '/api/user',
+      type: 'PATCH',
+      data: params, 
+      success: function(book) {
+          // Do something with the result
+          console.log(book);
+    }});
   },
   makeBookObject: function(bookData){
     var chosen = bookData.volumeInfo;
@@ -43,7 +56,7 @@ var APIUtil = {
                 publishing: chosen.publisher,
                 pages: chosen.pageCount,
                 language: chosen.language,
-                read: "reading",
+                read: "toRead",
               };
       if(chosen.imageLinks !== undefined){
         newBook.image = chosen.imageLinks.thumbnail;
@@ -66,6 +79,7 @@ var APIUtil = {
       ApiActions.receiveUserBooks(books);
     });
   },
+
 };
 
 module.exports = APIUtil;

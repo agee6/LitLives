@@ -2,7 +2,7 @@ var React = require('react');
 var BookShelfStore = require('../stores/BookShelfStore.js');
 var Shelf = require('./BookShelf/Shelf.jsx');
 var BookSearch = require('./BookSearch.jsx');
-var Modal = require('react-modal');
+
 var History = require('react-router').History;
 
 var customStyles = {
@@ -23,15 +23,7 @@ var BookShelf = React.createClass({
     var reading = BookShelfStore.reading();
     var toRead = BookShelfStore.toRead();
     var allToRead = reading.concat(toRead);
-    return({readBooks: BookShelfStore.read(), toReadBooks: allToRead, modalIsOpen: false})
-  },
-  openModal: function() {
-    this.setState({modalIsOpen: true, chosen: BookSearchStore.currentBook()});
-  },
-
-  closeModal: function() {
-    BookSearchStore.resetCurrentBook(null);
-    this.setState({modalIsOpen: false});
+    return({readBooks: BookShelfStore.read(), toReadBooks: allToRead})
   },
   componentDidMount: function(){
     this.bookShelfIndex = BookShelfStore.addListener(this._onChange);

@@ -11,20 +11,26 @@ var Notebook = React.createClass({
 
   },
   componentWillUnmount: function(){
-    this.storeIndex.remove(); 
+    this.storeIndex.remove();
   },
   _onChange: function(){
     this.setState({currentBook: BookSearchStore.currentBook()});
   },
 
   render: function(){
+    if(this.state.currentBook){
+      return(
 
-    return(
-      <section className="Notebook">
-        <img src={this.state.currentBook.image}></img>
-        <BookPage currentBook={this.state.currentBook} changeCurrentBook={this.changeCurrentBook}/>
-      </section>
-    )
+        <section className="Notebook">
+          <img src={this.state.currentBook.image}></img>
+          <BookPage currentBook={this.state.currentBook} changeCurrentBook={this.changeCurrentBook}/>
+        </section>
+      )
+    }else{
+      return(
+        <div>currently loading</div>
+      )
+    }
   }
 
 });

@@ -34,6 +34,7 @@ var ApiActions = {
 
   },
   updateCurrentBook: function(book){
+
     AppDispatcher.dispatch({
       actionType: BookSearchConstants.ReceiveCurrentBook,
       book: book

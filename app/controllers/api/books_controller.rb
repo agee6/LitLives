@@ -6,6 +6,7 @@ class Api::BooksController < ApplicationController
     @book = Book.new(creation_hash)
 
     if @book.save
+      current_user.update({current_book: @book.id})
       render json: @book
     else
       flash.now[:errors] = @book.errors.full_messages

@@ -1,11 +1,15 @@
 var React = require('react');
 var History = require('react-router').History;
 var APIUtil = require('../util/APIUtil.js');
+var RadioGroup = require('react-radio-group');
 
 var BookConfirmation = React.createClass({
   mixins: [History],
   getInitialState:function(){
-    return({})
+    return({selectedValue: 'apple'})
+  },
+  handleChange: function(value){
+    this.setState({selectedValue: value});
   },
   yesClick:function(event){
       event.preventDefault();
@@ -29,12 +33,24 @@ var BookConfirmation = React.createClass({
             <h2>{chosen.title}</h2>
             <h3>by, {chosen.author}</h3>
             <img src={chosen.image}></img>
-              <form>
-                <input type="radio" name="fruit" value="apple" />Apple
-                <input type="radio" name="fruit" value="orange" />Orange
-                <input type="radio" name="fruit" value="watermelon" />Watermelon
-              </form>
-
+              <RadioGroup
+                name="fruit"
+                selectedValue={this.state.selectedValue}
+                onChange={this.handleChange}>
+                {Radio => (
+                  <div>
+                    <label>
+                      <Radio value="apple" />Apple
+                    </label>
+                    <label>
+                      <Radio value="orange" />Orange
+                    </label>
+                    <label>
+                      <Radio value="watermelon" />Watermelon
+                    </label>
+                  </div>
+                )}
+              </RadioGroup>
         </div>
           <button className="Confirmation" id="Yes" onClick={this.yesClick}>Yes</button>
           <button className="Confirmation" id="No" onClick={this.noClick}>No, searchAgain</button>

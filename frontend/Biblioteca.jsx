@@ -16,7 +16,7 @@ var App = React.createClass({
   componentDidMount: function(){
     APIUtil.getUserBooks();
     if (cb !== "false"){
-      debugger;
+      APIUtil.getCurrentBook();
       this.history.push({pathname: "/Desk"});
     }
 
@@ -33,7 +33,7 @@ var App = React.createClass({
 var routes = (
   <Route path="/" component={App}>
     <IndexRoute component={Search}/>
-    <Desk path="/Desk" component={Desk} />
+    <Route path="/Desk" component={Desk} />
   </Route>
 );
 

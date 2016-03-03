@@ -51,7 +51,7 @@
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
 	var Search = __webpack_require__(206);
-	var Desk = __webpack_require__(257);
+	var Desk = __webpack_require__(258);
 	var APIUtil = __webpack_require__(231);
 	var root = document.getElementById('reactContent');
 	var cb = root.getAttribute("data-has-book");
@@ -64,7 +64,7 @@
 	  componentDidMount: function () {
 	    APIUtil.getUserBooks();
 	    if (cb !== "false") {
-	      debugger;
+	      APIUtil.getCurrentBook();
 	      this.history.push({ pathname: "/Desk" });
 	    }
 	  },
@@ -80,7 +80,7 @@
 	  Route,
 	  { path: '/', component: App },
 	  React.createElement(IndexRoute, { component: Search }),
-	  React.createElement(Desk, { path: '/Desk', component: Desk })
+	  React.createElement(Route, { path: '/Desk', component: Desk })
 	);
 	
 	document.addEventListener("DOMContentLoaded", function () {
@@ -24032,10 +24032,10 @@
 
 	var React = __webpack_require__(1);
 	var InitialBookIndex = __webpack_require__(207);
-	var SearchArea = __webpack_require__(234);
+	var SearchArea = __webpack_require__(235);
 	var BookSearchStore = __webpack_require__(208);
-	var BookConfirmation = __webpack_require__(236);
-	var Modal = __webpack_require__(237);
+	var BookConfirmation = __webpack_require__(237);
+	var Modal = __webpack_require__(238);
 	
 	var customStyles = {
 	  content: {
@@ -24098,7 +24098,7 @@
 	var React = __webpack_require__(1);
 	var BookSearchStore = __webpack_require__(208);
 	var APIUtil = __webpack_require__(231);
-	var IndexItem = __webpack_require__(233);
+	var IndexItem = __webpack_require__(234);
 	
 	var InitialBookIndex = React.createClass({
 	  displayName: 'InitialBookIndex',
@@ -31004,9 +31004,22 @@
 	    });
 	  },
 	  getCurrentBook: function () {
+	
 	    $.get('/api/user', {}, function (book) {
+	
 	      ApiActions.updateCurrentBook(book);
 	    });
+	  },
+	  updateUser: function (params) {
+	
+	    $.ajax({
+	      url: '/api/user',
+	      type: 'PATCH',
+	      data: params,
+	      success: function (book) {
+	        // Do something with the result
+	        console.log(book);
+	      } });
 	  },
 	  makeBookObject: function (bookData) {
 	    var chosen = bookData.volumeInfo;
@@ -31015,7 +31028,7 @@
 	      publishing: chosen.publisher,
 	      pages: chosen.pageCount,
 	      language: chosen.language,
-	      read: "reading"
+	      read: "toRead"
 	    };
 	    if (chosen.imageLinks !== undefined) {
 	      newBook.image = chosen.imageLinks.thumbnail;
@@ -31038,6 +31051,7 @@
 	      ApiActions.receiveUserBooks(books);
 	    });
 	  }
+	
 	};
 	
 	module.exports = APIUtil;
@@ -31048,7 +31062,7 @@
 
 	var AppDispatcher = __webpack_require__(228);
 	var BookSearchConstants = __webpack_require__(227);
-	var BookShelfConstants = __webpack_require__(262);
+	var BookShelfConstants = __webpack_require__(233);
 	
 	var ApiActions = {
 	
@@ -31079,6 +31093,7 @@
 	    });
 	  },
 	  updateCurrentBook: function (book) {
+	
 	    AppDispatcher.dispatch({
 	      actionType: BookSearchConstants.ReceiveCurrentBook,
 	      book: book
@@ -31090,6 +31105,17 @@
 
 /***/ },
 /* 233 */
+/***/ function(module, exports) {
+
+	var BookShelfConstants = {
+	  ReceiveUserBooks: "RECEIVE_USER_BOOKS",
+	  ReceiveAddedBook: "RECIEVE_ADDED_BOOK"
+	};
+	
+	module.exports = BookShelfConstants;
+
+/***/ },
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -31119,11 +31145,11 @@
 	module.exports = IndexItem;
 
 /***/ },
-/* 234 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var BookSearchBar = __webpack_require__(235);
+	var BookSearchBar = __webpack_require__(236);
 	
 	var SearchArea = React.createClass({
 	  displayName: 'SearchArea',
@@ -31163,13 +31189,13 @@
 	module.exports = SearchArea;
 
 /***/ },
-/* 235 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var APIUtil = __webpack_require__(231);
 	var BookSearchStore = __webpack_require__(208);
-	var BookConfirmation = __webpack_require__(236);
+	var BookConfirmation = __webpack_require__(237);
 	
 	var BookSearchBar = React.createClass({
 	  displayName: 'BookSearchBar',
@@ -31249,19 +31275,23 @@
 	module.exports = BookSearchBar;
 
 /***/ },
-/* 236 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
 	var APIUtil = __webpack_require__(231);
+	var RadioGroup = __webpack_require__(266);
 	
 	var BookConfirmation = React.createClass({
 	  displayName: 'BookConfirmation',
 	
 	  mixins: [History],
 	  getInitialState: function () {
-	    return {};
+	    return { selectedValue: 'apple' };
+	  },
+	  handleChange: function (value) {
+	    this.setState({ selectedValue: value });
 	  },
 	  yesClick: function (event) {
 	    event.preventDefault();
@@ -31302,14 +31332,33 @@
 	        ),
 	        React.createElement('img', { src: chosen.image }),
 	        React.createElement(
-	          'form',
-	          null,
-	          React.createElement('input', { type: 'radio', name: 'fruit', value: 'apple' }),
-	          'Apple',
-	          React.createElement('input', { type: 'radio', name: 'fruit', value: 'orange' }),
-	          'Orange',
-	          React.createElement('input', { type: 'radio', name: 'fruit', value: 'watermelon' }),
-	          'Watermelon'
+	          RadioGroup,
+	          {
+	            name: 'fruit',
+	            selectedValue: this.state.selectedValue,
+	            onChange: this.handleChange },
+	          Radio => React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	              'label',
+	              null,
+	              React.createElement(Radio, { value: 'apple' }),
+	              'Apple'
+	            ),
+	            React.createElement(
+	              'label',
+	              null,
+	              React.createElement(Radio, { value: 'orange' }),
+	              'Orange'
+	            ),
+	            React.createElement(
+	              'label',
+	              null,
+	              React.createElement(Radio, { value: 'watermelon' }),
+	              'Watermelon'
+	            )
+	          )
 	        )
 	      ),
 	      React.createElement(
@@ -31329,23 +31378,23 @@
 	module.exports = BookConfirmation;
 
 /***/ },
-/* 237 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(238);
+	module.exports = __webpack_require__(239);
 	
 
 
 /***/ },
-/* 238 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var ExecutionEnvironment = __webpack_require__(239);
-	var ModalPortal = React.createFactory(__webpack_require__(240));
-	var ariaAppHider = __webpack_require__(255);
-	var elementClass = __webpack_require__(256);
+	var ExecutionEnvironment = __webpack_require__(240);
+	var ModalPortal = React.createFactory(__webpack_require__(241));
+	var ariaAppHider = __webpack_require__(256);
+	var elementClass = __webpack_require__(257);
 	var renderSubtreeIntoContainer = __webpack_require__(158).unstable_renderSubtreeIntoContainer;
 	
 	var SafeHTMLElement = ExecutionEnvironment.canUseDOM ? window.HTMLElement : {};
@@ -31424,7 +31473,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 239 */
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -31469,14 +31518,14 @@
 
 
 /***/ },
-/* 240 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var div = React.DOM.div;
-	var focusManager = __webpack_require__(241);
-	var scopeTab = __webpack_require__(243);
-	var Assign = __webpack_require__(244);
+	var focusManager = __webpack_require__(242);
+	var scopeTab = __webpack_require__(244);
+	var Assign = __webpack_require__(245);
 	
 	
 	// so that our CSS is statically analyzable
@@ -31673,10 +31722,10 @@
 
 
 /***/ },
-/* 241 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(242);
+	var findTabbable = __webpack_require__(243);
 	var modalElement = null;
 	var focusLaterElement = null;
 	var needToFocus = false;
@@ -31747,7 +31796,7 @@
 
 
 /***/ },
-/* 242 */
+/* 243 */
 /***/ function(module, exports) {
 
 	/*!
@@ -31803,10 +31852,10 @@
 
 
 /***/ },
-/* 243 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(242);
+	var findTabbable = __webpack_require__(243);
 	
 	module.exports = function(node, event) {
 	  var tabbable = findTabbable(node);
@@ -31824,7 +31873,7 @@
 
 
 /***/ },
-/* 244 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31835,9 +31884,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseAssign = __webpack_require__(245),
-	    createAssigner = __webpack_require__(251),
-	    keys = __webpack_require__(247);
+	var baseAssign = __webpack_require__(246),
+	    createAssigner = __webpack_require__(252),
+	    keys = __webpack_require__(248);
 	
 	/**
 	 * A specialized version of `_.assign` for customizing assigned values without
@@ -31910,7 +31959,7 @@
 
 
 /***/ },
-/* 245 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31921,8 +31970,8 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseCopy = __webpack_require__(246),
-	    keys = __webpack_require__(247);
+	var baseCopy = __webpack_require__(247),
+	    keys = __webpack_require__(248);
 	
 	/**
 	 * The base implementation of `_.assign` without support for argument juggling,
@@ -31943,7 +31992,7 @@
 
 
 /***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports) {
 
 	/**
@@ -31981,7 +32030,7 @@
 
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31992,9 +32041,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var getNative = __webpack_require__(248),
-	    isArguments = __webpack_require__(249),
-	    isArray = __webpack_require__(250);
+	var getNative = __webpack_require__(249),
+	    isArguments = __webpack_require__(250),
+	    isArray = __webpack_require__(251);
 	
 	/** Used to detect unsigned integer values. */
 	var reIsUint = /^\d+$/;
@@ -32223,7 +32272,7 @@
 
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports) {
 
 	/**
@@ -32366,7 +32415,7 @@
 
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports) {
 
 	/**
@@ -32616,7 +32665,7 @@
 
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports) {
 
 	/**
@@ -32802,7 +32851,7 @@
 
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32813,9 +32862,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var bindCallback = __webpack_require__(252),
-	    isIterateeCall = __webpack_require__(253),
-	    restParam = __webpack_require__(254);
+	var bindCallback = __webpack_require__(253),
+	    isIterateeCall = __webpack_require__(254),
+	    restParam = __webpack_require__(255);
 	
 	/**
 	 * Creates a function that assigns properties of source object(s) to a given
@@ -32860,7 +32909,7 @@
 
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports) {
 
 	/**
@@ -32931,7 +32980,7 @@
 
 
 /***/ },
-/* 253 */
+/* 254 */
 /***/ function(module, exports) {
 
 	/**
@@ -33069,7 +33118,7 @@
 
 
 /***/ },
-/* 254 */
+/* 255 */
 /***/ function(module, exports) {
 
 	/**
@@ -33142,7 +33191,7 @@
 
 
 /***/ },
-/* 255 */
+/* 256 */
 /***/ function(module, exports) {
 
 	var _element = typeof document !== 'undefined' ? document.body : null;
@@ -33189,7 +33238,7 @@
 
 
 /***/ },
-/* 256 */
+/* 257 */
 /***/ function(module, exports) {
 
 	module.exports = function(opts) {
@@ -33254,13 +33303,13 @@
 
 
 /***/ },
-/* 257 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var Notebook = __webpack_require__(258);
-	var BookShelf = __webpack_require__(267);
-	var BookSearchStore = __webpack_require__(208);
+	var Notebook = __webpack_require__(259);
+	var BookShelf = __webpack_require__(261);
+	
 	var Desk = React.createClass({
 	  displayName: 'Desk',
 	
@@ -33278,11 +33327,11 @@
 	module.exports = Desk;
 
 /***/ },
-/* 258 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var BookPage = __webpack_require__(259);
+	var BookPage = __webpack_require__(260);
 	var BookSearchStore = __webpack_require__(208);
 	
 	var Notebook = React.createClass({
@@ -33302,13 +33351,20 @@
 	  },
 	
 	  render: function () {
-	
-	    return React.createElement(
-	      'section',
-	      { className: 'Notebook' },
-	      React.createElement('img', { src: this.state.currentBook.image }),
-	      React.createElement(BookPage, { currentBook: this.state.currentBook, changeCurrentBook: this.changeCurrentBook })
-	    );
+	    if (this.state.currentBook) {
+	      return React.createElement(
+	        'section',
+	        { className: 'Notebook' },
+	        React.createElement('img', { src: this.state.currentBook.image }),
+	        React.createElement(BookPage, { currentBook: this.state.currentBook, changeCurrentBook: this.changeCurrentBook })
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        null,
+	        'currently loading'
+	      );
+	    }
 	  }
 	
 	});
@@ -33316,7 +33372,7 @@
 	module.exports = Notebook;
 
 /***/ },
-/* 259 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33388,83 +33444,78 @@
 	module.exports = BookPage;
 
 /***/ },
-/* 260 */,
-/* 261 */,
-/* 262 */
-/***/ function(module, exports) {
-
-	var BookShelfConstants = {
-	  ReceiveUserBooks: "RECEIVE_USER_BOOKS",
-	  ReceiveAddedBook: "RECIEVE_ADDED_BOOK"
-	};
-	
-	module.exports = BookShelfConstants;
-
-/***/ },
-/* 263 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var ShelfItem = __webpack_require__(264);
+	var BookShelfStore = __webpack_require__(262);
+	var Shelf = __webpack_require__(263);
+	var BookSearch = __webpack_require__(265);
 	
-	var Shelf = React.createClass({
-	  displayName: 'Shelf',
+	var History = __webpack_require__(159).History;
 	
+	var customStyles = {
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    marginRight: '-50%',
+	    transform: 'translate(-50%, -50%)'
+	  }
+	};
 	
+	var BookShelf = React.createClass({
+	  displayName: 'BookShelf',
+	
+	  mixins: [History],
+	
+	  getInitialState: function () {
+	    var reading = BookShelfStore.reading();
+	    var toRead = BookShelfStore.toRead();
+	    var allToRead = reading.concat(toRead);
+	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead };
+	  },
+	  componentDidMount: function () {
+	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function () {
+	    this.bookShelfIndex.remove();
+	  },
+	  _onChange: function () {
+	    var reading = BookShelfStore.reading();
+	    var toRead = BookShelfStore.toRead();
+	    var allToRead = reading.concat(toRead);
+	    this.setState({ readBooks: BookShelfStore.read(), toReadBooks: allToRead });
+	  },
+	  click: function (event) {
+	    event.preventDefault();
+	    this.history.push({ pathname: "/" });
+	  },
 	  render: function () {
-	    var theshelf = [];
-	    var theshelf = this.props.books.map(function (book, index) {
-	      return React.createElement(ShelfItem, { key: index, bookTitle: book.title, book: book });
-	    }, this);
+	
 	    return React.createElement(
 	      'section',
-	      { className: 'BookShelf', id: 'Shelf' },
+	      { className: 'bookshelf' },
+	      React.createElement(Shelf, { books: this.state.toReadBooks }),
+	      React.createElement(Shelf, { books: this.state.readBooks }),
 	      React.createElement(
-	        'ul',
-	        null,
-	        theshelf
+	        'button',
+	        { className: 'AddBooks', onClick: this.click },
+	        'Add to shelf'
 	      )
 	    );
 	  }
-	
 	});
-	
-	module.exports = Shelf;
+	module.exports = BookShelf;
 
 /***/ },
-/* 264 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(208);
-	var ApiActions = __webpack_require__(232);
-	
-	var ShelfItem = React.createClass({
-	  displayName: 'ShelfItem',
-	
-	  onClick: function (event) {
-	    event.preventDefault();
-	    ApiActions.updateCurrentBook(this.props.book);
-	  },
-	  render: function () {
-	    return React.createElement(
-	      'li',
-	      { className: 'ShelfItem', onClick: this.onClick },
-	      this.props.bookTitle
-	    );
-	  }
-	});
-	
-	module.exports = ShelfItem;
-
-/***/ },
-/* 265 */,
-/* 266 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var Store = __webpack_require__(209).Store;
 	var _books = { read: [], toRead: [], reading: [] };
-	var BookShelfConstants = __webpack_require__(262);
+	var BookShelfConstants = __webpack_require__(233);
 	var AppDispatcher = __webpack_require__(228);
 	var BookShelfStore = new Store(AppDispatcher);
 	
@@ -33522,89 +33573,75 @@
 	module.exports = BookShelfStore;
 
 /***/ },
-/* 267 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var BookShelfStore = __webpack_require__(266);
-	var Shelf = __webpack_require__(263);
-	var BookSearch = __webpack_require__(268);
-	var Modal = __webpack_require__(237);
-	var History = __webpack_require__(159).History;
+	var ShelfItem = __webpack_require__(264);
 	
-	var customStyles = {
-	  content: {
-	    top: '50%',
-	    left: '50%',
-	    right: 'auto',
-	    bottom: 'auto',
-	    marginRight: '-50%',
-	    transform: 'translate(-50%, -50%)'
-	  }
-	};
+	var Shelf = React.createClass({
+	  displayName: 'Shelf',
 	
-	var BookShelf = React.createClass({
-	  displayName: 'BookShelf',
 	
-	  mixins: [History],
-	
-	  getInitialState: function () {
-	    var reading = BookShelfStore.reading();
-	    var toRead = BookShelfStore.toRead();
-	    var allToRead = reading.concat(toRead);
-	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead, modalIsOpen: false };
-	  },
-	  openModal: function () {
-	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
-	  },
-	
-	  closeModal: function () {
-	    BookSearchStore.resetCurrentBook(null);
-	    this.setState({ modalIsOpen: false });
-	  },
-	  componentDidMount: function () {
-	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function () {
-	    this.bookShelfIndex.remove();
-	  },
-	  _onChange: function () {
-	    var reading = BookShelfStore.reading();
-	    var toRead = BookShelfStore.toRead();
-	    var allToRead = reading.concat(toRead);
-	    this.setState({ readBooks: BookShelfStore.read(), toReadBooks: allToRead });
-	  },
-	  click: function (event) {
-	    event.preventDefault();
-	    this.history.push({ pathname: "/" });
-	  },
 	  render: function () {
-	
+	    var theshelf = [];
+	    var theshelf = this.props.books.map(function (book, index) {
+	      return React.createElement(ShelfItem, { key: index, bookTitle: book.title, book: book });
+	    }, this);
 	    return React.createElement(
 	      'section',
-	      { className: 'bookshelf' },
-	      React.createElement(Shelf, { books: this.state.toReadBooks }),
-	      React.createElement(Shelf, { books: this.state.readBooks }),
+	      { className: 'BookShelf', id: 'Shelf' },
 	      React.createElement(
-	        'button',
-	        { className: 'AddBooks', onClick: this.click },
-	        'Add to shelf'
+	        'ul',
+	        null,
+	        theshelf
 	      )
 	    );
 	  }
+	
 	});
-	module.exports = BookShelf;
+	
+	module.exports = Shelf;
 
 /***/ },
-/* 268 */
+/* 264 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(208);
+	var ApiActions = __webpack_require__(232);
+	var APIUtil = __webpack_require__(231);
+	
+	var ShelfItem = React.createClass({
+	  displayName: 'ShelfItem',
+	
+	  onClick: function (event) {
+	    event.preventDefault();
+	
+	    APIUtil.updateUser({ current_book: this.props.book.id });
+	    ApiActions.updateCurrentBook(this.props.book);
+	  },
+	  render: function () {
+	    return React.createElement(
+	      'li',
+	      { className: 'ShelfItem', onClick: this.onClick },
+	      this.props.bookTitle
+	    );
+	  }
+	});
+	
+	module.exports = ShelfItem;
+
+/***/ },
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var InitialBookIndex = __webpack_require__(207);
-	var SearchArea = __webpack_require__(234);
+	var SearchArea = __webpack_require__(235);
 	var BookSearchStore = __webpack_require__(208);
-	var BookConfirmation = __webpack_require__(236);
-	var Modal = __webpack_require__(237);
+	var BookConfirmation = __webpack_require__(237);
+	var Modal = __webpack_require__(238);
 	
 	var customStyles = {
 	  content: {
@@ -33663,6 +33700,82 @@
 	  }
 	});
 	module.exports = Search;
+
+/***/ },
+/* 266 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// /lib contains the transpiled code. It's ignored by git but picked up by
+	// npm publish. See package.json's "prerelease" and "build" scripts
+	module.exports = __webpack_require__(267);
+
+
+/***/ },
+/* 267 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, module, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
+	    factory(exports, module, require('react'));
+	  } else {
+	    var mod = {
+	      exports: {}
+	    };
+	    factory(mod.exports, mod, global.React);
+	    global.RadioGroup = mod.exports;
+	  }
+	})(this, function (exports, module, _react) {
+	  'use strict';
+	
+	  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	  var _React = _interopRequireDefault(_react);
+	
+	  function radio(name, selectedValue, onChange) {
+	    return _React['default'].createClass({
+	      render: function render() {
+	        var optional = {};
+	        if (selectedValue !== undefined) {
+	          optional.checked = this.props.value === selectedValue;
+	        }
+	        if (typeof onChange === 'function') {
+	          optional.onChange = onChange.bind(null, this.props.value);
+	        }
+	
+	        return _React['default'].createElement('input', _extends({}, this.props, {
+	          type: 'radio',
+	          name: name
+	        }, optional));
+	      }
+	    });
+	  }
+	
+	  module.exports = _React['default'].createClass({
+	    displayName: 'index',
+	
+	    propTypes: {
+	      name: _react.PropTypes.string,
+	      selectedValue: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.number, _react.PropTypes.bool]),
+	      onChange: _react.PropTypes.func,
+	      children: _react.PropTypes.func.isRequired
+	    },
+	
+	    render: function render() {
+	      var _props = this.props;
+	      var name = _props.name;
+	      var selectedValue = _props.selectedValue;
+	      var onChange = _props.onChange;
+	      var children = _props.children;
+	
+	      var renderedChildren = children(radio(name, selectedValue, onChange));
+	      return renderedChildren && _React['default'].Children.only(renderedChildren);
+	    }
+	  });
+	});
 
 /***/ }
 /******/ ]);

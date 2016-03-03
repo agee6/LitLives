@@ -10,17 +10,17 @@ class Api::UsersController < ApplicationController
   end
   def update
     @user = current_user
-    if @user.update(user_params)
+
+    if @user.update({current_book: user_params[:current_book]})
       render json: @user.current_book
     else
       render json: @user.errors.full_messages
     end
-    
 
   end
-
+  private
   def user_params
-    params.permit(:current_book, :id)
+    params.permit(:current_book)
   end
 
 

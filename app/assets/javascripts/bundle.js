@@ -51,7 +51,7 @@
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
 	var Search = __webpack_require__(206);
-	var Desk = __webpack_require__(258);
+	var Desk = __webpack_require__(266);
 	var APIUtil = __webpack_require__(231);
 	var root = document.getElementById('reactContent');
 	var cb = root.getAttribute("data-has-book");
@@ -24035,8 +24035,8 @@
 	var SearchArea = __webpack_require__(235);
 	var BookSearchStore = __webpack_require__(208);
 	var BookConfirmation = __webpack_require__(237);
-	var Modal = __webpack_require__(238);
-	
+	var Modal = __webpack_require__(240);
+	var BookSearch = __webpack_require__(260);
 	var customStyles = {
 	  content: {
 	    top: '50%',
@@ -24145,6 +24145,7 @@
 	var BookSearchConstants = __webpack_require__(227);
 	var AppDispatcher = __webpack_require__(228);
 	var BookSearchStore = new Store(AppDispatcher);
+	var APIUtil = __webpack_require__(231);
 	
 	var resetSearchResults = function (results) {
 	  _searchResults = [];
@@ -24153,7 +24154,15 @@
 	var resetCurrentBook = function (book) {
 	  _currentBook = book;
 	};
+	var loadInitial = function (results) {
 	
+	  _initialResults = results.slice();
+	  APIUtil.addToInitial();
+	};
+	var addToInitial = function (results) {
+	
+	  _initialResults = _initialResults.concat(results.slice());
+	};
 	BookSearchStore.all = function () {
 	  return _searchResults.slice(0);
 	};
@@ -24162,10 +24171,6 @@
 	};
 	BookSearchStore.initialData = function () {
 	  return _initialResults;
-	};
-	var loadInitial = function (results) {
-	
-	  _initialResults = results.slice();
 	};
 	BookSearchStore.resetCurrentBook = function (book) {
 	  _currentBook = book;
@@ -24187,6 +24192,10 @@
 	      break;
 	    case BookSearchConstants.ReceiveCurrentBook:
 	      var d2 = resetCurrentBook(payload.book);
+	      BookSearchStore.__emitChange();
+	      break;
+	    case BookSearchConstants.AddInitialReceived:
+	      var c3 = addToInitial(payload.results);
 	      BookSearchStore.__emitChange();
 	      break;
 	  }
@@ -30703,7 +30712,8 @@
 	var BookSearchConstants = {
 	  SearchResultsReceived: "RESULTS_RECEIVED",
 	  InitialResultsReceived: "INITIAL_RESULTS_RECIEVED",
-	  ReceiveCurrentBook: "RECEIVE_CURRENT_BOOK"
+	  ReceiveCurrentBook: "RECEIVE_CURRENT_BOOK",
+	  AddInitialReceived: "ADD_INITIAL_RECEIVED"
 	};
 	
 	module.exports = BookSearchConstants;
@@ -30984,13 +30994,22 @@
 	  },
 	  getInitialBookIndex: function () {
 	
-	    var uri = "https://www.googleapis.com/books/v1/volumes?q=Best+Novels";
-	    $.get(uri, { maxResults: 20 }, function (book_list) {
+	    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+selling+novels+all+time";
+	    $.get(uri, { maxResults: 40 }, function (book_list) {
 	
 	      var newBookList = book_list.items.map(function (book, index) {
 	        return APIUtil.makeBookObject(book);
 	      });
 	      ApiActions.ReceiveInitial(newBookList);
+	    });
+	  },
+	  addToInitial: function () {
+	    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+classic+novels";
+	    $.get(uri, { maxResults: 40 }, function (book_list) {
+	      var newBookList = book_list.items.map(function (book, index) {
+	        return APIUtil.makeBookObject(book);
+	      });
+	      ApiActions.AddToInitial(newBookList);
 	    });
 	  },
 	  createBook: function (bookItem) {
@@ -31100,6 +31119,12 @@
 	      actionType: BookSearchConstants.ReceiveCurrentBook,
 	      book: book
 	    });
+	  },
+	  AddToInitial: function (newBookList) {
+	    AppDispatcher.dispatch({
+	      actionType: BookSearchConstants.AddInitialReceived,
+	      results: newBookList
+	    });
 	  }
 	};
 	
@@ -31139,7 +31164,7 @@
 	  render: function () {
 	    return React.createElement(
 	      'li',
-	      { className: 'InitialIndex', onClick: this.onClick },
+	      { className: 'InitialIndex hvr-grow', onClick: this.onClick },
 	      React.createElement('img', { src: this.props.book.image })
 	    );
 	  }
@@ -31163,26 +31188,8 @@
 	      { id: 'popupbody' },
 	      React.createElement(
 	        'div',
-	        { id: 'pop-outer' },
-	        React.createElement(
-	          'div',
-	          { id: 'popup-q' },
-	          React.createElement(
-	            'form',
-	            { action: '#', id: 'popup-form', method: 'post' },
-	            React.createElement('img', { id: 'close', src: '/assets/closeButton.png' }),
-	            React.createElement(
-	              'h2',
-	              null,
-	              'What book are you reading now'
-	            ),
-	            React.createElement(
-	              'div',
-	              { id: 'searchDiv' },
-	              React.createElement(BookSearchBar, { whenChosen: this.props.whenChosen })
-	            )
-	          )
-	        )
+	        { id: 'landing-search-bar' },
+	        React.createElement(BookSearchBar, { whenChosen: this.props.whenChosen })
 	      )
 	    );
 	  }
@@ -31227,6 +31234,30 @@
 	      this.setState({ searchResults: [] });
 	    }
 	  },
+	  searchBarMoveUp: function () {
+	    // debugger;
+	    // this.refs.searchbar.style{{bottom: "10%"}}
+	    $("#landing-search-bar").css("bottom", "40%");
+	    setTimeout(function () {
+	      this.setState({
+	        showAutocomplete: true
+	      });
+	      // debugger;
+	    }.bind(this), 1800);
+	    // this.hideAutocomplete();
+	    // this.tempToken = setTimeout(this.showAutocomplete, 2000);
+	  },
+	  searchBarMoveBack: function () {
+	    $("#landing-search-bar").css("bottom", "20%");
+	    // this.hideAutocomplete();
+	
+	    // setTimeout(function(){
+	    this.setState({
+	      showAutocomplete: false
+	    });
+	    //     // debugger;
+	    // }.bind(this), 500);
+	  },
 	  clickOption: function (event) {
 	    this.click(event);
 	  },
@@ -31252,18 +31283,26 @@
 	      null,
 	      React.createElement(
 	        'label',
-	        { id: 'BookSearch' },
-	        'Enter the book title:'
+	        { id: 'BookSearchLabel' },
+	        'What book would you like to explore?'
 	      ),
-	      React.createElement('input', {
-	        type: 'text',
-	        value: this.state.value,
-	        onChange: this.handleChange
-	      }),
+	      React.createElement('br', null),
 	      React.createElement(
-	        'button',
-	        { onClick: this.click },
-	        'Find my book!'
+	        'form',
+	        { className: 'SearchForm' },
+	        React.createElement('input', { id: 'BookSearchInput',
+	          type: 'text',
+	          value: this.state.value,
+	          onChange: this.handleChange,
+	          onFocus: this.searchBarMoveUp,
+	          onBlur: this.searchBarMoveBack,
+	          placeholder: 'enter book title'
+	        }),
+	        React.createElement(
+	          'button',
+	          { id: 'BookSearchButton', className: 'hvr-grow-shadow', onClick: this.click },
+	          'Find!'
+	        )
 	      ),
 	      React.createElement(
 	        'ul',
@@ -31283,7 +31322,7 @@
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
 	var APIUtil = __webpack_require__(231);
-	var RadioGroup = __webpack_require__(266);
+	var RadioGroup = __webpack_require__(238);
 	
 	var BookConfirmation = React.createClass({
 	  displayName: 'BookConfirmation',
@@ -31384,20 +31423,96 @@
 /* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
+	// /lib contains the transpiled code. It's ignored by git but picked up by
+	// npm publish. See package.json's "prerelease" and "build" scripts
 	module.exports = __webpack_require__(239);
-	
 
 
 /***/ },
 /* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, module, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
+	    factory(exports, module, require('react'));
+	  } else {
+	    var mod = {
+	      exports: {}
+	    };
+	    factory(mod.exports, mod, global.React);
+	    global.RadioGroup = mod.exports;
+	  }
+	})(this, function (exports, module, _react) {
+	  'use strict';
+	
+	  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	  var _React = _interopRequireDefault(_react);
+	
+	  function radio(name, selectedValue, onChange) {
+	    return _React['default'].createClass({
+	      render: function render() {
+	        var optional = {};
+	        if (selectedValue !== undefined) {
+	          optional.checked = this.props.value === selectedValue;
+	        }
+	        if (typeof onChange === 'function') {
+	          optional.onChange = onChange.bind(null, this.props.value);
+	        }
+	
+	        return _React['default'].createElement('input', _extends({}, this.props, {
+	          type: 'radio',
+	          name: name
+	        }, optional));
+	      }
+	    });
+	  }
+	
+	  module.exports = _React['default'].createClass({
+	    displayName: 'index',
+	
+	    propTypes: {
+	      name: _react.PropTypes.string,
+	      selectedValue: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.number, _react.PropTypes.bool]),
+	      onChange: _react.PropTypes.func,
+	      children: _react.PropTypes.func.isRequired
+	    },
+	
+	    render: function render() {
+	      var _props = this.props;
+	      var name = _props.name;
+	      var selectedValue = _props.selectedValue;
+	      var onChange = _props.onChange;
+	      var children = _props.children;
+	
+	      var renderedChildren = children(radio(name, selectedValue, onChange));
+	      return renderedChildren && _React['default'].Children.only(renderedChildren);
+	    }
+	  });
+	});
+
+/***/ },
+/* 240 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(241);
+	
+
+
+/***/ },
+/* 241 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function(process) {var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var ExecutionEnvironment = __webpack_require__(240);
-	var ModalPortal = React.createFactory(__webpack_require__(241));
-	var ariaAppHider = __webpack_require__(256);
-	var elementClass = __webpack_require__(257);
+	var ExecutionEnvironment = __webpack_require__(242);
+	var ModalPortal = React.createFactory(__webpack_require__(243));
+	var ariaAppHider = __webpack_require__(258);
+	var elementClass = __webpack_require__(259);
 	var renderSubtreeIntoContainer = __webpack_require__(158).unstable_renderSubtreeIntoContainer;
 	
 	var SafeHTMLElement = ExecutionEnvironment.canUseDOM ? window.HTMLElement : {};
@@ -31476,7 +31591,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 240 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -31521,14 +31636,14 @@
 
 
 /***/ },
-/* 241 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var div = React.DOM.div;
-	var focusManager = __webpack_require__(242);
-	var scopeTab = __webpack_require__(244);
-	var Assign = __webpack_require__(245);
+	var focusManager = __webpack_require__(244);
+	var scopeTab = __webpack_require__(246);
+	var Assign = __webpack_require__(247);
 	
 	
 	// so that our CSS is statically analyzable
@@ -31725,10 +31840,10 @@
 
 
 /***/ },
-/* 242 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(243);
+	var findTabbable = __webpack_require__(245);
 	var modalElement = null;
 	var focusLaterElement = null;
 	var needToFocus = false;
@@ -31799,7 +31914,7 @@
 
 
 /***/ },
-/* 243 */
+/* 245 */
 /***/ function(module, exports) {
 
 	/*!
@@ -31855,10 +31970,10 @@
 
 
 /***/ },
-/* 244 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(243);
+	var findTabbable = __webpack_require__(245);
 	
 	module.exports = function(node, event) {
 	  var tabbable = findTabbable(node);
@@ -31876,7 +31991,7 @@
 
 
 /***/ },
-/* 245 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31887,9 +32002,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseAssign = __webpack_require__(246),
-	    createAssigner = __webpack_require__(252),
-	    keys = __webpack_require__(248);
+	var baseAssign = __webpack_require__(248),
+	    createAssigner = __webpack_require__(254),
+	    keys = __webpack_require__(250);
 	
 	/**
 	 * A specialized version of `_.assign` for customizing assigned values without
@@ -31962,7 +32077,7 @@
 
 
 /***/ },
-/* 246 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -31973,8 +32088,8 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseCopy = __webpack_require__(247),
-	    keys = __webpack_require__(248);
+	var baseCopy = __webpack_require__(249),
+	    keys = __webpack_require__(250);
 	
 	/**
 	 * The base implementation of `_.assign` without support for argument juggling,
@@ -31995,7 +32110,7 @@
 
 
 /***/ },
-/* 247 */
+/* 249 */
 /***/ function(module, exports) {
 
 	/**
@@ -32033,7 +32148,7 @@
 
 
 /***/ },
-/* 248 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32044,9 +32159,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var getNative = __webpack_require__(249),
-	    isArguments = __webpack_require__(250),
-	    isArray = __webpack_require__(251);
+	var getNative = __webpack_require__(251),
+	    isArguments = __webpack_require__(252),
+	    isArray = __webpack_require__(253);
 	
 	/** Used to detect unsigned integer values. */
 	var reIsUint = /^\d+$/;
@@ -32275,7 +32390,7 @@
 
 
 /***/ },
-/* 249 */
+/* 251 */
 /***/ function(module, exports) {
 
 	/**
@@ -32418,7 +32533,7 @@
 
 
 /***/ },
-/* 250 */
+/* 252 */
 /***/ function(module, exports) {
 
 	/**
@@ -32668,7 +32783,7 @@
 
 
 /***/ },
-/* 251 */
+/* 253 */
 /***/ function(module, exports) {
 
 	/**
@@ -32854,7 +32969,7 @@
 
 
 /***/ },
-/* 252 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32865,9 +32980,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var bindCallback = __webpack_require__(253),
-	    isIterateeCall = __webpack_require__(254),
-	    restParam = __webpack_require__(255);
+	var bindCallback = __webpack_require__(255),
+	    isIterateeCall = __webpack_require__(256),
+	    restParam = __webpack_require__(257);
 	
 	/**
 	 * Creates a function that assigns properties of source object(s) to a given
@@ -32912,7 +33027,7 @@
 
 
 /***/ },
-/* 253 */
+/* 255 */
 /***/ function(module, exports) {
 
 	/**
@@ -32983,7 +33098,7 @@
 
 
 /***/ },
-/* 254 */
+/* 256 */
 /***/ function(module, exports) {
 
 	/**
@@ -33121,7 +33236,7 @@
 
 
 /***/ },
-/* 255 */
+/* 257 */
 /***/ function(module, exports) {
 
 	/**
@@ -33194,7 +33309,7 @@
 
 
 /***/ },
-/* 256 */
+/* 258 */
 /***/ function(module, exports) {
 
 	var _element = typeof document !== 'undefined' ? document.body : null;
@@ -33241,7 +33356,7 @@
 
 
 /***/ },
-/* 257 */
+/* 259 */
 /***/ function(module, exports) {
 
 	module.exports = function(opts) {
@@ -33306,12 +33421,529 @@
 
 
 /***/ },
-/* 258 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var Notebook = __webpack_require__(259);
-	var BookShelf = __webpack_require__(261);
+	var LinkedStateMixin = __webpack_require__(261);
+	// var ReactRouter = require('react-router');
+	// var History = require('react-router').History;
+	var DropDown = __webpack_require__(265);
+	
+	var BookSearch = React.createClass({
+	  displayName: 'BookSearch',
+	
+	  // mixins: [LinkedStateMixin],
+	
+	  getInitialState: function () {
+	    this.styleSheetShow = document.createElement('style');
+	    this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
+	    // this.styleSheetHide = document.createElement('style');
+	    // this.styleSheetHide.innerHTML = ".pac-container {display: none;}";
+	
+	    return {
+	      book: "",
+	      placeholder: "What book would you like to Explore?",
+	      showAutocomplete: false,
+	      showSpinner: false
+	    };
+	  },
+	
+	  searchBarMoveUp: function () {
+	    // debugger;
+	    // this.refs.searchbar.style{{bottom: "10%"}}
+	    $("#landing-search-bar").css("bottom", "20%");
+	    setTimeout(function () {
+	      this.setState({
+	        showAutocomplete: true
+	      });
+	      // debugger;
+	    }.bind(this), 1800);
+	    // this.hideAutocomplete();
+	    // this.tempToken = setTimeout(this.showAutocomplete, 2000);
+	  },
+	
+	  // showAutocomplete: function() {
+	  //   // document.body.appendChild(this.styleSheetShow);
+	  //   document.body.appendChild(this.styleSheetShow);
+	  // },
+	  //
+	  // hideAutocomplete: function() {
+	  //   // clearTimeout(this.tempToken);
+	  //   // document.body.appendChild(this.styleSheetHide);
+	  // },
+	
+	  searchBarMoveBack: function () {
+	    $("#landing-search-bar").css("bottom", "0%");
+	    // this.hideAutocomplete();
+	
+	    // setTimeout(function(){
+	    this.setState({
+	      showAutocomplete: false
+	    });
+	    //     // debugger;
+	    // }.bind(this), 500);
+	  },
+	
+	  handleSearch: function (e) {
+	    if (arguments.length > 0) {
+	      e.preventDefault();
+	    }
+	
+	    // may use History mixins;
+	    // this.history.pushState(null, 'search/' + this.state.loc)
+	    // debugger;
+	
+	    if (this.state.loc === "") {
+	      this.setState({
+	        placeholder: "Please choose a book"
+	      });
+	    } else {
+	      setTimeout(this.redirectToSearch, 2000);
+	      this.setState({
+	        showSpinner: true
+	      });
+	    }
+	  },
+	
+	  redirectToSearch: function () {
+	    // var loc = this.state.loc.replace(/\W+/g, "-");
+	    // console.log("pushStatefromsearch");
+	    // this.props.history.pushState(null, 'search/' + loc);
+	  },
+	
+	  handleLocChange: function (e) {
+	    // console.log(this.refs.locinput.value);
+	    this.setState({
+	      book: this.refs.locinput.value
+	    });
+	    if (this.refs.locinput.value > 0) {
+	      APIUtil.fetchBookResults(this.refs.locinput.value);
+	    }
+	    // autocomplete: needs to add a delay using setTimeout and clearTimeout to cancel if the user changes before timeout expires
+	  },
+	
+	  render: function () {
+	    var org1 = React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'form',
+	        { className: 'form-horizontal', role: 'form', onSubmit: this.handleSearch },
+	        React.createElement(
+	          'div',
+	          { className: 'input-group input-group-lg' },
+	          React.createElement('input', {
+	            type: 'text',
+	            className: 'form-control',
+	
+	            placeholder: this.state.placeholder }),
+	          React.createElement(
+	            'span',
+	            { className: 'input-group-addon' },
+	            '@'
+	          )
+	        ),
+	        React.createElement(
+	          'button',
+	          null,
+	          'Search'
+	        )
+	      )
+	    );
+	
+	    var design1 = React.createElement(
+	      'div',
+	      { className: 'col-xs-12', id: 'landing-search-bar' },
+	      React.createElement(
+	        'div',
+	        { className: 'row' },
+	        React.createElement(
+	          'div',
+	          { className: 'col-xs-8 col-xs-offset-2' },
+	          React.createElement(
+	            'form',
+	            { role: 'form', onSubmit: this.handleSearch },
+	            React.createElement(
+	              'div',
+	              { className: 'input-group' },
+	              React.createElement('input', {
+	                type: 'text',
+	                className: 'form-control',
+	
+	                placeholder: this.state.placeholder }),
+	              React.createElement(
+	                'span',
+	                { className: 'input-group-button' },
+	                React.createElement(
+	                  'button',
+	                  { className: 'btn btn-default', type: 'button' },
+	                  'Search'
+	                )
+	              )
+	            )
+	          )
+	        )
+	      )
+	    );
+	    var buttonSubmit = React.createElement(
+	      'span',
+	      { className: 'input-group-btn' },
+	      React.createElement(
+	        'button',
+	        { className: 'btn btn-default', type: 'button', onClick: this.handleSearch },
+	        'Search'
+	      )
+	    );
+	
+	    var buttonProgress = React.createElement(
+	      'span',
+	      { className: 'input-group-btn' },
+	      React.createElement(
+	        'button',
+	        { className: 'btn btn-default', disabled: true },
+	        React.createElement(
+	          'div',
+	          { className: 'three-quarters-loader' },
+	          'Loading…'
+	        )
+	      )
+	    );
+	    var design2 = React.createElement(
+	      'div',
+	      { className: 'col-xs-12' },
+	      React.createElement(
+	        'div',
+	        { className: 'row' },
+	        React.createElement(
+	          'div',
+	          { className: 'col-xs-offset-2 col-xs-8' },
+	          React.createElement(
+	            'div',
+	            { className: 'col-xs-offset-2 col-xs-8' },
+	            React.createElement(
+	              'form',
+	              { className: 'input-group', role: 'form', onSubmit: this.handleSearch },
+	              React.createElement('input', {
+	                type: 'text',
+	                className: 'form-control center',
+	                id: 'landing-search-input',
+	                onChange: this.handleLocChange,
+	                placeholder: this.state.placeholder,
+	                ref: 'locinput',
+	                onFocus: this.searchBarMoveUp,
+	                onBlur: this.searchBarMoveBack }),
+	              this.state.showSpinner ? buttonProgress : buttonSubmit
+	            )
+	          )
+	        )
+	      )
+	    );
+	
+	    var showAutocomplete = this.state.loc !== "" && this.state.showAutocomplete;
+	    // console.log("toggle autocomplete: " + showAutocomplete)
+	    // var showAutocomplete = (this.state.loc !== "");
+	    return React.createElement(
+	      'div',
+	      { className: 'col-xs-12', id: 'landing-search-bar', ref: 'searchbar' },
+	      design2,
+	      showAutocomplete ? React.createElement(DropDown, {
+	        locinput: this.refs.locinput,
+	        handleSearch: this.handleSearch,
+	        handleLocChange: this.handleLocChange }) : ""
+	    );
+	  }
+	});
+	
+	module.exports = BookSearch;
+
+/***/ },
+/* 261 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(262);
+
+/***/ },
+/* 262 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule LinkedStateMixin
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	var ReactLink = __webpack_require__(263);
+	var ReactStateSetters = __webpack_require__(264);
+	
+	/**
+	 * A simple mixin around ReactLink.forState().
+	 */
+	var LinkedStateMixin = {
+	  /**
+	   * Create a ReactLink that's linked to part of this component's state. The
+	   * ReactLink will have the current value of this.state[key] and will call
+	   * setState() when a change is requested.
+	   *
+	   * @param {string} key state key to update. Note: you may want to use keyOf()
+	   * if you're using Google Closure Compiler advanced mode.
+	   * @return {ReactLink} ReactLink instance linking to the state.
+	   */
+	  linkState: function (key) {
+	    return new ReactLink(this.state[key], ReactStateSetters.createStateKeySetter(this, key));
+	  }
+	};
+	
+	module.exports = LinkedStateMixin;
+
+/***/ },
+/* 263 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactLink
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	/**
+	 * ReactLink encapsulates a common pattern in which a component wants to modify
+	 * a prop received from its parent. ReactLink allows the parent to pass down a
+	 * value coupled with a callback that, when invoked, expresses an intent to
+	 * modify that value. For example:
+	 *
+	 * React.createClass({
+	 *   getInitialState: function() {
+	 *     return {value: ''};
+	 *   },
+	 *   render: function() {
+	 *     var valueLink = new ReactLink(this.state.value, this._handleValueChange);
+	 *     return <input valueLink={valueLink} />;
+	 *   },
+	 *   _handleValueChange: function(newValue) {
+	 *     this.setState({value: newValue});
+	 *   }
+	 * });
+	 *
+	 * We have provided some sugary mixins to make the creation and
+	 * consumption of ReactLink easier; see LinkedValueUtils and LinkedStateMixin.
+	 */
+	
+	var React = __webpack_require__(2);
+	
+	/**
+	 * @param {*} value current value of the link
+	 * @param {function} requestChange callback to request a change
+	 */
+	function ReactLink(value, requestChange) {
+	  this.value = value;
+	  this.requestChange = requestChange;
+	}
+	
+	/**
+	 * Creates a PropType that enforces the ReactLink API and optionally checks the
+	 * type of the value being passed inside the link. Example:
+	 *
+	 * MyComponent.propTypes = {
+	 *   tabIndexLink: ReactLink.PropTypes.link(React.PropTypes.number)
+	 * }
+	 */
+	function createLinkTypeChecker(linkType) {
+	  var shapes = {
+	    value: typeof linkType === 'undefined' ? React.PropTypes.any.isRequired : linkType.isRequired,
+	    requestChange: React.PropTypes.func.isRequired
+	  };
+	  return React.PropTypes.shape(shapes);
+	}
+	
+	ReactLink.PropTypes = {
+	  link: createLinkTypeChecker
+	};
+	
+	module.exports = ReactLink;
+
+/***/ },
+/* 264 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactStateSetters
+	 */
+	
+	'use strict';
+	
+	var ReactStateSetters = {
+	  /**
+	   * Returns a function that calls the provided function, and uses the result
+	   * of that to set the component's state.
+	   *
+	   * @param {ReactCompositeComponent} component
+	   * @param {function} funcReturningState Returned callback uses this to
+	   *                                      determine how to update state.
+	   * @return {function} callback that when invoked uses funcReturningState to
+	   *                    determined the object literal to setState.
+	   */
+	  createStateSetter: function (component, funcReturningState) {
+	    return function (a, b, c, d, e, f) {
+	      var partialState = funcReturningState.call(component, a, b, c, d, e, f);
+	      if (partialState) {
+	        component.setState(partialState);
+	      }
+	    };
+	  },
+	
+	  /**
+	   * Returns a single-argument callback that can be used to update a single
+	   * key in the component's state.
+	   *
+	   * Note: this is memoized function, which makes it inexpensive to call.
+	   *
+	   * @param {ReactCompositeComponent} component
+	   * @param {string} key The key in the state that you should update.
+	   * @return {function} callback of 1 argument which calls setState() with
+	   *                    the provided keyName and callback argument.
+	   */
+	  createStateKeySetter: function (component, key) {
+	    // Memoize the setters.
+	    var cache = component.__keySetters || (component.__keySetters = {});
+	    return cache[key] || (cache[key] = createStateKeySetter(component, key));
+	  }
+	};
+	
+	function createStateKeySetter(component, key) {
+	  // Partial state is allocated outside of the function closure so it can be
+	  // reused with every call, avoiding memory allocation when this function
+	  // is called.
+	  var partialState = {};
+	  return function stateKeySetter(value) {
+	    partialState[key] = value;
+	    component.setState(partialState);
+	  };
+	}
+	
+	ReactStateSetters.Mixin = {
+	  /**
+	   * Returns a function that calls the provided function, and uses the result
+	   * of that to set the component's state.
+	   *
+	   * For example, these statements are equivalent:
+	   *
+	   *   this.setState({x: 1});
+	   *   this.createStateSetter(function(xValue) {
+	   *     return {x: xValue};
+	   *   })(1);
+	   *
+	   * @param {function} funcReturningState Returned callback uses this to
+	   *                                      determine how to update state.
+	   * @return {function} callback that when invoked uses funcReturningState to
+	   *                    determined the object literal to setState.
+	   */
+	  createStateSetter: function (funcReturningState) {
+	    return ReactStateSetters.createStateSetter(this, funcReturningState);
+	  },
+	
+	  /**
+	   * Returns a single-argument callback that can be used to update a single
+	   * key in the component's state.
+	   *
+	   * For example, these statements are equivalent:
+	   *
+	   *   this.setState({x: 1});
+	   *   this.createStateKeySetter('x')(1);
+	   *
+	   * Note: this is memoized function, which makes it inexpensive to call.
+	   *
+	   * @param {string} key The key in the state that you should update.
+	   * @return {function} callback of 1 argument which calls setState() with
+	   *                    the provided keyName and callback argument.
+	   */
+	  createStateKeySetter: function (key) {
+	    return ReactStateSetters.createStateKeySetter(this, key);
+	  }
+	};
+	
+	module.exports = ReactStateSetters;
+
+/***/ },
+/* 265 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+	
+	var DropDown = React.createClass({
+	  displayName: 'DropDown',
+	
+	
+	  _fillInAddress: function () {
+	    // debugger;
+	    this.props.handleLocChange();
+	    this.props.handleSearch();
+	  },
+	
+	  componentWillUnmount: function () {
+	    document.getElementById('html-body').removeChild(document.getElementsByClassName("pac-container")[0]);
+	    // ReactDOM.unmountComponentAtNode(document.getElementsByClassName("pac-container")[0]);
+	  },
+	
+	  componentDidMount: function () {
+	    // using Google Maps Places Autocomplete client version
+	    this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
+	    this.autofillOptions = {
+	      types: ['geocode']
+	    };
+	    // this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
+	    // // debugger;
+	    // this.autofill.addListener('place_changed', this._fillInAddress);
+	  },
+	
+	  // componentWillReceiveProps: function() {
+	  //   console.log("new autofill")
+	  //   this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
+	  //   this.autofillOptions = {
+	  //     types: ['geocode']
+	  //   };
+	  //   this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
+	  //   this.autofill.addListener('place_changed', this._fillInAddress);
+	  // },
+	
+	  render: function () {
+	    return React.createElement('div', null);
+	  }
+	});
+	
+	module.exports = DropDown;
+
+/***/ },
+/* 266 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var Notebook = __webpack_require__(267);
+	var BookShelf = __webpack_require__(268);
 	
 	var Desk = React.createClass({
 	  displayName: 'Desk',
@@ -33321,7 +33953,7 @@
 	
 	    return React.createElement(
 	      'section',
-	      { className: 'Desk' },
+	      { className: 'Desk', id: 'Desk' },
 	      React.createElement(Notebook, null),
 	      React.createElement(BookShelf, null)
 	    );
@@ -33330,15 +33962,15 @@
 	module.exports = Desk;
 
 /***/ },
-/* 259 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var BookPage = __webpack_require__(260);
+	var BookPage = __webpack_require__(272);
 	var BookSearchStore = __webpack_require__(208);
-	var Tabs = __webpack_require__(271);
-	var Note = __webpack_require__(272);
-	var Reviews = __webpack_require__(273);
+	var Tabs = __webpack_require__(273);
+	var Note = __webpack_require__(274);
+	var Reviews = __webpack_require__(275);
 	
 	var Notebook = React.createClass({
 	  displayName: 'Notebook',
@@ -33348,6 +33980,11 @@
 	  },
 	  componentDidMount: function () {
 	    this.storeIndex = BookSearchStore.addListener(this._onChange);
+	    $("#flipbook").turn({
+	      width: 400,
+	      height: 300,
+	      autoCenter: true
+	    });
 	  },
 	  componentWillUnmount: function () {
 	    this.storeIndex.remove();
@@ -33358,17 +33995,48 @@
 	
 	  render: function () {
 	    if (this.state.currentBook) {
+	      var customStyle = {
+	        backgroundImage: 'url(' + this.state.currentBook.image + ')'
+	      };
 	      return React.createElement(
 	        'section',
-	        { className: 'Notebook' },
-	        React.createElement('img', { src: this.state.currentBook.image }),
-	        React.createElement(BookPage, { currentBook: this.state.currentBook, changeCurrentBook: this.changeCurrentBook }),
-	        React.createElement(Note, null),
-	        React.createElement(Reviews, null),
+	        { className: 'Notebook', id: 'page-flip' },
 	        React.createElement(
-	          'aside',
-	          null,
-	          React.createElement(Tabs, null)
+	          'div',
+	          { id: 'r1' },
+	          React.createElement('div', { id: 'p1', style: customStyle })
+	        ),
+	        React.createElement(
+	          'div',
+	          { id: 'p2' },
+	          React.createElement(BookPage, { currentBook: this.state.currentBook, changeCurrentBook: this.changeCurrentBook })
+	        ),
+	        React.createElement(
+	          'div',
+	          { id: 'r3' },
+	          React.createElement('div', { id: 'p3' })
+	        ),
+	        React.createElement(
+	          'div',
+	          { 'class': 's' },
+	          React.createElement(
+	            'div',
+	            { id: 's3' },
+	            React.createElement('div', { id: 'sp3' })
+	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          { 'class': 's', id: 's4' },
+	          React.createElement(
+	            'div',
+	            { id: 's2' },
+	            React.createElement(
+	              'div',
+	              null,
+	              React.createElement(Note, null)
+	            )
+	          )
 	        )
 	      );
 	    } else {
@@ -33385,7 +34053,195 @@
 	module.exports = Notebook;
 
 /***/ },
-/* 260 */
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var BookShelfStore = __webpack_require__(269);
+	var Shelf = __webpack_require__(270);
+	
+	var History = __webpack_require__(159).History;
+	
+	var customStyles = {
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    marginRight: '-50%',
+	    transform: 'translate(-50%, -50%)'
+	  }
+	};
+	
+	var BookShelf = React.createClass({
+	  displayName: 'BookShelf',
+	
+	  mixins: [History],
+	
+	  getInitialState: function () {
+	    var reading = BookShelfStore.reading();
+	    var toRead = BookShelfStore.toRead();
+	    var allToRead = reading.concat(toRead);
+	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead };
+	  },
+	  componentDidMount: function () {
+	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function () {
+	    this.bookShelfIndex.remove();
+	  },
+	  _onChange: function () {
+	    var reading = BookShelfStore.reading();
+	    var toRead = BookShelfStore.toRead();
+	    var allToRead = reading.concat(toRead);
+	    this.setState({ readBooks: BookShelfStore.read(), toReadBooks: allToRead });
+	  },
+	  click: function (event) {
+	    event.preventDefault();
+	    this.history.push({ pathname: "/" });
+	  },
+	  render: function () {
+	
+	    return React.createElement(
+	      'section',
+	      { className: 'bookshelf' },
+	      React.createElement(Shelf, { books: this.state.toReadBooks }),
+	      React.createElement(Shelf, { books: this.state.readBooks }),
+	      React.createElement(
+	        'button',
+	        { className: 'AddBooks', onClick: this.click },
+	        'Add to shelf'
+	      )
+	    );
+	  }
+	});
+	module.exports = BookShelf;
+
+/***/ },
+/* 269 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(209).Store;
+	var _books = { read: [], toRead: [], reading: [] };
+	var BookShelfConstants = __webpack_require__(233);
+	var AppDispatcher = __webpack_require__(228);
+	var BookShelfStore = new Store(AppDispatcher);
+	
+	var resetBooks = function (results) {
+	  _books = {};
+	  _books = results;
+	};
+	var addBook = function (book) {
+	  if (book.read === "read") {
+	    _books.read.push(book);
+	  } else if (book.read === "toRead") {
+	    _books.toRead.push(book);
+	  } else {
+	    _books.reading.push(book);
+	  }
+	};
+	
+	BookShelfStore.all = function () {
+	
+	  return _books;
+	};
+	BookShelfStore.empty = function () {
+	  _books = { read: [], toRead: [], reading: [] };
+	};
+	BookShelfStore.read = function () {
+	
+	  return _books.read;
+	};
+	BookShelfStore.toRead = function () {
+	
+	  return _books.toRead;
+	};
+	BookShelfStore.reading = function () {
+	
+	  return _books.reading;
+	};
+	
+	BookShelfStore.__onDispatch = function (payload) {
+	
+	  switch (payload.actionType) {
+	    case BookShelfConstants.ReceiveUserBooks:
+	
+	      var result = resetBooks(payload.books);
+	      BookShelfStore.__emitChange();
+	      break;
+	    case BookShelfConstants.ReceiveAddedBook:
+	      var added = addBook(payload.book);
+	      BookShelfStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	window.BookShelfStore = BookShelfStore;
+	
+	module.exports = BookShelfStore;
+
+/***/ },
+/* 270 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ShelfItem = __webpack_require__(271);
+	
+	var Shelf = React.createClass({
+	  displayName: 'Shelf',
+	
+	
+	  render: function () {
+	    var theshelf = [];
+	    var theshelf = this.props.books.map(function (book, index) {
+	      return React.createElement(ShelfItem, { key: index, bookTitle: book.title, book: book });
+	    }, this);
+	    return React.createElement(
+	      'section',
+	      { className: 'BookShelf', id: 'Shelf' },
+	      React.createElement(
+	        'ul',
+	        null,
+	        theshelf
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = Shelf;
+
+/***/ },
+/* 271 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(208);
+	var ApiActions = __webpack_require__(232);
+	var APIUtil = __webpack_require__(231);
+	
+	var ShelfItem = React.createClass({
+	  displayName: 'ShelfItem',
+	
+	  onClick: function (event) {
+	    event.preventDefault();
+	
+	    APIUtil.updateUser({ current_book: this.props.book.id });
+	    ApiActions.updateCurrentBook(this.props.book);
+	  },
+	  render: function () {
+	    return React.createElement(
+	      'li',
+	      { className: 'ShelfItem', onClick: this.onClick },
+	      this.props.bookTitle
+	    );
+	  }
+	});
+	
+	module.exports = ShelfItem;
+
+/***/ },
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33457,344 +34313,7 @@
 	module.exports = BookPage;
 
 /***/ },
-/* 261 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var BookShelfStore = __webpack_require__(262);
-	var Shelf = __webpack_require__(263);
-	var BookSearch = __webpack_require__(265);
-	
-	var History = __webpack_require__(159).History;
-	
-	var customStyles = {
-	  content: {
-	    top: '50%',
-	    left: '50%',
-	    right: 'auto',
-	    bottom: 'auto',
-	    marginRight: '-50%',
-	    transform: 'translate(-50%, -50%)'
-	  }
-	};
-	
-	var BookShelf = React.createClass({
-	  displayName: 'BookShelf',
-	
-	  mixins: [History],
-	
-	  getInitialState: function () {
-	    var reading = BookShelfStore.reading();
-	    var toRead = BookShelfStore.toRead();
-	    var allToRead = reading.concat(toRead);
-	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead };
-	  },
-	  componentDidMount: function () {
-	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function () {
-	    this.bookShelfIndex.remove();
-	  },
-	  _onChange: function () {
-	    var reading = BookShelfStore.reading();
-	    var toRead = BookShelfStore.toRead();
-	    var allToRead = reading.concat(toRead);
-	    this.setState({ readBooks: BookShelfStore.read(), toReadBooks: allToRead });
-	  },
-	  click: function (event) {
-	    event.preventDefault();
-	    this.history.push({ pathname: "/" });
-	  },
-	  render: function () {
-	
-	    return React.createElement(
-	      'section',
-	      { className: 'bookshelf' },
-	      React.createElement(Shelf, { books: this.state.toReadBooks }),
-	      React.createElement(Shelf, { books: this.state.readBooks }),
-	      React.createElement(
-	        'button',
-	        { className: 'AddBooks', onClick: this.click },
-	        'Add to shelf'
-	      )
-	    );
-	  }
-	});
-	module.exports = BookShelf;
-
-/***/ },
-/* 262 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Store = __webpack_require__(209).Store;
-	var _books = { read: [], toRead: [], reading: [] };
-	var BookShelfConstants = __webpack_require__(233);
-	var AppDispatcher = __webpack_require__(228);
-	var BookShelfStore = new Store(AppDispatcher);
-	
-	var resetBooks = function (results) {
-	  _books = {};
-	  _books = results;
-	};
-	var addBook = function (book) {
-	  if (book.read === "read") {
-	    _books.read.push(book);
-	  } else if (book.read === "toRead") {
-	    _books.toRead.push(book);
-	  } else {
-	    _books.reading.push(book);
-	  }
-	};
-	
-	BookShelfStore.all = function () {
-	
-	  return _books;
-	};
-	BookShelfStore.empty = function () {
-	  _books = { read: [], toRead: [], reading: [] };
-	};
-	BookShelfStore.read = function () {
-	
-	  return _books.read;
-	};
-	BookShelfStore.toRead = function () {
-	
-	  return _books.toRead;
-	};
-	BookShelfStore.reading = function () {
-	
-	  return _books.reading;
-	};
-	
-	BookShelfStore.__onDispatch = function (payload) {
-	
-	  switch (payload.actionType) {
-	    case BookShelfConstants.ReceiveUserBooks:
-	
-	      var result = resetBooks(payload.books);
-	      BookShelfStore.__emitChange();
-	      break;
-	    case BookShelfConstants.ReceiveAddedBook:
-	      var added = addBook(payload.book);
-	      BookShelfStore.__emitChange();
-	      break;
-	  }
-	};
-	
-	window.BookShelfStore = BookShelfStore;
-	
-	module.exports = BookShelfStore;
-
-/***/ },
-/* 263 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ShelfItem = __webpack_require__(264);
-	
-	var Shelf = React.createClass({
-	  displayName: 'Shelf',
-	
-	
-	  render: function () {
-	    var theshelf = [];
-	    var theshelf = this.props.books.map(function (book, index) {
-	      return React.createElement(ShelfItem, { key: index, bookTitle: book.title, book: book });
-	    }, this);
-	    return React.createElement(
-	      'section',
-	      { className: 'BookShelf', id: 'Shelf' },
-	      React.createElement(
-	        'ul',
-	        null,
-	        theshelf
-	      )
-	    );
-	  }
-	
-	});
-	
-	module.exports = Shelf;
-
-/***/ },
-/* 264 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(208);
-	var ApiActions = __webpack_require__(232);
-	var APIUtil = __webpack_require__(231);
-	
-	var ShelfItem = React.createClass({
-	  displayName: 'ShelfItem',
-	
-	  onClick: function (event) {
-	    event.preventDefault();
-	
-	    APIUtil.updateUser({ current_book: this.props.book.id });
-	    ApiActions.updateCurrentBook(this.props.book);
-	  },
-	  render: function () {
-	    return React.createElement(
-	      'li',
-	      { className: 'ShelfItem', onClick: this.onClick },
-	      this.props.bookTitle
-	    );
-	  }
-	});
-	
-	module.exports = ShelfItem;
-
-/***/ },
-/* 265 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var InitialBookIndex = __webpack_require__(207);
-	var SearchArea = __webpack_require__(235);
-	var BookSearchStore = __webpack_require__(208);
-	var BookConfirmation = __webpack_require__(237);
-	var Modal = __webpack_require__(238);
-	
-	var customStyles = {
-	  content: {
-	    top: '50%',
-	    left: '50%',
-	    right: 'auto',
-	    bottom: 'auto',
-	    marginRight: '-50%',
-	    transform: 'translate(-50%, -50%)'
-	  }
-	};
-	
-	var Search = React.createClass({
-	  displayName: 'Search',
-	
-	
-	  getInitialState: function () {
-	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
-	  },
-	  bookChosen: function () {
-	    this.openModal();
-	  },
-	  openModal: function () {
-	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
-	  },
-	
-	  closeModal: function () {
-	    BookSearchStore.resetCurrentBook(null);
-	    this.setState({ modalIsOpen: false });
-	  },
-	  render: function () {
-	
-	    return React.createElement(
-	      'div',
-	      { className: 'homePage' },
-	      React.createElement(SearchArea, { whenChosen: this.bookChosen }),
-	      React.createElement(
-	        'button',
-	        { onClick: this.openModal },
-	        'Click Me!'
-	      ),
-	      React.createElement(
-	        Modal,
-	        {
-	          isOpen: this.state.modalIsOpen,
-	          onRequestClose: this.closeModal,
-	          style: customStyles },
-	        React.createElement(BookConfirmation, { book: this.state.chosen, close: this.closeModal }),
-	        React.createElement(
-	          'button',
-	          { onClick: this.closeModal },
-	          'close'
-	        )
-	      )
-	    );
-	  }
-	});
-	module.exports = Search;
-
-/***/ },
-/* 266 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// /lib contains the transpiled code. It's ignored by git but picked up by
-	// npm publish. See package.json's "prerelease" and "build" scripts
-	module.exports = __webpack_require__(267);
-
-
-/***/ },
-/* 267 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
-	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, module, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	  } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
-	    factory(exports, module, require('react'));
-	  } else {
-	    var mod = {
-	      exports: {}
-	    };
-	    factory(mod.exports, mod, global.React);
-	    global.RadioGroup = mod.exports;
-	  }
-	})(this, function (exports, module, _react) {
-	  'use strict';
-	
-	  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	  var _React = _interopRequireDefault(_react);
-	
-	  function radio(name, selectedValue, onChange) {
-	    return _React['default'].createClass({
-	      render: function render() {
-	        var optional = {};
-	        if (selectedValue !== undefined) {
-	          optional.checked = this.props.value === selectedValue;
-	        }
-	        if (typeof onChange === 'function') {
-	          optional.onChange = onChange.bind(null, this.props.value);
-	        }
-	
-	        return _React['default'].createElement('input', _extends({}, this.props, {
-	          type: 'radio',
-	          name: name
-	        }, optional));
-	      }
-	    });
-	  }
-	
-	  module.exports = _React['default'].createClass({
-	    displayName: 'index',
-	
-	    propTypes: {
-	      name: _react.PropTypes.string,
-	      selectedValue: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.number, _react.PropTypes.bool]),
-	      onChange: _react.PropTypes.func,
-	      children: _react.PropTypes.func.isRequired
-	    },
-	
-	    render: function render() {
-	      var _props = this.props;
-	      var name = _props.name;
-	      var selectedValue = _props.selectedValue;
-	      var onChange = _props.onChange;
-	      var children = _props.children;
-	
-	      var renderedChildren = children(radio(name, selectedValue, onChange));
-	      return renderedChildren && _React['default'].Children.only(renderedChildren);
-	    }
-	  });
-	});
-
-/***/ },
-/* 268 */,
-/* 269 */,
-/* 270 */,
-/* 271 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33816,7 +34335,7 @@
 	module.exports = Tabs;
 
 /***/ },
-/* 272 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -33850,7 +34369,7 @@
 	module.exports = Note;
 
 /***/ },
-/* 273 */
+/* 275 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);

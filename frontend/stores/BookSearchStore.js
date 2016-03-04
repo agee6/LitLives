@@ -5,6 +5,7 @@ var _currentBook = null;
 var BookSearchConstants = require('../constants/BookSearchConstants');
 var AppDispatcher = require('../dispatcher/dispatcher');
 var BookSearchStore = new Store(AppDispatcher);
+var APIUtil = require('../util/APIUtil.js');
 
 
 var resetSearchResults = function(results){
@@ -15,7 +16,16 @@ var resetCurrentBook = function(book){
   _currentBook = book;
 
 };
+var loadInitial = function(results){
 
+  _initialResults = results.slice();
+  APIUtil.addToInitial();
+
+};
+var addToInitial = function(results){
+  
+  _initialResults = _initialResults.concat(results.slice());
+};
 BookSearchStore.all = function () {
   return _searchResults.slice(0);
 };
@@ -24,10 +34,6 @@ BookSearchStore.empty = function(){
 };
 BookSearchStore.initialData = function(){
   return _initialResults;
-};
-var loadInitial = function(results){
-
-  _initialResults = results.slice();
 };
 BookSearchStore.resetCurrentBook = function(book){
   _currentBook = book;
@@ -50,6 +56,10 @@ BookSearchStore.__onDispatch = function (payload) {
       break;
     case BookSearchConstants.ReceiveCurrentBook:
       var d2 = resetCurrentBook(payload.book);
+      BookSearchStore.__emitChange();
+      break;
+    case BookSearchConstants.AddInitialReceived:
+      var c3 = addToInitial(payload.results);
       BookSearchStore.__emitChange();
       break;
   }

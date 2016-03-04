@@ -10,18 +10,14 @@ var SearchArea = React.createClass({
 
 
       <section id="popupbody">
-        <div id="pop-outer">
-          <div id="popup-q">
-            <form action="#" id="popup-form" method="post">
-              <img id="close" src="/assets/closeButton.png"></img>
-                <h2>What book are you reading now</h2>
-                <div id="searchDiv">
-                  <BookSearchBar whenChosen={this.props.whenChosen} />
-                </div>
 
-            </form>
-          </div>
+
+        <div id="landing-search-bar" >
+          <BookSearchBar whenChosen={this.props.whenChosen} />
         </div>
+
+
+
       </section>
     )
   }

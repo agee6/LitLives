@@ -7,7 +7,7 @@ var Desk = React.createClass({
   render: function(){
 
     return(
-      <section className="Desk">
+      <section className="Desk" id="Desk">
         <Notebook  />
 
         <BookShelf />

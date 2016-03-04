@@ -1,17 +1,11 @@
-/*
-body {
-    padding: 0;
-    margin: 0;
-}
 
-#all {
-    width: 680px;
-    margin-left: auto;
-    margin-right: auto;
+#Desk{
+    background-image: url('WoodBackground.jpg');
+    position:relative;
+    height: 800px; 
 }
-
 #page-flip {
-    background-image: url(http://cssdeck.com/uploads/media/items/6/6h4pDpK.jpg);
+
     position: absolute;
     padding: 40px 40px 40px 340px;
     width: 300px;
@@ -172,7 +166,7 @@ body {
     -webkit-transform-origin: 0 0;
     -webkit-transform: translate(1000px, 500px) rotate(0deg);
 }
-
+/*
 a {
     display: block;
     position: absolute;
@@ -182,16 +176,17 @@ a {
     -webkit-transition-property: margin;
     -webkit-transition-duration: 0.01s;
 }
-
+*/
 #coke {
     width: 253px;
     height: 158px;
 }
-
+/*
 a:hover {
     padding: 0;
     border: 1px dotted #92C7C1;
 }
+*/
 
 #page-flip:hover #coke {
     -webkit-transition-delay: .8s;

@@ -4,7 +4,7 @@ var SearchArea = require('./SearchArea.jsx');
 var BookSearchStore = require('../stores/BookSearchStore.js');
 var BookConfirmation = require('./BookConfirmation.jsx');
 var Modal = require('react-modal');
-
+var BookSearch = require('./BookSearch/BookSearch.jsx');
 var customStyles = {
   content : {
     top                   : '50%',
@@ -38,6 +38,7 @@ var Search = React.createClass({
       <div className="homePage">
         <SearchArea whenChosen={this.bookChosen}/>
         <InitialBookIndex whenChosen={this.bookChosen}/>
+      
           <Modal
              isOpen={this.state.modalIsOpen}
              onRequestClose={this.closeModal}

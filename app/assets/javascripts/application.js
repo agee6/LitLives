@@ -16,3 +16,5 @@
 
 //= frontPage
 //= pop_up
+//= turnjs4
+//= turn.js

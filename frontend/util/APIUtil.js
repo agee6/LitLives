@@ -11,13 +11,22 @@ var APIUtil = {
   },
   getInitialBookIndex: function(){
 
-    var uri = "https://www.googleapis.com/books/v1/volumes?q=Best+Novels";
-    $.get(uri, {maxResults: 20}, function(book_list){
+    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+selling+novels+all+time";
+    $.get(uri, {maxResults: 40}, function(book_list){
 
       var newBookList = book_list.items.map(function(book, index){
         return(APIUtil.makeBookObject(book));
       });
       ApiActions.ReceiveInitial(newBookList);
+    });
+  },
+  addToInitial: function(){
+    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+classic+novels";
+    $.get(uri, {maxResults: 40}, function(book_list){
+      var newBookList = book_list.items.map(function(book, index){
+        return(APIUtil.makeBookObject(book));
+      });
+      ApiActions.AddToInitial(newBookList);
     });
   },
   createBook: function(bookItem){

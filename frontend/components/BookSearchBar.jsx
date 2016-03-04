@@ -22,7 +22,7 @@ var BookSearchBar = React.createClass({
     this.storeIndex = BookSearchStore.addListener(this._onChange);
   },
   componentWillUnmount: function(){
-    this.storeIndex.remove(); 
+    this.storeIndex.remove();
   },
   _onChange: function(){
     if (this.state.value.length > 0){
@@ -31,6 +31,30 @@ var BookSearchBar = React.createClass({
     else{
       this.setState({searchResults: []});
     }
+  },
+  searchBarMoveUp: function() {
+    // debugger;
+    // this.refs.searchbar.style{{bottom: "10%"}}
+    $("#landing-search-bar").css("bottom", "40%");
+    setTimeout(function(){
+        this.setState({
+          showAutocomplete: true
+        });
+        // debugger;
+    }.bind(this), 1800);
+    // this.hideAutocomplete();
+    // this.tempToken = setTimeout(this.showAutocomplete, 2000);
+  },
+  searchBarMoveBack: function() {
+    $("#landing-search-bar").css("bottom", "20%");
+    // this.hideAutocomplete();
+
+    // setTimeout(function(){
+      this.setState({
+        showAutocomplete: false
+      });
+    //     // debugger;
+    // }.bind(this), 500);
   },
   clickOption: function(event){
     this.click(event);
@@ -52,13 +76,20 @@ var BookSearchBar = React.createClass({
 
     return (
       <div>
-        <label id="BookSearch">Enter the book title:</label>
-        <input
-          type="text"
-          value={this.state.value}
-          onChange={this.handleChange}
-          />
-        <button onClick={this.click}>Find my book!</button>
+        <label id="BookSearchLabel">What book would you like to explore?</label>
+        <br/>
+        <form className="SearchForm">
+          <input id="BookSearchInput"
+            type="text"
+            value={this.state.value}
+            onChange={this.handleChange}
+            onFocus={this.searchBarMoveUp}
+            onBlur={this.searchBarMoveBack}
+            placeholder="enter book title"
+            />
+          <button id="BookSearchButton" className="hvr-grow-shadow" onClick={this.click}>Find!</button>
+
+        </form>
         <ul className="searchGuesses">
           {guesses}
         </ul>

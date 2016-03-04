@@ -11,6 +11,11 @@ var Notebook = React.createClass({
   },
   componentDidMount: function(){
     this.storeIndex = BookSearchStore.addListener(this._onChange);
+    $("#flipbook").turn({
+		width: 400,
+		height: 300,
+		autoCenter: true
+	});
 
   },
   componentWillUnmount: function(){
@@ -22,17 +27,40 @@ var Notebook = React.createClass({
 
   render: function(){
     if(this.state.currentBook){
+      var customStyle = {
+        backgroundImage: 'url(' + this.state.currentBook.image + ')'
+      };
       return(
 
-        <section className="Notebook">
-          <img src={this.state.currentBook.image}></img>
-          <BookPage currentBook={this.state.currentBook} changeCurrentBook={this.changeCurrentBook}/>
-          <Note />
-          <Reviews />
+        <section className="Notebook" id="page-flip">
+          <div id="r1">
+            <div id="p1" style={customStyle}>
 
-          <aside>
-            <Tabs /> 
-          </aside>
+
+            </div>
+          </div>
+          <div id="p2">
+            <BookPage currentBook={this.state.currentBook} changeCurrentBook={this.changeCurrentBook}/>
+          </div>
+          <div id="r3">
+            <div id="p3">
+
+            </div>
+          </div>
+          <div class="s">
+            <div id="s3">
+              <div id="sp3">
+
+              </div>
+            </div>
+          </div>
+          <div class="s" id="s4">
+            <div id="s2">
+              <div>
+                <Note />
+              </div>
+            </div>
+          </div>
 
         </section>
       )

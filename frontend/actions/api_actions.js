@@ -39,6 +39,12 @@ var ApiActions = {
       actionType: BookSearchConstants.ReceiveCurrentBook,
       book: book
     });
+  },
+  AddToInitial: function(newBookList){
+    AppDispatcher.dispatch({
+      actionType: BookSearchConstants.AddInitialReceived,
+      results: newBookList
+    });
   }
 };
 

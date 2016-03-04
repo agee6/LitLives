@@ -2,7 +2,7 @@ var React = require('react');
 var BookSearchStore = require('../stores/BookSearchStore.js');
 var ApiActions = require('../actions/api_actions.js');
 var History = require('react-router').History;
-var APIUtil = require('../util/APIUtil.js'); 
+var APIUtil = require('../util/APIUtil.js');
 
 var IndexItem = React.createClass({
   mixins: [History],
@@ -14,7 +14,7 @@ var IndexItem = React.createClass({
   },
   render: function(){
     return(
-      <li className="InitialIndex" onClick={this.onClick}><img src={this.props.book.image}></img></li>
+      <li className="InitialIndex hvr-grow" onClick={this.onClick}><img src={this.props.book.image}></img></li>
     );
   }
 })

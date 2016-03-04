@@ -1,7 +1,6 @@
 var React = require('react');
 var BookShelfStore = require('../stores/BookShelfStore.js');
 var Shelf = require('./BookShelf/Shelf.jsx');
-var BookSearch = require('./BookSearch.jsx');
 
 var History = require('react-router').History;
 

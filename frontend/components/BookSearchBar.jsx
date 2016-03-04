@@ -12,14 +12,20 @@ var BookSearchBar = React.createClass({
 
     this.setState({value: event.target.value});
 
-    if (this.state.value.length > 0 ){
+    if (this.state.value.length > 0 && !this.pending){
+      this.pending = true;
       APIUtil.fetchBookResults(this.state.value);
+      window.setInterval(function(){
+        this.pending = false; 
+
+      }.bind(this), 1000);
     }
 
   },
 
   componentDidMount: function(){
     this.storeIndex = BookSearchStore.addListener(this._onChange);
+    this.pending = false;
   },
   componentWillUnmount: function(){
     this.storeIndex.remove();
@@ -35,7 +41,7 @@ var BookSearchBar = React.createClass({
   searchBarMoveUp: function() {
     // debugger;
     // this.refs.searchbar.style{{bottom: "10%"}}
-    $("#landing-search-bar").css("bottom", "40%");
+    $("#landing-search-bar").css("top", "40%");
     setTimeout(function(){
         this.setState({
           showAutocomplete: true
@@ -46,7 +52,7 @@ var BookSearchBar = React.createClass({
     // this.tempToken = setTimeout(this.showAutocomplete, 2000);
   },
   searchBarMoveBack: function() {
-    $("#landing-search-bar").css("bottom", "20%");
+    $("#landing-search-bar").css("top", "20%");
     // this.hideAutocomplete();
 
     // setTimeout(function(){
@@ -75,7 +81,7 @@ var BookSearchBar = React.createClass({
 
 
     return (
-      <div>
+      <div id="landing-search-bar">
         <label id="BookSearchLabel">What book would you like to explore?</label>
         <br/>
         <form className="SearchForm">

@@ -13,7 +13,7 @@ var ShelfItem = React.createClass({
   },
   render: function(){
     return(
-      <li className="ShelfItem" onClick={this.onClick}>{this.props.bookTitle}</li>
+      <li className="ShelfItem hvr-grow" id={this.props.theid} onClick={this.onClick}>{this.props.bookTitle}</li>
     )
   }
 })

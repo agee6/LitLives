@@ -5,6 +5,7 @@ var APIUtil = {
   fetchBookResults: function(query){
     var uri = "https://www.googleapis.com/books/v1/volumes?q="+query ;
     $.get(uri, {}, function(book_list){
+      console.log(book_list)
       ApiActions.ReceiveActions(book_list);
     });
 

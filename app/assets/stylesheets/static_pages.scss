@@ -36,13 +36,16 @@
 
 #landing-search-bar {
   position: absolute;
-  bottom: 20%;
+  top: 40%;
   padding: 3%;
-  left: 30%;
+  margin-left: -250px;
   background-color: rgba(0, 0, 0, 0.8);
   background-size: 100%;
   z-index: 10;
   overflow: visible;
+  height: 100px;
+  width: 500px;
+  left: 50%;
 
 
 }
@@ -95,8 +98,8 @@
 }
 
 #landing-search-bar {
-  -webkit-transition: bottom 2s, -webkit-transform 2s;
-  transition: bottom 2s, transform 2s;
+  -webkit-transition: top 2s, -webkit-transform 2s;
+  transition: top 2s, transform 2s;
 }
 #BookSearchInput {
   width:300px;

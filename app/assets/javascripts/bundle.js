@@ -30989,6 +30989,7 @@
 	  fetchBookResults: function (query) {
 	    var uri = "https://www.googleapis.com/books/v1/volumes?q=" + query;
 	    $.get(uri, {}, function (book_list) {
+	      console.log(book_list);
 	      ApiActions.ReceiveActions(book_list);
 	    });
 	  },
@@ -31186,11 +31187,7 @@
 	    return React.createElement(
 	      'section',
 	      { id: 'popupbody' },
-	      React.createElement(
-	        'div',
-	        { id: 'landing-search-bar' },
-	        React.createElement(BookSearchBar, { whenChosen: this.props.whenChosen })
-	      )
+	      React.createElement(BookSearchBar, { whenChosen: this.props.whenChosen })
 	    );
 	  }
 	});
@@ -31216,13 +31213,18 @@
 	
 	    this.setState({ value: event.target.value });
 	
-	    if (this.state.value.length > 0) {
+	    if (this.state.value.length > 0 && !this.pending) {
+	      this.pending = true;
 	      APIUtil.fetchBookResults(this.state.value);
+	      window.setInterval(function () {
+	        this.pending = false;
+	      }.bind(this), 1000);
 	    }
 	  },
 	
 	  componentDidMount: function () {
 	    this.storeIndex = BookSearchStore.addListener(this._onChange);
+	    this.pending = false;
 	  },
 	  componentWillUnmount: function () {
 	    this.storeIndex.remove();
@@ -31237,7 +31239,7 @@
 	  searchBarMoveUp: function () {
 	    // debugger;
 	    // this.refs.searchbar.style{{bottom: "10%"}}
-	    $("#landing-search-bar").css("bottom", "40%");
+	    $("#landing-search-bar").css("top", "40%");
 	    setTimeout(function () {
 	      this.setState({
 	        showAutocomplete: true
@@ -31248,7 +31250,7 @@
 	    // this.tempToken = setTimeout(this.showAutocomplete, 2000);
 	  },
 	  searchBarMoveBack: function () {
-	    $("#landing-search-bar").css("bottom", "20%");
+	    $("#landing-search-bar").css("top", "20%");
 	    // this.hideAutocomplete();
 	
 	    // setTimeout(function(){
@@ -31280,7 +31282,7 @@
 	
 	    return React.createElement(
 	      'div',
-	      null,
+	      { id: 'landing-search-bar' },
 	      React.createElement(
 	        'label',
 	        { id: 'BookSearchLabel' },
@@ -33980,11 +33982,6 @@
 	  },
 	  componentDidMount: function () {
 	    this.storeIndex = BookSearchStore.addListener(this._onChange);
-	    $("#flipbook").turn({
-	      width: 400,
-	      height: 300,
-	      autoCenter: true
-	    });
 	  },
 	  componentWillUnmount: function () {
 	    this.storeIndex.remove();
@@ -34003,40 +34000,8 @@
 	        { className: 'Notebook', id: 'page-flip' },
 	        React.createElement(
 	          'div',
-	          { id: 'r1' },
-	          React.createElement('div', { id: 'p1', style: customStyle })
-	        ),
-	        React.createElement(
-	          'div',
-	          { id: 'p2' },
+	          { id: 'page-area' },
 	          React.createElement(BookPage, { currentBook: this.state.currentBook, changeCurrentBook: this.changeCurrentBook })
-	        ),
-	        React.createElement(
-	          'div',
-	          { id: 'r3' },
-	          React.createElement('div', { id: 'p3' })
-	        ),
-	        React.createElement(
-	          'div',
-	          { 'class': 's' },
-	          React.createElement(
-	            'div',
-	            { id: 's3' },
-	            React.createElement('div', { id: 'sp3' })
-	          )
-	        ),
-	        React.createElement(
-	          'div',
-	          { 'class': 's', id: 's4' },
-	          React.createElement(
-	            'div',
-	            { id: 's2' },
-	            React.createElement(
-	              'div',
-	              null,
-	              React.createElement(Note, null)
-	            )
-	          )
 	        )
 	      );
 	    } else {
@@ -34193,8 +34158,14 @@
 	
 	  render: function () {
 	    var theshelf = [];
+	    var theid;
 	    var theshelf = this.props.books.map(function (book, index) {
-	      return React.createElement(ShelfItem, { key: index, bookTitle: book.title, book: book });
+	      if (index % 2 === 0) {
+	        theid = "book1";
+	      } else {
+	        theid = "book2";
+	      }
+	      return React.createElement(ShelfItem, { theid: theid, key: index, bookTitle: book.title, book: book });
 	    }, this);
 	    return React.createElement(
 	      'section',
@@ -34232,7 +34203,7 @@
 	  render: function () {
 	    return React.createElement(
 	      'li',
-	      { className: 'ShelfItem', onClick: this.onClick },
+	      { className: 'ShelfItem hvr-grow', id: this.props.theid, onClick: this.onClick },
 	      this.props.bookTitle
 	    );
 	  }

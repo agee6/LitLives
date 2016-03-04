@@ -11,12 +11,7 @@ var SearchArea = React.createClass({
 
       <section id="popupbody">
 
-
-        <div id="landing-search-bar" >
           <BookSearchBar whenChosen={this.props.whenChosen} />
-        </div>
-
-
 
       </section>
     )

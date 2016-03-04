@@ -130,6 +130,40 @@ ul {
    position: fixed;
    overflow-y: scroll;
  }
+ #page-flip {
+   background-image: url('unwritten.jpg');
+   width: 600px;
+   height: 700px;
+   float: left;
+   margin: 30px;
+   background-size: cover;
+
+ }
+ #page-area{
+   float: right;
+   width: 500px;
+ }
+ #book1 {
+   background-image: url('book1Side.jpg');
+   background-size: cover;
+ }
+ #book2 {
+   background-image: url('book2Side.jpg');
+ }
+ .ShelfItem{
+   width: 200px;
+   display:inline-block;
+ }
+ .ShelfItem:hover {
+   cursor: pointer;
+ }
+ #Shelf {
+   float: right;
+   width: 200px;
+   margin: 20px; 
+
+ }
+
 
 
 /* * Copyright (c) 2012 Thibaut Courouble

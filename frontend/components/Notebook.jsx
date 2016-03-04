@@ -1,6 +1,9 @@
 var React = require('react');
 var BookPage = require('./NoteBook/BookPage.jsx');
 var BookSearchStore = require('../stores/BookSearchStore.js');
+var Tabs = require('./NoteBook/Tabs.jsx');
+var Note = require('./NoteBook/Note.jsx');
+var Reviews = require('./NoteBook/Reviews.jsx');
 
 var Notebook = React.createClass({
   getInitialState: function(){
@@ -24,6 +27,13 @@ var Notebook = React.createClass({
         <section className="Notebook">
           <img src={this.state.currentBook.image}></img>
           <BookPage currentBook={this.state.currentBook} changeCurrentBook={this.changeCurrentBook}/>
+          <Note />
+          <Reviews />
+
+          <aside>
+            <Tabs /> 
+          </aside>
+
         </section>
       )
     }else{

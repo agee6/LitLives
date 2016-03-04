@@ -2,15 +2,13 @@ class Api::BooksController < ApplicationController
   def create
     input_hash = {user_id: current_user.id}
     creation_hash = book_params.merge(input_hash)
-
     @book = Book.new(creation_hash)
-
     if @book.save
       current_user.update({current_book: @book.id})
       render json: @book
     else
       flash.now[:errors] = @book.errors.full_messages
-      render json: @book.errors
+      render json: @book.errors, status: 422
     end
 
   end

@@ -30984,8 +30984,9 @@
 	  },
 	  getInitialBookIndex: function () {
 	
-	    var uri = "https://www.googleapis.com/books/v1/volumes?q=Best+Novels+all+time";
+	    var uri = "https://www.googleapis.com/books/v1/volumes?q=Best+Novels";
 	    $.get(uri, { maxResults: 20 }, function (book_list) {
+	
 	      var newBookList = book_list.items.map(function (book, index) {
 	        return APIUtil.makeBookObject(book);
 	      });
@@ -30995,6 +30996,7 @@
 	  createBook: function (bookItem) {
 	
 	    $.post('/api/books', bookItem, function (payload) {
+	
 	      ApiActions.ReceiveAddedBook(payload);
 	    });
 	  },
@@ -31288,15 +31290,16 @@
 	
 	  mixins: [History],
 	  getInitialState: function () {
-	    return { selectedValue: 'apple' };
+	    return { selectedValue: 'reading' };
 	  },
 	  handleChange: function (value) {
 	    this.setState({ selectedValue: value });
 	  },
 	  yesClick: function (event) {
 	    event.preventDefault();
-	
-	    APIUtil.createBook(this.props.book);
+	    var bookToSend = this.props.book;
+	    bookToSend.read = this.state.selectedValue;
+	    APIUtil.createBook(bookToSend);
 	    var url = "/Desk";
 	    this.history.push({ pathname: url });
 	    //reroute to User Show with Book Display
@@ -31343,20 +31346,20 @@
 	            React.createElement(
 	              'label',
 	              null,
-	              React.createElement(Radio, { value: 'apple' }),
-	              'Apple'
+	              React.createElement(Radio, { value: 'read' }),
+	              'have read'
 	            ),
 	            React.createElement(
 	              'label',
 	              null,
-	              React.createElement(Radio, { value: 'orange' }),
-	              'Orange'
+	              React.createElement(Radio, { value: 'toRead' }),
+	              'want to read'
 	            ),
 	            React.createElement(
 	              'label',
 	              null,
-	              React.createElement(Radio, { value: 'watermelon' }),
-	              'Watermelon'
+	              React.createElement(Radio, { value: 'reading' }),
+	              'currently reading'
 	            )
 	          )
 	        )
@@ -33333,6 +33336,9 @@
 	var React = __webpack_require__(1);
 	var BookPage = __webpack_require__(260);
 	var BookSearchStore = __webpack_require__(208);
+	var Tabs = __webpack_require__(271);
+	var Note = __webpack_require__(272);
+	var Reviews = __webpack_require__(273);
 	
 	var Notebook = React.createClass({
 	  displayName: 'Notebook',
@@ -33356,7 +33362,14 @@
 	        'section',
 	        { className: 'Notebook' },
 	        React.createElement('img', { src: this.state.currentBook.image }),
-	        React.createElement(BookPage, { currentBook: this.state.currentBook, changeCurrentBook: this.changeCurrentBook })
+	        React.createElement(BookPage, { currentBook: this.state.currentBook, changeCurrentBook: this.changeCurrentBook }),
+	        React.createElement(Note, null),
+	        React.createElement(Reviews, null),
+	        React.createElement(
+	          'aside',
+	          null,
+	          React.createElement(Tabs, null)
+	        )
 	      );
 	    } else {
 	      return React.createElement(
@@ -33776,6 +33789,83 @@
 	    }
 	  });
 	});
+
+/***/ },
+/* 268 */,
+/* 269 */,
+/* 270 */,
+/* 271 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var Tabs = React.createClass({
+	  displayName: 'Tabs',
+	
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      'Here is where I will put all the tabs'
+	    );
+	  }
+	
+	});
+	
+	module.exports = Tabs;
+
+/***/ },
+/* 272 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var Note = React.createClass({
+	  displayName: "Note",
+	
+	
+	  render: function () {
+	    return React.createElement(
+	      "div",
+	      { className: "NoteArea" },
+	      React.createElement(
+	        "form",
+	        { action: "demo_form.asp", id: "usrform" },
+	        "Name: ",
+	        React.createElement("input", { type: "text", name: "usrname" }),
+	        React.createElement("input", { type: "submit" })
+	      ),
+	      React.createElement("br", null),
+	      React.createElement(
+	        "textarea",
+	        { rows: "4", cols: "50", name: "comment", form: "usrform" },
+	        "Enter text here..."
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = Note;
+
+/***/ },
+/* 273 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	var Reviews = React.createClass({
+	  displayName: 'Reviews',
+	
+	
+	  render: function () {
+	    return React.createElement('div', null);
+	  }
+	
+	});
+	
+	module.exports = Reviews;
 
 /***/ }
 /******/ ]);

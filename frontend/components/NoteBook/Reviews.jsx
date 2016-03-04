@@ -1,7 +1,7 @@
 var React = require('react');
-var PropTypes = React.PropTypes;
 
-var Author = React.createClass({
+
+var Reviews = React.createClass({
 
   render: function() {
     return (
@@ -11,4 +11,4 @@ var Author = React.createClass({
 
 });
 
-module.exports = Author;
+module.exports = Reviews;

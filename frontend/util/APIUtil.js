@@ -11,8 +11,9 @@ var APIUtil = {
   },
   getInitialBookIndex: function(){
 
-    var uri = "https://www.googleapis.com/books/v1/volumes?q=Best+Novels+all+time";
+    var uri = "https://www.googleapis.com/books/v1/volumes?q=Best+Novels";
     $.get(uri, {maxResults: 20}, function(book_list){
+
       var newBookList = book_list.items.map(function(book, index){
         return(APIUtil.makeBookObject(book));
       });
@@ -22,6 +23,7 @@ var APIUtil = {
   createBook: function(bookItem){
 
     $.post('/api/books', bookItem, function(payload){
+
       ApiActions.ReceiveAddedBook(payload);
     });
 
@@ -43,7 +45,7 @@ var APIUtil = {
     $.ajax({
       url: '/api/user',
       type: 'PATCH',
-      data: params, 
+      data: params,
       success: function(book) {
           // Do something with the result
           console.log(book);

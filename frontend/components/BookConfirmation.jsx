@@ -6,15 +6,16 @@ var RadioGroup = require('react-radio-group');
 var BookConfirmation = React.createClass({
   mixins: [History],
   getInitialState:function(){
-    return({selectedValue: 'apple'})
+    return({selectedValue: 'reading'})
   },
   handleChange: function(value){
     this.setState({selectedValue: value});
   },
   yesClick:function(event){
       event.preventDefault();
-
-    APIUtil.createBook(this.props.book);
+    var bookToSend = this.props.book;
+    bookToSend.read = this.state.selectedValue;
+    APIUtil.createBook(bookToSend);
     var url = "/Desk"
     this.history.push({pathname: url});
     //reroute to User Show with Book Display
@@ -40,13 +41,13 @@ var BookConfirmation = React.createClass({
                 {Radio => (
                   <div>
                     <label>
-                      <Radio value="apple" />Apple
+                      <Radio value="read" />have read
                     </label>
                     <label>
-                      <Radio value="orange" />Orange
+                      <Radio value="toRead" />want to read
                     </label>
                     <label>
-                      <Radio value="watermelon" />Watermelon
+                      <Radio value="reading" />currently reading
                     </label>
                   </div>
                 )}

@@ -1,6 +1,7 @@
 
 body {
-  background-color: #e4cdb4;
+  background-color: #261a0d;
+  margin: -10px; 
 }
 .logo{
   background-image: url("Drawing.png");
@@ -9,21 +10,18 @@ body {
   height: 40px;
 
 }
-.searchGuesses{
-  background-color: white;
-  position: relative;
 
-}
 .logo:hover{
   cursor: pointer;
 }
 
 button{
-  background-image: url("BookButton.jpg");
+  /*background-image: url("BookButton.jpg");*/
   height: 40px;
   background-size: cover;
   border: 5px;
   border-color: #e4cdb4;
+
 
 }
 button:hover{
@@ -62,48 +60,7 @@ ul {
 
 
 }
-#image1 {
-  background-image: url("PandP.jpg");
-  background-color: #e4cdb4;
-  background-size: cover;
-  float: left;
-  height: 500px;
-  width: 320px;
-  margin: 20px;
 
-}
-#image2 {
-  background-image: url("HP.jpg");
-  float: left;
-  background-size: cover;
-  height: 500px;
-  width: 320px;
-  margin: 20px;
-}
-#image3 {
-  background-image: url("GreatGatsby.jpg");
-  float: left;
-  background-size: cover;
-  height: 500px;
-  width: 320px;
-  margin: 20px;
-}
-#image4 {
-  background-image: url("The_Fault_in_Our_Stars.jpg");
-  float:left;
-  background-size: cover;
-  height: 500px;
-  width: 320px;
-  margin: 20px;
-}
-#image5 {
-  background-image: url("TaleofTwoCities.jpg");
-  float:left;
-  background-size: cover;
-  height: 500px;
-  width: 320px;
-  margin: 20px;
-}
 .hvr-grow-shadow {
   display: inline-block;
   vertical-align: middle;
@@ -130,6 +87,7 @@ ul {
    position: fixed;
    overflow-y: scroll;
  }
+
  #page-flip {
    background-image: url('unwritten.jpg');
    width: 600px;
@@ -139,6 +97,7 @@ ul {
    background-size: cover;
 
  }
+
  #page-area{
    float: right;
    width: 500px;
@@ -146,9 +105,15 @@ ul {
  #book1 {
    background-image: url('book1Side.jpg');
    background-size: cover;
+   margin: 0px, 20px, 0px, 20px;
+   height: 20px;
  }
  #book2 {
    background-image: url('book2Side.jpg');
+   background-size: cover;
+   height: 30px;
+   color: white;
+
  }
  .ShelfItem{
    width: 200px;
@@ -160,9 +125,10 @@ ul {
  #Shelf {
    float: right;
    width: 200px;
-   margin: 20px; 
+   margin: 20px;
 
  }
+
 
 
 

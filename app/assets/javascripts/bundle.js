@@ -24038,6 +24038,15 @@
 	var Modal = __webpack_require__(240);
 	var BookSearch = __webpack_require__(260);
 	var customStyles = {
+	  overlay: {
+	    position: 'fixed',
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+	    zIndex: 20
+	  },
 	  content: {
 	    top: '50%',
 	    left: '50%',
@@ -24074,16 +24083,20 @@
 	      React.createElement(SearchArea, { whenChosen: this.bookChosen }),
 	      React.createElement(InitialBookIndex, { whenChosen: this.bookChosen }),
 	      React.createElement(
-	        Modal,
-	        {
-	          isOpen: this.state.modalIsOpen,
-	          onRequestClose: this.closeModal,
-	          style: customStyles },
-	        React.createElement(BookConfirmation, { book: this.state.chosen, close: this.closeModal }),
+	        'div',
+	        { className: 'modal' },
 	        React.createElement(
-	          'button',
-	          { onClick: this.closeModal },
-	          'close'
+	          Modal,
+	          {
+	            isOpen: this.state.modalIsOpen,
+	            onRequestClose: this.closeModal,
+	            style: customStyles },
+	          React.createElement(BookConfirmation, { book: this.state.chosen, close: this.closeModal }),
+	          React.createElement(
+	            'button',
+	            { onClick: this.closeModal },
+	            'close'
+	          )
 	        )
 	      )
 	    );
@@ -24125,9 +24138,13 @@
 	      return React.createElement(IndexItem, { key: index, book: book });
 	    });
 	    return React.createElement(
-	      'ul',
-	      { className: 'BookList' },
-	      bookOptions
+	      'div',
+	      { id: 'BookArea' },
+	      React.createElement(
+	        'ul',
+	        { className: 'BookList' },
+	        bookOptions
+	      )
 	    );
 	  }
 	});
@@ -31165,7 +31182,7 @@
 	  render: function () {
 	    return React.createElement(
 	      'li',
-	      { className: 'InitialIndex hvr-grow', onClick: this.onClick },
+	      { className: 'InitialBooks hvr-grow', onClick: this.onClick },
 	      React.createElement('img', { src: this.props.book.image })
 	    );
 	  }
@@ -31207,7 +31224,7 @@
 	  displayName: 'BookSearchBar',
 	
 	  getInitialState: function () {
-	    return { value: "", searchResults: [] };
+	    return { value: "", searchResults: [], showGuesses: false };
 	  },
 	  handleChange: function (event) {
 	
@@ -31239,10 +31256,10 @@
 	  searchBarMoveUp: function () {
 	    // debugger;
 	    // this.refs.searchbar.style{{bottom: "10%"}}
-	    $("#landing-search-bar").css("top", "40%");
+	    $("#landing-search-bar").css("bottom", "40%");
 	    setTimeout(function () {
 	      this.setState({
-	        showAutocomplete: true
+	        showGuesses: true
 	      });
 	      // debugger;
 	    }.bind(this), 1800);
@@ -31250,12 +31267,12 @@
 	    // this.tempToken = setTimeout(this.showAutocomplete, 2000);
 	  },
 	  searchBarMoveBack: function () {
-	    $("#landing-search-bar").css("top", "20%");
+	    $("#landing-search-bar").css("bottom", "20%");
 	    // this.hideAutocomplete();
 	
 	    // setTimeout(function(){
 	    this.setState({
-	      showAutocomplete: false
+	      showGuesses: false
 	    });
 	    //     // debugger;
 	    // }.bind(this), 500);
@@ -31272,13 +31289,17 @@
 	  },
 	  render: function () {
 	    var that = this;
-	    var guesses = this.state.searchResults.map(function (result, index) {
-	      return React.createElement(
-	        'li',
-	        { key: index, onClick: that.clickOption, className: 'searchGuess' },
-	        result.volumeInfo.title
-	      );
-	    });
+	    if (this.state.showGuesses) {
+	      var guesses = this.state.searchResults.map(function (result, index) {
+	        return React.createElement(
+	          'li',
+	          { key: index, onClick: that.clickOption, className: 'searchGuess' },
+	          result.volumeInfo.title
+	        );
+	      });
+	    } else {
+	      guesses = React.createElement('div', null);
+	    }
 	
 	    return React.createElement(
 	      'div',
@@ -31300,16 +31321,12 @@
 	          onBlur: this.searchBarMoveBack,
 	          placeholder: 'enter book title'
 	        }),
+	        React.createElement('button', { id: 'BookSearchButton', className: 'hvr-grow-shadow fa fa-search', onClick: this.click }),
 	        React.createElement(
-	          'button',
-	          { id: 'BookSearchButton', className: 'hvr-grow-shadow', onClick: this.click },
-	          'Find!'
+	          'ul',
+	          { className: 'searchGuesses' },
+	          guesses
 	        )
-	      ),
-	      React.createElement(
-	        'ul',
-	        { className: 'searchGuesses' },
-	        guesses
 	      )
 	    );
 	  }

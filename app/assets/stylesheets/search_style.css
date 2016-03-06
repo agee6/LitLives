@@ -1,5 +1,87 @@
-.InitialIndex {
+.InitialBooks {
   float: left;
   height: 200px;
+  z-index: 9;
+  /*box-shadow: 0px 0px 5px rgba(0,0,0,.3);*/
+  margin: 2px;
+  /*box-shadow: 10px 10px 10px 10px rgba(256,256,256,0.5);*/
 
+}
+#landing-search-bar {
+  position: absolute;
+  bottom: 20%;
+  padding: 3%;
+  margin-left: -260px;
+  background-color: rgba(0, 0, 0, 0.8);
+  background-size: 100%;
+  z-index: 1;
+  overflow: visible;
+  height: 100px;
+  width: 475px;
+  left: 50%;
+
+
+}
+.homePage {
+  margin: 0px;
+}
+#landing-search-bar {
+  -webkit-transition: top 2s, -webkit-transform 2s;
+  transition: bottom 2s, transform 2s;
+}
+#BookSearchInput {
+  width:360px;
+  height: 30px;
+  margin-left: 30px;
+  margin: 0px;
+  padding: 0px;
+  vertical-align: bottom;
+  margin-left: 20px;
+  border: 0px;
+  font-size: 16px;
+  margin-top: 20px;
+
+}
+#BookSearchLabel {
+  font-size: 30px;
+  color: #996633;
+
+
+}
+#BookSearchButton {
+  margin: 0px;
+  width: 50px;
+  height: 30px;
+  border-radius: 0px;
+
+  background-color: rgba(200, 200, 200, 1);
+}
+.SearchForm{
+
+
+}
+.searchGuesses{
+  background-color: rgba(200, 200, 200, 1);
+  position: relative;
+
+}
+.searchGuesses{
+  overflow:visible;
+  width:360px;
+  margin: 0px;
+  padding: 0px;
+  margin-left: 20px;
+
+}
+.searchGuess{
+
+}
+.BookArea {
+  /*box-shadow: 12px 12px 12px 12px rgba(220,220,220,0.5);*/
+}
+.InitialBooks:hover{
+  box-shadow: 0px 0px 30px 10px rgba(220,220,220,0.5);
+  /*box-shadow: 12px 12px 7px 10px rgba(256,256,256,0.5);*/
+  background-color: rgba(220,220,220,0.5);
+  z-index: 10;
 }

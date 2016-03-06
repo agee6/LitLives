@@ -6,7 +6,7 @@ var BookConfirmation = require('./BookConfirmation.jsx');
 
 var BookSearchBar = React.createClass({
   getInitialState: function(){
-    return{value: "", searchResults: []}
+    return{value: "", searchResults: [], showGuesses: false}
   },
   handleChange: function(event){
 
@@ -16,7 +16,7 @@ var BookSearchBar = React.createClass({
       this.pending = true;
       APIUtil.fetchBookResults(this.state.value);
       window.setInterval(function(){
-        this.pending = false; 
+        this.pending = false;
 
       }.bind(this), 1000);
     }
@@ -41,10 +41,10 @@ var BookSearchBar = React.createClass({
   searchBarMoveUp: function() {
     // debugger;
     // this.refs.searchbar.style{{bottom: "10%"}}
-    $("#landing-search-bar").css("top", "40%");
+    $("#landing-search-bar").css("bottom", "40%");
     setTimeout(function(){
         this.setState({
-          showAutocomplete: true
+          showGuesses: true
         });
         // debugger;
     }.bind(this), 1800);
@@ -52,12 +52,12 @@ var BookSearchBar = React.createClass({
     // this.tempToken = setTimeout(this.showAutocomplete, 2000);
   },
   searchBarMoveBack: function() {
-    $("#landing-search-bar").css("top", "20%");
+    $("#landing-search-bar").css("bottom", "20%");
     // this.hideAutocomplete();
 
     // setTimeout(function(){
       this.setState({
-        showAutocomplete: false
+        showGuesses: false,
       });
     //     // debugger;
     // }.bind(this), 500);
@@ -75,9 +75,13 @@ var BookSearchBar = React.createClass({
   },
   render: function(){
     var that = this;
-    var guesses = this.state.searchResults.map(function(result, index){
-      return( <li key={index} onClick={that.clickOption} className="searchGuess">{result.volumeInfo.title }</li>);
-    })
+    if (this.state.showGuesses){
+      var guesses = this.state.searchResults.map(function(result, index){
+        return( <li key={index} onClick={that.clickOption} className="searchGuess">{result.volumeInfo.title }</li>);
+      })
+    }else{
+      guesses = <div /> 
+    }
 
 
     return (
@@ -93,12 +97,12 @@ var BookSearchBar = React.createClass({
             onBlur={this.searchBarMoveBack}
             placeholder="enter book title"
             />
-          <button id="BookSearchButton" className="hvr-grow-shadow" onClick={this.click}>Find!</button>
+          <button id="BookSearchButton" className="hvr-grow-shadow fa fa-search" onClick={this.click}></button>
+          <ul className="searchGuesses">
+            {guesses}
+          </ul>
 
         </form>
-        <ul className="searchGuesses">
-          {guesses}
-        </ul>
 
 
 

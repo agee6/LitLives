@@ -27,9 +27,12 @@ var InitialBookIndex = React.createClass({
         return(<IndexItem key={index} book={book} />);
     });
     return(
-      <ul className="BookList">
-        {bookOptions}
-      </ul>
+      <div id="BookArea">
+        <ul className="BookList">
+          {bookOptions}
+        </ul>
+
+      </div>
 
     );
   }

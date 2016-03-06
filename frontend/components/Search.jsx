@@ -6,6 +6,15 @@ var BookConfirmation = require('./BookConfirmation.jsx');
 var Modal = require('react-modal');
 var BookSearch = require('./BookSearch/BookSearch.jsx');
 var customStyles = {
+  overlay : {
+    position          : 'fixed',
+    top               : 0,
+    left              : 0,
+    right             : 0,
+    bottom            : 0,
+    backgroundColor   : 'rgba(255, 255, 255, 0.75)',
+    zIndex           : 20
+  },
   content : {
     top                   : '50%',
     left                  : '50%',
@@ -38,7 +47,7 @@ var Search = React.createClass({
       <div className="homePage">
         <SearchArea whenChosen={this.bookChosen}/>
         <InitialBookIndex whenChosen={this.bookChosen}/>
-      
+          <div className="modal">
           <Modal
              isOpen={this.state.modalIsOpen}
              onRequestClose={this.closeModal}
@@ -48,6 +57,7 @@ var Search = React.createClass({
              <button onClick={this.closeModal}>close</button>
 
            </Modal>
+         </div>
       </div>
     );
 

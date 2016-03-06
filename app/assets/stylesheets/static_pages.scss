@@ -17,6 +17,7 @@
   margin: 10px;
   opacity: 150%;
 
+
 }
 .SplashTitleArea{
   background-color: #d7b48e;
@@ -34,21 +35,7 @@
 
 
 
-#landing-search-bar {
-  position: absolute;
-  top: 40%;
-  padding: 3%;
-  margin-left: -250px;
-  background-color: rgba(0, 0, 0, 0.8);
-  background-size: 100%;
-  z-index: 10;
-  overflow: visible;
-  height: 100px;
-  width: 500px;
-  left: 50%;
 
-
-}
 .hvr-shadow-radial {
   height: 50px;
   width: 200px;
@@ -97,40 +84,7 @@
   opacity: 1;
 }
 
-#landing-search-bar {
-  -webkit-transition: top 2s, -webkit-transform 2s;
-  transition: top 2s, transform 2s;
-}
-#BookSearchInput {
-  width:300px;
-  margin-left: 30px;
-  margin: 0px;
-  padding: 0px;
-  vertical-align: bottom;
-}
-#BookSearchLabel {
-  font-size: 30px;
-  color: #996633;
 
-
-}
-#BookSearchButton {
-  margin: 0px;
-  width: 100px;
-}
-.SearchForm{
-
-}
-.searchGuesses{
-  overflow:visible;
-  width:300px;
-  margin: 0px; ;
-  padding: 0px;
-
-}
-.searchGuess{
-
-}
 .pac-container {
   -webkit-transition: all 2s, -webkit-transform 2s;
   transition: all 2s, transform 2s;
@@ -138,8 +92,8 @@
 .hvr-grow {
     display: inline-block;
     vertical-align: middle;
-    transform: translateZ(0);
-    box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+    // transform: translateZ(0);
+    // box-shadow: 0 0 1px rgba(0, 0, 0, 0);
     backface-visibility: hidden;
     -moz-osx-font-smoothing: grayscale;
     transition-duration: 0.3s;

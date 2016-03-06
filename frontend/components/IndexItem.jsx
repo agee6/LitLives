@@ -14,7 +14,7 @@ var IndexItem = React.createClass({
   },
   render: function(){
     return(
-      <li className="InitialIndex hvr-grow" onClick={this.onClick}><img src={this.props.book.image}></img></li>
+      <li className="InitialBooks hvr-grow" onClick={this.onClick}><img src={this.props.book.image}></img></li>
     );
   }
 })

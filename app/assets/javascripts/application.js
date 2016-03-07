@@ -18,3 +18,4 @@
 //= pop_up
 //= turnjs4
 //= turn.js
+//=jquery.transit.min.js

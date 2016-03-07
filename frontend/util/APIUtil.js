@@ -21,6 +21,9 @@ var APIUtil = {
       ApiActions.ReceiveInitial(newBookList);
     });
   },
+  logoutUser: function(){
+
+  }, 
   addToInitial: function(){
     var uri = "https://www.googleapis.com/books/v1/volumes?q=best+classic+novels";
     $.get(uri, {maxResults: 40}, function(book_list){

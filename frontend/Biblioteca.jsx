@@ -10,6 +10,7 @@ var APIUtil = require('./util/APIUtil.js');
 var root = document.getElementById('reactContent');
 var cb = root.getAttribute("data-has-book");
 var History = require('react-router').History;
+var Navbar = require('./components/Navbar.jsx');
 
 var App = React.createClass({
   mixins:[History],
@@ -24,6 +25,7 @@ var App = React.createClass({
   render: function(){
     return (
       <div>
+        <Navbar /> 
 
         {this.props.children}
       </div>

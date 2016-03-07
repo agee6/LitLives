@@ -1,0 +1,81 @@
+/*#Navbar {
+  background-color: blue;
+  width: 100%;
+  height:30px;
+}
+#NavRight {
+  float: right;
+}
+#NavSearch {
+  float: left;
+
+}
+#NavDesk {
+  float: left;
+}
+#Username {
+  float: right;
+}*/
+
+
+.group:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+
+/* Basic resetting of defaults */
+
+
+
+.header {
+  background: #f00;
+  color: #fff;
+  border-bottom: 1px solid #ccc;
+}
+.nav-right {
+  display: block;
+  height: 50px;
+  /*margin: 10px 10px;*/
+  padding-left: 20px;
+  padding-right: 20px;
+  text-align: center;
+
+
+}
+
+.header-nav {
+  margin: 0 auto;
+  width: 900px;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  height: 50px;
+}
+
+.header-logo {
+  float: left;
+  border-right: 1px solid #ccc;
+  height: 50px;
+  width: 50px;
+  padding: 0px 10px;
+}
+
+.header-logo:hover {
+  background: #000;
+}
+
+.header-list {
+  float: right;
+  padding: 0px;
+  margin: 0px;
+}
+
+.header-list > li {
+  float: left;
+  border-left: 1px solid #ccc;
+}
+
+.header-list > li:hover {
+  background: #000;
+}

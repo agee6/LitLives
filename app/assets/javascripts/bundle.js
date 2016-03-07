@@ -56,6 +56,7 @@
 	var root = document.getElementById('reactContent');
 	var cb = root.getAttribute("data-has-book");
 	var History = __webpack_require__(159).History;
+	var Navbar = __webpack_require__(276);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -72,6 +73,7 @@
 	    return React.createElement(
 	      'div',
 	      null,
+	      React.createElement(Navbar, null),
 	      this.props.children
 	    );
 	  }
@@ -31021,6 +31023,7 @@
 	      ApiActions.ReceiveInitial(newBookList);
 	    });
 	  },
+	  logoutUser: function () {},
 	  addToInitial: function () {
 	    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+classic+novels";
 	    $.get(uri, { maxResults: 40 }, function (book_list) {
@@ -34044,17 +34047,6 @@
 	
 	var History = __webpack_require__(159).History;
 	
-	var customStyles = {
-	  content: {
-	    top: '50%',
-	    left: '50%',
-	    right: 'auto',
-	    bottom: 'auto',
-	    marginRight: '-50%',
-	    transform: 'translate(-50%, -50%)'
-	  }
-	};
-	
 	var BookShelf = React.createClass({
 	  displayName: 'BookShelf',
 	
@@ -34064,7 +34056,8 @@
 	    var reading = BookShelfStore.reading();
 	    var toRead = BookShelfStore.toRead();
 	    var allToRead = reading.concat(toRead);
-	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead };
+	    this.spinClass = 'fa fa-bars';
+	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: false };
 	  },
 	  componentDidMount: function () {
 	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
@@ -34078,21 +34071,91 @@
 	    var allToRead = reading.concat(toRead);
 	    this.setState({ readBooks: BookShelfStore.read(), toReadBooks: allToRead });
 	  },
-	  click: function (event) {
+	  onAddClick: function (event) {
 	    event.preventDefault();
 	    this.history.push({ pathname: "/" });
+	  },
+	  booksClick: function (event) {
+	    event.preventDefault();
+	    if (this.state.shelfVisible) {
+	      this.spinClass = 'fa fa-bars';
+	      $('.menu-trigger i').transition({
+	        rotate: '-180deg'
+	      });
+	      // this.menuClass='menu'
+	      this.setState({ shelfVisible: false });
+	    } else {
+	      this.spinClass = 'fa fa-times';
+	      $('.menu-trigger i').transition({
+	        rotate: '180deg'
+	      });
+	      // this.menuClass='menu open'
+	      this.setState({ shelfVisible: true });
+	    }
+	
+	    $('.menu').toggleClass('open', 200, 'easeOutQuad');
 	  },
 	  render: function () {
 	
 	    return React.createElement(
 	      'section',
 	      { className: 'bookshelf' },
-	      React.createElement(Shelf, { books: this.state.toReadBooks }),
-	      React.createElement(Shelf, { books: this.state.readBooks }),
 	      React.createElement(
-	        'button',
-	        { className: 'AddBooks', onClick: this.click },
-	        'Add to shelf'
+	        'div',
+	        { className: 'menu' },
+	        React.createElement(
+	          'ul',
+	          null,
+	          React.createElement(
+	            'li',
+	            null,
+	            React.createElement(
+	              'a',
+	              { href: '' },
+	              'Home'
+	            )
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            React.createElement(
+	              'a',
+	              { href: '' },
+	              'About'
+	            )
+	          ),
+	          React.createElement(
+	            'li',
+	            null,
+	            React.createElement(
+	              'a',
+	              { href: '' },
+	              'Click Bait'
+	            )
+	          )
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'site-wrapper' },
+	        React.createElement(
+	          'div',
+	          { className: 'header' },
+	          React.createElement(
+	            'div',
+	            { className: 'menu-trigger', onClick: this.booksClick },
+	            React.createElement(
+	              'a',
+	              { href: '/Desk' },
+	              ' ',
+	              React.createElement(
+	                'i',
+	                { className: this.spinClass },
+	                ' '
+	              )
+	            )
+	          )
+	        )
 	      )
 	    );
 	  }
@@ -34373,6 +34436,64 @@
 	});
 	
 	module.exports = Reviews;
+
+/***/ },
+/* 276 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var History = __webpack_require__(159).History;
+	
+	var Navbar = React.createClass({
+	  displayName: 'Navbar',
+	
+	  mixins: [History],
+	  searchClick: function () {
+	    this.history.push({ pathname: "/" });
+	  },
+	  deskClick: function () {
+	    this.history.push({ pathname: "/Desk" });
+	  },
+	  signOut: function () {},
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      { className: 'Navbar' },
+	      React.createElement(
+	        'nav',
+	        { className: 'header-nav group' },
+	        React.createElement(
+	          'div',
+	          { className: 'header-logo' },
+	          React.createElement('i', { className: 'fa fa-book fa-3x' })
+	        ),
+	        React.createElement(
+	          'ul',
+	          { className: 'header-list group' },
+	          React.createElement(
+	            'li',
+	            { className: 'nav-right', id: 'NavSearch', onClick: this.searchClick },
+	            'Search'
+	          ),
+	          React.createElement(
+	            'li',
+	            { className: 'nav-right', id: 'NavDesk', onClick: this.deskClick },
+	            'Desk'
+	          ),
+	          React.createElement(
+	            'li',
+	            { className: 'nav-right', id: 'NavUser', onClick: this.signOut },
+	            'Sign Out'
+	          )
+	        )
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = Navbar;
 
 /***/ }
 /******/ ]);

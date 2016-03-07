@@ -12,6 +12,7 @@ var Desk = React.createClass({
 
         <BookShelf />
       </section>
+    
     )
   }
 })

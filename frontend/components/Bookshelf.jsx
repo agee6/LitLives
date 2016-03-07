@@ -4,17 +4,6 @@ var Shelf = require('./BookShelf/Shelf.jsx');
 
 var History = require('react-router').History;
 
-var customStyles = {
-  content : {
-    top                   : '50%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
-  }
-};
-
 var BookShelf = React.createClass({
   mixins: [History],
 
@@ -22,7 +11,8 @@ var BookShelf = React.createClass({
     var reading = BookShelfStore.reading();
     var toRead = BookShelfStore.toRead();
     var allToRead = reading.concat(toRead);
-    return({readBooks: BookShelfStore.read(), toReadBooks: allToRead})
+    this.spinClass = 'fa fa-bars';
+    return({readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: false})
   },
   componentDidMount: function(){
     this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
@@ -36,18 +26,55 @@ var BookShelf = React.createClass({
     var allToRead = reading.concat(toRead);
     this.setState({readBooks: BookShelfStore.read(), toReadBooks: allToRead});
   },
-  click: function(event){
+  onAddClick: function(event){
     event.preventDefault();
     this.history.push({pathname: "/"})
+  },
+  booksClick: function(event){
+      event.preventDefault();
+      if(this.state.shelfVisible){
+        this.spinClass='fa fa-bars';
+        $('.menu-trigger i').transition({
+          rotate: '-180deg'
+        });
+        // this.menuClass='menu'
+        this.setState({shelfVisible: false});
+      }else{
+        this.spinClass='fa fa-times';
+        $('.menu-trigger i').transition({
+          rotate: '180deg'
+        });
+        // this.menuClass='menu open'
+        this.setState({shelfVisible: true});
+
+      }
+
+
+      $('.menu').toggleClass('open', 200, 'easeOutQuad');
+
   },
   render: function(){
 
     return(
       <section className="bookshelf">
 
-        <Shelf books={this.state.toReadBooks} />
-        <Shelf books={this.state.readBooks} />
-        <button className="AddBooks" onClick={this.click}>Add to shelf</button>
+
+          <div className="menu">
+            <ul>
+              <li><a href="">Home</a>
+              </li>
+              <li><a href="">About</a>
+              </li>
+              <li><a href="">Click Bait</a>
+              </li>
+            </ul>
+          </div>
+          <div className="site-wrapper">
+            <div className="header">
+              <div className="menu-trigger" onClick={this.booksClick}><a href="/Desk"> <i className={this.spinClass}> </i></a>
+              </div>
+            </div>
+          </div>
 
       </section>
     )

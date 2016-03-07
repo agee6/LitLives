@@ -1,7 +1,7 @@
 var AppDispatcher = require('../dispatcher/dispatcher');
 var BookSearchConstants = require('../constants/BookSearchConstants');
 var BookShelfConstants = require('../constants/BookShelfConstants');
-
+var NoteConstants = require('../constants/NoteConstants');
 
 var ApiActions = {
 
@@ -44,6 +44,12 @@ var ApiActions = {
     AppDispatcher.dispatch({
       actionType: BookSearchConstants.AddInitialReceived,
       results: newBookList
+    });
+  },
+  receiveNotes: function(notes){
+    AppDispatcher.dispatch({
+      actionType: NoteConstants.ReceiveNotes,
+      results: notes
     });
   }
 };

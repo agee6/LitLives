@@ -28,7 +28,7 @@ var BookShelf = React.createClass({
   },
   onAddClick: function(event){
     event.preventDefault();
-    this.history.push({pathname: "/"})
+    this.history.push({pathname: "/Search"})
   },
   booksClick: function(event){
       event.preventDefault();
@@ -66,7 +66,7 @@ var BookShelf = React.createClass({
           </div>
           <div className="site-wrapper">
             <div className="header">
-              <div className="menu-trigger" onClick={this.booksClick}><a href="/Desk"> <i className={this.spinClass}> </i></a>
+              <div className="menu-trigger" onClick={this.booksClick}><i className={this.spinClass}> </i>
               </div>
             </div>
           </div>

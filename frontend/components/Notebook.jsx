@@ -7,7 +7,8 @@ var Reviews = require('./NoteBook/Reviews.jsx');
 
 var Notebook = React.createClass({
   getInitialState: function(){
-    return({currentBook:BookSearchStore.currentBook()})
+    this.tabs = ["Book Page", "Notes"]
+    return({currentBook:BookSearchStore.currentBook(), tab: "Book Page"});
   },
   componentDidMount: function(){
     this.storeIndex = BookSearchStore.addListener(this._onChange);
@@ -20,19 +21,30 @@ var Notebook = React.createClass({
   _onChange: function(){
     this.setState({currentBook: BookSearchStore.currentBook()});
   },
+  changeTab: function(tab){
+    this.setState({tab:tab});
+  },
 
   render: function(){
     if(this.state.currentBook){
       var customStyle = {
         backgroundImage: 'url(' + this.state.currentBook.image + ')'
       };
+      var currentTab;
+      if(this.state.tab === "Book Page"){
+        currentTab = <BookPage currentBook={this.state.currentBook} />;
+      }else if(this.state.tab === "Notes"){
+        currentTab = <Note currentBook={this.state.currentBook} />;
+      }
+
       return(
 
         <section className="Notebook" id="page-flip">
           <div id="page-area">
-            <BookPage currentBook={this.state.currentBook} changeCurrentBook={this.changeCurrentBook}/>
+            {currentTab}
 
           </div>
+          <Tabs clickFunction={this.changeTab} tabOptions={this.tabs}/>
 
 
         </section>

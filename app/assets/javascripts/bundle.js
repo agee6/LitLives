@@ -56,7 +56,7 @@
 	var root = document.getElementById('reactContent');
 	var cb = root.getAttribute("data-has-book");
 	var History = __webpack_require__(159).History;
-	var Navbar = __webpack_require__(276);
+	var Navbar = __webpack_require__(277);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -80,8 +80,8 @@
 	});
 	var routes = React.createElement(
 	  Route,
-	  { path: '/Search', component: App },
-	  React.createElement(IndexRoute, { component: Search }),
+	  { path: '/', component: App },
+	  React.createElement(Route, { path: '/Search', component: Search }),
 	  React.createElement(Route, { path: '/Desk', component: Desk })
 	);
 	
@@ -31098,6 +31098,16 @@
 	    $.get('/api/books', {}, function (books) {
 	      ApiActions.receiveUserBooks(books);
 	    });
+	  },
+	  createNote: function (noteHash) {
+	    $.post('/api/notes', { notes: noteHash }, function (payload) {
+	      console.log(payload);
+	    });
+	  },
+	  bookNotes: function (book_id) {
+	    $.get('api/notes', { book_id: book_id }, function (notes) {
+	      ApiActions.receiveNotes(notes);
+	    });
 	  }
 	
 	};
@@ -31111,6 +31121,7 @@
 	var AppDispatcher = __webpack_require__(228);
 	var BookSearchConstants = __webpack_require__(227);
 	var BookShelfConstants = __webpack_require__(233);
+	var NoteConstants = __webpack_require__(279);
 	
 	var ApiActions = {
 	
@@ -31151,6 +31162,12 @@
 	    AppDispatcher.dispatch({
 	      actionType: BookSearchConstants.AddInitialReceived,
 	      results: newBookList
+	    });
+	  },
+	  receiveNotes: function (notes) {
+	    AppDispatcher.dispatch({
+	      actionType: NoteConstants.ReceiveNotes,
+	      results: notes
 	    });
 	  }
 	};
@@ -33971,7 +33988,7 @@
 
 	var React = __webpack_require__(1);
 	var Notebook = __webpack_require__(267);
-	var BookShelf = __webpack_require__(268);
+	var BookShelf = __webpack_require__(273);
 	
 	var Desk = React.createClass({
 	  displayName: 'Desk',
@@ -33994,17 +34011,18 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var BookPage = __webpack_require__(272);
+	var BookPage = __webpack_require__(268);
 	var BookSearchStore = __webpack_require__(208);
-	var Tabs = __webpack_require__(273);
-	var Note = __webpack_require__(274);
-	var Reviews = __webpack_require__(275);
+	var Tabs = __webpack_require__(269);
+	var Note = __webpack_require__(271);
+	var Reviews = __webpack_require__(272);
 	
 	var Notebook = React.createClass({
 	  displayName: 'Notebook',
 	
 	  getInitialState: function () {
-	    return { currentBook: BookSearchStore.currentBook() };
+	    this.tabs = ["Book Page", "Notes"];
+	    return { currentBook: BookSearchStore.currentBook(), tab: "Book Page" };
 	  },
 	  componentDidMount: function () {
 	    this.storeIndex = BookSearchStore.addListener(this._onChange);
@@ -34015,20 +34033,31 @@
 	  _onChange: function () {
 	    this.setState({ currentBook: BookSearchStore.currentBook() });
 	  },
+	  changeTab: function (tab) {
+	    this.setState({ tab: tab });
+	  },
 	
 	  render: function () {
 	    if (this.state.currentBook) {
 	      var customStyle = {
 	        backgroundImage: 'url(' + this.state.currentBook.image + ')'
 	      };
+	      var currentTab;
+	      if (this.state.tab === "Book Page") {
+	        currentTab = React.createElement(BookPage, { currentBook: this.state.currentBook });
+	      } else if (this.state.tab === "Notes") {
+	        currentTab = React.createElement(Note, { currentBook: this.state.currentBook });
+	      }
+	
 	      return React.createElement(
 	        'section',
 	        { className: 'Notebook', id: 'page-flip' },
 	        React.createElement(
 	          'div',
 	          { id: 'page-area' },
-	          React.createElement(BookPage, { currentBook: this.state.currentBook, changeCurrentBook: this.changeCurrentBook })
-	        )
+	          currentTab
+	        ),
+	        React.createElement(Tabs, { clickFunction: this.changeTab, tabOptions: this.tabs })
 	      );
 	    } else {
 	      return React.createElement(
@@ -34045,232 +34074,6 @@
 
 /***/ },
 /* 268 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var BookShelfStore = __webpack_require__(269);
-	var Shelf = __webpack_require__(270);
-	
-	var History = __webpack_require__(159).History;
-	
-	var BookShelf = React.createClass({
-	  displayName: 'BookShelf',
-	
-	  mixins: [History],
-	
-	  getInitialState: function () {
-	    var reading = BookShelfStore.reading();
-	    var toRead = BookShelfStore.toRead();
-	    var allToRead = reading.concat(toRead);
-	    this.spinClass = 'fa fa-bars';
-	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: false };
-	  },
-	  componentDidMount: function () {
-	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function () {
-	    this.bookShelfIndex.remove();
-	  },
-	  _onChange: function () {
-	    var reading = BookShelfStore.reading();
-	    var toRead = BookShelfStore.toRead();
-	    var allToRead = reading.concat(toRead);
-	    this.setState({ readBooks: BookShelfStore.read(), toReadBooks: allToRead });
-	  },
-	  onAddClick: function (event) {
-	    event.preventDefault();
-	    this.history.push({ pathname: "/" });
-	  },
-	  booksClick: function (event) {
-	    event.preventDefault();
-	    if (this.state.shelfVisible) {
-	      this.spinClass = 'fa fa-bars';
-	
-	      // this.menuClass='menu'
-	      this.setState({ shelfVisible: false });
-	    } else {
-	      this.spinClass = 'fa fa-times';
-	
-	      // this.menuClass='menu open'
-	      this.setState({ shelfVisible: true });
-	    }
-	
-	    $('.menu').toggleClass('open', 200, 'easeOutQuad');
-	  },
-	  render: function () {
-	
-	    return React.createElement(
-	      'section',
-	      { className: 'bookshelf' },
-	      React.createElement(
-	        'div',
-	        { className: 'menu' },
-	        React.createElement(Shelf, { books: this.state.toReadBooks }),
-	        React.createElement(Shelf, { books: this.state.readBooks }),
-	        React.createElement(
-	          'button',
-	          { className: 'shelf-button', onClick: this.onAddClick },
-	          'Add to Shelf'
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'site-wrapper' },
-	        React.createElement(
-	          'div',
-	          { className: 'header' },
-	          React.createElement(
-	            'div',
-	            { className: 'menu-trigger', onClick: this.booksClick },
-	            React.createElement(
-	              'a',
-	              { href: '/Desk' },
-	              ' ',
-	              React.createElement(
-	                'i',
-	                { className: this.spinClass },
-	                ' '
-	              )
-	            )
-	          )
-	        )
-	      )
-	    );
-	  }
-	});
-	module.exports = BookShelf;
-
-/***/ },
-/* 269 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Store = __webpack_require__(209).Store;
-	var _books = { read: [], toRead: [], reading: [] };
-	var BookShelfConstants = __webpack_require__(233);
-	var AppDispatcher = __webpack_require__(228);
-	var BookShelfStore = new Store(AppDispatcher);
-	
-	var resetBooks = function (results) {
-	  _books = {};
-	  _books = results;
-	};
-	var addBook = function (book) {
-	  if (book.read === "read") {
-	    _books.read.push(book);
-	  } else if (book.read === "toRead") {
-	    _books.toRead.push(book);
-	  } else {
-	    _books.reading.push(book);
-	  }
-	};
-	
-	BookShelfStore.all = function () {
-	
-	  return _books;
-	};
-	BookShelfStore.empty = function () {
-	  _books = { read: [], toRead: [], reading: [] };
-	};
-	BookShelfStore.read = function () {
-	
-	  return _books.read;
-	};
-	BookShelfStore.toRead = function () {
-	
-	  return _books.toRead;
-	};
-	BookShelfStore.reading = function () {
-	
-	  return _books.reading;
-	};
-	
-	BookShelfStore.__onDispatch = function (payload) {
-	
-	  switch (payload.actionType) {
-	    case BookShelfConstants.ReceiveUserBooks:
-	
-	      var result = resetBooks(payload.books);
-	      BookShelfStore.__emitChange();
-	      break;
-	    case BookShelfConstants.ReceiveAddedBook:
-	      var added = addBook(payload.book);
-	      BookShelfStore.__emitChange();
-	      break;
-	  }
-	};
-	
-	window.BookShelfStore = BookShelfStore;
-	
-	module.exports = BookShelfStore;
-
-/***/ },
-/* 270 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var ShelfItem = __webpack_require__(271);
-	
-	var Shelf = React.createClass({
-	  displayName: 'Shelf',
-	
-	
-	  render: function () {
-	    var theshelf = [];
-	    var theid;
-	    var theshelf = this.props.books.map(function (book, index) {
-	      if (index % 2 === 0) {
-	        theid = "book1";
-	      } else {
-	        theid = "book2";
-	      }
-	      return React.createElement(ShelfItem, { theid: theid, key: index, bookTitle: book.title, book: book });
-	    }, this);
-	    return React.createElement(
-	      'section',
-	      { className: 'BookShelf', id: 'Shelf' },
-	      React.createElement(
-	        'ul',
-	        null,
-	        theshelf
-	      )
-	    );
-	  }
-	
-	});
-	
-	module.exports = Shelf;
-
-/***/ },
-/* 271 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(208);
-	var ApiActions = __webpack_require__(232);
-	var APIUtil = __webpack_require__(231);
-	
-	var ShelfItem = React.createClass({
-	  displayName: 'ShelfItem',
-	
-	  onClick: function (event) {
-	    event.preventDefault();
-	
-	    APIUtil.updateUser({ current_book: this.props.book.id });
-	    ApiActions.updateCurrentBook(this.props.book);
-	  },
-	  render: function () {
-	    return React.createElement(
-	      'li',
-	      { className: 'ShelfItem hvr-grow', id: this.props.theid, onClick: this.onClick },
-	      this.props.bookTitle
-	    );
-	  }
-	});
-	
-	module.exports = ShelfItem;
-
-/***/ },
-/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -34342,10 +34145,11 @@
 	module.exports = BookPage;
 
 /***/ },
-/* 273 */
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var Tab = __webpack_require__(270);
 	
 	var Tabs = React.createClass({
 	  displayName: 'Tabs',
@@ -34355,7 +34159,12 @@
 	    return React.createElement(
 	      'div',
 	      null,
-	      'Here is where I will put all the tabs'
+	      React.createElement(
+	        'ul',
+	        { className: 'tabsList' },
+	        React.createElement(Tab, { clickFunc: this.props.clickFunction, tabName: this.props.tabOptions[0] }),
+	        React.createElement(Tab, { clickFunc: this.props.clickFunction, tabName: this.props.tabOptions[1] })
+	      )
 	    );
 	  }
 	
@@ -34364,32 +34173,136 @@
 	module.exports = Tabs;
 
 /***/ },
-/* 274 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
 	
-	var Note = React.createClass({
-	  displayName: "Note",
+	var Tab = React.createClass({
+	  displayName: "Tab",
 	
+	  tabClick: function (event) {
+	    event.preventDefault();
+	    this.props.clickFunc(this.props.tabName);
+	  },
 	
 	  render: function () {
 	    return React.createElement(
-	      "div",
-	      { className: "NoteArea" },
+	      "li",
+	      { className: "tab", onClick: this.tabClick },
+	      this.props.tabName
+	    );
+	  }
+	
+	});
+	
+	module.exports = Tab;
+
+/***/ },
+/* 271 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var LinkedStateMixin = __webpack_require__(261);
+	var RadioGroup = __webpack_require__(238);
+	var APIUtil = __webpack_require__(231);
+	var NoteStore = __webpack_require__(278);
+	
+	var Note = React.createClass({
+	  displayName: 'Note',
+	
+	  mixins: [LinkedStateMixin],
+	  getInitialState: function () {
+	    return { noteText: "", pageNumber: null, selectedValue: true, allNotes: NoteStore.all() };
+	  },
+	  saveNote: function (event) {
+	    event.preventDefault();
+	    debugger;
+	    var pn = parseInt(this.state.pageNumber);
+	    var noteHash = { body: this.state.noteText, page: pn, public: this.state.selectedValue, book_id: this.props.currentBook.id };
+	    APIUtil.createNote(noteHash);
+	  },
+	  handleChange: function (value) {
+	    this.setState({ selectedValue: value });
+	  },
+	  componentDidMount: function () {
+	    this.sI = NoteStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function () {
+	    this.sI.remove();
+	  },
+	  _onChange: function () {
+	    this.setState({ allNotes: NoteStore.all() });
+	  },
+	
+	  render: function () {
+	    var noteDisplay = this.state.allNotes.map(function (note) {
+	      return React.createElement(
+	        'p',
+	        null,
+	        note.body
+	      );
+	    });
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'NoteArea' },
+	      React.createElement('br', null),
 	      React.createElement(
-	        "form",
-	        { action: "demo_form.asp", id: "usrform" },
-	        "Name: ",
-	        React.createElement("input", { type: "text", name: "usrname" }),
-	        React.createElement("input", { type: "submit" })
+	        'h3',
+	        { className: 'NoteBookTitle' },
+	        'Note on'
 	      ),
-	      React.createElement("br", null),
 	      React.createElement(
-	        "textarea",
-	        { rows: "4", cols: "50", name: "comment", form: "usrform" },
-	        "Enter text here..."
-	      )
+	        'h3',
+	        { className: 'NoteBookTitle Title' },
+	        ' ',
+	        this.props.currentBook.title
+	      ),
+	      React.createElement(
+	        'form',
+	        { className: 'NoteForm' },
+	        React.createElement('textarea', { className: 'NoteInput', rows: '20', cols: '60', name: 'comment',
+	          placeholder: 'Enter note here...', valueLink: this.linkState('noteText') }),
+	        React.createElement('br', null),
+	        React.createElement(
+	          'label',
+	          { className: 'PageInputLabel' },
+	          'associated page (optional):'
+	        ),
+	        React.createElement('input', { className: 'PageInputs', valueLink: this.linkState('pageNumber') }),
+	        React.createElement('br', null),
+	        React.createElement(
+	          RadioGroup,
+	          {
+	            name: 'fruit',
+	            selectedValue: this.state.selectedValue,
+	            onChange: this.handleChange },
+	          Radio => React.createElement(
+	            'div',
+	            null,
+	            React.createElement(
+	              'label',
+	              null,
+	              React.createElement(Radio, { value: true }),
+	              'Public'
+	            ),
+	            React.createElement(
+	              'label',
+	              null,
+	              React.createElement(Radio, { value: false }),
+	              'Private'
+	            )
+	          )
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'NoteSubmitButton', onClick: this.saveNote },
+	          'Save!'
+	        )
+	      ),
+	      noteDisplay
 	    );
 	  }
 	
@@ -34398,7 +34311,7 @@
 	module.exports = Note;
 
 /***/ },
-/* 275 */
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -34416,7 +34329,228 @@
 	module.exports = Reviews;
 
 /***/ },
+/* 273 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var BookShelfStore = __webpack_require__(274);
+	var Shelf = __webpack_require__(275);
+	
+	var History = __webpack_require__(159).History;
+	
+	var BookShelf = React.createClass({
+	  displayName: 'BookShelf',
+	
+	  mixins: [History],
+	
+	  getInitialState: function () {
+	    var reading = BookShelfStore.reading();
+	    var toRead = BookShelfStore.toRead();
+	    var allToRead = reading.concat(toRead);
+	    this.spinClass = 'fa fa-bars';
+	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: false };
+	  },
+	  componentDidMount: function () {
+	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function () {
+	    this.bookShelfIndex.remove();
+	  },
+	  _onChange: function () {
+	    var reading = BookShelfStore.reading();
+	    var toRead = BookShelfStore.toRead();
+	    var allToRead = reading.concat(toRead);
+	    this.setState({ readBooks: BookShelfStore.read(), toReadBooks: allToRead });
+	  },
+	  onAddClick: function (event) {
+	    event.preventDefault();
+	    this.history.push({ pathname: "/Search" });
+	  },
+	  booksClick: function (event) {
+	    event.preventDefault();
+	    if (this.state.shelfVisible) {
+	      this.spinClass = 'fa fa-bars';
+	
+	      // this.menuClass='menu'
+	      this.setState({ shelfVisible: false });
+	    } else {
+	      this.spinClass = 'fa fa-times';
+	
+	      // this.menuClass='menu open'
+	      this.setState({ shelfVisible: true });
+	    }
+	
+	    $('.menu').toggleClass('open', 200, 'easeOutQuad');
+	  },
+	  render: function () {
+	
+	    return React.createElement(
+	      'section',
+	      { className: 'bookshelf' },
+	      React.createElement(
+	        'div',
+	        { className: 'menu' },
+	        React.createElement(Shelf, { books: this.state.toReadBooks }),
+	        React.createElement(Shelf, { books: this.state.readBooks }),
+	        React.createElement(
+	          'button',
+	          { className: 'shelf-button', onClick: this.onAddClick },
+	          'Add to Shelf'
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'site-wrapper' },
+	        React.createElement(
+	          'div',
+	          { className: 'header' },
+	          React.createElement(
+	            'div',
+	            { className: 'menu-trigger', onClick: this.booksClick },
+	            React.createElement(
+	              'i',
+	              { className: this.spinClass },
+	              ' '
+	            )
+	          )
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = BookShelf;
+
+/***/ },
+/* 274 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(209).Store;
+	var _books = { read: [], toRead: [], reading: [] };
+	var BookShelfConstants = __webpack_require__(233);
+	var AppDispatcher = __webpack_require__(228);
+	var BookShelfStore = new Store(AppDispatcher);
+	
+	var resetBooks = function (results) {
+	  _books = {};
+	  _books = results;
+	};
+	var addBook = function (book) {
+	  if (book.read === "read") {
+	    _books.read.push(book);
+	  } else if (book.read === "toRead") {
+	    _books.toRead.push(book);
+	  } else {
+	    _books.reading.push(book);
+	  }
+	};
+	
+	BookShelfStore.all = function () {
+	
+	  return _books;
+	};
+	BookShelfStore.empty = function () {
+	  _books = { read: [], toRead: [], reading: [] };
+	};
+	BookShelfStore.read = function () {
+	
+	  return _books.read;
+	};
+	BookShelfStore.toRead = function () {
+	
+	  return _books.toRead;
+	};
+	BookShelfStore.reading = function () {
+	
+	  return _books.reading;
+	};
+	
+	BookShelfStore.__onDispatch = function (payload) {
+	
+	  switch (payload.actionType) {
+	    case BookShelfConstants.ReceiveUserBooks:
+	
+	      var result = resetBooks(payload.books);
+	      BookShelfStore.__emitChange();
+	      break;
+	    case BookShelfConstants.ReceiveAddedBook:
+	      var added = addBook(payload.book);
+	      BookShelfStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	window.BookShelfStore = BookShelfStore;
+	
+	module.exports = BookShelfStore;
+
+/***/ },
+/* 275 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ShelfItem = __webpack_require__(276);
+	
+	var Shelf = React.createClass({
+	  displayName: 'Shelf',
+	
+	
+	  render: function () {
+	    var theshelf = [];
+	    var theid;
+	    var theshelf = this.props.books.map(function (book, index) {
+	      if (index % 2 === 0) {
+	        theid = "book1";
+	      } else {
+	        theid = "book2";
+	      }
+	      return React.createElement(ShelfItem, { theid: theid, key: index, bookTitle: book.title, book: book });
+	    }, this);
+	    return React.createElement(
+	      'section',
+	      { className: 'BookShelf', id: 'Shelf' },
+	      React.createElement(
+	        'ul',
+	        null,
+	        theshelf
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = Shelf;
+
+/***/ },
 /* 276 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(208);
+	var ApiActions = __webpack_require__(232);
+	var APIUtil = __webpack_require__(231);
+	
+	var ShelfItem = React.createClass({
+	  displayName: 'ShelfItem',
+	
+	  onClick: function (event) {
+	    event.preventDefault();
+	
+	    APIUtil.updateUser({ current_book: this.props.book.id });
+	    ApiActions.updateCurrentBook(this.props.book);
+	  },
+	  render: function () {
+	    return React.createElement(
+	      'li',
+	      { className: 'ShelfItem hvr-grow', id: this.props.theid, onClick: this.onClick },
+	      this.props.bookTitle
+	    );
+	  }
+	});
+	
+	module.exports = ShelfItem;
+
+/***/ },
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -34428,7 +34562,7 @@
 	
 	  mixins: [History],
 	  searchClick: function () {
-	    this.history.push({ pathname: "/" });
+	    this.history.push({ pathname: "/Search" });
 	  },
 	  deskClick: function () {
 	    this.history.push({ pathname: "/Desk" });
@@ -34476,6 +34610,53 @@
 	});
 	
 	module.exports = Navbar;
+
+/***/ },
+/* 278 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(209).Store;
+	var _notes = [];
+	var NoteConstants = __webpack_require__(279);
+	var AppDispatcher = __webpack_require__(228);
+	var NoteStore = new Store(AppDispatcher);
+	var APIUtil = __webpack_require__(231);
+	
+	var resetNotes = function (notes) {
+	  _notes = [];
+	  _notes = notes.slice(0);
+	};
+	
+	NoteStore.all = function () {
+	  return _notes.slice(0);
+	};
+	NoteStore.empty = function () {
+	  _notes = [];
+	};
+	
+	NoteStore.__onDispatch = function (payload) {
+	
+	  switch (payload.actionType) {
+	    case NoteConstants.ReceiveNotes:
+	      var result = resetNotes(payload.results);
+	      NoteStore.__emitChange();
+	      break;
+	
+	  }
+	};
+	
+	module.exports = NoteStore;
+
+/***/ },
+/* 279 */
+/***/ function(module, exports) {
+
+	var NoteConstants = {
+	  ReceiveNotes: "NOTES_RECEIVED"
+	
+	};
+	
+	module.exports = NoteConstants;
 
 /***/ }
 /******/ ]);

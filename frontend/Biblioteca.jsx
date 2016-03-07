@@ -33,8 +33,8 @@ var App = React.createClass({
   }
 });
 var routes = (
-  <Route path="/Search" component={App}>
-    <IndexRoute component={Search}/>
+  <Route path="/" component={App}>
+    <Route path="/Search" component={Search}/>
     <Route path="/Desk" component={Desk} />
   </Route>
 );

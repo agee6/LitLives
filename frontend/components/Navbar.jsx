@@ -5,7 +5,7 @@ var APIUtil = require('../util/APIUtil.js');
 var Navbar = React.createClass({
   mixins: [History],
   searchClick:function(){
-    this.history.push({pathname: "/"});
+    this.history.push({pathname: "/Search"});
   },
   deskClick:function(){
     this.history.push({pathname: "/Desk"});

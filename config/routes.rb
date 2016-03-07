@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json} do
     resources :books, only: [:create, :destroy, :show, :index, :update, :new]
     resources :reviews, only: [:create, :destroy, :show, :index, :update, :new]
-    resources :comments, only: [:create, :destroy, :show, :index, :update, :new]
+    resources :notes, only: [:create, :destroy, :show, :index, :update, :new]
     resource :user, only: [ :destroy, :show, :update]
 
 

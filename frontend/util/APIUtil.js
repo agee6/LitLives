@@ -99,6 +99,16 @@ var APIUtil = {
       ApiActions.receiveUserBooks(books);
     });
   },
+  createNote: function(noteHash){
+    $.post('/api/notes', {notes: noteHash}, function(payload){
+      console.log(payload);
+    });
+  },
+  bookNotes: function(book_id){
+    $.get('api/notes', {book_id: book_id}, function(notes){
+      ApiActions.receiveNotes(notes);
+    }); 
+  }
 
 };
 

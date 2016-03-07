@@ -31,20 +31,7 @@ button:hover{
 ul {
   list-style-type: none;
 }
-.headerButton {
-  float: right;
-  height: 30px;
-  width: 70px;
-  background-color: blue;
-  border-color: #e4cdb4;
-  position: absolute;
-  top: 10px;
-  right: 40px;
-  margin-left: 100px;
-  margin-right: 100px;
 
-
-}
 .searchGuess:hover {
   cursor: pointer;
   background-color: #e4cdb4;

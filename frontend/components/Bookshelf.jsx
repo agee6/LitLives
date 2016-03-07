@@ -34,16 +34,12 @@ var BookShelf = React.createClass({
       event.preventDefault();
       if(this.state.shelfVisible){
         this.spinClass='fa fa-bars';
-        $('.menu-trigger i').transition({
-          rotate: '-180deg'
-        });
+
         // this.menuClass='menu'
         this.setState({shelfVisible: false});
       }else{
         this.spinClass='fa fa-times';
-        $('.menu-trigger i').transition({
-          rotate: '180deg'
-        });
+
         // this.menuClass='menu open'
         this.setState({shelfVisible: true});
 
@@ -60,14 +56,13 @@ var BookShelf = React.createClass({
 
 
           <div className="menu">
-            <ul>
-              <li><a href="">Home</a>
-              </li>
-              <li><a href="">About</a>
-              </li>
-              <li><a href="">Click Bait</a>
-              </li>
-            </ul>
+
+
+                <Shelf books={this.state.toReadBooks}/>
+
+                <Shelf books={this.state.readBooks}/>
+
+                <button className="shelf-button" onClick={this.onAddClick}>Add to Shelf</button>
           </div>
           <div className="site-wrapper">
             <div className="header">

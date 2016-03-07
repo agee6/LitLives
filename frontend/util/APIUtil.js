@@ -5,7 +5,7 @@ var APIUtil = {
   fetchBookResults: function(query){
     var uri = "https://www.googleapis.com/books/v1/volumes?q="+query ;
     $.get(uri, {}, function(book_list){
-      console.log(book_list)
+      console.log(book_list);
       ApiActions.ReceiveActions(book_list);
     });
 
@@ -23,7 +23,12 @@ var APIUtil = {
   },
   logoutUser: function(){
 
-  }, 
+    $.ajax({
+      url: '/session',
+      type: 'DELETE'
+    });
+
+  },
   addToInitial: function(){
     var uri = "https://www.googleapis.com/books/v1/volumes?q=best+classic+novels";
     $.get(uri, {maxResults: 40}, function(book_list){

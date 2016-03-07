@@ -27,7 +27,7 @@
 #book1 {
   background-image: url('book1Side.jpg');
   background-size: cover;
-  margin: 0px, 20px, 0px, 20px;
+  /*margin: 0px, 20px, 0px, 20px;*/
   height: 20px;
 }
 #book2 {
@@ -40,58 +40,61 @@
 .ShelfItem{
   width: 200px;
   display:inline-block;
+  /*transform: rotate(90deg);*/
+  float: left;
 }
 .ShelfItem:hover {
   cursor: pointer;
 }
 #Shelf {
   float: right;
-  width: 200px;
-  margin: 20px;
+  width: 100%;
+  /*margin: 20px;*/
+  overflow: scroll;
+  border-top: 4px solid #261a0d;
+  border-bottom: 4px solid #261a0d;
 
 }
-a {
-  color: orange;
+.shelfButton{
+  position: relative;
 }
 
-.menu a:hover {
-  opacity: 0.5;
-}
+
 
 .menu {
   height: 100%;
-  width: 10%;
-  background: orange;
+  width: 300px;
+  background: transparent;
+  border-color: #261a0d;
+  border: 4px solid;
   position: absolute;
   top: 0;
   right: -10%;
+  display: none;
   text-align: center;
+  margin: 10px;
 }
 
 .open {
   right: 0;
+  display: block;
 }
 
 .menu ul {
   list-style-type: none;
-  margin: 55px 0;
+  /*margin: 55px 0;*/
   padding: 0;
 }
 
 .menu li {
-  padding: 5px 20px;
-  margin: 10px 0;
-}
-
-.menu li a {
-  color: #fff;
-  text-decoration: none;
+  /*padding: 5px 20px;
+  margin: 10px 0;*/
 }
 
 .menu-trigger {
   position: absolute;
   top: 10%;
-  right: 10%;
+  right: 0px;
 
 }
 
@@ -102,7 +105,7 @@ a {
 
 .header {
   position: relative;
-  margin: 50px 0;
+  /*margin: 50px 0;*/
   text-align: center;
 }
 
@@ -125,6 +128,6 @@ a {
 .menu-trigger i {
 
   font-size: 3em;
-  color: blue;
+  color: #261a0d;
 
 }

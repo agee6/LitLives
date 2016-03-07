@@ -25,7 +25,7 @@ var App = React.createClass({
   render: function(){
     return (
       <div>
-        <Navbar /> 
+        <Navbar />
 
         {this.props.children}
       </div>
@@ -33,7 +33,7 @@ var App = React.createClass({
   }
 });
 var routes = (
-  <Route path="/" component={App}>
+  <Route path="/Search" component={App}>
     <IndexRoute component={Search}/>
     <Route path="/Desk" component={Desk} />
   </Route>

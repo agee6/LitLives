@@ -73,7 +73,7 @@
   background: #E0C8AE;
   cursor: pointer;
   color:#261a0d;
-  transition: 0.5s; 
+  transition: 1s;
 }
 
 .header-list {
@@ -86,6 +86,26 @@
   float: left;
   border-left: 1px solid #ccc;
 
+}
+.headerButton {
+  float: right;
+  height: 45px;
+  width: 90px;
+  color:#E0C8AE;
+  background-color: #261a0d;
+  border-color: #261a0d;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  /*margin-left: 100px;
+  margin-right: 100px;*/
+
+
+}
+.headerButton:hover {
+  background-color: #E0C8AE;
+  color: #261a0d;
+  transition: 1s; 
 }
 
 .header-list > li:hover {

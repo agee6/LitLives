@@ -80,7 +80,7 @@
 	});
 	var routes = React.createElement(
 	  Route,
-	  { path: '/', component: App },
+	  { path: '/Search', component: App },
 	  React.createElement(IndexRoute, { component: Search }),
 	  React.createElement(Route, { path: '/Desk', component: Desk })
 	);
@@ -31023,7 +31023,13 @@
 	      ApiActions.ReceiveInitial(newBookList);
 	    });
 	  },
-	  logoutUser: function () {},
+	  logoutUser: function () {
+	
+	    $.ajax({
+	      url: '/session',
+	      type: 'DELETE'
+	    });
+	  },
 	  addToInitial: function () {
 	    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+classic+novels";
 	    $.get(uri, { maxResults: 40 }, function (book_list) {
@@ -34079,16 +34085,12 @@
 	    event.preventDefault();
 	    if (this.state.shelfVisible) {
 	      this.spinClass = 'fa fa-bars';
-	      $('.menu-trigger i').transition({
-	        rotate: '-180deg'
-	      });
+	
 	      // this.menuClass='menu'
 	      this.setState({ shelfVisible: false });
 	    } else {
 	      this.spinClass = 'fa fa-times';
-	      $('.menu-trigger i').transition({
-	        rotate: '180deg'
-	      });
+	
 	      // this.menuClass='menu open'
 	      this.setState({ shelfVisible: true });
 	    }
@@ -34103,36 +34105,12 @@
 	      React.createElement(
 	        'div',
 	        { className: 'menu' },
+	        React.createElement(Shelf, { books: this.state.toReadBooks }),
+	        React.createElement(Shelf, { books: this.state.readBooks }),
 	        React.createElement(
-	          'ul',
-	          null,
-	          React.createElement(
-	            'li',
-	            null,
-	            React.createElement(
-	              'a',
-	              { href: '' },
-	              'Home'
-	            )
-	          ),
-	          React.createElement(
-	            'li',
-	            null,
-	            React.createElement(
-	              'a',
-	              { href: '' },
-	              'About'
-	            )
-	          ),
-	          React.createElement(
-	            'li',
-	            null,
-	            React.createElement(
-	              'a',
-	              { href: '' },
-	              'Click Bait'
-	            )
-	          )
+	          'button',
+	          { className: 'shelf-button', onClick: this.onAddClick },
+	          'Add to Shelf'
 	        )
 	      ),
 	      React.createElement(
@@ -34443,6 +34421,7 @@
 
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
+	var APIUtil = __webpack_require__(231);
 	
 	var Navbar = React.createClass({
 	  displayName: 'Navbar',
@@ -34454,7 +34433,10 @@
 	  deskClick: function () {
 	    this.history.push({ pathname: "/Desk" });
 	  },
-	  signOut: function () {},
+	  signOut: function () {
+	    debugger;
+	    APIUtil.logoutUser();
+	  },
 	
 	  render: function () {
 	    return React.createElement(
@@ -34483,7 +34465,7 @@
 	          ),
 	          React.createElement(
 	            'li',
-	            { className: 'nav-right', id: 'NavUser', onClick: this.signOut },
+	            { className: 'nav-right', id: 'NavUser' },
 	            'Sign Out'
 	          )
 	        )

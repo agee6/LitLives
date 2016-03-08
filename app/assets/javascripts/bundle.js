@@ -31108,6 +31108,16 @@
 	    $.get('api/notes', { book_id: book_id }, function (notes) {
 	      ApiActions.receiveNotes(notes);
 	    });
+	  },
+	  deleteNote: function (noteId) {
+	    var uri = '/api/notes/' + noteId;
+	    $.ajax({
+	      url: uri,
+	      type: 'DELETE',
+	      success: function (notes) {
+	        // Do something with the result
+	        ApiActions.receiveNotes(notes);
+	      } });
 	  }
 	
 	};
@@ -34139,11 +34149,6 @@
 	          "publisher: ",
 	          book.publishing
 	        )
-	      ),
-	      React.createElement(
-	        "button",
-	        { className: "BookPage", id: "BookFinishedButton", onClick: this.onClick },
-	        "Finished Reading!"
 	      )
 	    );
 	  }
@@ -34188,6 +34193,7 @@
 	var Tab = React.createClass({
 	  displayName: "Tab",
 	
+	
 	  tabClick: function (event) {
 	    event.preventDefault();
 	    this.props.clickFunc(this.props.tabName);
@@ -34196,7 +34202,7 @@
 	  render: function () {
 	    return React.createElement(
 	      "li",
-	      { className: "tab", onClick: this.tabClick },
+	      { className: "tab", id: this.props.tabName, onClick: this.tabClick },
 	      this.props.tabName
 	    );
 	  }
@@ -34214,13 +34220,34 @@
 	var RadioGroup = __webpack_require__(238);
 	var APIUtil = __webpack_require__(231);
 	var NoteStore = __webpack_require__(278);
+	var NoteItem = __webpack_require__(280);
+	var Modal = __webpack_require__(240);
+	var customStyles = {
+	  overlay: {
+	    position: 'fixed',
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+	    zIndex: 20
+	  },
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    marginRight: '-50%',
+	    transform: 'translate(-50%, -50%)'
+	  }
+	};
 	
 	var Note = React.createClass({
 	  displayName: 'Note',
 	
 	  mixins: [LinkedStateMixin],
 	  getInitialState: function () {
-	    return { noteText: "", pageNumber: null, selectedValue: true, allNotes: NoteStore.all(), chapter: null };
+	    return { noteText: "", pageNumber: null, selectedValue: true, allNotes: NoteStore.all(), chapter: null, modalIsOpen: false };
 	  },
 	  saveNote: function (event) {
 	    event.preventDefault();
@@ -34235,6 +34262,7 @@
 	    }
 	    var noteHash = { body: this.state.noteText, page: pn, public: this.state.selectedValue, chapter: chap, book_id: this.props.currentBook.id };
 	    APIUtil.createNote(noteHash);
+	    this.closeModal();
 	  },
 	  handleChange: function (value) {
 	    this.setState({ selectedValue: value });
@@ -34249,24 +34277,31 @@
 	  _onChange: function () {
 	    this.setState({ allNotes: NoteStore.all() });
 	  },
+	  openModal: function () {
+	    this.setState({ modalIsOpen: true });
+	  },
+	
+	  closeModal: function () {
+	    this.setState({ modalIsOpen: false });
+	  },
 	
 	  render: function () {
 	    var noteDisplay = this.state.allNotes.map(function (note) {
-	      return React.createElement(
-	        'p',
-	        null,
-	        note.body
-	      );
+	      return React.createElement(NoteItem, { note: note });
 	    });
 	
 	    return React.createElement(
 	      'div',
 	      { className: 'NoteArea' },
-	      React.createElement('br', null),
+	      React.createElement(
+	        'button',
+	        { className: 'AddNoteButton', onClick: this.openModal },
+	        'Add Note'
+	      ),
 	      React.createElement(
 	        'h3',
 	        { className: 'NoteBookTitle' },
-	        'Note on'
+	        'Notes on'
 	      ),
 	      React.createElement(
 	        'h3',
@@ -34274,56 +34309,68 @@
 	        ' ',
 	        this.props.currentBook.title
 	      ),
+	      noteDisplay,
 	      React.createElement(
-	        'form',
-	        { className: 'NoteForm' },
-	        React.createElement('textarea', { className: 'NoteInput', rows: '20', cols: '60', name: 'comment',
-	          placeholder: 'Enter note here...', valueLink: this.linkState('noteText') }),
-	        React.createElement('br', null),
+	        Modal,
+	        {
+	          isOpen: this.state.modalIsOpen,
+	          onRequestClose: this.closeModal,
+	          style: customStyles },
 	        React.createElement(
-	          'label',
-	          { className: 'PageInputLabel' },
-	          'associated page (optional):'
-	        ),
-	        React.createElement('input', { className: 'PageInputs', valueLink: this.linkState('pageNumber') }),
-	        React.createElement('br', null),
-	        React.createElement(
-	          'label',
-	          { className: 'ChapterInputLabel' },
-	          'associated chapter (optional):'
-	        ),
-	        React.createElement('input', { className: 'ChapterInputs', valueLink: this.linkState('chapter') }),
-	        React.createElement('br', null),
-	        React.createElement(
-	          RadioGroup,
-	          {
-	            name: 'fruit',
-	            selectedValue: this.state.selectedValue,
-	            onChange: this.handleChange },
-	          Radio => React.createElement(
-	            'div',
-	            null,
-	            React.createElement(
-	              'label',
+	          'form',
+	          { className: 'NoteForm' },
+	          React.createElement('textarea', { className: 'NoteInput', rows: '20', cols: '60', name: 'comment',
+	            placeholder: 'Enter note here...', valueLink: this.linkState('noteText') }),
+	          React.createElement('br', null),
+	          React.createElement(
+	            'label',
+	            { className: 'PageInputLabel' },
+	            'associated page (optional):'
+	          ),
+	          React.createElement('input', { className: 'PageInputs', valueLink: this.linkState('pageNumber') }),
+	          React.createElement('br', null),
+	          React.createElement(
+	            'label',
+	            { className: 'ChapterInputLabel' },
+	            'associated chapter (optional):'
+	          ),
+	          React.createElement('input', { className: 'ChapterInputs', valueLink: this.linkState('chapter') }),
+	          React.createElement('br', null),
+	          React.createElement(
+	            RadioGroup,
+	            {
+	              name: 'fruit',
+	              selectedValue: this.state.selectedValue,
+	              onChange: this.handleChange },
+	            Radio => React.createElement(
+	              'div',
 	              null,
-	              React.createElement(Radio, { value: true }),
-	              'Public'
-	            ),
-	            React.createElement(
-	              'label',
-	              null,
-	              React.createElement(Radio, { value: false }),
-	              'Private'
+	              React.createElement(
+	                'label',
+	                null,
+	                React.createElement(Radio, { value: true }),
+	                'Public'
+	              ),
+	              React.createElement(
+	                'label',
+	                null,
+	                React.createElement(Radio, { value: false }),
+	                'Private'
+	              )
 	            )
+	          ),
+	          React.createElement(
+	            'button',
+	            { className: 'NoteSubmitButton', onClick: this.saveNote },
+	            'Save!'
 	          )
 	        ),
 	        React.createElement(
 	          'button',
-	          { className: 'NoteSubmitButton', onClick: this.saveNote },
-	          'Save!'
+	          { onClick: this.closeModal },
+	          'close'
 	        )
-	      ),
-	      noteDisplay
+	      )
 	    );
 	  }
 	
@@ -34411,7 +34458,17 @@
 	      React.createElement(
 	        'div',
 	        { className: 'menu' },
+	        React.createElement(
+	          'label',
+	          { className: 'ShelfLabel' },
+	          'Books To Read'
+	        ),
 	        React.createElement(Shelf, { books: this.state.toReadBooks }),
+	        React.createElement(
+	          'label',
+	          { className: 'ShelfLabel' },
+	          'Books I Have Read'
+	        ),
 	        React.createElement(Shelf, { books: this.state.readBooks }),
 	        React.createElement(
 	          'button',
@@ -34558,6 +34615,7 @@
 	
 	    APIUtil.updateUser({ current_book: this.props.book.id });
 	    ApiActions.updateCurrentBook(this.props.book);
+	    APIUtil.fetchNotes(this.props.book.id);
 	  },
 	  render: function () {
 	    return React.createElement(
@@ -34691,6 +34749,56 @@
 	};
 	
 	module.exports = NoteConstants;
+
+/***/ },
+/* 280 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	var APIUtil = __webpack_require__(231);
+	
+	var NoteItem = React.createClass({
+	  displayName: 'NoteItem',
+	
+	
+	  deleteClick: function () {
+	    APIUtil.deleteNote(this.props.note.id);
+	  },
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      { className: 'Individual Note' },
+	      React.createElement(
+	        'h4',
+	        { className: 'NoteTitle' },
+	        this.props.note.title
+	      ),
+	      React.createElement(
+	        'p',
+	        { className: 'NoteBody' },
+	        this.props.note.body
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'NoteFooter' },
+	        'From:',
+	        this.props.note.chapter,
+	        ' and page:',
+	        this.props.note.page
+	      ),
+	      React.createElement(
+	        'button',
+	        { className: 'NoteDelete', onClick: this.deleteClick },
+	        'Delete Note!'
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = NoteItem;
 
 /***/ }
 /******/ ]);

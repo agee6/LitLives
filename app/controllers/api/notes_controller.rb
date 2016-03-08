@@ -32,9 +32,14 @@ class Api::NotesController < ApplicationController
 
   end
   def destroy
+    @note = Note.find_by_id(params[:id])
+    book_id = @note.book_id
+    @note.destroy
+    @notes = Note.where({user_id: current_user.id, book_id: book_id})
+    render json: @notes
 
   end
-  
+
 
   private
 

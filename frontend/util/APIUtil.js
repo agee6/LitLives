@@ -102,13 +102,23 @@ var APIUtil = {
   createNote: function(noteHash){
     $.post('/api/notes', {note: noteHash}, function(payload){
       ApiActions.addNote(payload);
-  
+
     });
   },
   fetchNotes: function(book_id){
     $.get('api/notes', {book_id: book_id}, function(notes){
       ApiActions.receiveNotes(notes);
     });
+  },
+  deleteNote: function(noteId){
+      var uri = '/api/notes/'+noteId;
+    $.ajax({
+      url: uri,
+      type: 'DELETE',
+      success: function(notes) {
+          // Do something with the result
+          ApiActions.receiveNotes(notes);
+    }});
   }
 
 };

@@ -23,7 +23,6 @@ var BookPage = React.createClass({
           <p>publisher: {book.publishing}</p>
 
         </footer>
-        <button className="BookPage" id="BookFinishedButton" onClick={this.onClick}>Finished Reading!</button>
 
       </section>
     )

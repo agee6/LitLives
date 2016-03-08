@@ -57,9 +57,9 @@ var BookShelf = React.createClass({
 
           <div className="menu">
 
-
+                <label className="ShelfLabel">Books To Read</label>
                 <Shelf books={this.state.toReadBooks}/>
-
+                <label className="ShelfLabel">Books I Have Read</label>
                 <Shelf books={this.state.readBooks}/>
 
                 <button className="shelf-button" onClick={this.onAddClick}>Add to Shelf</button>

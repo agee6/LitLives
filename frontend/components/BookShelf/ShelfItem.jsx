@@ -9,6 +9,7 @@ var ShelfItem = React.createClass({
 
     APIUtil.updateUser({current_book: this.props.book.id});
     ApiActions.updateCurrentBook(this.props.book);
+    APIUtil.fetchNotes(this.props.book.id);
 
   },
   render: function(){

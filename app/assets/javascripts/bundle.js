@@ -69,6 +69,8 @@
 	    if (cb !== "false") {
 	      APIUtil.getCurrentBook();
 	      this.history.push({ pathname: "/Desk" });
+	    } else {
+	      this.history.push({ pathname: "/Search" });
 	    }
 	  },
 	  render: function render() {

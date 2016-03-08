@@ -19,6 +19,8 @@ var App = React.createClass({
     if (cb !== "false"){
       APIUtil.getCurrentBook();
       this.history.push({pathname: "/Desk"});
+    }else {
+      this.history.push({pathname: "/Search"});
     }
 
   },

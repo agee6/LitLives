@@ -4,7 +4,7 @@ var Shelf = require('./BookShelf/Shelf.jsx');
 
 var History = require('react-router').History;
 
-var BookShelf = React.createClass({
+var BS = React.createClass({
   mixins: [History],
 
   getInitialState: function(){
@@ -12,7 +12,8 @@ var BookShelf = React.createClass({
     var toRead = BookShelfStore.toRead();
     var allToRead = reading.concat(toRead);
     this.spinClass = 'fa fa-bars';
-    return({readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: false})
+
+    return({readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: false});
   },
   componentDidMount: function(){
     this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
@@ -46,14 +47,13 @@ var BookShelf = React.createClass({
       }
 
 
-      $('.menu').toggleClass('open', 200, 'easeOutQuad');
+      // $('.menu').toggleClass('open', 200, 'easeOutQuad');
 
   },
   render: function(){
 
-    return(
+    return (
       <section className="bookshelf">
-
 
           <div className="menu">
 
@@ -71,8 +71,9 @@ var BookShelf = React.createClass({
             </div>
           </div>
 
+
       </section>
-    )
+    );
   }
 })
-module.exports = BookShelf;
+module.exports = BS;

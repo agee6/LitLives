@@ -31376,7 +31376,9 @@
 	        return React.createElement(
 	          'li',
 	          { key: index, onClick: that.clickOption, className: 'searchGuess' },
-	          result.volumeInfo.title
+	          ' ',
+	          result.volumeInfo.title,
+	          ' '
 	        );
 	      });
 	    } else {
@@ -34054,7 +34056,7 @@
 	
 	var React = __webpack_require__(1);
 	var Notebook = __webpack_require__(268);
-	var BookShelf = __webpack_require__(276);
+	var BS = __webpack_require__(281);
 	
 	var Desk = React.createClass({
 	  displayName: 'Desk',
@@ -34066,7 +34068,7 @@
 	      'section',
 	      { className: 'Desk', id: 'Desk' },
 	      React.createElement(Notebook, null),
-	      React.createElement(BookShelf, null)
+	      React.createElement(BS, null)
 	    );
 	  }
 	});
@@ -34563,110 +34565,7 @@
 	module.exports = Reviews;
 
 /***/ },
-/* 276 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookShelfStore = __webpack_require__(277);
-	var Shelf = __webpack_require__(278);
-	
-	var History = __webpack_require__(159).History;
-	
-	var BookShelf = React.createClass({
-	  displayName: 'BookShelf',
-	
-	  mixins: [History],
-	
-	  getInitialState: function getInitialState() {
-	    var reading = BookShelfStore.reading();
-	    var toRead = BookShelfStore.toRead();
-	    var allToRead = reading.concat(toRead);
-	    this.spinClass = 'fa fa-bars';
-	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: false };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.bookShelfIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    var reading = BookShelfStore.reading();
-	    var toRead = BookShelfStore.toRead();
-	    var allToRead = reading.concat(toRead);
-	    this.setState({ readBooks: BookShelfStore.read(), toReadBooks: allToRead });
-	  },
-	  onAddClick: function onAddClick(event) {
-	    event.preventDefault();
-	    this.history.push({ pathname: "/Search" });
-	  },
-	  booksClick: function booksClick(event) {
-	    event.preventDefault();
-	    if (this.state.shelfVisible) {
-	      this.spinClass = 'fa fa-bars';
-	
-	      // this.menuClass='menu'
-	      this.setState({ shelfVisible: false });
-	    } else {
-	      this.spinClass = 'fa fa-times';
-	
-	      // this.menuClass='menu open'
-	      this.setState({ shelfVisible: true });
-	    }
-	
-	    $('.menu').toggleClass('open', 200, 'easeOutQuad');
-	  },
-	  render: function render() {
-	
-	    return React.createElement(
-	      'section',
-	      { className: 'bookshelf' },
-	      React.createElement(
-	        'div',
-	        { className: 'menu' },
-	        React.createElement(
-	          'label',
-	          { className: 'ShelfLabel' },
-	          'Books To Read'
-	        ),
-	        React.createElement(Shelf, { books: this.state.toReadBooks }),
-	        React.createElement(
-	          'label',
-	          { className: 'ShelfLabel' },
-	          'Books I Have Read'
-	        ),
-	        React.createElement(Shelf, { books: this.state.readBooks }),
-	        React.createElement(
-	          'button',
-	          { className: 'shelf-button', onClick: this.onAddClick },
-	          'Add to Shelf'
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'site-wrapper' },
-	        React.createElement(
-	          'div',
-	          { className: 'header' },
-	          React.createElement(
-	            'div',
-	            { className: 'menu-trigger', onClick: this.booksClick },
-	            React.createElement(
-	              'i',
-	              { className: this.spinClass },
-	              ' '
-	            )
-	          )
-	        )
-	      )
-	    );
-	  }
-	});
-	module.exports = BookShelf;
-
-/***/ },
+/* 276 */,
 /* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -34865,6 +34764,111 @@
 	});
 	
 	module.exports = Navbar;
+
+/***/ },
+/* 281 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookShelfStore = __webpack_require__(277);
+	var Shelf = __webpack_require__(278);
+	
+	var History = __webpack_require__(159).History;
+	
+	var BS = React.createClass({
+	  displayName: 'BS',
+	
+	  mixins: [History],
+	
+	  getInitialState: function getInitialState() {
+	    var reading = BookShelfStore.reading();
+	    var toRead = BookShelfStore.toRead();
+	    var allToRead = reading.concat(toRead);
+	    this.spinClass = 'fa fa-bars';
+	
+	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: false };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.bookShelfIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    var reading = BookShelfStore.reading();
+	    var toRead = BookShelfStore.toRead();
+	    var allToRead = reading.concat(toRead);
+	    this.setState({ readBooks: BookShelfStore.read(), toReadBooks: allToRead });
+	  },
+	  onAddClick: function onAddClick(event) {
+	    event.preventDefault();
+	    this.history.push({ pathname: "/Search" });
+	  },
+	  booksClick: function booksClick(event) {
+	    event.preventDefault();
+	    if (this.state.shelfVisible) {
+	      this.spinClass = 'fa fa-bars';
+	
+	      // this.menuClass='menu'
+	      this.setState({ shelfVisible: false });
+	    } else {
+	      this.spinClass = 'fa fa-times';
+	
+	      // this.menuClass='menu open'
+	      this.setState({ shelfVisible: true });
+	    }
+	
+	    // $('.menu').toggleClass('open', 200, 'easeOutQuad');
+	  },
+	  render: function render() {
+	
+	    return React.createElement(
+	      'section',
+	      { className: 'bookshelf' },
+	      React.createElement(
+	        'div',
+	        { className: 'menu' },
+	        React.createElement(
+	          'label',
+	          { className: 'ShelfLabel' },
+	          'Books To Read'
+	        ),
+	        React.createElement(Shelf, { books: this.state.toReadBooks }),
+	        React.createElement(
+	          'label',
+	          { className: 'ShelfLabel' },
+	          'Books I Have Read'
+	        ),
+	        React.createElement(Shelf, { books: this.state.readBooks }),
+	        React.createElement(
+	          'button',
+	          { className: 'shelf-button', onClick: this.onAddClick },
+	          'Add to Shelf'
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'site-wrapper' },
+	        React.createElement(
+	          'div',
+	          { className: 'header' },
+	          React.createElement(
+	            'div',
+	            { className: 'menu-trigger', onClick: this.booksClick },
+	            React.createElement(
+	              'i',
+	              { className: this.spinClass },
+	              ' '
+	            )
+	          )
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = BS;
 
 /***/ }
 /******/ ]);

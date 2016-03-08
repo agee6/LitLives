@@ -1,6 +1,6 @@
 var React = require('react');
 var Notebook = require('./Notebook.jsx');
-var BookShelf = require('./BookShelf.jsx');
+var BS = require('./BS.jsx');
 
 var Desk = React.createClass({
 
@@ -10,9 +10,9 @@ var Desk = React.createClass({
       <section className="Desk" id="Desk">
         <Notebook  />
 
-        <BookShelf />
+        <BS />
       </section>
-    
+
     )
   }
 })

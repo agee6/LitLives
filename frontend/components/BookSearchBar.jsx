@@ -77,10 +77,10 @@ var BookSearchBar = React.createClass({
     var that = this;
     if (this.state.showGuesses){
       var guesses = this.state.searchResults.map(function(result, index){
-        return( <li key={index} onClick={that.clickOption} className="searchGuess">{result.volumeInfo.title }</li>);
-      })
+        return(<li key={index} onClick={that.clickOption} className="searchGuess"> {result.volumeInfo.title} </li>);
+      });
     }else{
-      guesses = <div /> 
+      guesses = <div />
     }
 
 

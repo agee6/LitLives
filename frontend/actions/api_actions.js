@@ -51,6 +51,12 @@ var ApiActions = {
       actionType: NoteConstants.ReceiveNotes,
       results: notes
     });
+  },
+  addNote: function(payload){
+    AppDispatcher.dispatch({
+      actionType: NoteConstants.AddNote,
+      result: payload
+    }); 
   }
 };
 

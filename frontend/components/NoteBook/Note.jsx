@@ -8,13 +8,20 @@ var NoteStore = require('../../stores/NoteStore.js');
 var Note = React.createClass({
   mixins: [LinkedStateMixin],
   getInitialState: function(){
-    return({noteText:"", pageNumber:null, selectedValue: true, allNotes: NoteStore.all()})
+    return({noteText:"", pageNumber:null, selectedValue: true, allNotes: NoteStore.all(), chapter: null})
   },
   saveNote:function(event){
     event.preventDefault();
-    debugger;
+
     var pn = parseInt(this.state.pageNumber);
-    var noteHash = {body: this.state.noteText, page: pn, public: this.state.selectedValue, book_id: this.props.currentBook.id};
+    var chap = parseInt(this.state.chapter);
+    if(isNaN(pn)){
+      pn = null;
+    }
+    if(isNaN(chap)){
+      chap = null;
+    }
+    var noteHash = {body: this.state.noteText, page: pn, public: this.state.selectedValue,chapter: chap, book_id: this.props.currentBook.id};
     APIUtil.createNote(noteHash);
 
   },
@@ -23,6 +30,7 @@ var Note = React.createClass({
   },
   componentDidMount: function(){
     this.sI = NoteStore.addListener(this._onChange);
+    APIUtil.fetchNotes(this.props.currentBook.id); 
   },
   componentWillUnmount: function(){
     this.sI.remove();
@@ -46,6 +54,9 @@ var Note = React.createClass({
           <br />
           <label className="PageInputLabel">associated page (optional):</label>
             <input className="PageInputs" valueLink={this.linkState('pageNumber')}/>
+          <br />
+          <label className="ChapterInputLabel">associated chapter (optional):</label>
+            <input className="ChapterInputs" valueLink={this.linkState('chapter')} />
         <br />
           <RadioGroup
             name="fruit"

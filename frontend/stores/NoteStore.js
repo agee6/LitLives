@@ -8,7 +8,16 @@ var APIUtil = require('../util/APIUtil.js');
 
 var resetNotes = function(notes){
   _notes = [];
-  _notes = notes.slice(0);
+  if(notes === null){
+    _notes = [];
+  }else {
+    _notes = notes.slice(0);
+
+  }
+};
+var addNote = function(note){
+
+  _notes.push(note);
 };
 
 NoteStore.all = function () {
@@ -23,6 +32,10 @@ NoteStore.__onDispatch = function (payload) {
   switch(payload.actionType) {
     case NoteConstants.ReceiveNotes:
       var result = resetNotes(payload.results);
+      NoteStore.__emitChange();
+      break;
+    case NoteConstants.AddNote:
+      var r2 = addNote(payload.result);
       NoteStore.__emitChange();
       break;
 

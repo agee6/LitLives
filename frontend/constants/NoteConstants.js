@@ -1,5 +1,6 @@
 var NoteConstants = {
-  ReceiveNotes: "NOTES_RECEIVED"
+  ReceiveNotes: "NOTES_RECEIVED",
+  AddNote: "ADD_NOTE"
 
 };
 

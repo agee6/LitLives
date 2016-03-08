@@ -100,14 +100,15 @@ var APIUtil = {
     });
   },
   createNote: function(noteHash){
-    $.post('/api/notes', {notes: noteHash}, function(payload){
-      console.log(payload);
+    $.post('/api/notes', {note: noteHash}, function(payload){
+      ApiActions.addNote(payload);
+  
     });
   },
-  bookNotes: function(book_id){
+  fetchNotes: function(book_id){
     $.get('api/notes', {book_id: book_id}, function(notes){
       ApiActions.receiveNotes(notes);
-    }); 
+    });
   }
 
 };

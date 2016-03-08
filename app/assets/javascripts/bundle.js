@@ -31100,11 +31100,11 @@
 	    });
 	  },
 	  createNote: function (noteHash) {
-	    $.post('/api/notes', { notes: noteHash }, function (payload) {
-	      console.log(payload);
+	    $.post('/api/notes', { note: noteHash }, function (payload) {
+	      ApiActions.addNote(payload);
 	    });
 	  },
-	  bookNotes: function (book_id) {
+	  fetchNotes: function (book_id) {
 	    $.get('api/notes', { book_id: book_id }, function (notes) {
 	      ApiActions.receiveNotes(notes);
 	    });
@@ -31168,6 +31168,12 @@
 	    AppDispatcher.dispatch({
 	      actionType: NoteConstants.ReceiveNotes,
 	      results: notes
+	    });
+	  },
+	  addNote: function (payload) {
+	    AppDispatcher.dispatch({
+	      actionType: NoteConstants.AddNote,
+	      result: payload
 	    });
 	  }
 	};
@@ -34214,13 +34220,20 @@
 	
 	  mixins: [LinkedStateMixin],
 	  getInitialState: function () {
-	    return { noteText: "", pageNumber: null, selectedValue: true, allNotes: NoteStore.all() };
+	    return { noteText: "", pageNumber: null, selectedValue: true, allNotes: NoteStore.all(), chapter: null };
 	  },
 	  saveNote: function (event) {
 	    event.preventDefault();
-	    debugger;
+	
 	    var pn = parseInt(this.state.pageNumber);
-	    var noteHash = { body: this.state.noteText, page: pn, public: this.state.selectedValue, book_id: this.props.currentBook.id };
+	    var chap = parseInt(this.state.chapter);
+	    if (isNaN(pn)) {
+	      pn = null;
+	    }
+	    if (isNaN(chap)) {
+	      chap = null;
+	    }
+	    var noteHash = { body: this.state.noteText, page: pn, public: this.state.selectedValue, chapter: chap, book_id: this.props.currentBook.id };
 	    APIUtil.createNote(noteHash);
 	  },
 	  handleChange: function (value) {
@@ -34228,6 +34241,7 @@
 	  },
 	  componentDidMount: function () {
 	    this.sI = NoteStore.addListener(this._onChange);
+	    APIUtil.fetchNotes(this.props.currentBook.id);
 	  },
 	  componentWillUnmount: function () {
 	    this.sI.remove();
@@ -34272,6 +34286,13 @@
 	          'associated page (optional):'
 	        ),
 	        React.createElement('input', { className: 'PageInputs', valueLink: this.linkState('pageNumber') }),
+	        React.createElement('br', null),
+	        React.createElement(
+	          'label',
+	          { className: 'ChapterInputLabel' },
+	          'associated chapter (optional):'
+	        ),
+	        React.createElement('input', { className: 'ChapterInputs', valueLink: this.linkState('chapter') }),
 	        React.createElement('br', null),
 	        React.createElement(
 	          RadioGroup,
@@ -34624,7 +34645,15 @@
 	
 	var resetNotes = function (notes) {
 	  _notes = [];
-	  _notes = notes.slice(0);
+	  if (notes === null) {
+	    _notes = [];
+	  } else {
+	    _notes = notes.slice(0);
+	  }
+	};
+	var addNote = function (note) {
+	
+	  _notes.push(note);
 	};
 	
 	NoteStore.all = function () {
@@ -34641,6 +34670,10 @@
 	      var result = resetNotes(payload.results);
 	      NoteStore.__emitChange();
 	      break;
+	    case NoteConstants.AddNote:
+	      var r2 = addNote(payload.result);
+	      NoteStore.__emitChange();
+	      break;
 	
 	  }
 	};
@@ -34652,7 +34685,8 @@
 /***/ function(module, exports) {
 
 	var NoteConstants = {
-	  ReceiveNotes: "NOTES_RECEIVED"
+	  ReceiveNotes: "NOTES_RECEIVED",
+	  AddNote: "ADD_NOTE"
 	
 	};
 	

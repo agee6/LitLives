@@ -4,13 +4,13 @@ var APIUtil = require('../util/APIUtil.js');
 
 var Navbar = React.createClass({
   mixins: [History],
-  searchClick:function(){
+  searchClick:function(event){
     this.history.push({pathname: "/Search"});
   },
-  deskClick:function(){
+  deskClick:function(event){
     this.history.push({pathname: "/Desk"});
   },
-  signOut: function(){
+  signOut: function(event){
     debugger;
     APIUtil.logoutUser();
   },
@@ -20,7 +20,7 @@ var Navbar = React.createClass({
       <div className="Navbar">
         <nav className="header-nav group">
 
-           <div className="header-logo">
+           <div className="header-logo" onClick={this.searchClick}>
              <i className="fa fa-book fa-3x"></i>
            </div>
 

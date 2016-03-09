@@ -84,4 +84,5 @@
   /*box-shadow: 12px 12px 7px 10px rgba(256,256,256,0.5);*/
   background-color: rgba(220,220,220,0.5);
   z-index: 10;
+  cursor: pointer; 
 }

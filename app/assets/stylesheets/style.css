@@ -40,8 +40,9 @@ ul {
 #username {
   float: left;
   position: absolute;
-  top: -10px;
+  top:  4px;
   left: 100px;
+  color:#e4cdb4;
 }
 
 .hvr-grow-shadow {
@@ -71,7 +72,7 @@ ul {
    overflow-y: scroll;
  }
 
- 
+
 
 
 

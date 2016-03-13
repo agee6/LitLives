@@ -10,7 +10,8 @@ Rails.application.routes.draw do
     resources :books, only: [:create, :destroy, :show, :index, :update, :new]
     resources :reviews, only: [:create, :destroy, :show, :index, :update, :new]
     resources :notes, only: [:create, :destroy, :show, :index, :update, :new]
-    resource :user, only: [ :destroy, :show, :update]
+    resource :user, only: [ :destroy, :show, :update, :create]
+    resource :session, only: [:show, :create, :destroy]
 
 
   end

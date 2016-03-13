@@ -47,7 +47,7 @@ var BS = React.createClass({
       }
 
 
-      // $('.menu').toggleClass('open', 200, 'easeOutQuad');
+       $('.menu').toggleClass('open', 200, 'easeOutQuad');
 
   },
   render: function(){

@@ -11,11 +11,17 @@ var root = document.getElementById('reactContent');
 var cb = root.getAttribute("data-has-book");
 var History = require('react-router').History;
 var Navbar = require('./components/Navbar.jsx');
+var UserStore = require('./stores/UserStore.js');
 
 var App = React.createClass({
   mixins:[History],
+  getInitialState: function(){
+    return({currentUser: UserStore.loggedIn()});
+  },
   componentDidMount: function(){
+    APIUtil.getCurrentUser();
     APIUtil.getUserBooks();
+    
     if (cb !== "false"){
       APIUtil.getCurrentBook();
       this.history.push({pathname: "/Desk"});

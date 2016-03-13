@@ -59,13 +59,19 @@
 	var cb = root.getAttribute("data-has-book");
 	var History = __webpack_require__(159).History;
 	var Navbar = __webpack_require__(280);
+	var UserStore = __webpack_require__(282);
 	
 	var App = React.createClass({
 	  displayName: 'App',
 	
 	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { currentUser: UserStore.loggedIn() };
+	  },
 	  componentDidMount: function componentDidMount() {
+	    APIUtil.getCurrentUser();
 	    APIUtil.getUserBooks();
+	
 	    if (cb !== "false") {
 	      APIUtil.getCurrentBook();
 	      this.history.push({ pathname: "/Desk" });
@@ -31023,17 +31029,17 @@
 	var APIUtil = {
 	  fetchBookResults: function fetchBookResults(query) {
 	    var uri = "https://www.googleapis.com/books/v1/volumes?q=" + query;
-	    $.get(uri, {}, function (book_list) {
-	      console.log(book_list);
-	      ApiActions.ReceiveActions(book_list);
+	    $.get(uri, {}, function (bookList) {
+	
+	      ApiActions.ReceiveActions(bookList);
 	    });
 	  },
 	  getInitialBookIndex: function getInitialBookIndex() {
 	
 	    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+selling+novels+all+time";
-	    $.get(uri, { maxResults: 40 }, function (book_list) {
+	    $.get(uri, { maxResults: 40 }, function (bookList) {
 	
-	      var newBookList = book_list.items.map(function (book, index) {
+	      var newBookList = bookList.items.map(function (book, index) {
 	        return APIUtil.makeBookObject(book);
 	      });
 	      ApiActions.ReceiveInitial(newBookList);
@@ -31048,8 +31054,8 @@
 	  },
 	  addToInitial: function addToInitial() {
 	    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+classic+novels";
-	    $.get(uri, { maxResults: 40 }, function (book_list) {
-	      var newBookList = book_list.items.map(function (book, index) {
+	    $.get(uri, { maxResults: 40 }, function (bookList) {
+	      var newBookList = bookList.items.map(function (book, index) {
 	        return APIUtil.makeBookObject(book);
 	      });
 	      ApiActions.AddToInitial(newBookList);
@@ -31120,8 +31126,8 @@
 	      ApiActions.addNote(payload);
 	    });
 	  },
-	  fetchNotes: function fetchNotes(book_id) {
-	    $.get('api/notes', { book_id: book_id }, function (notes) {
+	  fetchNotes: function fetchNotes(bookId) {
+	    $.get('api/notes', { book_id: bookId }, function (notes) {
 	      ApiActions.receiveNotes(notes);
 	    });
 	  },
@@ -31134,6 +31140,11 @@
 	        // Do something with the result
 	        ApiActions.receiveNotes(notes);
 	      } });
+	  },
+	  getCurrentUser: function getCurrentUser() {
+	    $.get('/api/session', {}, function (user) {
+	      ApiActions.receiveUser(user);
+	    });
 	  }
 	
 	};
@@ -31150,6 +31161,7 @@
 	var BookSearchConstants = __webpack_require__(227);
 	var BookShelfConstants = __webpack_require__(233);
 	var NoteConstants = __webpack_require__(234);
+	var UserConstants = __webpack_require__(281);
 	
 	var ApiActions = {
 	
@@ -31202,6 +31214,12 @@
 	    AppDispatcher.dispatch({
 	      actionType: NoteConstants.AddNote,
 	      result: payload
+	    });
+	  },
+	  receiveUser: function receiveUser(user) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.ReceiveUser,
+	      results: user
 	    });
 	  }
 	};
@@ -34619,7 +34637,7 @@
 	      this.setState({ shelfVisible: true });
 	    }
 	
-	    // $('.menu').toggleClass('open', 200, 'easeOutQuad');
+	    $('.menu').toggleClass('open', 200, 'easeOutQuad');
 	  },
 	  render: function render() {
 	
@@ -34868,6 +34886,66 @@
 	});
 	
 	module.exports = Navbar;
+
+/***/ },
+/* 281 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	var UserConstants = {
+	  RegisterUser: "REGISTER_USER",
+	  ReceiveUser: "RECEIVE_USER"
+	};
+	
+	module.exports = UserConstants;
+
+/***/ },
+/* 282 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Store = __webpack_require__(209).Store;
+	var _users = [];
+	var UserConstants = __webpack_require__(281);
+	var AppDispatcher = __webpack_require__(228);
+	var UserStore = new Store(AppDispatcher);
+	
+	var resetUser = function resetUser(user) {
+	  _users = [];
+	  _users[0] = user;
+	};
+	UserStore.loggedIn = function () {
+	  if (_users[0] === undefined || _users[0] === null) {
+	    return false;
+	  } else {
+	    return true;
+	  }
+	};
+	
+	UserStore.currentUser = function () {
+	  return _users[0];
+	};
+	UserStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case UserConstants.RegisterUser:
+	      var result = resetUser(payload.user);
+	      UserStore.__emitChange();
+	      break;
+	    case UserConstants.LogoutUser:
+	      var logout = resetUser(null);
+	      UserStore.__emitChange();
+	      break;
+	    case UserConstants.ReceiveUser:
+	      var r2 = resetUser(payload.results);
+	      UserStore.__emitChange();
+	      break;
+	  }
+	};
+	window.UserStore = UserStore;
+	
+	module.exports = UserStore;
 
 /***/ }
 /******/ ]);

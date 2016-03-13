@@ -4,18 +4,18 @@ var ApiActions = require('../actions/api_actions');
 var APIUtil = {
   fetchBookResults: function(query){
     var uri = "https://www.googleapis.com/books/v1/volumes?q="+query ;
-    $.get(uri, {}, function(book_list){
-      console.log(book_list);
-      ApiActions.ReceiveActions(book_list);
+    $.get(uri, {}, function(bookList){
+
+      ApiActions.ReceiveActions(bookList);
     });
 
   },
   getInitialBookIndex: function(){
 
     var uri = "https://www.googleapis.com/books/v1/volumes?q=best+selling+novels+all+time";
-    $.get(uri, {maxResults: 40}, function(book_list){
+    $.get(uri, {maxResults: 40}, function(bookList){
 
-      var newBookList = book_list.items.map(function(book, index){
+      var newBookList = bookList.items.map(function(book, index){
         return(APIUtil.makeBookObject(book));
       });
       ApiActions.ReceiveInitial(newBookList);
@@ -31,8 +31,8 @@ var APIUtil = {
   },
   addToInitial: function(){
     var uri = "https://www.googleapis.com/books/v1/volumes?q=best+classic+novels";
-    $.get(uri, {maxResults: 40}, function(book_list){
-      var newBookList = book_list.items.map(function(book, index){
+    $.get(uri, {maxResults: 40}, function(bookList){
+      var newBookList = bookList.items.map(function(book, index){
         return(APIUtil.makeBookObject(book));
       });
       ApiActions.AddToInitial(newBookList);
@@ -105,8 +105,8 @@ var APIUtil = {
 
     });
   },
-  fetchNotes: function(book_id){
-    $.get('api/notes', {book_id: book_id}, function(notes){
+  fetchNotes: function(bookId){
+    $.get('api/notes', {book_id: bookId}, function(notes){
       ApiActions.receiveNotes(notes);
     });
   },
@@ -119,6 +119,11 @@ var APIUtil = {
           // Do something with the result
           ApiActions.receiveNotes(notes);
     }});
+  },
+  getCurrentUser: function(){
+    $.get('/api/session', {}, function(user){
+      ApiActions.receiveUser(user);
+    });
   }
 
 };

@@ -2,6 +2,7 @@ var AppDispatcher = require('../dispatcher/dispatcher');
 var BookSearchConstants = require('../constants/BookSearchConstants');
 var BookShelfConstants = require('../constants/BookShelfConstants');
 var NoteConstants = require('../constants/NoteConstants');
+var UserConstants = require('../constants/UserConstants'); 
 
 var ApiActions = {
 
@@ -56,7 +57,13 @@ var ApiActions = {
     AppDispatcher.dispatch({
       actionType: NoteConstants.AddNote,
       result: payload
-    }); 
+    });
+  },
+  receiveUser: function(user){
+    AppDispatcher.dispatch({
+      actionType: UserConstants.ReceiveUser,
+      results: user
+    })
   }
 };
 

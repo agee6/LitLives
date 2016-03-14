@@ -14,6 +14,9 @@ body {
 .logo:hover{
   cursor: pointer;
 }
+.userNameLabel{
+  color: blue; 
+}
 
 button{
   /*background-image: url("BookButton.jpg");*/

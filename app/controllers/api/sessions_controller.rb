@@ -8,7 +8,7 @@ class Api::SessionsController < ApplicationController
     @user = User.find_by_credentials(params[:username], params[:password]);
     p @user
     if @user.nil?
-      render json: []
+      render json: nil
     else
       login(@user)
       render json: @user
@@ -17,8 +17,9 @@ class Api::SessionsController < ApplicationController
 
   def destroy
     @user = current_user
+    p @user
     logout
-    render json: []
+    render json: nil
 
   end
   private

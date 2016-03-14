@@ -24,8 +24,12 @@ var APIUtil = {
   logoutUser: function(){
 
     $.ajax({
-      url: '/session',
-      type: 'DELETE'
+      url: '/api/session',
+      type: 'DELETE',
+      success: function(payload){
+        console.log("deleted");
+        ApiActions.receiveUser(payload);
+      }
     });
 
   },
@@ -124,7 +128,18 @@ var APIUtil = {
     $.get('/api/session', {}, function(user){
       ApiActions.receiveUser(user);
     });
+  },
+  signIn: function(username, password) {
+    $.post('/api/session', {username: username, password: password}, function(user){
+      ApiActions.receiveUser(user);
+    });
+  },
+  createUser: function(username, password){
+    $.post('/api/user',{username:username, password: password}, function(user){
+      ApiActions.receiveUser(user);
+    });
   }
+
 
 };
 

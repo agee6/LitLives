@@ -56,7 +56,7 @@
 	var Desk = __webpack_require__(267);
 	var APIUtil = __webpack_require__(231);
 	var root = document.getElementById('reactContent');
-	var cb = root.getAttribute("data-has-book");
+	// var cb = root.getAttribute("data-has-book");
 	var History = __webpack_require__(159).History;
 	var Navbar = __webpack_require__(280);
 	var UserStore = __webpack_require__(282);
@@ -66,18 +66,23 @@
 	
 	  mixins: [History],
 	  getInitialState: function getInitialState() {
-	    return { currentUser: UserStore.loggedIn() };
+	    return { loggedIn: UserStore.loggedIn() };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    APIUtil.getCurrentUser();
-	    APIUtil.getUserBooks();
-	
-	    if (cb !== "false") {
+	    if (this.state.loggedIn) {
+	      APIUtil.getUserBooks();
 	      APIUtil.getCurrentBook();
-	      this.history.push({ pathname: "/Desk" });
-	    } else {
-	      this.history.push({ pathname: "/Search" });
 	    }
+	
+	    this.history.push({ pathname: "/Search" });
+	  },
+	  _onChange: function _onChange() {
+	    if (UserStore.loggedIn()) {
+	      APIUtil.getUserBooks();
+	      APIUtil.getCurrentBook();
+	    }
+	    this.setState({ loggedIn: UserStore.loggedIn() });
 	  },
 	  render: function render() {
 	    return React.createElement(
@@ -31048,8 +31053,12 @@
 	  logoutUser: function logoutUser() {
 	
 	    $.ajax({
-	      url: '/session',
-	      type: 'DELETE'
+	      url: '/api/session',
+	      type: 'DELETE',
+	      success: function success(payload) {
+	        console.log("deleted");
+	        ApiActions.receiveUser(payload);
+	      }
 	    });
 	  },
 	  addToInitial: function addToInitial() {
@@ -31143,6 +31152,16 @@
 	  },
 	  getCurrentUser: function getCurrentUser() {
 	    $.get('/api/session', {}, function (user) {
+	      ApiActions.receiveUser(user);
+	    });
+	  },
+	  signIn: function signIn(username, password) {
+	    $.post('/api/session', { username: username, password: password }, function (user) {
+	      ApiActions.receiveUser(user);
+	    });
+	  },
+	  createUser: function createUser(username, password) {
+	    $.post('/api/user', { username: username, password: password }, function (user) {
 	      ApiActions.receiveUser(user);
 	    });
 	  }
@@ -34832,23 +34851,103 @@
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
 	var APIUtil = __webpack_require__(231);
+	var Modal = __webpack_require__(241);
+	var LinkedStateMixin = __webpack_require__(262);
+	var UserStore = __webpack_require__(282);
+	var customStyles = {
+	  overlay: {
+	    position: 'fixed',
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+	    zIndex: 20
+	  },
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    marginRight: '-50%',
+	    transform: 'translate(-50%, -50%)'
+	  }
+	};
 	
 	var Navbar = React.createClass({
 	  displayName: 'Navbar',
 	
-	  mixins: [History],
+	  mixins: [History, LinkedStateMixin],
+	  getInitialState: function getInitialState() {
+	    return { loggedIn: UserStore.loggedIn(), username: null, password: null, modalIsOpen: false, message: "" };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.userIndex = UserStore.addListener(this._onChange);
+	  },
 	  searchClick: function searchClick(event) {
+	
 	    this.history.push({ pathname: "/Search" });
 	  },
 	  deskClick: function deskClick(event) {
 	    this.history.push({ pathname: "/Desk" });
 	  },
-	  signOut: function signOut(event) {
-	    debugger;
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
+	
+	  closeModal: function closeModal() {
+	
+	    this.setState({ modalIsOpen: false });
+	  },
+	  signOutClick: function signOutClick(event) {
+	
 	    APIUtil.logoutUser();
+	  },
+	  signClick: function signClick(event) {
+	    event.preventDefault();
+	    this.clicked = true;
+	
+	    if (this.state.password !== null && this.state.password.length >= 6) {
+	      APIUtil.signIn(this.state.username, this.state.password);
+	    } else {
+	      this.state.password = "";
+	      this.setState({ message: "invalid password please try again" });
+	    }
+	  },
+	  _onChange: function _onChange() {
+	
+	    if (UserStore.loggedIn()) {
+	      this.closeModal();
+	      this.setState({ loggedIn: UserStore.loggedIn() });
+	    } else {
+	      if (this.clicked) {
+	        this.setState({ message: "unsuccessful, please try again", loggedIn: UserStore.loggedIn() });
+	      } else {
+	        this.setState({ loggedIn: UserStore.loggedIn() });
+	      }
+	    }
 	  },
 	
 	  render: function render() {
+	    var signB;
+	    var un;
+	    var cb;
+	
+	    if (this.state.loggedIn) {
+	      signB = React.createElement(
+	        'li',
+	        { className: 'nav-right', id: 'NavUser', onClick: this.signOutClick },
+	        'Sign Out'
+	      );
+	      un = UserStore.currentUser().username;
+	    } else {
+	      signB = React.createElement(
+	        'li',
+	        { className: 'nav-right', id: 'NavUser', onClick: this.openModal },
+	        'Sign in/up!'
+	      );
+	    }
+	
 	    return React.createElement(
 	      'div',
 	      { className: 'Navbar' },
@@ -34858,7 +34957,12 @@
 	        React.createElement(
 	          'div',
 	          { className: 'header-logo', onClick: this.searchClick },
-	          React.createElement('i', { className: 'fa fa-book fa-3x' })
+	          React.createElement('i', { className: 'fa fa-book fa-3x' }),
+	          React.createElement(
+	            'div',
+	            { className: 'userNameLabel' },
+	            un
+	          )
 	        ),
 	        React.createElement(
 	          'ul',
@@ -34873,11 +34977,53 @@
 	            { className: 'nav-right', id: 'NavDesk', onClick: this.deskClick },
 	            'Desk'
 	          ),
+	          signB
+	        )
+	      ),
+	      React.createElement(
+	        Modal,
+	        {
+	          isOpen: this.state.modalIsOpen,
+	          onRequestClose: this.closeModal,
+	          style: customStyles },
+	        React.createElement(
+	          'h1',
+	          null,
+	          ' This is my logIn Modal!'
+	        ),
+	        React.createElement(
+	          'p',
+	          null,
+	          ' ',
+	          this.state.message
+	        ),
+	        React.createElement(
+	          'form',
+	          { className: 'NoteForm' },
 	          React.createElement(
-	            'li',
-	            { className: 'nav-right', id: 'NavUser' },
-	            'Sign Out'
+	            'label',
+	            { className: 'UserNameLabel' },
+	            'Username:'
+	          ),
+	          React.createElement('input', { type: 'text', className: 'UserNameInput', valueLink: this.linkState('username'), placholder: 'enter a valid username' }),
+	          React.createElement('br', null),
+	          React.createElement(
+	            'label',
+	            { className: 'PasswordInputLabel' },
+	            'Password:'
+	          ),
+	          React.createElement('input', { type: 'password', className: 'PasswordInput', password: 'enter a password, at least 6 digits long', valueLink: this.linkState('password') }),
+	          React.createElement('br', null),
+	          React.createElement(
+	            'button',
+	            { className: 'SignButton', onClick: this.signClick },
+	            'Save!'
 	          )
+	        ),
+	        React.createElement(
+	          'button',
+	          { onClick: this.closeModal },
+	          'close'
 	        )
 	      )
 	    );

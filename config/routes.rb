@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
-  root to: "static_pages#root"
-  get '/home', to: "static_pages#home"
+  root to: "static_pages#home"
+  # get '/home', to: "static_pages#home"
 
 
   resource :session, only: [:create, :destroy, :new]

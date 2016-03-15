@@ -21,3 +21,5 @@
 #
 # Genre.create({name: "Fantasy", description: "Usually associated with fantastic events and midevial times"})
 # Genre.create({name: "Science Fiction", description: "Fetishizes the future as Fantasy does the past. Equally unrealistic"})
+
+User.create({username: "guest_user", password: "password"});

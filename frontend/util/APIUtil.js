@@ -135,7 +135,7 @@ var APIUtil = {
     });
   },
   createUser: function(username, password){
-    $.post('/api/user',{username:username, password: password}, function(user){
+    $.post('/api/user',{username: username, password: password}, function(user){
       ApiActions.receiveUser(user);
     });
   }

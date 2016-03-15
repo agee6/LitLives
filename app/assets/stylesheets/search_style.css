@@ -1,9 +1,11 @@
 .InitialBooks {
   float: left;
   height: 200px;
+  /*width: 100px;*/
   z-index: 9;
   /*box-shadow: 0px 0px 5px rgba(0,0,0,.3);*/
-  margin: 2px;
+  margin: 4px;
+  /*background-size: cover;*/
   /*box-shadow: 10px 10px 10px 10px rgba(256,256,256,0.5);*/
 
 }
@@ -114,7 +116,8 @@
 
 
 }
-.searchGuess{
+#searchGuess{
+  color:  #261a0d;
 
 }
 .BookArea {

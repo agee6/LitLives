@@ -18,9 +18,20 @@ class Api::UsersController < ApplicationController
     end
 
   end
+  def create
+    @user = User.new({username: params[:username], password: params[:password]})
+    if @user.save
+      login(@user)
+      render json: @user
+    else
+
+      render json: nil
+    end
+
+  end
   private
   def user_params
-    params.permit(:current_book)
+    params.permit(:current_book, :username, :password)
   end
 
 

@@ -4,7 +4,7 @@ body {
   /*margin: -10px; */
 }
 span{
-  color: #e4cdb4;
+  color: inherit;
 
 }
 .logo{
@@ -26,14 +26,14 @@ span{
   left: 100px;
 }
 #bookTitle {
-  left: 150px; 
+  left: 150px;
 }
 
 button{
   /*background-image: url("BookButton.jpg");*/
-  height: 40px;
-  background-size: cover;
-  border: 5px;
+  /*height: 40px;*/
+  /*background-size: cover;*/
+  /*border: 5px;*/
   border-color: #e4cdb4;
 
 
@@ -84,6 +84,9 @@ ul {
    bottom: 0;
    position: fixed;
    overflow-y: scroll;
+ }
+ .SignButton {
+   margin: 10px;
  }
 
 

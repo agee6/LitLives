@@ -22,7 +22,9 @@ var customStyles = {
     right                 : 'auto',
     bottom                : 'auto',
     marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
+    transform             : 'translate(-50%, -50%)',
+    backgroundColor       : '#e4cdb4',
+    borderRadius          : '5px'
   }
 };
 
@@ -39,7 +41,12 @@ var Navbar = React.createClass({
     this.history.push({pathname: "/Search"});
   },
   deskClick:function(event){
-    this.history.push({pathname: "/Desk"});
+    if(this.state.loggedIn){
+      this.history.push({pathname: "/Desk"});
+
+    }else{
+      this.setState({modalIsOpen: true})
+    }
   },
   openModal: function() {
     this.setState({modalIsOpen: true, chosen: BookSearchStore.currentBook()});
@@ -68,7 +75,7 @@ var Navbar = React.createClass({
     }
     else{
       this.state.password = "";
-      this.setState({message: "invalid password please try again"});
+      this.setState({message: "invalid password, must be at least 6 digits please try again"});
     }
 
 
@@ -90,7 +97,25 @@ var Navbar = React.createClass({
       }
     }
   },
+  signUpClick: function(event){
+    event.preventDefault();
+    console.log("SignedUp!");
+    this.clicked = true;
+    if(this.state.username !== "" && this.state.password !== ""){
+      APIUtil.createUser(this.state.username, this.state.password)
+    }
+    else {
+      this.setState({message: "invalid password please try again"});
+    }
+    debugger;
 
+  },
+  logInAsGuest:function(event){
+    event.preventDefault();
+    console.log("I'm a guest");
+    this.clicked = true;
+    APIUtil.signIn("guest_user", "password");
+  },
   render: function() {
     var signB;
     var un;
@@ -100,11 +125,12 @@ var Navbar = React.createClass({
       signB = <li className="nav-right" id="NavUser" onClick={this.signOutClick}>Sign Out</li>;
       un = UserStore.currentUser().username;
       if(BookSearchStore.currentBook() !== null){
-        cb = <div className="userNameLabel" id="bookTitle"> is currently exploring {BookSearchStore.currentBook().title}</div>;
-
+        // cb = <div className="userNameLabel" id="bookTitle"> is currently exploring {BookSearchStore.currentBook().title}</div>;
+        cb= {backgroundImage: "url(" +BookSearchStore.currentBook().image + ")"};
       }else {
-        cb = <div />
+        cb = null;
       }
+
     }
     else{
       signB = <li className="nav-right" id="NavUser" onClick={this.openModal}>Sign in/up!</li>
@@ -112,12 +138,12 @@ var Navbar = React.createClass({
 
     return (
       <div className="Navbar">
-        <nav className="header-nav group">
+        <nav className="header-nav group" >
 
            <div className="header-logo" onClick={this.searchClick}>
              <i className="fa fa-book fa-3x"></i>
-             <div className="userNameLabel">{un}</div>
-             {cb}
+             <div className="userNameLabel" >{un}</div>
+
            </div>
 
            <ul className="header-list group">
@@ -133,20 +159,26 @@ var Navbar = React.createClass({
             onRequestClose={this.closeModal}
             style={customStyles} >
 
-           <h1> This is my logIn Modal!</h1>
+           <h1> Login or Enter as guest to continue exploring!</h1>
            <p> {this.state.message}</p>
 
             <form className="NoteForm">
+              <div className="UserNameArea">
+                <label className="UserNameLabel">Username:</label>
+                <input type="text" className="UserNameInput" valueLink={this.linkState('username')} placholder="enter a valid username"/>
 
-              <label className="UserNameLabel">Username:</label>
-              <input type="text" className="UserNameInput" valueLink={this.linkState('username')} placholder="enter a valid username"/>
-              <br />
-              <label className="PasswordInputLabel">Password:</label>
-              <input type="password" className="PasswordInput" password="enter a password, at least 6 digits long" valueLink={this.linkState('password')} />
+              </div>
+              <div className="PasswordArea">
+                <label className="PasswordInputLabel">Password:</label>
+                <input type="password" className="PasswordInput" password="enter a password, at least 6 digits long" valueLink={this.linkState('password')} />
+
+              </div>
               <br />
 
-                  <button className="SignButton" onClick={this.signClick}>Save!</button>
-            </form>
+                  <button id="SignButton" onClick={this.signClick}>Sign In!</button>
+                  <button id="SignButton" onClick={this.signUpClick}>Sign Up!</button>
+                  <button id="SignButton" onClick={this.logInAsGuest}>Guest Sign In</button>
+              </form>
 
 
             <button onClick={this.closeModal}>close</button>

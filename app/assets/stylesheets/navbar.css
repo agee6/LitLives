@@ -105,7 +105,7 @@
 .headerButton:hover {
   background-color: #E0C8AE;
   color: #261a0d;
-  transition: 1s; 
+  transition: 1s;
 }
 
 .header-list > li:hover {
@@ -113,4 +113,54 @@
   color: #261a0d;
   background-color: #E0C8AE;
   transition: 1s;
+}
+#SignButton {
+  margin: 20px;
+  width: 150px;
+  margin-left: 30px; 
+
+
+  /*left: 20px; */
+}
+.PasswordInputLabel{
+  float: left;
+  /*margin: 10px;*/
+  padding: 10px;
+  position: absolute;
+  margin-left: 100px;
+  /*top: 70px;*/
+}
+.PasswordInput {
+  float: right;
+  width: 300px;
+  margin: 10px;
+  margin-right: 100px;
+
+}
+.UserNameLabel {
+  float: left;
+  /*margin: 10px;*/
+  padding: 10px;
+  /*position: absolute;*/
+  /*top: 10%;*/
+  margin-left: 100px;
+
+}
+.UserNameInput{
+  float:right;
+  width: 300px;
+  margin: 10px;
+  margin-right: 100px;
+
+}
+.PasswordArea {
+  width: 100%;
+  position: relative;
+  height: 50px;
+}
+.UserNameArea {
+  width: 100%;
+  position: relative;
+  height: 50px;
+
 }

@@ -53,13 +53,13 @@
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
 	var Search = __webpack_require__(206);
-	var Desk = __webpack_require__(268);
+	var Desk = __webpack_require__(269);
 	var APIUtil = __webpack_require__(231);
 	var root = document.getElementById('reactContent');
 	// var cb = root.getAttribute("data-has-book");
 	var History = __webpack_require__(159).History;
-	var Navbar = __webpack_require__(281);
-	var UserStore = __webpack_require__(282);
+	var Navbar = __webpack_require__(282);
+	var UserStore = __webpack_require__(283);
 	var ApiActions = __webpack_require__(232);
 	
 	var App = React.createClass({
@@ -24061,8 +24061,8 @@
 	var SearchArea = __webpack_require__(237);
 	var BookSearchStore = __webpack_require__(208);
 	var BookConfirmation = __webpack_require__(239);
-	var Modal = __webpack_require__(242);
-	var BookSearch = __webpack_require__(262);
+	var Modal = __webpack_require__(243);
+	var BookSearch = __webpack_require__(263);
 	var customStyles = {
 	  overlay: {
 	    position: 'fixed',
@@ -31376,7 +31376,7 @@
 	var APIUtil = __webpack_require__(231);
 	var BookSearchStore = __webpack_require__(208);
 	var BookConfirmation = __webpack_require__(239);
-	var SearchListItem = __webpack_require__(283);
+	var SearchListItem = __webpack_require__(242);
 	
 	var BookSearchBar = React.createClass({
 	  displayName: 'BookSearchBar',
@@ -31683,20 +31683,50 @@
 /* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(243);
+	"use strict";
 	
-
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	
+	var SearchListItem = React.createClass({
+	  displayName: "SearchListItem",
+	
+	  click: function click(event) {
+	    event.preventDefault();
+	    this.props.clickOption(this.props.book);
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      "li",
+	      { onClick: this.click, id: "searchGuess" },
+	      " ",
+	      this.props.book.volumeInfo.title,
+	      " "
+	    );
+	  }
+	
+	});
+	
+	module.exports = SearchListItem;
 
 /***/ },
 /* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
+	module.exports = __webpack_require__(244);
+	
+
+
+/***/ },
+/* 244 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/* WEBPACK VAR INJECTION */(function(process) {var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var ExecutionEnvironment = __webpack_require__(244);
-	var ModalPortal = React.createFactory(__webpack_require__(245));
-	var ariaAppHider = __webpack_require__(260);
-	var elementClass = __webpack_require__(261);
+	var ExecutionEnvironment = __webpack_require__(245);
+	var ModalPortal = React.createFactory(__webpack_require__(246));
+	var ariaAppHider = __webpack_require__(261);
+	var elementClass = __webpack_require__(262);
 	var renderSubtreeIntoContainer = __webpack_require__(158).unstable_renderSubtreeIntoContainer;
 	
 	var SafeHTMLElement = ExecutionEnvironment.canUseDOM ? window.HTMLElement : {};
@@ -31775,7 +31805,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 244 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -31820,14 +31850,14 @@
 
 
 /***/ },
-/* 245 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var div = React.DOM.div;
-	var focusManager = __webpack_require__(246);
-	var scopeTab = __webpack_require__(248);
-	var Assign = __webpack_require__(249);
+	var focusManager = __webpack_require__(247);
+	var scopeTab = __webpack_require__(249);
+	var Assign = __webpack_require__(250);
 	
 	
 	// so that our CSS is statically analyzable
@@ -32024,10 +32054,10 @@
 
 
 /***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(247);
+	var findTabbable = __webpack_require__(248);
 	var modalElement = null;
 	var focusLaterElement = null;
 	var needToFocus = false;
@@ -32098,7 +32128,7 @@
 
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports) {
 
 	/*!
@@ -32154,10 +32184,10 @@
 
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var findTabbable = __webpack_require__(247);
+	var findTabbable = __webpack_require__(248);
 	
 	module.exports = function(node, event) {
 	  var tabbable = findTabbable(node);
@@ -32175,7 +32205,7 @@
 
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32186,9 +32216,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseAssign = __webpack_require__(250),
-	    createAssigner = __webpack_require__(256),
-	    keys = __webpack_require__(252);
+	var baseAssign = __webpack_require__(251),
+	    createAssigner = __webpack_require__(257),
+	    keys = __webpack_require__(253);
 	
 	/**
 	 * A specialized version of `_.assign` for customizing assigned values without
@@ -32261,7 +32291,7 @@
 
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32272,8 +32302,8 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var baseCopy = __webpack_require__(251),
-	    keys = __webpack_require__(252);
+	var baseCopy = __webpack_require__(252),
+	    keys = __webpack_require__(253);
 	
 	/**
 	 * The base implementation of `_.assign` without support for argument juggling,
@@ -32294,7 +32324,7 @@
 
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports) {
 
 	/**
@@ -32332,7 +32362,7 @@
 
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -32343,9 +32373,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var getNative = __webpack_require__(253),
-	    isArguments = __webpack_require__(254),
-	    isArray = __webpack_require__(255);
+	var getNative = __webpack_require__(254),
+	    isArguments = __webpack_require__(255),
+	    isArray = __webpack_require__(256);
 	
 	/** Used to detect unsigned integer values. */
 	var reIsUint = /^\d+$/;
@@ -32574,7 +32604,7 @@
 
 
 /***/ },
-/* 253 */
+/* 254 */
 /***/ function(module, exports) {
 
 	/**
@@ -32717,7 +32747,7 @@
 
 
 /***/ },
-/* 254 */
+/* 255 */
 /***/ function(module, exports) {
 
 	/**
@@ -32967,7 +32997,7 @@
 
 
 /***/ },
-/* 255 */
+/* 256 */
 /***/ function(module, exports) {
 
 	/**
@@ -33153,7 +33183,7 @@
 
 
 /***/ },
-/* 256 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33164,9 +33194,9 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var bindCallback = __webpack_require__(257),
-	    isIterateeCall = __webpack_require__(258),
-	    restParam = __webpack_require__(259);
+	var bindCallback = __webpack_require__(258),
+	    isIterateeCall = __webpack_require__(259),
+	    restParam = __webpack_require__(260);
 	
 	/**
 	 * Creates a function that assigns properties of source object(s) to a given
@@ -33211,7 +33241,7 @@
 
 
 /***/ },
-/* 257 */
+/* 258 */
 /***/ function(module, exports) {
 
 	/**
@@ -33282,7 +33312,7 @@
 
 
 /***/ },
-/* 258 */
+/* 259 */
 /***/ function(module, exports) {
 
 	/**
@@ -33420,7 +33450,7 @@
 
 
 /***/ },
-/* 259 */
+/* 260 */
 /***/ function(module, exports) {
 
 	/**
@@ -33493,7 +33523,7 @@
 
 
 /***/ },
-/* 260 */
+/* 261 */
 /***/ function(module, exports) {
 
 	var _element = typeof document !== 'undefined' ? document.body : null;
@@ -33540,7 +33570,7 @@
 
 
 /***/ },
-/* 261 */
+/* 262 */
 /***/ function(module, exports) {
 
 	module.exports = function(opts) {
@@ -33605,16 +33635,16 @@
 
 
 /***/ },
-/* 262 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var LinkedStateMixin = __webpack_require__(263);
+	var LinkedStateMixin = __webpack_require__(264);
 	// var ReactRouter = require('react-router');
 	// var History = require('react-router').History;
-	var DropDown = __webpack_require__(267);
+	var DropDown = __webpack_require__(268);
 	
 	var BookSearch = React.createClass({
 	  displayName: 'BookSearch',
@@ -33844,13 +33874,13 @@
 	module.exports = BookSearch;
 
 /***/ },
-/* 263 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(264);
+	module.exports = __webpack_require__(265);
 
 /***/ },
-/* 264 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33867,8 +33897,8 @@
 	
 	'use strict';
 	
-	var ReactLink = __webpack_require__(265);
-	var ReactStateSetters = __webpack_require__(266);
+	var ReactLink = __webpack_require__(266);
+	var ReactStateSetters = __webpack_require__(267);
 	
 	/**
 	 * A simple mixin around ReactLink.forState().
@@ -33891,7 +33921,7 @@
 	module.exports = LinkedStateMixin;
 
 /***/ },
-/* 265 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33965,7 +33995,7 @@
 	module.exports = ReactLink;
 
 /***/ },
-/* 266 */
+/* 267 */
 /***/ function(module, exports) {
 
 	/**
@@ -34074,7 +34104,7 @@
 	module.exports = ReactStateSetters;
 
 /***/ },
-/* 267 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34126,14 +34156,14 @@
 	module.exports = DropDown;
 
 /***/ },
-/* 268 */
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var Notebook = __webpack_require__(269);
-	var BS = __webpack_require__(277);
+	var Notebook = __webpack_require__(270);
+	var BS = __webpack_require__(278);
 	
 	var Desk = React.createClass({
 	  displayName: 'Desk',
@@ -34152,17 +34182,17 @@
 	module.exports = Desk;
 
 /***/ },
-/* 269 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var BookPage = __webpack_require__(270);
+	var BookPage = __webpack_require__(271);
 	var BookSearchStore = __webpack_require__(208);
-	var Tabs = __webpack_require__(271);
-	var Note = __webpack_require__(273);
-	var Reviews = __webpack_require__(276);
+	var Tabs = __webpack_require__(272);
+	var Note = __webpack_require__(274);
+	var Reviews = __webpack_require__(277);
 	
 	var Notebook = React.createClass({
 	  displayName: 'Notebook',
@@ -34220,7 +34250,7 @@
 	module.exports = Notebook;
 
 /***/ },
-/* 270 */
+/* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -34289,13 +34319,13 @@
 	module.exports = BookPage;
 
 /***/ },
-/* 271 */
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var Tab = __webpack_require__(272);
+	var Tab = __webpack_require__(273);
 	
 	var Tabs = React.createClass({
 	  displayName: 'Tabs',
@@ -34319,7 +34349,7 @@
 	module.exports = Tabs;
 
 /***/ },
-/* 272 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -34349,18 +34379,18 @@
 	module.exports = Tab;
 
 /***/ },
-/* 273 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var LinkedStateMixin = __webpack_require__(263);
+	var LinkedStateMixin = __webpack_require__(264);
 	var RadioGroup = __webpack_require__(240);
 	var APIUtil = __webpack_require__(231);
-	var NoteStore = __webpack_require__(274);
-	var NoteItem = __webpack_require__(275);
-	var Modal = __webpack_require__(242);
+	var NoteStore = __webpack_require__(275);
+	var NoteItem = __webpack_require__(276);
+	var Modal = __webpack_require__(243);
 	
 	var customStyles = {
 	  overlay: {
@@ -34522,7 +34552,7 @@
 	module.exports = Note;
 
 /***/ },
-/* 274 */
+/* 275 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34572,7 +34602,7 @@
 	module.exports = NoteStore;
 
 /***/ },
-/* 275 */
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34624,7 +34654,7 @@
 	module.exports = NoteItem;
 
 /***/ },
-/* 276 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34644,14 +34674,14 @@
 	module.exports = Reviews;
 
 /***/ },
-/* 277 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var BookShelfStore = __webpack_require__(278);
-	var Shelf = __webpack_require__(279);
+	var BookShelfStore = __webpack_require__(279);
+	var Shelf = __webpack_require__(280);
 	
 	var History = __webpack_require__(159).History;
 	
@@ -34749,7 +34779,7 @@
 	module.exports = BS;
 
 /***/ },
-/* 278 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34818,13 +34848,13 @@
 	module.exports = BookShelfStore;
 
 /***/ },
-/* 279 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var ShelfItem = __webpack_require__(280);
+	var ShelfItem = __webpack_require__(281);
 	
 	var Shelf = React.createClass({
 	  displayName: 'Shelf',
@@ -34857,7 +34887,7 @@
 	module.exports = Shelf;
 
 /***/ },
-/* 280 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34889,7 +34919,7 @@
 	module.exports = ShelfItem;
 
 /***/ },
-/* 281 */
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34897,9 +34927,9 @@
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
 	var APIUtil = __webpack_require__(231);
-	var Modal = __webpack_require__(242);
-	var LinkedStateMixin = __webpack_require__(263);
-	var UserStore = __webpack_require__(282);
+	var Modal = __webpack_require__(243);
+	var LinkedStateMixin = __webpack_require__(264);
+	var UserStore = __webpack_require__(283);
 	var ApiActions = __webpack_require__(232);
 	var BookSearchStore = __webpack_require__(208);
 	var customStyles = {
@@ -34918,7 +34948,9 @@
 	    right: 'auto',
 	    bottom: 'auto',
 	    marginRight: '-50%',
-	    transform: 'translate(-50%, -50%)'
+	    transform: 'translate(-50%, -50%)',
+	    backgroundColor: '#e4cdb4',
+	    borderRadius: '5px'
 	  }
 	};
 	
@@ -34937,7 +34969,11 @@
 	    this.history.push({ pathname: "/Search" });
 	  },
 	  deskClick: function deskClick(event) {
-	    this.history.push({ pathname: "/Desk" });
+	    if (this.state.loggedIn) {
+	      this.history.push({ pathname: "/Desk" });
+	    } else {
+	      this.setState({ modalIsOpen: true });
+	    }
 	  },
 	  openModal: function openModal() {
 	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
@@ -34964,7 +35000,7 @@
 	      APIUtil.signIn(this.state.username, this.state.password);
 	    } else {
 	      this.state.password = "";
-	      this.setState({ message: "invalid password please try again" });
+	      this.setState({ message: "invalid password, must be at least 6 digits please try again" });
 	    }
 	  },
 	  _onChange: function _onChange() {
@@ -34980,7 +35016,23 @@
 	      }
 	    }
 	  },
-	
+	  signUpClick: function signUpClick(event) {
+	    event.preventDefault();
+	    console.log("SignedUp!");
+	    this.clicked = true;
+	    if (this.state.username !== "" && this.state.password !== "") {
+	      APIUtil.createUser(this.state.username, this.state.password);
+	    } else {
+	      this.setState({ message: "invalid password please try again" });
+	    }
+	    debugger;
+	  },
+	  logInAsGuest: function logInAsGuest(event) {
+	    event.preventDefault();
+	    console.log("I'm a guest");
+	    this.clicked = true;
+	    APIUtil.signIn("guest_user", "password");
+	  },
 	  render: function render() {
 	    var signB;
 	    var un;
@@ -34994,14 +35046,10 @@
 	      );
 	      un = UserStore.currentUser().username;
 	      if (BookSearchStore.currentBook() !== null) {
-	        cb = React.createElement(
-	          'div',
-	          { className: 'userNameLabel', id: 'bookTitle' },
-	          ' is currently exploring ',
-	          BookSearchStore.currentBook().title
-	        );
+	        // cb = <div className="userNameLabel" id="bookTitle"> is currently exploring {BookSearchStore.currentBook().title}</div>;
+	        cb = { backgroundImage: "url(" + BookSearchStore.currentBook().image + ")" };
 	      } else {
-	        cb = React.createElement('div', null);
+	        cb = null;
 	      }
 	    } else {
 	      signB = React.createElement(
@@ -35025,8 +35073,7 @@
 	            'div',
 	            { className: 'userNameLabel' },
 	            un
-	          ),
-	          cb
+	          )
 	        ),
 	        React.createElement(
 	          'ul',
@@ -35053,7 +35100,7 @@
 	        React.createElement(
 	          'h1',
 	          null,
-	          ' This is my logIn Modal!'
+	          ' Login or Enter as guest to continue exploring!'
 	        ),
 	        React.createElement(
 	          'p',
@@ -35065,23 +35112,40 @@
 	          'form',
 	          { className: 'NoteForm' },
 	          React.createElement(
-	            'label',
-	            { className: 'UserNameLabel' },
-	            'Username:'
+	            'div',
+	            { className: 'UserNameArea' },
+	            React.createElement(
+	              'label',
+	              { className: 'UserNameLabel' },
+	              'Username:'
+	            ),
+	            React.createElement('input', { type: 'text', className: 'UserNameInput', valueLink: this.linkState('username'), placholder: 'enter a valid username' })
 	          ),
-	          React.createElement('input', { type: 'text', className: 'UserNameInput', valueLink: this.linkState('username'), placholder: 'enter a valid username' }),
-	          React.createElement('br', null),
 	          React.createElement(
-	            'label',
-	            { className: 'PasswordInputLabel' },
-	            'Password:'
+	            'div',
+	            { className: 'PasswordArea' },
+	            React.createElement(
+	              'label',
+	              { className: 'PasswordInputLabel' },
+	              'Password:'
+	            ),
+	            React.createElement('input', { type: 'password', className: 'PasswordInput', password: 'enter a password, at least 6 digits long', valueLink: this.linkState('password') })
 	          ),
-	          React.createElement('input', { type: 'password', className: 'PasswordInput', password: 'enter a password, at least 6 digits long', valueLink: this.linkState('password') }),
 	          React.createElement('br', null),
 	          React.createElement(
 	            'button',
-	            { className: 'SignButton', onClick: this.signClick },
-	            'Save!'
+	            { id: 'SignButton', onClick: this.signClick },
+	            'Sign In!'
+	          ),
+	          React.createElement(
+	            'button',
+	            { id: 'SignButton', onClick: this.signUpClick },
+	            'Sign Up!'
+	          ),
+	          React.createElement(
+	            'button',
+	            { id: 'SignButton', onClick: this.logInAsGuest },
+	            'Guest Sign In'
 	          )
 	        ),
 	        React.createElement(
@@ -35098,7 +35162,7 @@
 	module.exports = Navbar;
 
 /***/ },
-/* 282 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35143,36 +35207,6 @@
 	window.UserStore = UserStore;
 	
 	module.exports = UserStore;
-
-/***/ },
-/* 283 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(1);
-	var PropTypes = React.PropTypes;
-	
-	var SearchListItem = React.createClass({
-	  displayName: "SearchListItem",
-	
-	  click: function click(event) {
-	    event.preventDefault();
-	    this.props.clickOption(this.props.book);
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      "li",
-	      { onClick: this.click, className: "searchGuess" },
-	      " ",
-	      this.props.book.volumeInfo.title,
-	      " "
-	    );
-	  }
-	
-	});
-	
-	module.exports = SearchListItem;
 
 /***/ }
 /******/ ]);

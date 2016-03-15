@@ -8,7 +8,7 @@ var SearchListItem = React.createClass({
   },
   render: function() {
     return (
-      <li onClick={this.click} className="searchGuess"> {this.props.book.volumeInfo.title} </li>
+      <li onClick={this.click} id="searchGuess"> {this.props.book.volumeInfo.title} </li>
     );
   }
 

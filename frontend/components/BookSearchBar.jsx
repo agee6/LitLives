@@ -2,7 +2,7 @@ var React = require('react');
 var APIUtil = require('../util/APIUtil.js');
 var BookSearchStore = require('../stores/BookSearchStore.js');
 var BookConfirmation = require('./BookConfirmation.jsx');
-
+var SearchListItem = require('./SearchListitem.jsx');
 
 var BookSearchBar = React.createClass({
   getInitialState: function(){
@@ -18,7 +18,7 @@ var BookSearchBar = React.createClass({
       window.setInterval(function(){
         this.pending = false;
 
-      }.bind(this), 1000);
+      }.bind(this), 1500);
     }
 
   },
@@ -56,14 +56,19 @@ var BookSearchBar = React.createClass({
     // this.hideAutocomplete();
 
     // setTimeout(function(){
-      this.setState({
-        showGuesses: false,
-      });
+      // this.setState({
+      //   showGuesses: false,
+      // });
     //     // debugger;
     // }.bind(this), 500);
   },
-  clickOption: function(event){
-    this.click(event);
+  clickOption: function(book){
+
+    var theChosen = book;
+    var chosen = APIUtil.makeBookObject(book);
+    BookSearchStore.resetCurrentBook(chosen);
+    this.props.whenChosen();
+
   },
   click: function(event){
     event.preventDefault();
@@ -73,20 +78,23 @@ var BookSearchBar = React.createClass({
     this.props.whenChosen();
 
   },
+  removeSearchGuesses: function(){
+    this.setState({showGuesses:false});
+  },
   render: function(){
     var that = this;
     if (this.state.showGuesses){
       var guesses = this.state.searchResults.map(function(result, index){
-        return(<li key={index} onClick={that.clickOption} className="searchGuess"> {result.volumeInfo.title} </li>);
-      });
+        return(<SearchListItem key={result.id} book={result} clickOption={this.clickOption} />);
+      }, this);
     }else{
-      guesses = <div />
+      guesses = null;
     }
 
 
     return (
       <div id="landing-search-bar">
-        <label id="BookSearchLabel">What book would you like to explore?</label>
+        <label id="BookSearchLabel">What book do you want to explore?</label>
         <br/>
         <form className="SearchForm">
           <input id="BookSearchInput"

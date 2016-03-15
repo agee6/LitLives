@@ -3,6 +3,10 @@ body {
   background-color: #261a0d;
   /*margin: -10px; */
 }
+span{
+  color: #e4cdb4;
+
+}
 .logo{
   background-image: url("Drawing.png");
   background-size: cover;
@@ -11,11 +15,18 @@ body {
 
 }
 
+
 .logo:hover{
   cursor: pointer;
 }
 .userNameLabel{
-  color: blue; 
+  color: #e4cdb4;
+  position: absolute;
+  top: 22px;
+  left: 100px;
+}
+#bookTitle {
+  left: 150px; 
 }
 
 button{

@@ -5,6 +5,7 @@ var APIUtil = require('../../util/APIUtil.js');
 var NoteStore = require('../../stores/NoteStore.js');
 var NoteItem = require('./NoteItem.jsx');
 var Modal = require('react-modal');
+
 var customStyles = {
   overlay : {
     position          : 'fixed',
@@ -71,11 +72,13 @@ var Note = React.createClass({
     var noteDisplay = this.state.allNotes.map(function(note){
       return(<NoteItem note={note} />);
     });
+    var banana = this.props.currentBook.title;
+
 
     return (
       <div className="NoteArea">
         <button className="AddNoteButton" onClick={this.openModal}>Add Note</button>
-        <h3 className="NoteBookTitle">Notes on</h3><h3 className="NoteBookTitle Title"> {this.props.currentBook.title}</h3>
+        <h3 className="NoteBookTitle">Notes on</h3><h3 className="NoteBookTitle"> {banana}</h3>
 
         {noteDisplay}
 

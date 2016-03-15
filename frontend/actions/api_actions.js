@@ -2,7 +2,7 @@ var AppDispatcher = require('../dispatcher/dispatcher');
 var BookSearchConstants = require('../constants/BookSearchConstants');
 var BookShelfConstants = require('../constants/BookShelfConstants');
 var NoteConstants = require('../constants/NoteConstants');
-var UserConstants = require('../constants/UserConstants'); 
+var UserConstants = require('../constants/UserConstants');
 
 var ApiActions = {
 
@@ -39,6 +39,17 @@ var ApiActions = {
     AppDispatcher.dispatch({
       actionType: BookSearchConstants.ReceiveCurrentBook,
       book: book
+    });
+  },
+  emptyShelves: function(){
+
+    AppDispatcher.dispatch({
+      actionType: BookShelfConstants.EmptyShelves
+    });
+  },
+  deleteCurrentBook: function(){
+    AppDispatcher.dispatch({
+      actionType: BookSearchConstants.DeleteCurrentBook
     });
   },
   AddToInitial: function(newBookList){

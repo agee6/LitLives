@@ -12,6 +12,7 @@ var root = document.getElementById('reactContent');
 var History = require('react-router').History;
 var Navbar = require('./components/Navbar.jsx');
 var UserStore = require('./stores/UserStore.js');
+var ApiActions = require('./actions/api_actions');
 
 var App = React.createClass({
   mixins:[History],
@@ -24,6 +25,7 @@ var App = React.createClass({
       APIUtil.getUserBooks();
       APIUtil.getCurrentBook();
     }
+    UserStore.addListener(this._onChange);
 
     this.history.push({pathname: "/Search"});
 
@@ -32,7 +34,12 @@ var App = React.createClass({
     if(UserStore.loggedIn()){
       APIUtil.getUserBooks();
       APIUtil.getCurrentBook();
+    }else{
+      // ApiActions.emptyShelves();
+      // ApiActions.deleteCurrentBook();
+
     }
+
     this.setState({loggedIn: UserStore.loggedIn()});
   },
   render: function(){

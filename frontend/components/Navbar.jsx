@@ -4,6 +4,8 @@ var APIUtil = require('../util/APIUtil.js');
 var Modal = require('react-modal');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var UserStore = require('../stores/UserStore.js');
+var ApiActions = require('../actions/api_actions.js');
+var BookSearchStore = require('../stores/BookSearchStore.js');
 var customStyles = {
   overlay : {
     position          : 'fixed',
@@ -50,6 +52,12 @@ var Navbar = React.createClass({
   signOutClick: function(event){
 
     APIUtil.logoutUser();
+
+      ApiActions.emptyShelves();
+      ApiActions.deleteCurrentBook();
+
+
+    this.history.push({pathname: "/Search"});
   },
   signClick: function(event){
     event.preventDefault();
@@ -91,6 +99,12 @@ var Navbar = React.createClass({
     if(this.state.loggedIn){
       signB = <li className="nav-right" id="NavUser" onClick={this.signOutClick}>Sign Out</li>;
       un = UserStore.currentUser().username;
+      if(BookSearchStore.currentBook() !== null){
+        cb = <div className="userNameLabel" id="bookTitle"> is currently exploring {BookSearchStore.currentBook().title}</div>;
+
+      }else {
+        cb = <div />
+      }
     }
     else{
       signB = <li className="nav-right" id="NavUser" onClick={this.openModal}>Sign in/up!</li>
@@ -103,6 +117,7 @@ var Navbar = React.createClass({
            <div className="header-logo" onClick={this.searchClick}>
              <i className="fa fa-book fa-3x"></i>
              <div className="userNameLabel">{un}</div>
+             {cb}
            </div>
 
            <ul className="header-list group">

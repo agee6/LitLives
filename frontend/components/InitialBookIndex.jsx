@@ -24,8 +24,8 @@ var InitialBookIndex = React.createClass({
     var that = this;
 
     bookOptions = this.state.bookIndex.map(function(book, index){
-        return(<IndexItem key={index} book={book} />);
-    });
+        return(<IndexItem key={index} book={book} whenChosen={this.props.whenChosen}/>);
+    }, this);
     return(
       <div id="BookArea">
         <ul className="BookList">

@@ -14,7 +14,7 @@ var addBook = function(book){
   }else if(book.read === "toRead"){
     _books.toRead.push(book);
   }else {
-    _books.reading.push(book); 
+    _books.reading.push(book);
   }
 
 };
@@ -54,6 +54,10 @@ BookShelfStore.__onDispatch = function (payload) {
       var added = addBook(payload.book);
       BookShelfStore.__emitChange();
       break;
+    case BookShelfConstants.EmptyShelves:
+      BookShelfStore.empty();
+      BookShelfStore.__emitChange();
+      break; 
   }
 };
 

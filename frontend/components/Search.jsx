@@ -20,7 +20,7 @@ var customStyles = {
     left                  : '50%',
     right                 : 'auto',
     bottom                : 'auto',
-    marginRight           : '-50%',
+    // marginRight           : '-80%',
     transform             : 'translate(-50%, -50%)'
   }
 };

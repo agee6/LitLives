@@ -12,7 +12,7 @@ var NoteItem = React.createClass({
 
   render: function() {
     return (
-      <div className="Individual Note">
+      <div className="IndividualNote">
           <h4 className="NoteTitle">{this.props.note.title}</h4>
           <p className="NoteBody">{this.props.note.body}</p>
           <div className="NoteFooter">From:{this.props.note.chapter} and page:{this.props.note.page}</div>

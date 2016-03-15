@@ -89,6 +89,24 @@
   margin-bottom: 20px;
   position: relative;
 }
+.AddNoteButton {
+  margin: 20px;
+  margin-left: 50%;
+}
+.NoteDelete {
+  float: right;
+  font-size: 12px;
+  width: auto;
+  margin: 10px;
+
+}
+.NoteBody {
+  margin: 10px; 
+}
+.IndividualNote {
+  float:left;
+  width: 100%;
+}
 
 
 

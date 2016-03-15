@@ -30,10 +30,10 @@ var BookConfirmation = React.createClass({
     return(
       <section className="BookConfirmation">
         <div>
-          <h3>Is the following the correct book?</h3>
-            <h2>{chosen.title}</h2>
-            <h3>by, {chosen.author}</h3>
-            <img src={chosen.image}></img>
+          <h3 className="confirmationQuestion">Is the following the correct book?</h3>
+            <h2 className="confirmationTitle">{chosen.title}</h2>
+            <h3 className="byLine"> by, {chosen.author}</h3>
+            <img className="confirmationImage" src={chosen.image}></img>
               <RadioGroup
                 name="fruit"
                 selectedValue={this.state.selectedValue}
@@ -44,17 +44,17 @@ var BookConfirmation = React.createClass({
                       <Radio value="read" />have read
                     </label>
                     <label>
-                      <Radio value="toRead" />want to read
+                      <Radio value="toRead" />to read
                     </label>
                     <label>
-                      <Radio value="reading" />currently reading
+                      <Radio value="reading" />reading
                     </label>
                   </div>
                 )}
               </RadioGroup>
         </div>
           <button className="Confirmation" id="Yes" onClick={this.yesClick}>Yes</button>
-          <button className="Confirmation" id="No" onClick={this.noClick}>No, searchAgain</button>
+          <button className="Confirmation" id="No" onClick={this.noClick}>Search Again</button>
 
       </section>
     )

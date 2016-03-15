@@ -9,8 +9,9 @@ var IndexItem = React.createClass({
   onClick: function(event){
     event.preventDefault();
     ApiActions.updateCurrentBook(this.props.book);
-    APIUtil.createBook(this.props.book);
-    this.history.push("/Desk");
+    this.props.whenChosen(); 
+    // APIUtil.createBook(this.props.book);
+    // this.history.push("/Desk");
   },
   render: function(){
     return(

@@ -23,7 +23,7 @@ var loadInitial = function(results){
 
 };
 var addToInitial = function(results){
-  
+
   _initialResults = _initialResults.concat(results.slice());
 };
 BookSearchStore.all = function () {
@@ -62,6 +62,10 @@ BookSearchStore.__onDispatch = function (payload) {
       var c3 = addToInitial(payload.results);
       BookSearchStore.__emitChange();
       break;
+    case BookSearchConstants.DeleteCurrentBook:
+      var c4 = resetCurrentBook(null);
+      BookSearchStore.__emitChange();
+      break; 
   }
 };
 window.BookSearchStore = BookSearchStore;

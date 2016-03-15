@@ -17,7 +17,7 @@
   z-index: 1;
   overflow: visible;
   height: 100px;
-  width: 490px;
+  width: 450px;
   left: 50%;
 
 
@@ -73,6 +73,47 @@
   margin-left: 20px;
 
 }
+.confirmationTitle {
+  text-align: center;
+  margin: 10px;
+  margin-bottom: 0px;
+  margin-top: 50px;
+}
+.byLine{
+  text-align: right;
+  margin-top: 0px;
+
+}
+.confirmationImage {
+  margin-left: 30%;
+  margin-bottom: 10%;
+}
+.ReactModal__Body--open button{
+  width: auto;
+  margin-left: 40%;
+  margin-top: 50px;
+}
+.Confirmation{
+  /*background-color: #261a0d;;*/
+  height: 30px;
+  width: auto;
+  margin: 10px;
+}
+#Yes{
+  position:absolute;
+  left: -100px;
+  top: 3%;
+
+
+}
+#No{
+  position:absolute;
+  left: 0%;
+  top: 3%;
+  width: 150px;
+
+
+}
 .searchGuess{
 
 }
@@ -84,5 +125,5 @@
   /*box-shadow: 12px 12px 7px 10px rgba(256,256,256,0.5);*/
   background-color: rgba(220,220,220,0.5);
   z-index: 10;
-  cursor: pointer; 
+  cursor: pointer;
 }

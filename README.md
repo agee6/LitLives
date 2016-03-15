@@ -1,8 +1,23 @@
 # FresherNote
 
-[Heroku link][heroku] **NB:** This link is not yet live. 
+[Heroku link][heroku] 
 
-[heroku]: http://www.herokuapp.com
+[heroku]: http://www.litlives.herokuapp.com
+
+# LitLives
+
+Lit lives is a website for connecting to the wider world of literature in a more interactive way. A user can save the books they have read and want to read on various boookshelves, record notes and analysis on various works of literature in order to make new connections and understandings between characters, themes, ideas, and plot. 
+
+## Functionality
+
+- look up books and view description and information about that book
+- record notes about that book and record for personal use, indexed by page number and chapter.
+- record analysis and post publicly
+
+
+## Screen Shots
+
+
 
 ## Minimum Viable Product
 

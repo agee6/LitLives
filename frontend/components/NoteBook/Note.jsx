@@ -14,7 +14,9 @@ var customStyles = {
     right             : 0,
     bottom            : 0,
     backgroundColor   : 'rgba(255, 255, 255, 0.75)',
-    zIndex           : 20
+    zIndex           : 20,
+    backgroundImage   : 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
+    backgroundSize    : 'cover'
   },
   content : {
     top                   : '50%',
@@ -72,15 +74,33 @@ var Note = React.createClass({
     var noteDisplay = this.state.allNotes.map(function(note){
       return(<NoteItem note={note} />);
     });
+    if (this.state.allNotes.length === 0){
+      noteDisplay = (<div className="individual-note-area">No Notes to display</div> )
+    }
     var banana = this.props.currentBook.title;
-
+    var NoteStyle = {
+      backgroundImage: 'url(\'' + this.props.currentBook.image + '\')',
+      backgroundSize: 'cover'
+    }
 
     return (
       <div className="NoteArea">
-        <button className="AddNoteButton" onClick={this.openModal}>Add Note</button>
-        <h3 className="NoteBookTitle">Notes on</h3><h3 className="NoteBookTitle"> {banana}</h3>
+        <div className="dispay-notes">
+          <div className="note-header">
+            <div className="NoteBookTitle" id="statement">Notes on </div><div className="NoteBookTitle" id="book-title-note"> {banana}</div>
 
-        {noteDisplay}
+
+          </div>
+          <div className="note-area" style={NoteStyle}>
+            <div className="inner-note">
+              {noteDisplay}
+              <button className="AddNoteButton" onClick={this.openModal}>Add Note</button>
+
+            </div>
+
+          </div>
+        </div>
+
 
         <Modal
            isOpen={this.state.modalIsOpen}

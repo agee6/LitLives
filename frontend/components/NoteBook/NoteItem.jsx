@@ -16,7 +16,7 @@ var NoteItem = React.createClass({
           <h4 className="NoteTitle">{this.props.note.title}</h4>
           <p className="NoteBody">{this.props.note.body}</p>
           <div className="NoteFooter">From:{this.props.note.chapter} and page:{this.props.note.page}</div>
-          <button className="NoteDelete" onClick={this.deleteClick}>Delete Note!</button>
+          <button className="NoteDelete" onClick={this.deleteClick}>Delete Note</button>
       </div>
     );
   }

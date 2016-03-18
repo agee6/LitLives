@@ -1,10 +1,18 @@
 
+
+button {
+  height: auto;
+  width: auto;
+}
+
+
 body {
   background-color: #261a0d;
   /*margin: -10px; */
 }
 span{
   color: inherit;
+  font-weight: inherit; 
 
 }
 .logo{

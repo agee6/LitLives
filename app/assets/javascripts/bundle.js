@@ -34265,9 +34265,34 @@
 	    event.preventDefault();
 	    alert("congrats!");
 	  },
+	  markAsRead: function markAsRead(event) {
+	    event.preventDefault();
+	    console.log("read");
+	  },
+	  editClick: function editClick(event) {
+	    event.preventDefault();
+	    console.log("edit");
+	  },
 	  render: function render() {
 	    var book = this.props.currentBook;
 	    // var bookStyle = { backgroundImage: 'url('+ book.image + ')'};
+	    var pages, language, publisher;
+	
+	    if (book.pages === null) {
+	      pages = "N/A";
+	    } else {
+	      pages = book.pages;
+	    }
+	    if (book.language === null) {
+	      language = "N/A";
+	    } else {
+	      language = book.language;
+	    }
+	    if (book.publishing === null) {
+	      publisher = "N/A";
+	    } else {
+	      publisher = book.publishing;
+	    }
 	    return React.createElement(
 	      "section",
 	      { className: "BookPage", id: "BookPageArea" },
@@ -34297,25 +34322,39 @@
 	        )
 	      ),
 	      React.createElement(
-	        "footer",
+	        "div",
 	        { className: "BookPage", id: "BookFooter" },
 	        React.createElement(
 	          "div",
-	          { className: "BookFooter", id: "language" },
-	          "Pages: ",
-	          book.pages
+	          { className: "BookFooter", id: "pages" },
+	          "pages: ",
+	          pages
 	        ),
 	        React.createElement(
 	          "div",
 	          { className: "BookFooter", id: "language" },
 	          "language: ",
-	          book.language
+	          language
 	        ),
 	        React.createElement(
 	          "div",
 	          { className: "BookFooter", id: "publisher" },
 	          "publisher: ",
-	          book.publishing
+	          publisher
+	        )
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: "button-area" },
+	        React.createElement(
+	          "button",
+	          { className: "book-button-area", id: "edit-book-buton", onclick: this.editClick },
+	          "Edit Book"
+	        ),
+	        React.createElement(
+	          "button",
+	          { className: "book-button-area", id: "mark-as-read", onClick: this.markAsRead },
+	          "Mark as Read"
 	        )
 	      )
 	    );
@@ -34405,7 +34444,9 @@
 	    right: 0,
 	    bottom: 0,
 	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
-	    zIndex: 20
+	    zIndex: 20,
+	    backgroundImage: 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
+	    backgroundSize: 'cover'
 	  },
 	  content: {
 	    top: '50%',
@@ -34464,28 +34505,55 @@
 	    var noteDisplay = this.state.allNotes.map(function (note) {
 	      return React.createElement(NoteItem, { note: note });
 	    });
+	    if (this.state.allNotes.length === 0) {
+	      noteDisplay = React.createElement(
+	        'div',
+	        { className: 'individual-note-area' },
+	        'No Notes to display'
+	      );
+	    }
 	    var banana = this.props.currentBook.title;
+	    var NoteStyle = {
+	      backgroundImage: 'url(\'' + this.props.currentBook.image + '\')',
+	      backgroundSize: 'cover'
+	    };
 	
 	    return React.createElement(
 	      'div',
 	      { className: 'NoteArea' },
 	      React.createElement(
-	        'button',
-	        { className: 'AddNoteButton', onClick: this.openModal },
-	        'Add Note'
+	        'div',
+	        { className: 'dispay-notes' },
+	        React.createElement(
+	          'div',
+	          { className: 'note-header' },
+	          React.createElement(
+	            'div',
+	            { className: 'NoteBookTitle', id: 'statement' },
+	            'Notes on '
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'NoteBookTitle', id: 'book-title-note' },
+	            ' ',
+	            banana
+	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'note-area', style: NoteStyle },
+	          React.createElement(
+	            'div',
+	            { className: 'inner-note' },
+	            noteDisplay,
+	            React.createElement(
+	              'button',
+	              { className: 'AddNoteButton', onClick: this.openModal },
+	              'Add Note'
+	            )
+	          )
+	        )
 	      ),
-	      React.createElement(
-	        'h3',
-	        { className: 'NoteBookTitle' },
-	        'Notes on'
-	      ),
-	      React.createElement(
-	        'h3',
-	        { className: 'NoteBookTitle' },
-	        ' ',
-	        banana
-	      ),
-	      noteDisplay,
 	      React.createElement(
 	        Modal,
 	        {
@@ -34649,7 +34717,7 @@
 	      React.createElement(
 	        'button',
 	        { className: 'NoteDelete', onClick: this.deleteClick },
-	        'Delete Note!'
+	        'Delete Note'
 	      )
 	    );
 	  }

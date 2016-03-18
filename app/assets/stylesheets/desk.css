@@ -29,7 +29,7 @@
   height: 700px;
   float: left;
   margin: 30px;
-  background-size: cover;
+  /*background-size: cover;*/
 
 }
 
@@ -83,24 +83,7 @@
   height: 250px;
   width: 100%;
 }
-.AddNoteButton {
-  margin: 20px;
-  margin-left: 50%;
-}
-.NoteDelete {
-  float: right;
-  font-size: 12px;
-  width: auto;
-  margin: 10px;
 
-}
-.NoteBody {
-  margin: 10px;
-}
-.IndividualNote {
-  float:left;
-  width: 100%;
-}
 
 
 

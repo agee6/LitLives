@@ -9,18 +9,22 @@ var BookPage = React.createClass({
   },
   render: function(){
     var book = this.props.currentBook;
+    // var bookStyle = { backgroundImage: 'url('+ book.image + ')'};
     return(
-      <section className="BookPage">
-        <h1>{book.title}</h1>
-        <div className="BookPage" id="ImageInLine">
-          <img src={book.image}></img>
+      <section className="BookPage" id="BookPageArea">
+        <div className="BookTitleArea">
+          <div className="BookTitle">{book.title}</div>
+          <div className="Author">by, {book.author}</div>
+
         </div>
-        <h2>by, {book.author}</h2>
-        <p>{book.description}</p>
+        <div className="BookPage" id="BookDescriptionBox">
+          <img src={book.image} id="CoverPhoto"></img>
+          <p id="BookDescription">{book.description}</p>
+        </div>
         <footer className="BookPage" id="BookFooter">
-          <p>Pages: {book.pages}</p>
-          <p>language: {book.language}</p>
-          <p>publisher: {book.publishing}</p>
+          <div className="BookFooter" id="language">Pages: {book.pages}</div>
+          <div className="BookFooter" id="language">language: {book.language}</div>
+          <div className="BookFooter" id="publisher">publisher: {book.publishing}</div>
 
         </footer>
 

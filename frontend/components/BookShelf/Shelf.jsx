@@ -15,8 +15,8 @@ var Shelf = React.createClass({
       return(<ShelfItem theid={theid} key={index} bookTitle={book.title} book={book} /> );
     }, this);
     return(
-      <section className="BookShelf" id="Shelf">
-        <ul>
+      <section className="Shelf" id={this.props.identifier}>
+        <ul id="ShelfBookList">
           {theshelf}
         </ul>
       </section>

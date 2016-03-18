@@ -34267,48 +34267,53 @@
 	  },
 	  render: function render() {
 	    var book = this.props.currentBook;
+	    // var bookStyle = { backgroundImage: 'url('+ book.image + ')'};
 	    return React.createElement(
 	      "section",
-	      { className: "BookPage" },
+	      { className: "BookPage", id: "BookPageArea" },
 	      React.createElement(
-	        "h1",
-	        null,
-	        book.title
+	        "div",
+	        { className: "BookTitleArea" },
+	        React.createElement(
+	          "div",
+	          { className: "BookTitle" },
+	          book.title
+	        ),
+	        React.createElement(
+	          "div",
+	          { className: "Author" },
+	          "by, ",
+	          book.author
+	        )
 	      ),
 	      React.createElement(
 	        "div",
-	        { className: "BookPage", id: "ImageInLine" },
-	        React.createElement("img", { src: book.image })
-	      ),
-	      React.createElement(
-	        "h2",
-	        null,
-	        "by, ",
-	        book.author
-	      ),
-	      React.createElement(
-	        "p",
-	        null,
-	        book.description
+	        { className: "BookPage", id: "BookDescriptionBox" },
+	        React.createElement("img", { src: book.image, id: "CoverPhoto" }),
+	        React.createElement(
+	          "p",
+	          { id: "BookDescription" },
+	          book.description
+	        )
 	      ),
 	      React.createElement(
 	        "footer",
 	        { className: "BookPage", id: "BookFooter" },
 	        React.createElement(
-	          "p",
-	          null,
+	          "div",
+	          { className: "BookFooter", id: "language" },
 	          "Pages: ",
 	          book.pages
 	        ),
 	        React.createElement(
-	          "p",
-	          null,
+	          "div",
+	          { className: "BookFooter", id: "language" },
 	          "language: ",
 	          book.language
 	        ),
 	        React.createElement(
-	          "p",
-	          null,
+	          "div",
+	          { className: "BookFooter", id: "publisher" },
 	          "publisher: ",
 	          book.publishing
 	        )
@@ -34739,21 +34744,25 @@
 	        'div',
 	        { className: 'menu' },
 	        React.createElement(
-	          'label',
-	          { className: 'ShelfLabel' },
-	          'Books To Read'
-	        ),
-	        React.createElement(Shelf, { books: this.state.toReadBooks }),
-	        React.createElement(
-	          'label',
-	          { className: 'ShelfLabel' },
-	          'Books I Have Read'
-	        ),
-	        React.createElement(Shelf, { books: this.state.readBooks }),
-	        React.createElement(
-	          'button',
-	          { className: 'shelf-button', onClick: this.onAddClick },
-	          'Add to Shelf'
+	          'div',
+	          { className: 'FullBookShelf' },
+	          React.createElement(
+	            'label',
+	            { className: 'ShelfLabel', id: 'ToRead' },
+	            'Want to read shelf'
+	          ),
+	          React.createElement(Shelf, { books: this.state.toReadBooks, identifier: 'BooksToRead' }),
+	          React.createElement(
+	            'label',
+	            { className: 'ShelfLabel', id: 'Read' },
+	            'read shelf'
+	          ),
+	          React.createElement(Shelf, { books: this.state.readBooks, identifier: 'BooksRead' }),
+	          React.createElement(
+	            'button',
+	            { className: 'shelf-button', onClick: this.onAddClick },
+	            'Add to Shelf'
+	          )
 	        )
 	      ),
 	      React.createElement(
@@ -34873,10 +34882,10 @@
 	    }, this);
 	    return React.createElement(
 	      'section',
-	      { className: 'BookShelf', id: 'Shelf' },
+	      { className: 'Shelf', id: this.props.identifier },
 	      React.createElement(
 	        'ul',
-	        null,
+	        { id: 'ShelfBookList' },
 	        theshelf
 	      )
 	    );
@@ -34940,8 +34949,11 @@
 	    right: 0,
 	    bottom: 0,
 	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
-	    zIndex: 20
+	    backgroundImage: 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
+	    zIndex: 20,
+	    backgroundSize: 'cover'
 	  },
+	  // opacity           : 0.6
 	  content: {
 	    top: '50%',
 	    left: '50%',
@@ -34949,8 +34961,14 @@
 	    bottom: 'auto',
 	    marginRight: '-50%',
 	    transform: 'translate(-50%, -50%)',
-	    backgroundColor: '#e4cdb4',
-	    borderRadius: '5px'
+	
+	    backgroundImage: 'url(\'https://images.unsplash.com/photo-1457298483369-0a95d2b17fcd?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=f4fd0823787f85fcb27fd05027766a41\')',
+	    backgroundSize: 'cover',
+	    borderRadius: '10px',
+	    filter: 'blur(\'4px\')',
+	    width: '300px',
+	    backgroundBlendMode: 'darken'
+	
 	  }
 	};
 	
@@ -35018,7 +35036,7 @@
 	  },
 	  signUpClick: function signUpClick(event) {
 	    event.preventDefault();
-	    console.log("SignedUp!");
+	
 	    this.clicked = true;
 	    if (this.state.username !== "" && this.state.password !== "") {
 	      APIUtil.createUser(this.state.username, this.state.password);
@@ -35029,7 +35047,7 @@
 	  },
 	  logInAsGuest: function logInAsGuest(event) {
 	    event.preventDefault();
-	    console.log("I'm a guest");
+	
 	    this.clicked = true;
 	    APIUtil.signIn("guest_user", "password");
 	  },
@@ -35098,11 +35116,6 @@
 	          onRequestClose: this.closeModal,
 	          style: customStyles },
 	        React.createElement(
-	          'h1',
-	          null,
-	          ' Login or Enter as guest to continue exploring!'
-	        ),
-	        React.createElement(
 	          'p',
 	          null,
 	          ' ',
@@ -35114,38 +35127,36 @@
 	          React.createElement(
 	            'div',
 	            { className: 'UserNameArea' },
-	            React.createElement(
-	              'label',
-	              { className: 'UserNameLabel' },
-	              'Username:'
-	            ),
-	            React.createElement('input', { type: 'text', className: 'UserNameInput', valueLink: this.linkState('username'), placholder: 'enter a valid username' })
+	            React.createElement('input', { type: 'text', className: 'UserNameInput', valueLink: this.linkState('username'), placeholder: 'enter a valid username' })
 	          ),
 	          React.createElement(
 	            'div',
 	            { className: 'PasswordArea' },
+	            React.createElement('input', { type: 'password', className: 'PasswordInput', placeholder: 'enter a 6 digit password', valueLink: this.linkState('password') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'LoginButtonArea' },
 	            React.createElement(
-	              'label',
-	              { className: 'PasswordInputLabel' },
-	              'Password:'
+	              'button',
+	              { className: 'SignButton', onClick: this.signClick },
+	              'Sign In!'
 	            ),
-	            React.createElement('input', { type: 'password', className: 'PasswordInput', password: 'enter a password, at least 6 digits long', valueLink: this.linkState('password') })
-	          ),
-	          React.createElement('br', null),
-	          React.createElement(
-	            'button',
-	            { id: 'SignButton', onClick: this.signClick },
-	            'Sign In!'
-	          ),
-	          React.createElement(
-	            'button',
-	            { id: 'SignButton', onClick: this.signUpClick },
-	            'Sign Up!'
-	          ),
-	          React.createElement(
-	            'button',
-	            { id: 'SignButton', onClick: this.logInAsGuest },
-	            'Guest Sign In'
+	            React.createElement(
+	              'button',
+	              { className: 'SignButton', onClick: this.signUpClick },
+	              'Sign Up!'
+	            ),
+	            React.createElement(
+	              'div',
+	              { className: 'DividingOr' },
+	              '----------OR----------'
+	            ),
+	            React.createElement(
+	              'button',
+	              { className: 'SignButton', onClick: this.logInAsGuest },
+	              'Login as Guest'
+	            )
 	          )
 	        ),
 	        React.createElement(

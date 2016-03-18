@@ -14,7 +14,10 @@ var customStyles = {
     right             : 0,
     bottom            : 0,
     backgroundColor   : 'rgba(255, 255, 255, 0.75)',
-    zIndex           : 20
+    backgroundImage   : 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
+    zIndex            : 20,
+    backgroundSize    : 'cover',
+    // opacity           : 0.6
   },
   content : {
     top                   : '50%',
@@ -23,8 +26,15 @@ var customStyles = {
     bottom                : 'auto',
     marginRight           : '-50%',
     transform             : 'translate(-50%, -50%)',
-    backgroundColor       : '#e4cdb4',
-    borderRadius          : '5px'
+
+    backgroundImage       : 'url(\'https://images.unsplash.com/photo-1457298483369-0a95d2b17fcd?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=f4fd0823787f85fcb27fd05027766a41\')',
+    backgroundSize        : 'cover',
+    borderRadius          : '10px',
+    filter                : 'blur(\'4px\')',
+    width                 : '300px',
+    backgroundBlendMode   : 'darken',
+
+
   }
 };
 
@@ -78,10 +88,6 @@ var Navbar = React.createClass({
       this.setState({message: "invalid password, must be at least 6 digits please try again"});
     }
 
-
-
-
-
   },
   _onChange: function(){
 
@@ -99,7 +105,7 @@ var Navbar = React.createClass({
   },
   signUpClick: function(event){
     event.preventDefault();
-    console.log("SignedUp!");
+
     this.clicked = true;
     if(this.state.username !== "" && this.state.password !== ""){
       APIUtil.createUser(this.state.username, this.state.password)
@@ -112,7 +118,7 @@ var Navbar = React.createClass({
   },
   logInAsGuest:function(event){
     event.preventDefault();
-    console.log("I'm a guest");
+
     this.clicked = true;
     APIUtil.signIn("guest_user", "password");
   },
@@ -126,7 +132,7 @@ var Navbar = React.createClass({
       un = UserStore.currentUser().username;
       if(BookSearchStore.currentBook() !== null){
         // cb = <div className="userNameLabel" id="bookTitle"> is currently exploring {BookSearchStore.currentBook().title}</div>;
-        cb= {backgroundImage: "url(" +BookSearchStore.currentBook().image + ")"};
+        cb= {backgroundImage: "url(" + BookSearchStore.currentBook().image + ")"};
       }else {
         cb = null;
       }
@@ -159,25 +165,29 @@ var Navbar = React.createClass({
             onRequestClose={this.closeModal}
             style={customStyles} >
 
-           <h1> Login or Enter as guest to continue exploring!</h1>
+
            <p> {this.state.message}</p>
 
             <form className="NoteForm">
               <div className="UserNameArea">
-                <label className="UserNameLabel">Username:</label>
-                <input type="text" className="UserNameInput" valueLink={this.linkState('username')} placholder="enter a valid username"/>
+
+                <input type="text" className="UserNameInput" valueLink={this.linkState('username')} placeholder="enter a valid username"/>
 
               </div>
               <div className="PasswordArea">
-                <label className="PasswordInputLabel">Password:</label>
-                <input type="password" className="PasswordInput" password="enter a password, at least 6 digits long" valueLink={this.linkState('password')} />
+
+                <input type="password" className="PasswordInput" placeholder="enter a 6 digit password" valueLink={this.linkState('password')} />
 
               </div>
-              <br />
 
-                  <button id="SignButton" onClick={this.signClick}>Sign In!</button>
-                  <button id="SignButton" onClick={this.signUpClick}>Sign Up!</button>
-                  <button id="SignButton" onClick={this.logInAsGuest}>Guest Sign In</button>
+              <div className="LoginButtonArea">
+                <button className="SignButton" onClick={this.signClick}>Sign In!</button>
+                <button className="SignButton" onClick={this.signUpClick}>Sign Up!</button>
+                <div className="DividingOr">----------OR----------</div>
+                <button className="SignButton" onClick={this.logInAsGuest}>Login as Guest</button>
+
+              </div>
+
               </form>
 
 

@@ -90,11 +90,17 @@
   margin-left: 30%;
   margin-bottom: 10%;
 }
-.ReactModal__Body--open button{
+.ReactModal__Content > button{
+  width: auto;
+  margin-left: 40%;
+  height: auto; 
+
+}
+/*.NoteForm button:last-child{
   width: auto;
   margin-left: 40%;
   margin-top: 50px;
-}
+}*/
 .Confirmation{
   /*background-color: #261a0d;;*/
   height: 30px;
@@ -102,17 +108,17 @@
   margin: 10px;
 }
 #Yes{
-  position:absolute;
+  /*position:absolute;
   left: -100px;
-  top: 3%;
+  top: 3%;*/
 
 
 }
 #No{
-  position:absolute;
+  /*position:absolute;
   left: 0%;
-  top: 3%;
-  width: 150px;
+  top: 10%;
+  width: 150px;*/
 
 
 }

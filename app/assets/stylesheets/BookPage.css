@@ -1,0 +1,34 @@
+.BookTitleArea {
+  width: 100%;
+
+}
+.Author {
+  font-size: 12px;
+  text-align: center;
+
+}
+.BookTitle {
+  font-size: 30px;
+  text-align: center;
+
+}
+#BookPageArea {
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  position: relative;
+
+
+}
+#BookDescriptionBox {
+  width: 100%;
+
+}
+#BookDescription {
+  float: left;
+  margin: 10px;
+}
+#CoverPhoto {
+  float: right;
+  margin: 10px;
+}

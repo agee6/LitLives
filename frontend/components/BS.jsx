@@ -56,13 +56,13 @@ var BS = React.createClass({
       <section className="bookshelf">
 
           <div className="menu">
-
-                <label className="ShelfLabel">Books To Read</label>
-                <Shelf books={this.state.toReadBooks}/>
-                <label className="ShelfLabel">Books I Have Read</label>
-                <Shelf books={this.state.readBooks}/>
-
-                <button className="shelf-button" onClick={this.onAddClick}>Add to Shelf</button>
+            <div className="FullBookShelf">
+              <label className="ShelfLabel" id="ToRead">Want to read shelf</label>
+              <Shelf books={this.state.toReadBooks} identifier="BooksToRead"/>
+              <label className="ShelfLabel" id="Read">read shelf</label>
+              <Shelf books={this.state.readBooks} identifier="BooksRead"/>
+              <button className="shelf-button" onClick={this.onAddClick}>Add to Shelf</button>
+            </div>
           </div>
           <div className="site-wrapper">
             <div className="header">

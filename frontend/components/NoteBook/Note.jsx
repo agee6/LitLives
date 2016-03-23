@@ -85,13 +85,13 @@ var Note = React.createClass({
 
     return (
       <div className="NoteArea">
-        <div className="dispay-notes">
+        <div className="dispay-notes" style={NoteStyle}>
           <div className="note-header">
             <div className="NoteBookTitle" id="statement">Notes on </div><div className="NoteBookTitle" id="book-title-note"> {banana}</div>
 
 
           </div>
-          <div className="note-area" style={NoteStyle}>
+          <div className="note-area" >
             <div className="inner-note">
               {noteDisplay}
               <button className="AddNoteButton" onClick={this.openModal}>Add Note</button>
@@ -108,7 +108,7 @@ var Note = React.createClass({
            style={customStyles} >
 
            <form className="NoteForm">
-             <textarea className="NoteInput" rows="20" cols="60" name="comment"
+             <textarea className="NoteInput" rows="30" cols="100" name="comment"
                placeholder="Enter note here..." valueLink={this.linkState('noteText')}/>
              <br />
              <label className="PageInputLabel">associated page (optional):</label>
@@ -128,12 +128,12 @@ var Note = React.createClass({
                      </label>
                      <label>
                        <Radio value={false} />Private
-                       </label>
+                     </label>
 
                      </div>
                    )}
                  </RadioGroup>
-                 <button className="NoteSubmitButton" onClick={this.saveNote}>Save!</button>
+                 <button className="NoteSubmitButton" onClick={this.saveNote}>Save</button>
                </form>
 
            <button onClick={this.closeModal}>close</button>

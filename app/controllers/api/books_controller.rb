@@ -12,7 +12,17 @@ class Api::BooksController < ApplicationController
     end
 
   end
+  def update
+    @book = Book.find_by_id(params[:id])
+    if @book.update(book_params)
+      @books = Book.sort_user_books(current_user.id)
+      render json: @books
+    else
+      render json: nil
+    end
 
+
+  end
 
   def show
     @book = Book.find_by_id(params[:id])
@@ -25,7 +35,7 @@ class Api::BooksController < ApplicationController
 
   private
   def book_params
-    params.permit(:author, :genre, :title, :publishing, :year, :read, :ISBN13, :ISBN10, :description, :pages, :image, :language)
+    params.permit(:author, :genre, :title, :publishing, :year, :read, :ISBN13, :ISBN10, :description, :pages, :image, :language, :id)
   end
 
 end

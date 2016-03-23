@@ -1,6 +1,6 @@
 var Store = require('flux/utils').Store;
 var _analyses = [];
-var BanalysesConstants= require('../constants/AnalysesConstants');
+var AnalysesConstants= require('../constants/AnalysisConstants');
 var AppDispatcher = require('../dispatcher/dispatcher');
 var AnalysesStore = new Store(AppDispatcher);
 
@@ -23,17 +23,17 @@ AnalysesStore.empty = function(){
 AnalysesStore.__onDispatch = function (payload) {
 
   switch(payload.actionType) {
-    case AnalysesConstants.ReceiveUserBooks:
+    case AnalysesConstants.ReceiveAnalyses:
 
-      var result = resetBooks(payload.books);
+      var result = resetAnalyses(payload.results);
       AnalysesStore.__emitChange();
       break;
-    case AnalysesConstants.ReceiveAddedBook:
-      var added = addBook(payload.book);
+    case AnalysesConstants.ReceiveNewAnalysis:
+      var added = addAnalysis(payload.results);
       AnalysesStore.__emitChange();
       break;
-    case AnalysesConstants.EmptyShelves:
-      AnalysesStore.empty();
+    case AnalysesConstants.ReceiveAnalysis:
+      // AnalysesStore.empty();
       AnalysesStore.__emitChange();
       break;
   }

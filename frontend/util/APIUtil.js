@@ -70,7 +70,7 @@ var APIUtil = {
       data: params,
       success: function(book) {
           // Do something with the result
-          console.log(book);
+
     }});
   },
   makeBookObject: function(bookData){
@@ -138,6 +138,46 @@ var APIUtil = {
     $.post('/api/user',{username: username, password: password}, function(user){
       ApiActions.receiveUser(user);
     });
+  },
+  createAnalysis: function(analysisParams){
+    $.post('/api/analyses', {analysis:analysisParams}, function(analysis){
+      ApiActions.receiveNewAnalysis(analysis);
+    });
+  },
+  fetchAnalyses: function(analysisParams){
+    $.get('/api/analyses', {analysis: {}}, function(analyses){
+      ApiActions.receiveAnalyses(analyses);
+    });
+  },
+  fetchAnalysis: function(analysisId){
+    $.get('api/analyses', {id: analysisId}, function(analysis){
+      ApiActions.receiveAnalysis(analysis);
+    });
+  },
+  updateAnalysis: function(analysisParams){
+    $.ajax({
+      url: '/api/analyses',
+      type: 'PATCH',
+      data: {analysis: analysisParams},
+      success: function(analysis) {
+          // Do something with the result
+          console.log(analysis);
+    }});
+
+  },
+  updateBook: function(bookId, bookParams){
+    var uri = 'api/books/'+ bookId;
+
+    $.ajax({
+      url: uri,
+      type: 'PATCH',
+      data: bookParams,
+      success: function(books) {
+          // Do something with the result
+      
+          ApiActions.receiveUserBooks(books);
+    }});
+
   }
 
 

@@ -3,25 +3,27 @@ var BookSearchConstants = require('../constants/BookSearchConstants');
 var BookShelfConstants = require('../constants/BookShelfConstants');
 var NoteConstants = require('../constants/NoteConstants');
 var UserConstants = require('../constants/UserConstants');
+var AnalysisConstants = require('../constants/AnalysisConstants');
 
 var ApiActions = {
 
-  ReceiveActions: function(book_list){
+  ReceiveActions: function(bookList){
 
     AppDispatcher.dispatch({
       actionType: BookSearchConstants.SearchResultsReceived,
-      results: book_list.items
+      results: bookList.items
     });
   },
-  ReceiveInitial: function(book_list){
+  ReceiveInitial: function(bookList){
 
 
     AppDispatcher.dispatch({
       actionType: BookSearchConstants.InitialResultsReceived,
-      results: book_list
+      results: bookList
     });
   },
   receiveUserBooks: function(books){
+    
     AppDispatcher.dispatch({
       actionType: BookShelfConstants.ReceiveUserBooks,
       books: books
@@ -74,7 +76,25 @@ var ApiActions = {
     AppDispatcher.dispatch({
       actionType: UserConstants.ReceiveUser,
       results: user
-    })
+    });
+  },
+  receiveNewAnalysis: function(analysis){
+    AppDispatcher.dispatch({
+      actionType: AnalysisConstants.RecieveNewAnalysis,
+      results: analysis
+    });
+  },
+  receiveAnalyses: function(analyses){
+    AppDispatcher.dispatch({
+      actionType: AnalysisConstants.ReceiveAnalyses,
+      results: analyses
+    });
+  },
+  receiveAnalysis: function(analysis){
+    AppDispatcher.dispatch({
+      actionType: AnalysisConstants.ReceiveAnalysis,
+      results: analysis
+    });
   }
 };
 

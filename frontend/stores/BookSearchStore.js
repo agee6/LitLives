@@ -25,13 +25,24 @@ var loadInitial = function(results){
 var addToInitial = function(results){
 
   _initialResults = _initialResults.concat(results.slice());
+
+};
+BookSearchStore.cleanInitial = function(){
+  var initDup = [];
+  for (var i = 0; i < _initialResults.length; i++) {
+    if(_initialResults[i].image !== undefined){
+      initDup.push(_initialResults[i]);
+    }
+  }
+  _initialResults = [];
+  _initialResults = initDup;
 };
 BookSearchStore.all = function () {
   return _searchResults.slice(0);
 };
-BookSearchStore.empty = function(){
-  _searchResults = [];
-};
+// BookSearchStore.empty = function(){
+//   _searchResults = [];
+// };
 BookSearchStore.initialData = function(){
   return _initialResults;
 };
@@ -52,6 +63,7 @@ BookSearchStore.__onDispatch = function (payload) {
       break;
     case BookSearchConstants.InitialResultsReceived:
       var r2 = loadInitial(payload.results);
+      BookSearchStore.cleanInitial(); 
       BookSearchStore.__emitChange();
       break;
     case BookSearchConstants.ReceiveCurrentBook:
@@ -60,12 +72,13 @@ BookSearchStore.__onDispatch = function (payload) {
       break;
     case BookSearchConstants.AddInitialReceived:
       var c3 = addToInitial(payload.results);
+      BookSearchStore.cleanInitial();
       BookSearchStore.__emitChange();
       break;
     case BookSearchConstants.DeleteCurrentBook:
       var c4 = resetCurrentBook(null);
       BookSearchStore.__emitChange();
-      break; 
+      break;
   }
 };
 window.BookSearchStore = BookSearchStore;

@@ -41,6 +41,7 @@ var customStyles = {
 var Navbar = React.createClass({
   mixins: [History, LinkedStateMixin],
   getInitialState: function(){
+    this.toWhere = "/Search";
     return({loggedIn: UserStore.loggedIn(), username: null, password: null, modalIsOpen: false, message: ""})
   },
   componentDidMount: function(){
@@ -55,8 +56,13 @@ var Navbar = React.createClass({
       this.history.push({pathname: "/Desk"});
 
     }else{
-      this.setState({modalIsOpen: true})
+      this.setState({modalIsOpen: true, message: "login to continue"});
+      this.toWhere = "/Desk";
     }
+  },
+  analysesClick: function(event){
+    event.preventDefault();
+    this.history.push({pathname: "/Analyses"});
   },
   openModal: function() {
     this.setState({modalIsOpen: true, chosen: BookSearchStore.currentBook()});
@@ -64,7 +70,7 @@ var Navbar = React.createClass({
 
   closeModal: function() {
 
-    this.setState({modalIsOpen: false});
+    this.setState({modalIsOpen: false, message: ""});
   },
   signOutClick: function(event){
 
@@ -93,7 +99,8 @@ var Navbar = React.createClass({
 
     if(UserStore.loggedIn()){
       this.closeModal();
-      this.setState({loggedIn: UserStore.loggedIn()})
+      this.setState({loggedIn: UserStore.loggedIn()});
+      this.history.push({pathname: this.toWhere}); 
 
     }else{
       if(this.clicked){
@@ -153,6 +160,7 @@ var Navbar = React.createClass({
            </div>
 
            <ul className="header-list group">
+
              <li className="nav-right" id="NavSearch" onClick={this.searchClick}>Search</li>
              <li className="nav-right" id="NavDesk" onClick={this.deskClick}>Desk</li>
              {signB}
@@ -166,7 +174,7 @@ var Navbar = React.createClass({
             style={customStyles} >
 
 
-           <p> {this.state.message}</p>
+           <p className="loginMessage"> {this.state.message}</p>
 
             <form className="NoteForm">
               <div className="UserNameArea">

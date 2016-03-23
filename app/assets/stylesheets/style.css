@@ -12,7 +12,7 @@ body {
 }
 span{
   color: inherit;
-  font-weight: inherit; 
+  font-weight: inherit;
 
 }
 .logo{
@@ -21,6 +21,10 @@ span{
   width: 45px;
   height: 40px;
 
+}
+.book-list{
+  padding:0px;
+  margin: 0px; 
 }
 
 

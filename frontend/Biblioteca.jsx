@@ -13,6 +13,7 @@ var History = require('react-router').History;
 var Navbar = require('./components/Navbar.jsx');
 var UserStore = require('./stores/UserStore.js');
 var ApiActions = require('./actions/api_actions');
+var Analyses = require('./components/AnalysesComponents/Analyses.jsx');
 
 var App = React.createClass({
   mixins:[History],
@@ -26,6 +27,7 @@ var App = React.createClass({
       APIUtil.getCurrentBook();
     }
     UserStore.addListener(this._onChange);
+
 
     this.history.push({pathname: "/Search"});
 
@@ -56,6 +58,7 @@ var routes = (
   <Route path="/" component={App}>
     <Route path="/Search" component={Search}/>
     <Route path="/Desk" component={Desk} />
+    <Route path="/Analyses" component={Analyses} />
   </Route>
 );
 

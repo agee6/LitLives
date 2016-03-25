@@ -5,6 +5,8 @@ var BookSearchStore = require('../stores/BookSearchStore.js');
 var BookConfirmation = require('./BookConfirmation.jsx');
 var Modal = require('react-modal');
 var BookSearch = require('./BookSearch/BookSearch.jsx');
+var APIUtil = require('../util/APIUtil.js');
+
 var customStyles = {
   overlay : {
     position          : 'fixed',
@@ -31,7 +33,13 @@ var Search = React.createClass({
     return({chosen: BookSearchStore.currentBook(), modalIsOpen: false});
   },
   bookChosen: function(){
-    this.openModal();
+    // this.openModal();
+    event.preventDefault();
+    var bookToSend = BookSearchStore.currentBook();
+    bookToSend.read = "toRead";
+    APIUtil.createBook(bookToSend);
+    var url = "/Desk"
+    this.history.push({pathname: url});
   },
   openModal: function() {
     this.setState({modalIsOpen: true, chosen: BookSearchStore.currentBook()});

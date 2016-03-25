@@ -9,7 +9,12 @@ var IndexItem = React.createClass({
   onClick: function(event){
     event.preventDefault();
     ApiActions.updateCurrentBook(this.props.book);
-    this.props.whenChosen(); 
+    // this.props.whenChosen();
+    var bookToSend = this.props.book;
+    bookToSend.read = "toRead";
+    APIUtil.createBook(bookToSend);
+    var url = "/Desk"
+    this.history.push({pathname: url});
     // APIUtil.createBook(this.props.book);
     // this.history.push("/Desk");
   },

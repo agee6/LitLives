@@ -57,6 +57,7 @@ var BS = React.createClass({
 
           <div className="menu">
             <div className="FullBookShelf">
+              <div className="bookshelf-spacer"></div>
               <label className="ShelfLabel" id="ToRead">Want to read shelf</label>
               <Shelf books={this.state.toReadBooks} identifier="BooksToRead"/>
               <label className="ShelfLabel" id="Read">read shelf</label>

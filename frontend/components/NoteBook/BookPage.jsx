@@ -4,6 +4,7 @@ var LinkedStateMixin = require('react-addons-linked-state-mixin');
 var RadioGroup = require('react-radio-group');
 var APIUtil = require('../../util/APIUtil.js');
 var ApiActions = require('../../actions/api_actions.js');
+var BookSearchStore = require('../../stores/BookSearchStore');
 
 var customStyles = {
   overlay : {
@@ -51,10 +52,23 @@ var customStyles = {
 var BookPage = React.createClass({
   mixins: [LinkedStateMixin],
   getInitialState: function(){
-    var book = this.props.currentBook;
+    var book = BookSearchStore.currentBook();
     return({modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
               ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
-              description: book.description} );
+              description: book.description, currentBook: BookSearchStore.currentBook()} );
+  },
+  componentDidMount: function(){
+    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
+  },
+  componentWillUnmount:function(){
+    this.bookStoreIndex.remove();
+  },
+  _onChange:function(){
+    var book = BookSearchStore.currentBook();
+    this.setState({modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
+              ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
+              description: book.description, currentBook: BookSearchStore.currentBook()
+            });
   },
 
   openModal: function() {
@@ -81,19 +95,24 @@ var BookPage = React.createClass({
     this.openModal();
 
   },
+  deleteBook: function(event){
+    event.preventDefault();
+  },
   updateBook: function(event){
     event.preventDefault();
     var pages, chapters, year;
 
-    if(this.state.pages !== null && this.state.pages.length > 0){
-      pages = parseInt(this.state.pages);
-    }
-    if( this.state.chapters !== null && this.state.chapters.length > 0) {
+    // if(this.state.pages !== null && this.state.pages.length > 0){
+    // }
+    pages = parseInt(this.state.pages);
+
+    if( this.state.chapters !== null && this.statechapters !== undefined && this.state.chapters.length > 0) {
       chapters = parseInt(this.state.chapters);
     }
-    if(this.state.year !== null && this.state.year.length > 0){
-      year = parseInt(this.state.year);
-    }
+    // if(this.state.year !== null && this.state.year.length > 0){
+    //   year = parseInt(this.state.year);
+    // }
+    year = parseInt(this.state.year);
     var oldBook = this.props.currentBook;
 
     var newBook = {
@@ -115,7 +134,9 @@ var BookPage = React.createClass({
 
     APIUtil.updateBook(this.props.currentBook.id, newBook);
     this.closeModal();
-    ApiActions.updateCurrentBook(this.props.book);
+    newBook.title = this.props.currentBook.title;
+    newBook.id = this.props.currentBook.id;
+    ApiActions.updateCurrentBook(newBook);
 
 
 
@@ -124,7 +145,7 @@ var BookPage = React.createClass({
     this.setState({selectedValue: value});
   },
   render: function(){
-    var book = this.props.currentBook;
+    var book = this.state.currentBook;
     // var bookStyle = { backgroundImage: 'url('+ book.image + ')'};
     var pages, language, publisher;
 
@@ -165,6 +186,7 @@ var BookPage = React.createClass({
         <div className="button-area">
           <button className="book-button-area" id="edit-book-button" onClick={this.editClick}>Edit Book</button>
           <button className="book-button-area" id="mark-as-read" onClick={this.markAsRead}>Mark as Read</button>
+          <button className="book-button-area" id="delete-book" onClick={this.deleteBook}>Delete Book</button>
         </div>
 
         <Modal
@@ -172,7 +194,7 @@ var BookPage = React.createClass({
            onRequestClose={this.closeModal}
            style={customStyles} >
 
-           <div className="book-edit-title"> {this.props.currentBook.title}</div>
+           <div className="book-edit-title"> {this.state.currentBook.title}</div>
            <form className="book-edit-form">
 
              <textarea className="book-edit-description" rows="15" cols="60" name="comment"

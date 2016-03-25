@@ -13,7 +13,6 @@ var Notebook = React.createClass({
   componentDidMount: function(){
     this.storeIndex = BookSearchStore.addListener(this._onChange);
 
-
   },
   componentWillUnmount: function(){
     this.storeIndex.remove();

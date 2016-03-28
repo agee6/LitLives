@@ -34403,28 +34403,12 @@
 	    bottom: 'auto',
 	    marginRight: '-50%',
 	    transform: 'translate(-50%, -50%)',
-	    width: '50%',
+	    width: '500px',
 	    backgroundImage: 'url(\'https://images.unsplash.com/photo-1457298483369-0a95d2b17fcd?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=f4fd0823787f85fcb27fd05027766a41\')',
 	    backgroundSize: 'cover',
 	    borderRadius: '10px'
 	  }
 	};
-	// t.string   "title",       null: false
-	// t.string   "publishing"
-	// t.datetime "created_at",  null: false
-	// t.datetime "updated_at",  null: false
-	// t.integer  "user_id",     null: false
-	// t.string   "genre"
-	// t.integer  "year"
-	// t.string   "read"
-	// t.string   "ISBN13"
-	// t.string   "ISBN10"
-	// t.string   "author"
-	// t.string   "image"
-	// t.integer  "pages"
-	// t.string   "language"
-	// t.integer  "chapters"
-	// t.text     "description"
 	
 	var BookPage = React.createClass({
 	  displayName: 'BookPage',

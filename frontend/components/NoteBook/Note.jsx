@@ -52,6 +52,10 @@ var Note = React.createClass({
     var noteHash = { body: this.state.noteText, page: pn, public: true,chapter: chap, book_id: this.props.currentBook.id};
 
     APIUtil.createNote(noteHash);
+    this.state.noteText = "";
+    this.state.title = "";
+    this.state.pageNumber = null;
+    this.state.chapter= null; 
     this.closeModal();
 
 

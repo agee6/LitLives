@@ -31598,7 +31598,7 @@
 	          onBlur: this.searchBarMoveBack,
 	          placeholder: 'enter book title',
 	          list: 'search-options',
-	          autocomplete: 'off'
+	          autoComplete: 'off'
 	        }),
 	        React.createElement('button', { id: 'BookSearchButton', className: 'hvr-grow-shadow fa fa-search', onClick: this.click }),
 	        React.createElement(
@@ -34910,6 +34910,10 @@
 	    var noteHash = { body: this.state.noteText, page: pn, public: true, chapter: chap, book_id: this.props.currentBook.id };
 	
 	    APIUtil.createNote(noteHash);
+	    this.state.noteText = "";
+	    this.state.title = "";
+	    this.state.pageNumber = null;
+	    this.state.chapter = null;
 	    this.closeModal();
 	  },
 	  handleChange: function handleChange(value) {
@@ -35121,9 +35125,9 @@
 	      React.createElement(
 	        'div',
 	        { className: 'NoteFooter' },
-	        'From:',
+	        'Chapter: ',
 	        this.props.note.chapter,
-	        ' and page:',
+	        ' and page: ',
 	        this.props.note.page
 	      ),
 	      React.createElement(

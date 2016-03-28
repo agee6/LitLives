@@ -107,7 +107,7 @@ var BookSearchBar = React.createClass({
             onBlur={this.searchBarMoveBack}
             placeholder="enter book title"
             list="search-options"
-            autocomplete="off"
+            autoComplete="off"
             />
           <button id="BookSearchButton" className="hvr-grow-shadow fa fa-search" onClick={this.click}></button>
           <datalist className="searchGuesses" id="search-options">

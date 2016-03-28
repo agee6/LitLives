@@ -34880,7 +34880,11 @@
 	    right: 'auto',
 	    bottom: 'auto',
 	    marginRight: '-50%',
-	    transform: 'translate(-50%, -50%)'
+	    transform: 'translate(-50%, -50%)',
+	    backgroundImage: 'url(\'https://images.unsplash.com/photo-1457298483369-0a95d2b17fcd?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=f4fd0823787f85fcb27fd05027766a41\')',
+	    backgroundSize: 'cover',
+	    borderRadius: '10px'
+	
 	  }
 	};
 	
@@ -34995,19 +34999,21 @@
 	            placeholder: 'Enter note here...', valueLink: this.linkState('noteText') }),
 	          React.createElement('br', null),
 	          React.createElement(
-	            'label',
-	            { className: 'PageInputLabel' },
-	            'associated page (optional):'
+	            'div',
+	            { className: 'note-location-input' },
+	            React.createElement(
+	              'label',
+	              { className: 'note-input-label' },
+	              'associated page (optional):'
+	            ),
+	            React.createElement('input', { className: 'note-input', valueLink: this.linkState('pageNumber') }),
+	            React.createElement(
+	              'label',
+	              { className: 'note-input-label' },
+	              'associated chapter (optional):'
+	            ),
+	            React.createElement('input', { className: 'note-input', valueLink: this.linkState('chapter') })
 	          ),
-	          React.createElement('input', { className: 'PageInputs', valueLink: this.linkState('pageNumber') }),
-	          React.createElement('br', null),
-	          React.createElement(
-	            'label',
-	            { className: 'ChapterInputLabel' },
-	            'associated chapter (optional):'
-	          ),
-	          React.createElement('input', { className: 'ChapterInputs', valueLink: this.linkState('chapter') }),
-	          React.createElement('br', null),
 	          React.createElement(
 	            'button',
 	            { className: 'NoteSubmitButton', onClick: this.saveNote },

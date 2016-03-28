@@ -24,9 +24,13 @@ var customStyles = {
     right                 : 'auto',
     bottom                : 'auto',
     marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
+    transform             : 'translate(-50%, -50%)',
+    backgroundImage       : 'url(\'https://images.unsplash.com/photo-1457298483369-0a95d2b17fcd?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=f4fd0823787f85fcb27fd05027766a41\')',
+    backgroundSize        : 'cover',
+    borderRadius          : '10px'
+
   }
-};
+}
 
 var Note = React.createClass({
   mixins: [LinkedStateMixin],
@@ -44,7 +48,7 @@ var Note = React.createClass({
     if(isNaN(chap)){
       chap = null;
     }
-  
+
     var noteHash = { body: this.state.noteText, page: pn, public: true,chapter: chap, book_id: this.props.currentBook.id};
 
     APIUtil.createNote(noteHash);
@@ -115,12 +119,14 @@ var Note = React.createClass({
              <textarea className="NoteInput" rows="30" cols="100" name="comment"
                placeholder="Enter note here..." valueLink={this.linkState('noteText')}/>
              <br />
-             <label className="PageInputLabel">associated page (optional):</label>
-             <input className="PageInputs" valueLink={this.linkState('pageNumber')}/>
-             <br />
-             <label className="ChapterInputLabel">associated chapter (optional):</label>
-             <input className="ChapterInputs" valueLink={this.linkState('chapter')} />
-             <br />
+             <div className="note-location-input">
+               <label className="note-input-label">associated page (optional):</label>
+               <input className="note-input" valueLink={this.linkState('pageNumber')}/>
+
+               <label className="note-input-label">associated chapter (optional):</label>
+               <input className="note-input" valueLink={this.linkState('chapter')} />
+             </div>
+
 
                  <button className="NoteSubmitButton" onClick={this.saveNote}>Save</button>
                </form>

@@ -44,7 +44,8 @@ var Note = React.createClass({
     if(isNaN(chap)){
       chap = null;
     }
-    var noteHash = { body: this.state.noteText, page: pn, public: false,chapter: chap, book_id: this.props.currentBook.id};
+  
+    var noteHash = { body: this.state.noteText, page: pn, public: true,chapter: chap, book_id: this.props.currentBook.id};
 
     APIUtil.createNote(noteHash);
     this.closeModal();
@@ -74,7 +75,7 @@ var Note = React.createClass({
 
   render: function() {
     var noteDisplay = this.state.allNotes.map(function(note){
-      return(<NoteItem note={note} />);
+      return(<NoteItem note={note} key={note.body} />);
     });
     if (this.state.allNotes.length === 0){
       noteDisplay = (<div className="individual-note-area">No Notes to display</div> )

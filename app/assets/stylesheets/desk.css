@@ -117,6 +117,8 @@
   /*box-shadow: 12px 12px 7px 10px rgba(256,256,256,0.5);*/
   background-color: rgba(220,220,220,0.5);
   border-radius: 4px;
+  font-size: 24px;
+  width: 100%; 
 
 }
 #ToRead{

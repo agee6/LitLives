@@ -6,6 +6,8 @@ var BookConfirmation = require('./BookConfirmation.jsx');
 var Modal = require('react-modal');
 var BookSearch = require('./BookSearch/BookSearch.jsx');
 var APIUtil = require('../util/APIUtil.js');
+var History = require('react-router').History;
+
 
 var customStyles = {
   overlay : {
@@ -28,7 +30,7 @@ var customStyles = {
 };
 
 var Search = React.createClass({
-
+  mixins: [History], 
   getInitialState: function(){
     return({chosen: BookSearchStore.currentBook(), modalIsOpen: false});
   },

@@ -24066,6 +24066,7 @@
 	var Modal = __webpack_require__(244);
 	var BookSearch = __webpack_require__(264);
 	var APIUtil = __webpack_require__(231);
+	var History = __webpack_require__(159).History;
 	
 	var customStyles = {
 	  overlay: {
@@ -24090,7 +24091,7 @@
 	var Search = React.createClass({
 	  displayName: 'Search',
 	
-	
+	  mixins: [History],
 	  getInitialState: function getInitialState() {
 	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
 	  },
@@ -31167,7 +31168,7 @@
 	  createNote: function createNote(noteHash) {
 	
 	    $.post('/api/notes', { note: noteHash }, function (payload) {
-	      debugger;
+	
 	      ApiActions.addNote(payload);
 	    });
 	  },
@@ -31495,18 +31496,19 @@
 	  displayName: 'BookSearchBar',
 	
 	  getInitialState: function getInitialState() {
+	
 	    return { value: "", searchResults: [], showGuesses: false };
 	  },
 	  handleChange: function handleChange(event) {
 	
 	    this.setState({ value: event.target.value });
 	
-	    if (this.state.value.length > 0 && !this.pending) {
+	    if (this.state.value.length > 2 && !this.pending) {
 	      this.pending = true;
 	      APIUtil.fetchBookResults(this.state.value);
 	      window.setInterval(function () {
 	        this.pending = false;
-	      }.bind(this), 1500);
+	      }.bind(this), 1800);
 	    }
 	  },
 	
@@ -31553,6 +31555,7 @@
 	    var theChosen = book;
 	    var chosen = APIUtil.makeBookObject(book);
 	    BookSearchStore.resetCurrentBook(chosen);
+	    debugger;
 	    this.props.whenChosen();
 	  },
 	  click: function click(event) {
@@ -31593,12 +31596,14 @@
 	          onChange: this.handleChange,
 	          onFocus: this.searchBarMoveUp,
 	          onBlur: this.searchBarMoveBack,
-	          placeholder: 'enter book title'
+	          placeholder: 'enter book title',
+	          list: 'search-options',
+	          autocomplete: 'off'
 	        }),
 	        React.createElement('button', { id: 'BookSearchButton', className: 'hvr-grow-shadow fa fa-search', onClick: this.click }),
 	        React.createElement(
-	          'ul',
-	          { className: 'searchGuesses' },
+	          'datalist',
+	          { className: 'searchGuesses', id: 'search-options' },
 	          guesses
 	        )
 	      )
@@ -31806,16 +31811,11 @@
 	
 	  click: function click(event) {
 	    event.preventDefault();
+	    debugger;
 	    this.props.clickOption(this.props.book);
 	  },
 	  render: function render() {
-	    return React.createElement(
-	      "li",
-	      { onClick: this.click, id: "searchGuess" },
-	      " ",
-	      this.props.book.volumeInfo.title,
-	      " "
-	    );
+	    return React.createElement("option", { onClick: this.click, className: "searchGuess", value: this.props.book.volumeInfo.title });
 	  }
 	
 	});
@@ -34902,7 +34902,8 @@
 	    if (isNaN(chap)) {
 	      chap = null;
 	    }
-	    var noteHash = { body: this.state.noteText, page: pn, public: false, chapter: chap, book_id: this.props.currentBook.id };
+	
+	    var noteHash = { body: this.state.noteText, page: pn, public: true, chapter: chap, book_id: this.props.currentBook.id };
 	
 	    APIUtil.createNote(noteHash);
 	    this.closeModal();
@@ -34930,7 +34931,7 @@
 	
 	  render: function render() {
 	    var noteDisplay = this.state.allNotes.map(function (note) {
-	      return React.createElement(NoteItem, { note: note });
+	      return React.createElement(NoteItem, { note: note, key: note.body });
 	    });
 	    if (this.state.allNotes.length === 0) {
 	      noteDisplay = React.createElement(
@@ -35223,20 +35224,15 @@
 	          React.createElement(
 	            'label',
 	            { className: 'ShelfLabel', id: 'ToRead' },
-	            'Want to read shelf'
+	            'To Read'
 	          ),
 	          React.createElement(Shelf, { books: this.state.toReadBooks, identifier: 'BooksToRead' }),
 	          React.createElement(
 	            'label',
 	            { className: 'ShelfLabel', id: 'Read' },
-	            'read shelf'
+	            'Read'
 	          ),
-	          React.createElement(Shelf, { books: this.state.readBooks, identifier: 'BooksRead' }),
-	          React.createElement(
-	            'button',
-	            { className: 'shelf-button', onClick: this.onAddClick },
-	            'Add to Shelf'
-	          )
+	          React.createElement(Shelf, { books: this.state.readBooks, identifier: 'BooksRead' })
 	        )
 	      ),
 	      React.createElement(

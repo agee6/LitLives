@@ -15,6 +15,7 @@ var resetNotes = function(notes){
     _notes = notes.slice(0);
 
   }
+  
 };
 var addNote = function(note){
 

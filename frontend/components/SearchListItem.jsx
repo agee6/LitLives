@@ -4,11 +4,12 @@ var PropTypes = React.PropTypes;
 var SearchListItem = React.createClass({
   click: function(event){
     event.preventDefault();
+    debugger;
     this.props.clickOption(this.props.book);
   },
   render: function() {
     return (
-      <li onClick={this.click} id="searchGuess"> {this.props.book.volumeInfo.title} </li>
+      <option onClick={this.click} className="searchGuess" value={this.props.book.volumeInfo.title} />
     );
   }
 

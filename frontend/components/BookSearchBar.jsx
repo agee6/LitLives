@@ -6,19 +6,20 @@ var SearchListItem = require('./SearchListitem.jsx');
 
 var BookSearchBar = React.createClass({
   getInitialState: function(){
-    return{value: "", searchResults: [], showGuesses: false}
+
+    return({value: "", searchResults: [], showGuesses: false});
   },
   handleChange: function(event){
 
     this.setState({value: event.target.value});
 
-    if (this.state.value.length > 0 && !this.pending){
+    if (this.state.value.length > 2 && !this.pending){
       this.pending = true;
       APIUtil.fetchBookResults(this.state.value);
       window.setInterval(function(){
         this.pending = false;
 
-      }.bind(this), 1500);
+      }.bind(this), 1800);
     }
 
   },
@@ -67,6 +68,7 @@ var BookSearchBar = React.createClass({
     var theChosen = book;
     var chosen = APIUtil.makeBookObject(book);
     BookSearchStore.resetCurrentBook(chosen);
+    debugger;
     this.props.whenChosen();
 
   },
@@ -104,11 +106,13 @@ var BookSearchBar = React.createClass({
             onFocus={this.searchBarMoveUp}
             onBlur={this.searchBarMoveBack}
             placeholder="enter book title"
+            list="search-options"
+            autocomplete="off"
             />
           <button id="BookSearchButton" className="hvr-grow-shadow fa fa-search" onClick={this.click}></button>
-          <ul className="searchGuesses">
+          <datalist className="searchGuesses" id="search-options">
             {guesses}
-          </ul>
+          </datalist>
 
         </form>
 

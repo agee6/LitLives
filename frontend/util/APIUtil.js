@@ -106,7 +106,7 @@ var APIUtil = {
   createNote: function(noteHash){
 
     $.post('/api/notes', {note: noteHash}, function(payload){
-      debugger;
+    
       ApiActions.addNote(payload);
 
     });
@@ -189,7 +189,7 @@ var APIUtil = {
 
       success: function(books) {
           // Do something with the result
-        
+
 
           ApiActions.receiveUserBooks(books);
     }});

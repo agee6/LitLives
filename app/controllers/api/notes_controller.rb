@@ -12,14 +12,14 @@ class Api::NotesController < ApplicationController
   def create
     addendum = {user_id: current_user.id}
     creation_hash = addendum.merge(note_params)
-    p creation_hash
+
     @note = Note.new(creation_hash)
-    p @note
+
     if @note.save
-      p @note
+
       render json: @note
     else
-      p @note
+      
       render json: nil
     end
 

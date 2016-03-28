@@ -11,6 +11,7 @@ var NoteItem = React.createClass({
 
 
   render: function() {
+  
     return (
       <div className="IndividualNote">
           <h4 className="NoteTitle">{this.props.note.title}</h4>

@@ -104,7 +104,9 @@ var APIUtil = {
     });
   },
   createNote: function(noteHash){
+
     $.post('/api/notes', {note: noteHash}, function(payload){
+      debugger;
       ApiActions.addNote(payload);
 
     });
@@ -174,9 +176,24 @@ var APIUtil = {
       data: bookParams,
       success: function(books) {
           // Do something with the result
-      
+
           ApiActions.receiveUserBooks(books);
     }});
+
+  },
+  deleteBook: function(bookId){
+    var uri = 'api/books/' + bookId;
+    $.ajax({
+      url: uri,
+      type: 'DELETE',
+
+      success: function(books) {
+          // Do something with the result
+        
+
+          ApiActions.receiveUserBooks(books);
+    }});
+
 
   }
 

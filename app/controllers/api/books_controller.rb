@@ -15,14 +15,21 @@ class Api::BooksController < ApplicationController
   def update
     @book = Book.find_by_id(params[:id])
     if @book.update(book_params)
-      @books = Book.sort_user_books(current_user.id)
-      render json: @books
+
+      self.index
     else
       render json: nil
     end
 
 
   end
+  def destroy
+    @book=Book.find_by_id(params[:id]);
+    @book.destroy
+    self.index
+
+  end
+
 
   def show
     @book = Book.find_by_id(params[:id])

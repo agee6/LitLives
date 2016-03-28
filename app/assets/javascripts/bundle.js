@@ -31165,7 +31165,9 @@
 	    });
 	  },
 	  createNote: function createNote(noteHash) {
+	
 	    $.post('/api/notes', { note: noteHash }, function (payload) {
+	      debugger;
 	      ApiActions.addNote(payload);
 	    });
 	  },
@@ -31231,6 +31233,18 @@
 	      url: uri,
 	      type: 'PATCH',
 	      data: bookParams,
+	      success: function success(books) {
+	        // Do something with the result
+	
+	        ApiActions.receiveUserBooks(books);
+	      } });
+	  },
+	  deleteBook: function deleteBook(bookId) {
+	    var uri = 'api/books/' + bookId;
+	    $.ajax({
+	      url: uri,
+	      type: 'DELETE',
+	
 	      success: function success(books) {
 	        // Do something with the result
 	
@@ -34298,7 +34312,7 @@
 	
 	  getInitialState: function getInitialState() {
 	    this.tabs = ["Book Page", "Notes"];
-	    return { currentBook: BookSearchStore.currentBook(), tab: "Book Page" };
+	    return { currentBook: BookSearchStore.currentBook(), tab: "Book Page", tabs: this.tabs };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.storeIndex = BookSearchStore.addListener(this._onChange);
@@ -34312,6 +34326,14 @@
 	  changeTab: function changeTab(tab) {
 	    this.setState({ tab: tab });
 	  },
+	  changeTabOptions: function changeTabOptions(addNotes) {
+	    if (addNotes) {
+	      this.tabs = ["Book Page", "Notes"];
+	    } else {
+	      this.tabs = [];
+	    }
+	    this.setState({ tabs: this.tabs });
+	  },
 	
 	  render: function render() {
 	    if (this.state.currentBook) {
@@ -34320,7 +34342,7 @@
 	      };
 	      var currentTab;
 	      if (this.state.tab === "Book Page") {
-	        currentTab = React.createElement(BookPage, { currentBook: this.state.currentBook });
+	        currentTab = React.createElement(BookPage, { currentBook: this.state.currentBook, changeTabs: this.changeTabOptions });
 	      } else if (this.state.tab === "Notes") {
 	        currentTab = React.createElement(Note, { currentBook: this.state.currentBook });
 	      }
@@ -34412,7 +34434,7 @@
 	    var book = BookSearchStore.currentBook();
 	    return { modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
 	      ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
-	      description: book.description, currentBook: BookSearchStore.currentBook() };
+	      description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: true };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
@@ -34424,7 +34446,7 @@
 	    var book = BookSearchStore.currentBook();
 	    this.setState({ modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
 	      ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
-	      description: book.description, currentBook: BookSearchStore.currentBook()
+	      description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: true
 	    });
 	  },
 	
@@ -34443,7 +34465,8 @@
 	  },
 	  markAsRead: function markAsRead(event) {
 	    event.preventDefault();
-	    console.log("read");
+	
+	    APIUtil.updateBook(this.props.currentBook.id, { read: "read" });
 	  },
 	  editClick: function editClick(event) {
 	    event.preventDefault();
@@ -34452,6 +34475,17 @@
 	  },
 	  deleteBook: function deleteBook(event) {
 	    event.preventDefault();
+	
+	    APIUtil.deleteBook(this.state.currentBook.id);
+	    this.props.changeTabs(false);
+	    this.setState({ onShelf: false });
+	  },
+	  addToShelf: function addToShelf(event) {
+	    event.preventDefault();
+	
+	    APIUtil.createBook(this.state.currentBook);
+	    this.props.changeTabs(true);
+	    this.setState({ onShelf: true });
 	  },
 	  updateBook: function updateBook(event) {
 	    event.preventDefault();
@@ -34516,6 +34550,18 @@
 	    } else {
 	      publisher = book.publishing;
 	    }
+	    var deleteButton, addButton, markButton, editButton;
+	    if (this.state.onShelf) {
+	      deleteButton = false;
+	      addButton = true;
+	      markButton = false;
+	      editButton = true;
+	    } else {
+	      deleteButton = true;
+	      addButton = false;
+	      markButton = true;
+	      editButton = true;
+	    }
 	
 	    return React.createElement(
 	      'section',
@@ -34572,18 +34618,23 @@
 	        { className: 'button-area' },
 	        React.createElement(
 	          'button',
-	          { className: 'book-button-area', id: 'edit-book-button', onClick: this.editClick },
+	          { className: 'book-button-area', id: 'edit-book-button', onClick: this.editClick, disabled: deleteButton },
 	          'Edit Book'
 	        ),
 	        React.createElement(
 	          'button',
-	          { className: 'book-button-area', id: 'mark-as-read', onClick: this.markAsRead },
-	          'Mark as Read'
+	          { className: 'book-button-area', id: 'mark-as-read', onClick: this.markAsRead, disabled: deleteButton },
+	          'Mark As Read'
 	        ),
 	        React.createElement(
 	          'button',
-	          { className: 'book-button-area', id: 'delete-book', onClick: this.deleteBook },
-	          'Delete Book'
+	          { className: 'book-button-area', id: 'delete-book', onClick: this.deleteBook, disabled: deleteButton },
+	          'Remove From Shelf'
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'book-button-area', id: 'add-to-shelf', onClick: this.addToShelf, disabled: addButton },
+	          'Add To Shelf'
 	        )
 	      ),
 	      React.createElement(
@@ -34838,7 +34889,7 @@
 	
 	  mixins: [LinkedStateMixin],
 	  getInitialState: function getInitialState() {
-	    return { noteText: "", pageNumber: null, selectedValue: true, allNotes: NoteStore.all(), chapter: null, modalIsOpen: false };
+	    return { noteText: "", title: "", pageNumber: null, selectedValue: true, allNotes: NoteStore.all(), chapter: null, modalIsOpen: false };
 	  },
 	  saveNote: function saveNote(event) {
 	    event.preventDefault();
@@ -34851,7 +34902,8 @@
 	    if (isNaN(chap)) {
 	      chap = null;
 	    }
-	    var noteHash = { body: this.state.noteText, page: pn, public: this.state.selectedValue, chapter: chap, book_id: this.props.currentBook.id };
+	    var noteHash = { body: this.state.noteText, page: pn, public: false, chapter: chap, book_id: this.props.currentBook.id };
+	
 	    APIUtil.createNote(noteHash);
 	    this.closeModal();
 	  },
@@ -34956,31 +35008,6 @@
 	          React.createElement('input', { className: 'ChapterInputs', valueLink: this.linkState('chapter') }),
 	          React.createElement('br', null),
 	          React.createElement(
-	            RadioGroup,
-	            {
-	              name: 'fruit',
-	              selectedValue: this.state.selectedValue,
-	              onChange: this.handleChange },
-	            function (Radio) {
-	              return React.createElement(
-	                'div',
-	                null,
-	                React.createElement(
-	                  'label',
-	                  null,
-	                  React.createElement(Radio, { value: true }),
-	                  'Public'
-	                ),
-	                React.createElement(
-	                  'label',
-	                  null,
-	                  React.createElement(Radio, { value: false }),
-	                  'Private'
-	                )
-	              );
-	            }
-	          ),
-	          React.createElement(
 	            'button',
 	            { className: 'NoteSubmitButton', onClick: this.saveNote },
 	            'Save'
@@ -35013,6 +35040,7 @@
 	var APIUtil = __webpack_require__(231);
 	
 	var resetNotes = function resetNotes(notes) {
+	
 	  _notes = [];
 	  if (notes === null) {
 	    _notes = [];
@@ -35047,6 +35075,7 @@
 	  }
 	};
 	
+	Window.exports = NoteStore;
 	module.exports = NoteStore;
 
 /***/ },
@@ -35068,6 +35097,7 @@
 	  },
 	
 	  render: function render() {
+	
 	    return React.createElement(
 	      'div',
 	      { className: 'IndividualNote' },

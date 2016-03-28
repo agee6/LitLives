@@ -16,8 +16,10 @@ class Api::NotesController < ApplicationController
     @note = Note.new(creation_hash)
     p @note
     if @note.save
+      p @note
       render json: @note
     else
+      p @note
       render json: nil
     end
 

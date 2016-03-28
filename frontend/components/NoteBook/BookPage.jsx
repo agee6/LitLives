@@ -14,7 +14,7 @@ var customStyles = {
     right             : 0,
     bottom            : 0,
     backgroundColor   : 'rgba(255, 255, 255, 0.75)',
-    zIndex           : 20,
+    zIndex            : 20,
     backgroundImage   : 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
     backgroundSize    : 'cover'
   },
@@ -55,7 +55,7 @@ var BookPage = React.createClass({
     var book = BookSearchStore.currentBook();
     return({modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
               ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
-              description: book.description, currentBook: BookSearchStore.currentBook()} );
+              description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: true} );
   },
   componentDidMount: function(){
     this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
@@ -67,7 +67,7 @@ var BookPage = React.createClass({
     var book = BookSearchStore.currentBook();
     this.setState({modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
               ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
-              description: book.description, currentBook: BookSearchStore.currentBook()
+              description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: true
             });
   },
 
@@ -87,7 +87,9 @@ var BookPage = React.createClass({
   },
   markAsRead: function(event){
     event.preventDefault();
-    console.log("read");
+
+    APIUtil.updateBook(this.props.currentBook.id, {read:"read"});
+
   },
   editClick: function(event){
     event.preventDefault();
@@ -97,6 +99,21 @@ var BookPage = React.createClass({
   },
   deleteBook: function(event){
     event.preventDefault();
+
+    APIUtil.deleteBook(this.state.currentBook.id);
+    this.props.changeTabs(false);
+    this.setState({onShelf:false});
+
+  },
+  addToShelf: function(event){
+    event.preventDefault();
+
+    APIUtil.createBook(this.state.currentBook);
+    this.props.changeTabs(true); 
+    this.setState({onShelf:true});
+
+
+
   },
   updateBook: function(event){
     event.preventDefault();
@@ -165,6 +182,19 @@ var BookPage = React.createClass({
     }else {
       publisher = book.publishing;
     }
+    var deleteButton, addButton, markButton, editButton;
+    if(this.state.onShelf){
+      deleteButton = false;
+      addButton = true;
+      markButton = false;
+      editButton = true;
+    }else {
+      deleteButton = true;
+      addButton = false;
+      markButton = true;
+      editButton = true;
+
+    }
 
     return(
       <section className="BookPage" id="BookPageArea">
@@ -184,9 +214,10 @@ var BookPage = React.createClass({
 
         </div>
         <div className="button-area">
-          <button className="book-button-area" id="edit-book-button" onClick={this.editClick}>Edit Book</button>
-          <button className="book-button-area" id="mark-as-read" onClick={this.markAsRead}>Mark as Read</button>
-          <button className="book-button-area" id="delete-book" onClick={this.deleteBook}>Delete Book</button>
+          <button className="book-button-area" id="edit-book-button" onClick={this.editClick} disabled={deleteButton}>Edit Book</button>
+          <button className="book-button-area" id="mark-as-read" onClick={this.markAsRead} disabled={deleteButton}>Mark As Read</button>
+          <button className="book-button-area" id="delete-book" onClick={this.deleteBook} disabled={deleteButton}>Remove From Shelf</button>
+          <button className="book-button-area" id="add-to-shelf" onClick={this.addToShelf} disabled={addButton}>Add To Shelf</button>
         </div>
 
         <Modal

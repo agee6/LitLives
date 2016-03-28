@@ -14,7 +14,7 @@ var customStyles = {
     right             : 0,
     bottom            : 0,
     backgroundColor   : 'rgba(255, 255, 255, 0.75)',
-    zIndex           : 20,
+    zIndex            : 20,
     backgroundImage   : 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
     backgroundSize    : 'cover'
   },
@@ -31,7 +31,7 @@ var customStyles = {
 var Note = React.createClass({
   mixins: [LinkedStateMixin],
   getInitialState: function(){
-    return({noteText:"", pageNumber:null, selectedValue: true, allNotes: NoteStore.all(), chapter: null, modalIsOpen:false})
+    return({noteText:"", title: "", pageNumber:null, selectedValue: true, allNotes: NoteStore.all(), chapter: null, modalIsOpen:false})
   },
   saveNote:function(event){
     event.preventDefault();
@@ -44,9 +44,11 @@ var Note = React.createClass({
     if(isNaN(chap)){
       chap = null;
     }
-    var noteHash = {body: this.state.noteText, page: pn, public: this.state.selectedValue,chapter: chap, book_id: this.props.currentBook.id};
+    var noteHash = { body: this.state.noteText, page: pn, public: false,chapter: chap, book_id: this.props.currentBook.id};
+
     APIUtil.createNote(noteHash);
-    this.closeModal()
+    this.closeModal();
+
 
   },
   handleChange: function(value){
@@ -108,6 +110,7 @@ var Note = React.createClass({
            style={customStyles} >
 
            <form className="NoteForm">
+
              <textarea className="NoteInput" rows="30" cols="100" name="comment"
                placeholder="Enter note here..." valueLink={this.linkState('noteText')}/>
              <br />
@@ -117,22 +120,7 @@ var Note = React.createClass({
              <label className="ChapterInputLabel">associated chapter (optional):</label>
              <input className="ChapterInputs" valueLink={this.linkState('chapter')} />
              <br />
-             <RadioGroup
-               name="fruit"
-               selectedValue={this.state.selectedValue}
-               onChange={this.handleChange}>
-               {Radio => (
-                 <div>
-                   <label>
-                     <Radio value={true} />Public
-                     </label>
-                     <label>
-                       <Radio value={false} />Private
-                     </label>
 
-                     </div>
-                   )}
-                 </RadioGroup>
                  <button className="NoteSubmitButton" onClick={this.saveNote}>Save</button>
                </form>
 

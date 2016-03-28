@@ -179,6 +179,9 @@
 	position:relative;
 	top:1px;
 }
+.book-button-area:disabled {
+  opacity: 0.3;
+}
 
 .book-button-area #edit-book-button {
 

@@ -7,6 +7,7 @@ var APIUtil = require('../util/APIUtil.js');
 
 
 var resetNotes = function(notes){
+
   _notes = [];
   if(notes === null){
     _notes = [];
@@ -42,5 +43,5 @@ NoteStore.__onDispatch = function (payload) {
   }
 };
 
-
+Window.exports = NoteStore;
 module.exports = NoteStore;

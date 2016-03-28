@@ -8,7 +8,7 @@ var Reviews = require('./NoteBook/Reviews.jsx');
 var Notebook = React.createClass({
   getInitialState: function(){
     this.tabs = ["Book Page", "Notes"]
-    return({currentBook:BookSearchStore.currentBook(), tab: "Book Page"});
+    return({currentBook:BookSearchStore.currentBook(), tab: "Book Page", tabs: this.tabs});
   },
   componentDidMount: function(){
     this.storeIndex = BookSearchStore.addListener(this._onChange);
@@ -23,6 +23,15 @@ var Notebook = React.createClass({
   changeTab: function(tab){
     this.setState({tab:tab});
   },
+  changeTabOptions: function(addNotes){
+    if(addNotes){
+      this.tabs = ["Book Page", "Notes"];
+    }else {
+      this.tabs = [];
+    }
+    this.setState({tabs: this.tabs});
+
+  },
 
   render: function(){
     if(this.state.currentBook){
@@ -31,7 +40,7 @@ var Notebook = React.createClass({
       };
       var currentTab;
       if(this.state.tab === "Book Page"){
-        currentTab = <BookPage currentBook={this.state.currentBook} />;
+        currentTab = <BookPage currentBook={this.state.currentBook} changeTabs={this.changeTabOptions}/>;
       }else if(this.state.tab === "Notes"){
         currentTab = <Note currentBook={this.state.currentBook} />;
       }

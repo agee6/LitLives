@@ -2,7 +2,7 @@
 
 [Heroku link][heroku] 
 
-[heroku]: litlives.com
+[heroku]: www.litlives.com
 
 # LitLives
 

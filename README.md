@@ -67,10 +67,11 @@ The backend controller is done using ruby on rails with the front end being impl
 [search-bar]: ./docs/SearchBar.png 
 [search-titles]: ./docs/InitialBooks.png
 [desk-page]: ./docs/Desk.png
-[edit-book-page]: ./docs/ 
+[edit-book-page]: ./docs/EditBookPage.png
 [bookshelf-button]: ./docs/bookshelfbutton.png
 [bookshelf]: ./docs/bookshelf.png
-[add-note]: ./docs/
+[add-note]: ./docs/AddNotePage.png
+
 
 [phase-one]: ./docs/phases/phase1.md
 [phase-two]: ./docs/phases/phase2.md

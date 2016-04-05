@@ -1,8 +1,8 @@
-# FresherNote
+# LitLives 
 
-[Heroku link][heroku] 
+[Live Link](www.litlives.com)
 
-[heroku]: www.litlives.com
+
 
 # LitLives
 

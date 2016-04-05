@@ -1,6 +1,6 @@
 # LitLives 
 
-[Live Link](www.litlives.com)
+[Live Link](http://www.litlives.com)
 
 
 

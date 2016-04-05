@@ -62,6 +62,15 @@ Lit lives is implemented using a postgres database to store user and book data. 
 
 The backend controller is done using ruby on rails with the front end being implemented entirely as a single page app using react and javascript. Jquery is also used to do api requests to the rails back end.
 
+[splash-page]: .docs/SearchPage
+[sign-in]: .docs/Login
+[search-bar]: .docs/SearchBar 
+[search-titles]: .docs/InitialBooks
+[desk-page]: .docs/Desk
+[edit-book-page]: .docs/ 
+[bookshelf-button]: .docs/bookshelfbutton
+[bookshelf]: .docs/bookshelf
+[add-note]: .docs/
 
 [phase-one]: ./docs/phases/phase1.md
 [phase-two]: ./docs/phases/phase2.md

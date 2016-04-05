@@ -31490,7 +31490,7 @@
 	var APIUtil = __webpack_require__(231);
 	var BookSearchStore = __webpack_require__(208);
 	var BookConfirmation = __webpack_require__(240);
-	var SearchListItem = __webpack_require__(243);
+	var SearchListItem = __webpack_require__(287);
 	
 	var BookSearchBar = React.createClass({
 	  displayName: 'BookSearchBar',
@@ -31798,31 +31798,7 @@
 	});
 
 /***/ },
-/* 243 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(1);
-	var PropTypes = React.PropTypes;
-	
-	var SearchListItem = React.createClass({
-	  displayName: "SearchListItem",
-	
-	  click: function click(event) {
-	    event.preventDefault();
-	    debugger;
-	    this.props.clickOption(this.props.book);
-	  },
-	  render: function render() {
-	    return React.createElement("option", { onClick: this.click, className: "searchGuess", value: this.props.book.volumeInfo.title });
-	  }
-	
-	});
-	
-	module.exports = SearchListItem;
-
-/***/ },
+/* 243 */,
 /* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -35823,6 +35799,31 @@
 	};
 	
 	module.exports = AnalysesStore;
+
+/***/ },
+/* 287 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	
+	var SearchListItem = React.createClass({
+	  displayName: "SearchListItem",
+	
+	  click: function click(event) {
+	    event.preventDefault();
+	    debugger;
+	    this.props.clickOption(this.props.book);
+	  },
+	  render: function render() {
+	    return React.createElement("option", { onClick: this.click, className: "searchGuess", value: this.props.book.volumeInfo.title });
+	  }
+	
+	});
+	
+	module.exports = SearchListItem;
 
 /***/ }
 /******/ ]);

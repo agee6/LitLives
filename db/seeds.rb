@@ -43,7 +43,7 @@
 User.create({username: "guest_user", password: "password"});
 
 Book.create({title:"Slaughterhouse-Five", description: "Billy's book about the battle of Dresden, and his account of being on an Alien Vessel.",
-  user_id: 1, read: "read", image: "http://7summitsproject.com/wp-content/uploads/2015/06/Slaughterhouse-Five.jpg", language: "english" ISBN10: "9782040280772"})
+  user_id: 1, read: "read", image: "http://7summitsproject.com/wp-content/uploads/2015/06/Slaughterhouse-Five.jpg", language: "english", ISBN10: "9782040280772"})
 
 Analysis.create({title: "Our Children's Crusade", body: "The alternate title for the book is A Children’s Crusade: A Duty-Dance with Death. At The beginning of the book the author claims to be writing a book about the battle of Dresden, a lesser known allied air-strike where more people died than at Hiroshima. A wife of one of the author’s friends is angry he is writing a war book because war books always glorify war. She says they were just children fighting in the war. He agrees to call it A Children’s Crusade. In many ways, modern wars are no different from the children’s crusades of the middle ages.
 

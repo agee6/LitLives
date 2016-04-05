@@ -1,7 +1,4 @@
-# LitLives 
-
-[Live Link](http://www.litlives.com)
-
+# [LitLives Live Link](http://www.litlives.com)
 
 
 # LitLives

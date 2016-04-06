@@ -18,7 +18,13 @@ var Notebook = React.createClass({
     this.storeIndex.remove();
   },
   _onChange: function(){
-    this.setState({currentBook: BookSearchStore.currentBook()});
+    var bookTemp = BookSearchStore.currentBook();
+    if (bookTemp.id === undefined){
+      this.tabs = [];
+    }else {
+      this.tabs = ["Book Page", "Notes"];
+    }
+    this.setState({currentBook: BookSearchStore.currentBook(), tabs: this.tabs});
   },
   changeTab: function(tab){
     this.setState({tab:tab});

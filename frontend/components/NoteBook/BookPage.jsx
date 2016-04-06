@@ -47,6 +47,10 @@ var BookPage = React.createClass({
   },
   componentDidMount: function(){
     this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
+    if(!this.state.onShelf){
+      this.props.changeTabs(false);
+
+    }
   },
   componentWillUnmount:function(){
     this.bookStoreIndex.remove();
@@ -77,6 +81,14 @@ var BookPage = React.createClass({
     event.preventDefault();
 
     APIUtil.updateBook(this.props.currentBook.id, {read:"read"});
+    this.setState({selectedValue: "read"});
+
+  },
+  markAsUnread: function(event){
+    event.preventDefault();
+
+    APIUtil.updateBook(this.props.currentBook.id, {read:"toRead"});
+    this.setState({selectedValue: "toRead"});
 
   },
   editClick: function(event){
@@ -176,12 +188,22 @@ var BookPage = React.createClass({
       addButton = true;
       markButton = false;
       editButton = true;
+    
     }else {
       deleteButton = true;
       addButton = false;
       markButton = true;
       editButton = true;
 
+    }
+    var markFunction, markText;
+
+    if(this.state.selectedValue === "read"){
+      markFunction = this.markAsUnread;
+      markText = "Mark as Unread";
+    }else {
+      markFunction=this.markAsRead;
+      markText = "Mark as Read";
     }
 
     return(
@@ -203,7 +225,7 @@ var BookPage = React.createClass({
         </div>
         <div className="button-area">
           <button className="book-button-area" id="edit-book-button" onClick={this.editClick} disabled={deleteButton}>Edit Book</button>
-          <button className="book-button-area" id="mark-as-read" onClick={this.markAsRead} disabled={deleteButton}>Mark As Read</button>
+          <button className="book-button-area" id="mark-as-read" onClick={markFunction} disabled={deleteButton}>{markText}</button>
           <button className="book-button-area" id="delete-book" onClick={this.deleteBook} disabled={deleteButton}>Remove From Shelf</button>
           <button className="book-button-area" id="add-to-shelf" onClick={this.addToShelf} disabled={addButton}>Add To Shelf</button>
         </div>

@@ -34301,7 +34301,13 @@
 	    this.storeIndex.remove();
 	  },
 	  _onChange: function _onChange() {
-	    this.setState({ currentBook: BookSearchStore.currentBook() });
+	    var bookTemp = BookSearchStore.currentBook();
+	    if (bookTemp.id === undefined) {
+	      this.tabs = [];
+	    } else {
+	      this.tabs = ["Book Page", "Notes"];
+	    }
+	    this.setState({ currentBook: BookSearchStore.currentBook(), tabs: this.tabs });
 	  },
 	  changeTab: function changeTab(tab) {
 	    this.setState({ tab: tab });
@@ -34406,6 +34412,9 @@
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
+	    if (!this.state.onShelf) {
+	      this.props.changeTabs(false);
+	    }
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.bookStoreIndex.remove();
@@ -34435,6 +34444,13 @@
 	    event.preventDefault();
 	
 	    APIUtil.updateBook(this.props.currentBook.id, { read: "read" });
+	    this.setState({ selectedValue: "read" });
+	  },
+	  markAsUnread: function markAsUnread(event) {
+	    event.preventDefault();
+	
+	    APIUtil.updateBook(this.props.currentBook.id, { read: "toRead" });
+	    this.setState({ selectedValue: "toRead" });
 	  },
 	  editClick: function editClick(event) {
 	    event.preventDefault();
@@ -34530,6 +34546,15 @@
 	      markButton = true;
 	      editButton = true;
 	    }
+	    var markFunction, markText;
+	
+	    if (this.state.selectedValue === "read") {
+	      markFunction = this.markAsUnread;
+	      markText = "Mark as Unread";
+	    } else {
+	      markFunction = this.markAsRead;
+	      markText = "Mark as Read";
+	    }
 	
 	    return React.createElement(
 	      'section',
@@ -34591,8 +34616,8 @@
 	        ),
 	        React.createElement(
 	          'button',
-	          { className: 'book-button-area', id: 'mark-as-read', onClick: this.markAsRead, disabled: deleteButton },
-	          'Mark As Read'
+	          { className: 'book-button-area', id: 'mark-as-read', onClick: markFunction, disabled: deleteButton },
+	          markText
 	        ),
 	        React.createElement(
 	          'button',

@@ -9,7 +9,7 @@ var SearchListItem = React.createClass({
   },
   render: function() {
     return (
-      <option onClick={this.click} className="searchGuess" value={this.props.book.volumeInfo.title} />
+      <li onClick={this.click} className="searchGuess" value={this.props.book.volumeInfo.title}>{this.props.book.volumeInfo.title}</li>
     );
   }
 

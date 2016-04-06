@@ -2,7 +2,7 @@ var React = require('react');
 var APIUtil = require('../util/APIUtil.js');
 var BookSearchStore = require('../stores/BookSearchStore.js');
 var BookConfirmation = require('./BookConfirmation.jsx');
-var SearchListItem = require('./SearchListtem.jsx');
+var SearchListItem = require('./SearchListItem.jsx');
 
 var BookSearchBar = React.createClass({
   getInitialState: function(){
@@ -110,9 +110,9 @@ var BookSearchBar = React.createClass({
             autoComplete="off"
             />
           <button id="BookSearchButton" className="hvr-grow-shadow fa fa-search" onClick={this.click}></button>
-          <datalist className="searchGuesses" id="search-options">
+          <ul className="searchGuesses" id="search-options">
             {guesses}
-          </datalist>
+          </ul>
 
         </form>
 

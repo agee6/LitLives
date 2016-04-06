@@ -2,7 +2,7 @@ var React = require('react');
 var APIUtil = require('../util/APIUtil.js');
 var BookSearchStore = require('../stores/BookSearchStore.js');
 var BookConfirmation = require('./BookConfirmation.jsx');
-var SearchListItem = require('./SearchListItem.jsx');
+var SearchListItem = require('./SearchListtem.jsx');
 
 var BookSearchBar = React.createClass({
   getInitialState: function(){

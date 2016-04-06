@@ -1,8 +1,5 @@
-# FresherNote
+# [LitLives Live Link](http://www.litlives.com)
 
-[Heroku link][heroku] 
-
-[heroku]: litlives.com
 
 # LitLives
 
@@ -56,7 +53,7 @@ If the user would like to add, delete, or edit notes about the book they should 
 
 When the user no longer wants to make changes to their current books they can click on the "Search" button at the top of the screen to add another book to the shelf. If the user is done they can sign out by clicking on the "sign out" button at the top of the page. 
 
-## implementation
+## Implementation
 
 Lit lives is implemented using a postgres database to store user and book data. Notes, and books are stored in book, user, and note tables. Initial book seed data is taken from the google books api. For this reason a user can have multiple copies of a given book on their shelf, if the user wants to have data from two differeent editions, or they want to record notes from two different times reading through the book they can do this. 
 

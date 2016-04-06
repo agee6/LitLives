@@ -63,7 +63,7 @@ BookSearchStore.__onDispatch = function (payload) {
       break;
     case BookSearchConstants.InitialResultsReceived:
       var r2 = loadInitial(payload.results);
-      BookSearchStore.cleanInitial(); 
+      BookSearchStore.cleanInitial();
       BookSearchStore.__emitChange();
       break;
     case BookSearchConstants.ReceiveCurrentBook:
@@ -75,6 +75,10 @@ BookSearchStore.__onDispatch = function (payload) {
       BookSearchStore.cleanInitial();
       BookSearchStore.__emitChange();
       break;
+    case BookSearchConstants.UpdateCurrentBook:
+      var c3a = resetCurrentBook(payload.book);
+      BookSearchStore.__emitChange();
+      break; 
     case BookSearchConstants.DeleteCurrentBook:
       var c4 = resetCurrentBook(null);
       BookSearchStore.__emitChange();

@@ -12,7 +12,7 @@ var IndexItem = React.createClass({
     // this.props.whenChosen();
     var bookToSend = this.props.book;
     bookToSend.read = "toRead";
-    APIUtil.createBook(bookToSend);
+    // APIUtil.createBook(bookToSend);
     var url = "/Desk"
     this.history.push({pathname: url});
     // APIUtil.createBook(this.props.book);

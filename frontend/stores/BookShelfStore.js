@@ -57,7 +57,7 @@ BookShelfStore.__onDispatch = function (payload) {
     case BookShelfConstants.EmptyShelves:
       BookShelfStore.empty();
       BookShelfStore.__emitChange();
-      break; 
+      break;
   }
 };
 

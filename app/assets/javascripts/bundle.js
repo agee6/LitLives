@@ -24100,7 +24100,7 @@
 	    event.preventDefault();
 	    var bookToSend = BookSearchStore.currentBook();
 	    bookToSend.read = "toRead";
-	    APIUtil.createBook(bookToSend);
+	    // APIUtil.createBook(bookToSend);
 	    var url = "/Desk";
 	    this.history.push({ pathname: url });
 	  },
@@ -24266,6 +24266,10 @@
 	    case BookSearchConstants.AddInitialReceived:
 	      var c3 = addToInitial(payload.results);
 	      BookSearchStore.cleanInitial();
+	      BookSearchStore.__emitChange();
+	      break;
+	    case BookSearchConstants.UpdateCurrentBook:
+	      var c3a = resetCurrentBook(payload.book);
 	      BookSearchStore.__emitChange();
 	      break;
 	    case BookSearchConstants.DeleteCurrentBook:
@@ -30790,7 +30794,8 @@
 	  InitialResultsReceived: "INITIAL_RESULTS_RECIEVED",
 	  ReceiveCurrentBook: "RECEIVE_CURRENT_BOOK",
 	  AddInitialReceived: "ADD_INITIAL_RECEIVED",
-	  DeleteCurrentBook: "DELETE_CURRENT_BOOK"
+	  DeleteCurrentBook: "DELETE_CURRENT_BOOK",
+	  UpdateCurrentBook: "RECIEVE_ADDED_BOOK"
 	};
 	
 	module.exports = BookSearchConstants;
@@ -31440,7 +31445,7 @@
 	    // this.props.whenChosen();
 	    var bookToSend = this.props.book;
 	    bookToSend.read = "toRead";
-	    APIUtil.createBook(bookToSend);
+	    // APIUtil.createBook(bookToSend);
 	    var url = "/Desk";
 	    this.history.push({ pathname: url });
 	    // APIUtil.createBook(this.props.book);
@@ -34391,9 +34396,13 @@
 	  mixins: [LinkedStateMixin],
 	  getInitialState: function getInitialState() {
 	    var book = BookSearchStore.currentBook();
+	    var inDatabase = true;
+	    if (book.id === undefined) {
+	      inDatabase = false;
+	    }
 	    return { modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
 	      ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
-	      description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: true };
+	      description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);

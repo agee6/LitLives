@@ -30,7 +30,7 @@ var customStyles = {
 };
 
 var Search = React.createClass({
-  mixins: [History], 
+  mixins: [History],
   getInitialState: function(){
     return({chosen: BookSearchStore.currentBook(), modalIsOpen: false});
   },
@@ -39,7 +39,7 @@ var Search = React.createClass({
     event.preventDefault();
     var bookToSend = BookSearchStore.currentBook();
     bookToSend.read = "toRead";
-    APIUtil.createBook(bookToSend);
+    // APIUtil.createBook(bookToSend);
     var url = "/Desk"
     this.history.push({pathname: url});
   },

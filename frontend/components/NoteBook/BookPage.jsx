@@ -37,9 +37,13 @@ var BookPage = React.createClass({
   mixins: [LinkedStateMixin],
   getInitialState: function(){
     var book = BookSearchStore.currentBook();
+    var inDatabase = true;
+    if(book.id === undefined){
+      inDatabase = false;
+    }
     return({modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
               ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
-              description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: true} );
+              description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase} );
   },
   componentDidMount: function(){
     this.bookStoreIndex = BookSearchStore.addListener(this._onChange);

@@ -42,14 +42,14 @@
 
 }
 #book1 {
-  background-image: url('book1Side.jpg');
+  background-image: url('http://res.cloudinary.com/litlitves/image/upload/v1459981571/book1Side_mwnz8w.jpg');
   background-size: cover;
   /*margin: 0px, 20px, 0px, 20px;*/
   height: 40px;
 
 }
 #book2 {
-  background-image: url('book2Side.jpg');
+  background-image: url('http://res.cloudinary.com/litlitves/image/upload/v1459981577/book2Side_cq1gpw.jpg');
   background-size: cover;
   height: 40px;
   color: #e4cdb4;

@@ -35101,6 +35101,17 @@
 	  },
 	
 	  render: function render() {
+	    var chapterText, pageText;
+	    if (this.props.note.chapter === undefined || this.props.note.chapter === null) {
+	      chapterText = "";
+	    } else {
+	      chapterText = "Chapter: " + this.props.note.chapter;
+	    }
+	    if (this.props.note.page === undefined || this.props.note.page === null) {
+	      pageText = "";
+	    } else {
+	      pageText = "Page: " + this.props.note.page;
+	    }
 	
 	    return React.createElement(
 	      'div',
@@ -35118,10 +35129,7 @@
 	      React.createElement(
 	        'div',
 	        { className: 'NoteFooter' },
-	        'Chapter: ',
-	        this.props.note.chapter,
-	        ' and page: ',
-	        this.props.note.page
+	        chapterText + " " + pageText
 	      ),
 	      React.createElement(
 	        'button',

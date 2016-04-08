@@ -110,7 +110,6 @@
 	);
 	
 	document.addEventListener("DOMContentLoaded", function () {
-	
 	  ReactDOM.render(React.createElement(
 	    Router,
 	    null,
@@ -31363,6 +31362,12 @@
 	      actionType: AnalysisConstants.ReceiveAnalysis,
 	      results: analysis
 	    });
+	  },
+	  demandLogin: function demandLogin(need) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.UpdateNeeds,
+	      need: need
+	    });
 	  }
 	};
 	
@@ -31404,7 +31409,8 @@
 	
 	var UserConstants = {
 	  RegisterUser: "REGISTER_USER",
-	  ReceiveUser: "RECEIVE_USER"
+	  ReceiveUser: "RECEIVE_USER",
+	  UpdateNeeds: "UPDATE_NEEDS"
 	};
 	
 	module.exports = UserConstants;
@@ -34369,6 +34375,7 @@
 	var APIUtil = __webpack_require__(231);
 	var ApiActions = __webpack_require__(232);
 	var BookSearchStore = __webpack_require__(208);
+	var UserStore = __webpack_require__(283);
 	
 	var customStyles = {
 	  overlay: {
@@ -34467,9 +34474,13 @@
 	  addToShelf: function addToShelf(event) {
 	    event.preventDefault();
 	
-	    APIUtil.createBook(this.state.currentBook);
-	    this.props.changeTabs(true);
-	    this.setState({ onShelf: true });
+	    if (UserStore.loggedIn()) {
+	      APIUtil.createBook(this.state.currentBook);
+	      this.props.changeTabs(true);
+	      this.setState({ onShelf: true });
+	    } else {
+	      ApiActions.demandLogin();
+	    }
 	  },
 	  updateBook: function updateBook(event) {
 	    event.preventDefault();
@@ -34795,14 +34806,17 @@
 	
 	
 	  render: function render() {
+	    var tabList = this.props.tabOptions.map(function (tab) {
+	      return React.createElement(Tab, { clickFunc: this.props.clickFunction, tabName: tab, key: tab });
+	    }, this);
+	
 	    return React.createElement(
 	      'div',
 	      null,
 	      React.createElement(
 	        'ul',
 	        { className: 'tabsList' },
-	        React.createElement(Tab, { clickFunc: this.props.clickFunction, tabName: this.props.tabOptions[0] }),
-	        React.createElement(Tab, { clickFunc: this.props.clickFunction, tabName: this.props.tabOptions[1] })
+	        tabList
 	      )
 	    );
 	  }
@@ -35518,7 +35532,10 @@
 	      if (this.clicked) {
 	        this.setState({ message: "unsuccessful, please try again", loggedIn: UserStore.loggedIn() });
 	      } else {
-	        this.setState({ loggedIn: UserStore.loggedIn() });
+	        if (UserStore.needsToLogin()) {
+	          this.openModal();
+	          this.setState({ loggedIn: UserStore.loggedIn(), message: "login to continue" });
+	        }
 	      }
 	    }
 	  },
@@ -35668,6 +35685,7 @@
 	
 	var Store = __webpack_require__(209).Store;
 	var _users = [];
+	var needsToLogin = false;
 	var UserConstants = __webpack_require__(235);
 	var AppDispatcher = __webpack_require__(228);
 	var UserStore = new Store(AppDispatcher);
@@ -35676,12 +35694,18 @@
 	  _users = [];
 	  _users[0] = user;
 	};
+	var updateNeeds = function updateNeeds(need) {
+	  needsToLogin = need;
+	};
 	UserStore.loggedIn = function () {
 	  if (_users[0] === undefined || _users[0] === null) {
 	    return false;
 	  } else {
 	    return true;
 	  }
+	};
+	UserStore.needsToLogin = function () {
+	  return needsToLogin;
 	};
 	
 	UserStore.currentUser = function () {
@@ -35699,6 +35723,10 @@
 	      break;
 	    case UserConstants.ReceiveUser:
 	      var r2 = resetUser(payload.results);
+	      UserStore.__emitChange();
+	      break;
+	    case UserConstants.UpdateNeeds:
+	      var d2 = updateNeeds(payload.need);
 	      UserStore.__emitChange();
 	      break;
 	  }

@@ -23,7 +23,7 @@ var ApiActions = {
     });
   },
   receiveUserBooks: function(books){
-    
+
     AppDispatcher.dispatch({
       actionType: BookShelfConstants.ReceiveUserBooks,
       books: books
@@ -95,6 +95,12 @@ var ApiActions = {
       actionType: AnalysisConstants.ReceiveAnalysis,
       results: analysis
     });
+  },
+  demandLogin: function(need){
+    AppDispatcher.dispatch({
+      actionType: UserConstants.UpdateNeeds,
+      need: need
+    })
   }
 };
 

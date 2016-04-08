@@ -6,11 +6,14 @@ var Tabs = React.createClass({
 
 
   render: function() {
+    var tabList = this.props.tabOptions.map(function(tab){
+      return(<Tab clickFunc={this.props.clickFunction} tabName={tab} key={tab}/> );
+    }, this)
+
     return (
       <div>
         <ul className="tabsList">
-          <Tab clickFunc={this.props.clickFunction} tabName={this.props.tabOptions[0]} />
-          <Tab clickFunc={this.props.clickFunction} tabName={this.props.tabOptions[1]} />
+          {tabList}
         </ul>
       </div>
     );

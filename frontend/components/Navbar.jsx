@@ -97,18 +97,24 @@ var Navbar = React.createClass({
   },
   _onChange: function(){
 
+
     if(UserStore.loggedIn()){
       this.closeModal();
       this.setState({loggedIn: UserStore.loggedIn()});
-      this.history.push({pathname: this.toWhere}); 
+      this.history.push({pathname: this.toWhere});
 
     }else{
       if(this.clicked){
         this.setState({message:"unsuccessful, please try again", loggedIn: UserStore.loggedIn()});
       }else {
-        this.setState({loggedIn:UserStore.loggedIn()})
+        if(UserStore.needsToLogin()){
+          this.openModal();
+          this.setState({loggedIn: UserStore.loggedIn(), message: "login to continue"});
+        }
+        
       }
     }
+
   },
   signUpClick: function(event){
     event.preventDefault();

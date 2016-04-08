@@ -5,6 +5,7 @@ var RadioGroup = require('react-radio-group');
 var APIUtil = require('../../util/APIUtil.js');
 var ApiActions = require('../../actions/api_actions.js');
 var BookSearchStore = require('../../stores/BookSearchStore');
+var UserStore = require('../../stores/UserStore');
 
 var customStyles = {
   overlay : {
@@ -108,9 +109,15 @@ var BookPage = React.createClass({
   addToShelf: function(event){
     event.preventDefault();
 
-    APIUtil.createBook(this.state.currentBook);
-    this.props.changeTabs(true);
-    this.setState({onShelf:true});
+
+    if(UserStore.loggedIn()){
+      APIUtil.createBook(this.state.currentBook);
+      this.props.changeTabs(true);
+      this.setState({onShelf:true});
+
+    }else{
+      ApiActions.demandLogin(); 
+    }
 
 
 
@@ -188,7 +195,7 @@ var BookPage = React.createClass({
       addButton = true;
       markButton = false;
       editButton = true;
-    
+
     }else {
       deleteButton = true;
       addButton = false;

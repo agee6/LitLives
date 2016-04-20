@@ -111,7 +111,7 @@ var Navbar = React.createClass({
           this.openModal();
           this.setState({loggedIn: UserStore.loggedIn(), message: "login to continue"});
         }
-        
+
       }
     }
 
@@ -160,7 +160,8 @@ var Navbar = React.createClass({
         <nav className="header-nav group" >
 
            <div className="header-logo" onClick={this.searchClick}>
-             <i className="fa fa-book fa-3x"></i>
+             <img className="logo-corner" src="http://res.cloudinary.com/litlitves/image/upload/v1461114377/books-icon_f26trs.png" />
+
              <div className="userNameLabel" >{un}</div>
 
            </div>

@@ -4,7 +4,6 @@ var PropTypes = React.PropTypes;
 var SearchListItem = React.createClass({
   click: function(event){
     event.preventDefault();
-    debugger;
     this.props.clickOption(this.props.book);
   },
   render: function() {

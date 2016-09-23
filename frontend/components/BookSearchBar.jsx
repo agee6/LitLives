@@ -3,9 +3,14 @@ var APIUtil = require('../util/APIUtil.js');
 var BookSearchStore = require('../stores/BookSearchStore.js');
 var BookConfirmation = require('./BookConfirmation.jsx');
 var SearchListItem = require('./SearchListItem.jsx');
+var History = require('react-router').History;
+
 
 var BookSearchBar = React.createClass({
+  mixins: [History],
   getInitialState: function(){
+
+    this.leave = false;
 
     return({value: "", searchResults: [], showGuesses: false});
   },
@@ -32,10 +37,13 @@ var BookSearchBar = React.createClass({
     this.storeIndex.remove();
   },
   _onChange: function(){
-    if (this.state.value.length > 0){
+    if (this.state.value.length > 0 && !this.leave){
     this.setState({searchResults: BookSearchStore.all()});
-    }
-    else{
+    }else if(this.leave){
+      this.leave = false; 
+      var url = '/SearchResults';
+      this.history.push({pathname: url});
+    }else{
       this.setState({searchResults: []});
     }
   },
@@ -43,10 +51,10 @@ var BookSearchBar = React.createClass({
     // debugger;
     // this.refs.searchbar.style{{bottom: "10%"}}
     $("#landing-search-bar").css("bottom", "40%");
+    this.setState({
+      showGuesses: true
+    });
     setTimeout(function(){
-        this.setState({
-          showGuesses: true
-        });
         // debugger;
     }.bind(this), 1800);
     // this.hideAutocomplete();
@@ -55,11 +63,14 @@ var BookSearchBar = React.createClass({
   searchBarMoveBack: function() {
     $("#landing-search-bar").css("bottom", "20%");
     // this.hideAutocomplete();
+    // this.setState({
+    //   showGuesses: false
+    // });
 
     // setTimeout(function(){
-      // this.setState({
-      //   showGuesses: false,
-      // });
+    //   this.setState({
+    //     showGuesses: false,
+    //   });
     //     // debugger;
     // }.bind(this), 500);
   },
@@ -68,16 +79,17 @@ var BookSearchBar = React.createClass({
     var theChosen = book;
     var chosen = APIUtil.makeBookObject(book);
     BookSearchStore.resetCurrentBook(chosen);
-    debugger;
     this.props.whenChosen();
 
   },
   click: function(event){
     event.preventDefault();
-    var theChosen = this.state.searchResults[0].volumeInfo.title;
-    var chosen = APIUtil.makeBookObject(this.state.searchResults[0]);
-    BookSearchStore.resetCurrentBook(chosen);
-    this.props.whenChosen();
+    // var theChosen = this.state.searchResults[0].volumeInfo.title;
+    // var chosen = APIUtil.makeBookObject(this.state.searchResults[0]);
+    // BookSearchStore.resetCurrentBook(chosen);
+    // this.props.whenChosen();
+    this.leave = true;
+    APIUtil.fetchBookResults(this.state.value);
 
   },
   removeSearchGuesses: function(){
@@ -92,6 +104,7 @@ var BookSearchBar = React.createClass({
     }else{
       guesses = null;
     }
+
 
 
     return (

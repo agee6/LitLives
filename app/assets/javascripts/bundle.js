@@ -62,6 +62,7 @@
 	var UserStore = __webpack_require__(273);
 	var ApiActions = __webpack_require__(232);
 	var Analyses = __webpack_require__(285);
+	var SearchResults = __webpack_require__(287);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -106,7 +107,8 @@
 	  { path: '/', component: App },
 	  React.createElement(Route, { path: '/Search', component: Search }),
 	  React.createElement(Route, { path: '/Desk', component: Desk }),
-	  React.createElement(Route, { path: '/Analyses', component: Analyses })
+	  React.createElement(Route, { path: '/Analyses', component: Analyses }),
+	  React.createElement(Route, { path: '/SearchResults', component: SearchResults })
 	);
 	
 	document.addEventListener("DOMContentLoaded", function () {
@@ -31502,11 +31504,15 @@
 	var BookSearchStore = __webpack_require__(208);
 	var BookConfirmation = __webpack_require__(240);
 	var SearchListItem = __webpack_require__(243);
+	var History = __webpack_require__(159).History;
 	
 	var BookSearchBar = React.createClass({
 	  displayName: 'BookSearchBar',
 	
+	  mixins: [History],
 	  getInitialState: function getInitialState() {
+	
+	    this.leave = false;
 	
 	    return { value: "", searchResults: [], showGuesses: false };
 	  },
@@ -31531,8 +31537,12 @@
 	    this.storeIndex.remove();
 	  },
 	  _onChange: function _onChange() {
-	    if (this.state.value.length > 0) {
+	    if (this.state.value.length > 0 && !this.leave) {
 	      this.setState({ searchResults: BookSearchStore.all() });
+	    } else if (this.leave) {
+	      this.leave = false;
+	      var url = '/SearchResults';
+	      this.history.push({ pathname: url });
 	    } else {
 	      this.setState({ searchResults: [] });
 	    }
@@ -31541,10 +31551,10 @@
 	    // debugger;
 	    // this.refs.searchbar.style{{bottom: "10%"}}
 	    $("#landing-search-bar").css("bottom", "40%");
+	    this.setState({
+	      showGuesses: true
+	    });
 	    setTimeout(function () {
-	      this.setState({
-	        showGuesses: true
-	      });
 	      // debugger;
 	    }.bind(this), 1800);
 	    // this.hideAutocomplete();
@@ -31553,11 +31563,14 @@
 	  searchBarMoveBack: function searchBarMoveBack() {
 	    $("#landing-search-bar").css("bottom", "20%");
 	    // this.hideAutocomplete();
+	    // this.setState({
+	    //   showGuesses: false
+	    // });
 	
 	    // setTimeout(function(){
-	    // this.setState({
-	    //   showGuesses: false,
-	    // });
+	    //   this.setState({
+	    //     showGuesses: false,
+	    //   });
 	    //     // debugger;
 	    // }.bind(this), 500);
 	  },
@@ -31566,15 +31579,16 @@
 	    var theChosen = book;
 	    var chosen = APIUtil.makeBookObject(book);
 	    BookSearchStore.resetCurrentBook(chosen);
-	    debugger;
 	    this.props.whenChosen();
 	  },
 	  click: function click(event) {
 	    event.preventDefault();
-	    var theChosen = this.state.searchResults[0].volumeInfo.title;
-	    var chosen = APIUtil.makeBookObject(this.state.searchResults[0]);
-	    BookSearchStore.resetCurrentBook(chosen);
-	    this.props.whenChosen();
+	    // var theChosen = this.state.searchResults[0].volumeInfo.title;
+	    // var chosen = APIUtil.makeBookObject(this.state.searchResults[0]);
+	    // BookSearchStore.resetCurrentBook(chosen);
+	    // this.props.whenChosen();
+	    this.leave = true;
+	    APIUtil.fetchBookResults(this.state.value);
 	  },
 	  removeSearchGuesses: function removeSearchGuesses() {
 	    this.setState({ showGuesses: false });
@@ -31822,7 +31836,6 @@
 	
 	  click: function click(event) {
 	    event.preventDefault();
-	    debugger;
 	    this.props.clickOption(this.props.book);
 	  },
 	  render: function render() {
@@ -35897,6 +35910,157 @@
 	};
 	
 	module.exports = AnalysesStore;
+
+/***/ },
+/* 287 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var InitialBookIndex = __webpack_require__(207);
+	var SearchArea = __webpack_require__(238);
+	var BookSearchStore = __webpack_require__(208);
+	var BookConfirmation = __webpack_require__(240);
+	var Modal = __webpack_require__(244);
+	var BookSearch = __webpack_require__(264);
+	var APIUtil = __webpack_require__(231);
+	var SearchResultItem = __webpack_require__(288);
+	var History = __webpack_require__(159).History;
+	
+	var SearchResults = React.createClass({
+	  displayName: 'SearchResults',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { chosen: BookSearchStore.currentBook(), currentBooks: BookSearchStore.all() };
+	  },
+	  bookChosen: function bookChosen() {
+	    // this.openModal();
+	    event.preventDefault();
+	    var bookToSend = BookSearchStore.currentBook();
+	    bookToSend.read = "toRead";
+	    // APIUtil.createBook(bookToSend);
+	    var url = "/Desk";
+	    this.history.push({ pathname: url });
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
+	
+	  closeModal: function closeModal() {
+	    BookSearchStore.resetCurrentBook(null);
+	    this.setState({ modalIsOpen: false });
+	  },
+	  render: function render() {
+	
+	    var searchResults = [];
+	    for (var i = 0; i < this.state.currentBooks.length; i++) {
+	      searchResults.push(React.createElement(SearchResultItem, { book: this.state.currentBooks[i] }));
+	    }
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'homePage' },
+	      React.createElement(
+	        'ul',
+	        { className: 'search-results-list' },
+	        searchResults
+	      )
+	    );
+	  }
+	});
+	module.exports = SearchResults;
+
+/***/ },
+/* 288 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var InitialBookIndex = __webpack_require__(207);
+	var SearchArea = __webpack_require__(238);
+	var BookSearchStore = __webpack_require__(208);
+	var BookConfirmation = __webpack_require__(240);
+	var Modal = __webpack_require__(244);
+	var BookSearch = __webpack_require__(264);
+	var APIUtil = __webpack_require__(231);
+	var History = __webpack_require__(159).History;
+	
+	var customStyles = {};
+	
+	var SearchResultsItem = React.createClass({
+	  displayName: 'SearchResultsItem',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
+	  },
+	  bookChosen: function bookChosen() {
+	    // this.openModal();
+	    var chosen = APIUtil.makeBookObject(this.props.book);
+	    BookSearchStore.resetCurrentBook(chosen);
+	    event.preventDefault();
+	    var bookToSend = BookSearchStore.currentBook();
+	    bookToSend.read = "toRead";
+	    // APIUtil.createBook(bookToSend);
+	    var url = "/Desk";
+	    this.history.push({ pathname: url });
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
+	
+	  closeModal: function closeModal() {
+	    BookSearchStore.resetCurrentBook(null);
+	    this.setState({ modalIsOpen: false });
+	  },
+	  render: function render() {
+	    var imageLink, title, author, numPages, category;
+	    if (this.props.book.volumeInfo.imageLinks !== undefined) {
+	      imageLink = this.props.book.volumeInfo.imageLinks.thumbnail;
+	    } else {
+	      imageLink = "http://res.cloudinary.com/litlitves/image/upload/v1474661342/imageNotAvailable_fhql9f.jpg";
+	    }
+	    if (this.props.book.volumeInfo.categories !== undefined) {
+	      category = this.props.book.volumeInfo.categories[0];
+	    } else {
+	      category = null;
+	    }
+	
+	    return React.createElement(
+	      'li',
+	      { className: 'search-result', onClick: this.bookChosen },
+	      React.createElement('img', { className: 'search-result-image', src: imageLink }),
+	      React.createElement(
+	        'div',
+	        { className: 'data-area' },
+	        React.createElement(
+	          'div',
+	          null,
+	          this.props.book.volumeInfo.title
+	        ),
+	        React.createElement(
+	          'div',
+	          null,
+	          this.props.book.volumeInfo.subtitle
+	        ),
+	        React.createElement(
+	          'div',
+	          null,
+	          this.props.book.volumeInfo.authors[0]
+	        ),
+	        React.createElement(
+	          'div',
+	          null,
+	          category
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = SearchResultsItem;
 
 /***/ }
 /******/ ]);

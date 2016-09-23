@@ -78,7 +78,7 @@ BookSearchStore.__onDispatch = function (payload) {
     case BookSearchConstants.UpdateCurrentBook:
       var c3a = resetCurrentBook(payload.book);
       BookSearchStore.__emitChange();
-      break; 
+      break;
     case BookSearchConstants.DeleteCurrentBook:
       var c4 = resetCurrentBook(null);
       BookSearchStore.__emitChange();

@@ -14,6 +14,7 @@ var Navbar = require('./components/Navbar.jsx');
 var UserStore = require('./stores/UserStore.js');
 var ApiActions = require('./actions/api_actions');
 var Analyses = require('./components/AnalysesComponents/Analyses.jsx');
+var SearchResults = require('./components/SearchResults.jsx');
 
 var App = React.createClass({
   mixins:[History],
@@ -59,6 +60,7 @@ var routes = (
     <Route path="/Search" component={Search}/>
     <Route path="/Desk" component={Desk} />
     <Route path="/Analyses" component={Analyses} />
+    <Route path="/SearchResults" component={SearchResults} />
   </Route>
 );
 

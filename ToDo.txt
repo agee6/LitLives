@@ -1,0 +1,8 @@
+Search, reload on enter
+Search, add loading symbol
+Search, fix list display ( add padding, overflow issue/wrap)
+Font: baskerville?
+
+Search Results page: organize List better smaller thumbnails, more description
+
+Navbar rotate things around, better access (username, possibly welcome sign).

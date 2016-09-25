@@ -45,20 +45,24 @@ var SearchResultsItem = React.createClass({
       imageLink= "http://res.cloudinary.com/litlitves/image/upload/v1474661342/imageNotAvailable_fhql9f.jpg";
     }
     if(this.props.book.volumeInfo.categories !== undefined){
-      category=this.props.book.volumeInfo.categories[0];
+      category= "category: " + this.props.book.volumeInfo.categories[0];
     }else{
       category = null;
+    }
+    if(this.props.book.volumeInfo.authors !== undefined){
+      author = "by, " + this.props.book.volumeInfo.authors[0];
+
     }
 
 
     return(
-      <li className="search-result" onClick={this.bookChosen}>
+      <li className="search-result-item" onClick={this.bookChosen}>
         <img className='search-result-image' src={imageLink}/>
         <div className='data-area'>
-          <div>{this.props.book.volumeInfo.title}</div>
+          <div className='result-title'>{this.props.book.volumeInfo.title}</div>
           <div>{this.props.book.volumeInfo.subtitle}</div>
-          <div>{this.props.book.volumeInfo.authors[0]}</div>
-          <div>{category}</div>
+          <div className="result-author">{author}</div>
+          <div className='result-category'>{category}</div>
         </div>
       </li>
     );

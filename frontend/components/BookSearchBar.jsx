@@ -11,6 +11,8 @@ var BookSearchBar = React.createClass({
   getInitialState: function(){
 
     this.leave = false;
+    this.needToLoad = false;
+
 
     return({value: "", searchResults: [], showGuesses: false});
   },
@@ -20,11 +22,23 @@ var BookSearchBar = React.createClass({
 
     if (this.state.value.length > 2 && !this.pending){
       this.pending = true;
+      this.loadBar.style.display = 'block';
+      this.needToLoad = false;
       APIUtil.fetchBookResults(this.state.value);
       window.setInterval(function(){
         this.pending = false;
-
+        if(this.needToLoad){
+          this.pending = true;
+          this.loadBar.style.display = 'block';
+          this.needToLoad = false;
+          APIUtil.fetchBookResults(this.state.value);
+        }
       }.bind(this), 1800);
+    }else if(this.state.value.length > 2){
+      this.needToLoad = true;
+    }else{
+      this.needToLoad = false;
+      this.loadBar.style.display = 'none'; 
     }
 
   },
@@ -32,18 +46,21 @@ var BookSearchBar = React.createClass({
   componentDidMount: function(){
     this.storeIndex = BookSearchStore.addListener(this._onChange);
     this.pending = false;
+    this.loadBar = document.getElementById('loader');
   },
   componentWillUnmount: function(){
     this.storeIndex.remove();
   },
   _onChange: function(){
     if (this.state.value.length > 0 && !this.leave){
-    this.setState({searchResults: BookSearchStore.all()});
+      this.loadBar.style.display = 'none';
+      this.setState({searchResults: BookSearchStore.all()});
     }else if(this.leave){
-      this.leave = false; 
+      this.leave = false;
       var url = '/SearchResults';
       this.history.push({pathname: url});
     }else{
+      this.loadBar.style.display = 'none';
       this.setState({searchResults: []});
     }
   },
@@ -54,9 +71,9 @@ var BookSearchBar = React.createClass({
     this.setState({
       showGuesses: true
     });
-    setTimeout(function(){
-        // debugger;
-    }.bind(this), 1800);
+    // setTimeout(function(){
+    //     // debugger;
+    // }.bind(this), 1800);
     // this.hideAutocomplete();
     // this.tempToken = setTimeout(this.showAutocomplete, 2000);
   },
@@ -88,6 +105,7 @@ var BookSearchBar = React.createClass({
     // var chosen = APIUtil.makeBookObject(this.state.searchResults[0]);
     // BookSearchStore.resetCurrentBook(chosen);
     // this.props.whenChosen();
+
     this.leave = true;
     APIUtil.fetchBookResults(this.state.value);
 
@@ -123,6 +141,7 @@ var BookSearchBar = React.createClass({
             autoComplete="off"
             />
           <button id="BookSearchButton" className="hvr-grow-shadow fa fa-search" onClick={this.click}></button>
+          <div id="loader" className='loader'></div>
           <ul className="searchGuesses" id="search-options">
             {guesses}
           </ul>

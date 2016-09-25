@@ -31513,6 +31513,7 @@
 	  getInitialState: function getInitialState() {
 	
 	    this.leave = false;
+	    this.needToLoad = false;
 	
 	    return { value: "", searchResults: [], showGuesses: false };
 	  },
@@ -31522,28 +31523,44 @@
 	
 	    if (this.state.value.length > 2 && !this.pending) {
 	      this.pending = true;
+	      this.loadBar.style.display = 'block';
+	      this.needToLoad = false;
 	      APIUtil.fetchBookResults(this.state.value);
 	      window.setInterval(function () {
 	        this.pending = false;
+	        if (this.needToLoad) {
+	          this.pending = true;
+	          this.loadBar.style.display = 'block';
+	          this.needToLoad = false;
+	          APIUtil.fetchBookResults(this.state.value);
+	        }
 	      }.bind(this), 1800);
+	    } else if (this.state.value.length > 2) {
+	      this.needToLoad = true;
+	    } else {
+	      this.needToLoad = false;
+	      this.loadBar.style.display = 'none';
 	    }
 	  },
 	
 	  componentDidMount: function componentDidMount() {
 	    this.storeIndex = BookSearchStore.addListener(this._onChange);
 	    this.pending = false;
+	    this.loadBar = document.getElementById('loader');
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
 	    this.storeIndex.remove();
 	  },
 	  _onChange: function _onChange() {
 	    if (this.state.value.length > 0 && !this.leave) {
+	      this.loadBar.style.display = 'none';
 	      this.setState({ searchResults: BookSearchStore.all() });
 	    } else if (this.leave) {
 	      this.leave = false;
 	      var url = '/SearchResults';
 	      this.history.push({ pathname: url });
 	    } else {
+	      this.loadBar.style.display = 'none';
 	      this.setState({ searchResults: [] });
 	    }
 	  },
@@ -31554,9 +31571,9 @@
 	    this.setState({
 	      showGuesses: true
 	    });
-	    setTimeout(function () {
-	      // debugger;
-	    }.bind(this), 1800);
+	    // setTimeout(function(){
+	    //     // debugger;
+	    // }.bind(this), 1800);
 	    // this.hideAutocomplete();
 	    // this.tempToken = setTimeout(this.showAutocomplete, 2000);
 	  },
@@ -31587,6 +31604,7 @@
 	    // var chosen = APIUtil.makeBookObject(this.state.searchResults[0]);
 	    // BookSearchStore.resetCurrentBook(chosen);
 	    // this.props.whenChosen();
+	
 	    this.leave = true;
 	    APIUtil.fetchBookResults(this.state.value);
 	  },
@@ -31626,6 +31644,7 @@
 	          autoComplete: 'off'
 	        }),
 	        React.createElement('button', { id: 'BookSearchButton', className: 'hvr-grow-shadow fa fa-search', onClick: this.click }),
+	        React.createElement('div', { id: 'loader', className: 'loader' }),
 	        React.createElement(
 	          'ul',
 	          { className: 'searchGuesses', id: 'search-options' },
@@ -36024,21 +36043,24 @@
 	      imageLink = "http://res.cloudinary.com/litlitves/image/upload/v1474661342/imageNotAvailable_fhql9f.jpg";
 	    }
 	    if (this.props.book.volumeInfo.categories !== undefined) {
-	      category = this.props.book.volumeInfo.categories[0];
+	      category = "category: " + this.props.book.volumeInfo.categories[0];
 	    } else {
 	      category = null;
+	    }
+	    if (this.props.book.volumeInfo.authors !== undefined) {
+	      author = "by, " + this.props.book.volumeInfo.authors[0];
 	    }
 	
 	    return React.createElement(
 	      'li',
-	      { className: 'search-result', onClick: this.bookChosen },
+	      { className: 'search-result-item', onClick: this.bookChosen },
 	      React.createElement('img', { className: 'search-result-image', src: imageLink }),
 	      React.createElement(
 	        'div',
 	        { className: 'data-area' },
 	        React.createElement(
 	          'div',
-	          null,
+	          { className: 'result-title' },
 	          this.props.book.volumeInfo.title
 	        ),
 	        React.createElement(
@@ -36048,12 +36070,12 @@
 	        ),
 	        React.createElement(
 	          'div',
-	          null,
-	          this.props.book.volumeInfo.authors[0]
+	          { className: 'result-author' },
+	          author
 	        ),
 	        React.createElement(
 	          'div',
-	          null,
+	          { className: 'result-category' },
 	          category
 	        )
 	      )

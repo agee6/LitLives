@@ -38,6 +38,13 @@ var customStyles = {
   }
 };
 
+var quotes = [
+  "\"We read to know we are not alone.\" -C.S.Lewis",
+  "\"A reader lives a thousand lives before he dies\" -George R.R. Martin",
+  "\"You can never get a cup of tea large enough, or a book long enough to suit me\" -C.S.Lewis",
+  "\"It is what you read when you don't have to that determines what you will be when you can't help it.\" -Oscar Wilde"
+]
+
 var Navbar = React.createClass({
   mixins: [History, LinkedStateMixin],
   getInitialState: function(){
@@ -154,6 +161,7 @@ var Navbar = React.createClass({
     else{
       signB = <li className="nav-right" id="NavUser" onClick={this.openModal}>Sign in/up!</li>
     }
+    var quoteToUse = quotes[Math.floor(Math.random() * quotes.length)];
 
     return (
       <div className="Navbar">
@@ -162,7 +170,8 @@ var Navbar = React.createClass({
            <div className="header-logo" onClick={this.searchClick}>
              <img className="logo-corner" src="http://res.cloudinary.com/litlitves/image/upload/v1461114377/books-icon_f26trs.png" />
 
-             <div className="userNameLabel" >{un}</div>
+             <div className='userNameLabel'> {quoteToUse}</div>
+
 
            </div>
 

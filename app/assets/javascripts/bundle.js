@@ -31526,7 +31526,7 @@
 	      this.loadBar.style.display = 'block';
 	      this.needToLoad = false;
 	      APIUtil.fetchBookResults(this.state.value);
-	      window.setInterval(function () {
+	      window.setTimeout(function () {
 	        this.pending = false;
 	        if (this.needToLoad) {
 	          this.pending = true;
@@ -35586,6 +35586,8 @@
 	  }
 	};
 	
+	var quotes = ["\"We read to know we are not alone.\" -C.S.Lewis", "\"A reader lives a thousand lives before he dies\" -George R.R. Martin", "\"You can never get a cup of tea large enough, or a book long enough to suit me\" -C.S.Lewis", "\"It is what you read when you don't have to that determines what you will be when you can't help it.\" -Oscar Wilde"];
+	
 	var Navbar = React.createClass({
 	  displayName: 'Navbar',
 	
@@ -35700,6 +35702,7 @@
 	        'Sign in/up!'
 	      );
 	    }
+	    var quoteToUse = quotes[Math.floor(Math.random() * quotes.length)];
 	
 	    return React.createElement(
 	      'div',
@@ -35714,7 +35717,8 @@
 	          React.createElement(
 	            'div',
 	            { className: 'userNameLabel' },
-	            un
+	            ' ',
+	            quoteToUse
 	          )
 	        ),
 	        React.createElement(

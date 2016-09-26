@@ -25,7 +25,7 @@ var BookSearchBar = React.createClass({
       this.loadBar.style.display = 'block';
       this.needToLoad = false;
       APIUtil.fetchBookResults(this.state.value);
-      window.setInterval(function(){
+      window.setTimeout(function(){
         this.pending = false;
         if(this.needToLoad){
           this.pending = true;
@@ -38,7 +38,7 @@ var BookSearchBar = React.createClass({
       this.needToLoad = true;
     }else{
       this.needToLoad = false;
-      this.loadBar.style.display = 'none'; 
+      this.loadBar.style.display = 'none';
     }
 
   },

@@ -6,6 +6,7 @@ var APIUtil = require('../../util/APIUtil.js');
 var ApiActions = require('../../actions/api_actions.js');
 var BookSearchStore = require('../../stores/BookSearchStore');
 var UserStore = require('../../stores/UserStore');
+var Note = require('./Note.jsx');
 
 var customStyles = {
   overlay : {
@@ -116,7 +117,7 @@ var BookPage = React.createClass({
       this.setState({onShelf:true});
 
     }else{
-      ApiActions.demandLogin(); 
+      ApiActions.demandLogin();
     }
 
 
@@ -133,9 +134,7 @@ var BookPage = React.createClass({
     if( this.state.chapters !== null && this.statechapters !== undefined && this.state.chapters.length > 0) {
       chapters = parseInt(this.state.chapters);
     }
-    // if(this.state.year !== null && this.state.year.length > 0){
-    //   year = parseInt(this.state.year);
-    // }
+
     year = parseInt(this.state.year);
     var oldBook = this.props.currentBook;
 
@@ -170,7 +169,7 @@ var BookPage = React.createClass({
   },
   render: function(){
     var book = this.state.currentBook;
-    // var bookStyle = { backgroundImage: 'url('+ book.image + ')'};
+
     var pages, language, publisher;
 
     if(book.pages === null){
@@ -189,18 +188,21 @@ var BookPage = React.createClass({
     }else {
       publisher = book.publishing;
     }
-    var deleteButton, addButton, markButton, editButton;
+    var deleteButton, addButton, markButton, editButton, addDeleteButton;
     if(this.state.onShelf){
       deleteButton = false;
       addButton = true;
       markButton = false;
       editButton = true;
+      addDeleteButton = <button className="book-button-area" id="delete-book" onClick={this.deleteBook} disabled={deleteButton}>-</button>;
+
 
     }else {
       deleteButton = true;
       addButton = false;
       markButton = true;
       editButton = true;
+      addDeleteButton = <button className="book-button-area" id="add-to-shelf" onClick={this.addToShelf} disabled={addButton}>+</button>;
 
     }
     var markFunction, markText;
@@ -215,11 +217,15 @@ var BookPage = React.createClass({
 
     return(
       <section className="BookPage" id="BookPageArea">
+        <button className="book-button-area" id="edit-book-button" onClick={this.editClick} disabled={deleteButton}></button>
+        {addDeleteButton}
+
         <div className="BookTitleArea">
           <div className="BookTitle">{book.title}</div>
           <div className="Author">by, {book.author}</div>
 
         </div>
+
         <div className="BookPage" id="BookDescriptionBox">
           <img src={book.image} id="CoverPhoto"></img>
           <p id="BookDescription">{book.description}</p>
@@ -230,12 +236,9 @@ var BookPage = React.createClass({
           <div className="BookFooter" id="publisher">publisher: {publisher}</div>
 
         </div>
-        <div className="button-area">
-          <button className="book-button-area" id="edit-book-button" onClick={this.editClick} disabled={deleteButton}>Edit Book</button>
-          <button className="book-button-area" id="mark-as-read" onClick={markFunction} disabled={deleteButton}>{markText}</button>
-          <button className="book-button-area" id="delete-book" onClick={this.deleteBook} disabled={deleteButton}>Remove From Shelf</button>
-          <button className="book-button-area" id="add-to-shelf" onClick={this.addToShelf} disabled={addButton}>Add To Shelf</button>
-        </div>
+        <button className="book-button-area" id="mark-as-read" onClick={markFunction} disabled={deleteButton}>{markText}</button>
+        <Note currentBook={this.props.currentBook} />
+
 
         <Modal
            isOpen={this.state.modalIsOpen}
@@ -282,8 +285,6 @@ var BookPage = React.createClass({
                <input className="book-edit ISBN13-input" valueLink={this.linkState('ISBN13')} />
                <label className="book-edit label">ISBN10: </label>
                <input className="book-edit ISBN10-input" valueLink={this.linkState('ISBN10')} />
-
-
              </div>
              <div className="book-edit-sections" id="book-edit-length">
                <label className="book-edit label"># of pages: </label>

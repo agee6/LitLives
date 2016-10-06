@@ -1,6 +1,7 @@
 .BookTitleArea {
   width: 100%;
 
+
 }
 .Author {
   font-size: 12px;
@@ -184,6 +185,36 @@
   opacity: 0.3;
 }
 
-.book-button-area #edit-book-button {
-
+#edit-book-button {
+  background-image: url("https://www.picaflor-azul.com/images/edit1.png");
+  background-size:cover;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  height: 50px;
+  width: 50px;
+  border-radius: 10px;
+  margin: 5px;
+  box-sizing: border-box;
+}
+#add-to-shelf {
+  width: 50px;
+  height: 50px;
+  font-size: 40px;
+  border-radius: 10px;
+  margin: 5px;
+  right: 60px;
+  position: absolute;
+  padding: 0px;
+}
+#delete-book {
+  width: 50px;
+  height: 50px;
+  font-size: 40px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  position: absolute;
+  right:60px;
+  margin: 5px;
+  padding: 0px;
 }

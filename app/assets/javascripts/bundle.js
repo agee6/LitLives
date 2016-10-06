@@ -24221,11 +24221,12 @@
 	        backgroundImage: 'url(' + this.state.currentBook.image + ')'
 	      };
 	      var currentTab;
-	      if (this.state.tab === "Book Page") {
-	        currentTab = React.createElement(BookPage, { currentBook: this.state.currentBook, changeTabs: this.changeTabOptions });
-	      } else if (this.state.tab === "Notes") {
-	        currentTab = React.createElement(Note, { currentBook: this.state.currentBook });
-	      }
+	      // if(this.state.tab === "Book Page"){
+	      //   currentTab = <BookPage currentBook={this.state.currentBook} changeTabs={this.changeTabOptions}/>;
+	      // }else if(this.state.tab === "Notes"){
+	      //   currentTab = <Note currentBook={this.state.currentBook} />;
+	      // }
+	      currentTab = React.createElement(BookPage, { currentBook: this.state.currentBook, changeTabs: this.changeTabOptions });
 	
 	      return React.createElement(
 	        'section',
@@ -24234,8 +24235,7 @@
 	          'div',
 	          { id: 'page-area' },
 	          currentTab
-	        ),
-	        React.createElement(Tabs, { clickFunction: this.changeTab, tabOptions: this.tabs })
+	        )
 	      );
 	    } else {
 	      return React.createElement(
@@ -24264,6 +24264,7 @@
 	var ApiActions = __webpack_require__(237);
 	var BookSearchStore = __webpack_require__(247);
 	var UserStore = __webpack_require__(265);
+	var Note = __webpack_require__(268);
 	
 	var customStyles = {
 	  overlay: {
@@ -24381,9 +24382,7 @@
 	    if (this.state.chapters !== null && this.statechapters !== undefined && this.state.chapters.length > 0) {
 	      chapters = parseInt(this.state.chapters);
 	    }
-	    // if(this.state.year !== null && this.state.year.length > 0){
-	    //   year = parseInt(this.state.year);
-	    // }
+	
 	    year = parseInt(this.state.year);
 	    var oldBook = this.props.currentBook;
 	
@@ -24415,7 +24414,7 @@
 	  },
 	  render: function render() {
 	    var book = this.state.currentBook;
-	    // var bookStyle = { backgroundImage: 'url('+ book.image + ')'};
+	
 	    var pages, language, publisher;
 	
 	    if (book.pages === null) {
@@ -24433,17 +24432,27 @@
 	    } else {
 	      publisher = book.publishing;
 	    }
-	    var deleteButton, addButton, markButton, editButton;
+	    var deleteButton, addButton, markButton, editButton, addDeleteButton;
 	    if (this.state.onShelf) {
 	      deleteButton = false;
 	      addButton = true;
 	      markButton = false;
 	      editButton = true;
+	      addDeleteButton = React.createElement(
+	        'button',
+	        { className: 'book-button-area', id: 'delete-book', onClick: this.deleteBook, disabled: deleteButton },
+	        '-'
+	      );
 	    } else {
 	      deleteButton = true;
 	      addButton = false;
 	      markButton = true;
 	      editButton = true;
+	      addDeleteButton = React.createElement(
+	        'button',
+	        { className: 'book-button-area', id: 'add-to-shelf', onClick: this.addToShelf, disabled: addButton },
+	        '+'
+	      );
 	    }
 	    var markFunction, markText;
 	
@@ -24458,6 +24467,8 @@
 	    return React.createElement(
 	      'section',
 	      { className: 'BookPage', id: 'BookPageArea' },
+	      React.createElement('button', { className: 'book-button-area', id: 'edit-book-button', onClick: this.editClick, disabled: deleteButton }),
+	      addDeleteButton,
 	      React.createElement(
 	        'div',
 	        { className: 'BookTitleArea' },
@@ -24506,29 +24517,11 @@
 	        )
 	      ),
 	      React.createElement(
-	        'div',
-	        { className: 'button-area' },
-	        React.createElement(
-	          'button',
-	          { className: 'book-button-area', id: 'edit-book-button', onClick: this.editClick, disabled: deleteButton },
-	          'Edit Book'
-	        ),
-	        React.createElement(
-	          'button',
-	          { className: 'book-button-area', id: 'mark-as-read', onClick: markFunction, disabled: deleteButton },
-	          markText
-	        ),
-	        React.createElement(
-	          'button',
-	          { className: 'book-button-area', id: 'delete-book', onClick: this.deleteBook, disabled: deleteButton },
-	          'Remove From Shelf'
-	        ),
-	        React.createElement(
-	          'button',
-	          { className: 'book-button-area', id: 'add-to-shelf', onClick: this.addToShelf, disabled: addButton },
-	          'Add To Shelf'
-	        )
+	        'button',
+	        { className: 'book-button-area', id: 'mark-as-read', onClick: markFunction, disabled: deleteButton },
+	        markText
 	      ),
+	      React.createElement(Note, { currentBook: this.props.currentBook }),
 	      React.createElement(
 	        Modal,
 	        {

@@ -45,11 +45,12 @@ var Notebook = React.createClass({
         backgroundImage: 'url(' + this.state.currentBook.image + ')'
       };
       var currentTab;
-      if(this.state.tab === "Book Page"){
-        currentTab = <BookPage currentBook={this.state.currentBook} changeTabs={this.changeTabOptions}/>;
-      }else if(this.state.tab === "Notes"){
-        currentTab = <Note currentBook={this.state.currentBook} />;
-      }
+      // if(this.state.tab === "Book Page"){
+      //   currentTab = <BookPage currentBook={this.state.currentBook} changeTabs={this.changeTabOptions}/>;
+      // }else if(this.state.tab === "Notes"){
+      //   currentTab = <Note currentBook={this.state.currentBook} />;
+      // }
+      currentTab = <BookPage currentBook={this.state.currentBook} changeTabs={this.changeTabOptions}/>;
 
       return(
 
@@ -58,8 +59,7 @@ var Notebook = React.createClass({
             {currentTab}
 
           </div>
-          <Tabs clickFunction={this.changeTab} tabOptions={this.tabs}/>
-
+          
 
         </section>
       )

@@ -6,3 +6,17 @@ Font: baskerville?
 Search Results page: organize List better smaller thumbnails, more description
 
 Navbar rotate things around, better access (username, possibly welcome sign).
+
+
+
+Add name logo next to books
+
+put notes at the bottom of the book page
+
+Book Shelf titles full width, change color?
+
+Change Buttons toggle, only one? Edit use symbol, small in corner(?)
+
+Have book shelf always visible remove hamburger
+
+notes styled to match sight.

@@ -11,9 +11,9 @@ var BS = React.createClass({
     var reading = BookShelfStore.reading();
     var toRead = BookShelfStore.toRead();
     var allToRead = reading.concat(toRead);
-    this.spinClass = 'fa fa-bars';
+    this.spinClass = 'fa fa-times';
 
-    return({readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: false});
+    return({readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: true});
   },
   componentDidMount: function(){
     this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
@@ -57,18 +57,11 @@ var BS = React.createClass({
 
           <div className="menu">
             <div className="FullBookShelf">
-              <div className="bookshelf-spacer"></div>
               <label className="ShelfLabel" id="ToRead">To Read</label>
               <Shelf books={this.state.toReadBooks} identifier="BooksToRead"/>
               <label className="ShelfLabel" id="Read">Read</label>
               <Shelf books={this.state.readBooks} identifier="BooksRead"/>
 
-            </div>
-          </div>
-          <div className="site-wrapper">
-            <div className="header">
-              <div className="menu-trigger" onClick={this.booksClick}><i className={this.spinClass}> </i>
-              </div>
             </div>
           </div>
 

@@ -27,7 +27,7 @@
 .data-area{
   margin: 10px;
   display: flex;
-  align-items: center;
+  align-items: left;
   flex-direction: column;
 
 }

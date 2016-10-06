@@ -53,16 +53,16 @@
 	var Route = ReactRouter.Route;
 	var IndexRoute = ReactRouter.IndexRoute;
 	var Search = __webpack_require__(206);
-	var Desk = __webpack_require__(270);
-	var APIUtil = __webpack_require__(231);
+	var Desk = __webpack_require__(207);
+	var APIUtil = __webpack_require__(236);
 	var root = document.getElementById('reactContent');
 	// var cb = root.getAttribute("data-has-book");
 	var History = __webpack_require__(159).History;
-	var Navbar = __webpack_require__(284);
-	var UserStore = __webpack_require__(273);
-	var ApiActions = __webpack_require__(232);
-	var Analyses = __webpack_require__(285);
-	var SearchResults = __webpack_require__(287);
+	var Navbar = __webpack_require__(276);
+	var UserStore = __webpack_require__(265);
+	var ApiActions = __webpack_require__(237);
+	var Analyses = __webpack_require__(277);
+	var SearchResults = __webpack_require__(279);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -24060,13 +24060,13 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var InitialBookIndex = __webpack_require__(207);
-	var SearchArea = __webpack_require__(238);
-	var BookSearchStore = __webpack_require__(208);
-	var BookConfirmation = __webpack_require__(240);
-	var Modal = __webpack_require__(244);
-	var BookSearch = __webpack_require__(264);
-	var APIUtil = __webpack_require__(231);
+	var InitialBookIndex = __webpack_require__(280);
+	var SearchArea = __webpack_require__(282);
+	var BookSearchStore = __webpack_require__(247);
+	var BookConfirmation = __webpack_require__(284);
+	var Modal = __webpack_require__(210);
+	var BookSearch = __webpack_require__(286);
+	var APIUtil = __webpack_require__(236);
 	var History = __webpack_require__(159).History;
 	
 	var customStyles = {
@@ -24149,47 +24149,24 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(208);
-	var APIUtil = __webpack_require__(231);
-	var IndexItem = __webpack_require__(237);
+	var Notebook = __webpack_require__(208);
+	var BS = __webpack_require__(272);
 	
-	var InitialBookIndex = React.createClass({
-	  displayName: 'InitialBookIndex',
+	var Desk = React.createClass({
+	  displayName: 'Desk',
 	
 	
-	  getInitialState: function getInitialState() {
-	    return { bookIndex: BookSearchStore.initialData() };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    APIUtil.getInitialBookIndex();
-	    this.iIndex = BookSearchStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.iIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    this.setState({ bookIndex: BookSearchStore.initialData() });
-	  },
 	  render: function render() {
-	    var bookOptions;
-	    var that = this;
 	
-	    bookOptions = this.state.bookIndex.map(function (book, index) {
-	      return React.createElement(IndexItem, { key: index, book: book, whenChosen: this.props.whenChosen });
-	    }, this);
 	    return React.createElement(
-	      'div',
-	      { id: 'BookArea' },
-	      React.createElement(
-	        'ul',
-	        { className: 'book-list' },
-	        bookOptions
-	      )
+	      'section',
+	      { className: 'Desk', id: 'Desk' },
+	      React.createElement(Notebook, null),
+	      React.createElement(BS, null)
 	    );
 	  }
 	});
-	
-	module.exports = InitialBookIndex;
+	module.exports = Desk;
 
 /***/ },
 /* 208 */
@@ -24197,14 +24174,3459 @@
 
 	'use strict';
 	
-	var Store = __webpack_require__(209).Store;
+	var React = __webpack_require__(1);
+	var BookPage = __webpack_require__(209);
+	var BookSearchStore = __webpack_require__(247);
+	var Tabs = __webpack_require__(266);
+	var Note = __webpack_require__(268);
+	var Reviews = __webpack_require__(271);
+	
+	var Notebook = React.createClass({
+	  displayName: 'Notebook',
+	
+	  getInitialState: function getInitialState() {
+	    this.tabs = ["Book Page", "Notes"];
+	    return { currentBook: BookSearchStore.currentBook(), tab: "Book Page", tabs: this.tabs };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.storeIndex = BookSearchStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.storeIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    var bookTemp = BookSearchStore.currentBook();
+	    if (bookTemp.id === undefined) {
+	      this.tabs = [];
+	    } else {
+	      this.tabs = ["Book Page", "Notes"];
+	    }
+	    this.setState({ currentBook: BookSearchStore.currentBook(), tabs: this.tabs });
+	  },
+	  changeTab: function changeTab(tab) {
+	    this.setState({ tab: tab });
+	  },
+	  changeTabOptions: function changeTabOptions(addNotes) {
+	    if (addNotes) {
+	      this.tabs = ["Book Page", "Notes"];
+	    } else {
+	      this.tabs = [];
+	    }
+	    this.setState({ tabs: this.tabs });
+	  },
+	
+	  render: function render() {
+	    if (this.state.currentBook) {
+	      var customStyle = {
+	        backgroundImage: 'url(' + this.state.currentBook.image + ')'
+	      };
+	      var currentTab;
+	      if (this.state.tab === "Book Page") {
+	        currentTab = React.createElement(BookPage, { currentBook: this.state.currentBook, changeTabs: this.changeTabOptions });
+	      } else if (this.state.tab === "Notes") {
+	        currentTab = React.createElement(Note, { currentBook: this.state.currentBook });
+	      }
+	
+	      return React.createElement(
+	        'section',
+	        { className: 'Notebook', id: 'page-flip' },
+	        React.createElement(
+	          'div',
+	          { id: 'page-area' },
+	          currentTab
+	        ),
+	        React.createElement(Tabs, { clickFunction: this.changeTab, tabOptions: this.tabs })
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        null,
+	        'currently loading'
+	      );
+	    }
+	  }
+	
+	});
+	
+	module.exports = Notebook;
+
+/***/ },
+/* 209 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var Modal = __webpack_require__(210);
+	var LinkedStateMixin = __webpack_require__(230);
+	var RadioGroup = __webpack_require__(234);
+	var APIUtil = __webpack_require__(236);
+	var ApiActions = __webpack_require__(237);
+	var BookSearchStore = __webpack_require__(247);
+	var UserStore = __webpack_require__(265);
+	
+	var customStyles = {
+	  overlay: {
+	    position: 'fixed',
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+	    zIndex: 20,
+	    backgroundImage: 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
+	    backgroundSize: 'cover'
+	  },
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    marginRight: '-50%',
+	    transform: 'translate(-50%, -50%)',
+	    width: '500px',
+	    backgroundImage: 'url(\'https://images.unsplash.com/photo-1457298483369-0a95d2b17fcd?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=f4fd0823787f85fcb27fd05027766a41\')',
+	    backgroundSize: 'cover',
+	    borderRadius: '10px'
+	  }
+	};
+	
+	var BookPage = React.createClass({
+	  displayName: 'BookPage',
+	
+	  mixins: [LinkedStateMixin],
+	  getInitialState: function getInitialState() {
+	    var book = BookSearchStore.currentBook();
+	    var inDatabase = true;
+	    if (book.id === undefined) {
+	      inDatabase = false;
+	    }
+	    return { modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
+	      ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
+	      description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
+	    if (!this.state.onShelf) {
+	      this.props.changeTabs(false);
+	    }
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.bookStoreIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    var book = BookSearchStore.currentBook();
+	    this.setState({ modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
+	      ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
+	      description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: true
+	    });
+	  },
+	
+	  openModal: function openModal() {
+	
+	    this.setState({ modalIsOpen: true });
+	  },
+	
+	  closeModal: function closeModal() {
+	    this.setState({ modalIsOpen: false });
+	  },
+	
+	  onClick: function onClick(event) {
+	    event.preventDefault();
+	    alert("congrats!");
+	  },
+	  markAsRead: function markAsRead(event) {
+	    event.preventDefault();
+	
+	    APIUtil.updateBook(this.props.currentBook.id, { read: "read" });
+	    this.setState({ selectedValue: "read" });
+	  },
+	  markAsUnread: function markAsUnread(event) {
+	    event.preventDefault();
+	
+	    APIUtil.updateBook(this.props.currentBook.id, { read: "toRead" });
+	    this.setState({ selectedValue: "toRead" });
+	  },
+	  editClick: function editClick(event) {
+	    event.preventDefault();
+	
+	    this.openModal();
+	  },
+	  deleteBook: function deleteBook(event) {
+	    event.preventDefault();
+	
+	    APIUtil.deleteBook(this.state.currentBook.id);
+	    this.props.changeTabs(false);
+	    this.setState({ onShelf: false });
+	  },
+	  addToShelf: function addToShelf(event) {
+	    event.preventDefault();
+	
+	    if (UserStore.loggedIn()) {
+	      APIUtil.createBook(this.state.currentBook);
+	      this.props.changeTabs(true);
+	      this.setState({ onShelf: true });
+	    } else {
+	      ApiActions.demandLogin();
+	    }
+	  },
+	  updateBook: function updateBook(event) {
+	    event.preventDefault();
+	    var pages, chapters, year;
+	
+	    // if(this.state.pages !== null && this.state.pages.length > 0){
+	    // }
+	    pages = parseInt(this.state.pages);
+	
+	    if (this.state.chapters !== null && this.statechapters !== undefined && this.state.chapters.length > 0) {
+	      chapters = parseInt(this.state.chapters);
+	    }
+	    // if(this.state.year !== null && this.state.year.length > 0){
+	    //   year = parseInt(this.state.year);
+	    // }
+	    year = parseInt(this.state.year);
+	    var oldBook = this.props.currentBook;
+	
+	    var newBook = {
+	
+	      publishing: this.state.publisher,
+	      genre: this.state.genre,
+	      year: year,
+	      read: this.state.selectedValue,
+	      ISBN13: this.state.ISBN13,
+	      ISBN10: this.state.ISBN10,
+	      author: this.state.author,
+	      image: this.state.image,
+	      language: this.state.language,
+	      pages: pages,
+	      chapters: chapters,
+	      description: this.state.description
+	
+	    };
+	
+	    APIUtil.updateBook(this.props.currentBook.id, newBook);
+	    this.closeModal();
+	    newBook.title = this.props.currentBook.title;
+	    newBook.id = this.props.currentBook.id;
+	    ApiActions.updateCurrentBook(newBook);
+	  },
+	  handleChange: function handleChange(value) {
+	    this.setState({ selectedValue: value });
+	  },
+	  render: function render() {
+	    var book = this.state.currentBook;
+	    // var bookStyle = { backgroundImage: 'url('+ book.image + ')'};
+	    var pages, language, publisher;
+	
+	    if (book.pages === null) {
+	      pages = "N/A";
+	    } else {
+	      pages = book.pages;
+	    }
+	    if (book.language === null) {
+	      language = "N/A";
+	    } else {
+	      language = book.language;
+	    }
+	    if (book.publishing === null) {
+	      publisher = "N/A";
+	    } else {
+	      publisher = book.publishing;
+	    }
+	    var deleteButton, addButton, markButton, editButton;
+	    if (this.state.onShelf) {
+	      deleteButton = false;
+	      addButton = true;
+	      markButton = false;
+	      editButton = true;
+	    } else {
+	      deleteButton = true;
+	      addButton = false;
+	      markButton = true;
+	      editButton = true;
+	    }
+	    var markFunction, markText;
+	
+	    if (this.state.selectedValue === "read") {
+	      markFunction = this.markAsUnread;
+	      markText = "Mark as Unread";
+	    } else {
+	      markFunction = this.markAsRead;
+	      markText = "Mark as Read";
+	    }
+	
+	    return React.createElement(
+	      'section',
+	      { className: 'BookPage', id: 'BookPageArea' },
+	      React.createElement(
+	        'div',
+	        { className: 'BookTitleArea' },
+	        React.createElement(
+	          'div',
+	          { className: 'BookTitle' },
+	          book.title
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'Author' },
+	          'by, ',
+	          book.author
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'BookPage', id: 'BookDescriptionBox' },
+	        React.createElement('img', { src: book.image, id: 'CoverPhoto' }),
+	        React.createElement(
+	          'p',
+	          { id: 'BookDescription' },
+	          book.description
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'BookPage', id: 'BookFooter' },
+	        React.createElement(
+	          'div',
+	          { className: 'BookFooter', id: 'pages' },
+	          'pages: ',
+	          pages
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'BookFooter', id: 'language' },
+	          'language: ',
+	          language
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'BookFooter', id: 'publisher' },
+	          'publisher: ',
+	          publisher
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'button-area' },
+	        React.createElement(
+	          'button',
+	          { className: 'book-button-area', id: 'edit-book-button', onClick: this.editClick, disabled: deleteButton },
+	          'Edit Book'
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'book-button-area', id: 'mark-as-read', onClick: markFunction, disabled: deleteButton },
+	          markText
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'book-button-area', id: 'delete-book', onClick: this.deleteBook, disabled: deleteButton },
+	          'Remove From Shelf'
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'book-button-area', id: 'add-to-shelf', onClick: this.addToShelf, disabled: addButton },
+	          'Add To Shelf'
+	        )
+	      ),
+	      React.createElement(
+	        Modal,
+	        {
+	          isOpen: this.state.modalIsOpen,
+	          onRequestClose: this.closeModal,
+	          style: customStyles },
+	        React.createElement(
+	          'div',
+	          { className: 'book-edit-title' },
+	          ' ',
+	          this.state.currentBook.title
+	        ),
+	        React.createElement(
+	          'form',
+	          { className: 'book-edit-form' },
+	          React.createElement('textarea', { className: 'book-edit-description', rows: '15', cols: '60', name: 'comment',
+	            placeholder: 'Enter note here...', valueLink: this.linkState('description') }),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections', id: 'book-edit-basic' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'genre: '
+	            ),
+	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('genre') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'publisher: '
+	            ),
+	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('publisher') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'year published: '
+	            ),
+	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('year') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'author: '
+	            ),
+	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('author') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'language: '
+	            ),
+	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('language') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections', id: 'book-edit-image' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'image url: '
+	            ),
+	            React.createElement('input', { className: 'book-edit book-edit-input', id: 'book-edit-image', valueLink: this.linkState('image') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections', id: 'book-edit-isbn' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'ISBN13: '
+	            ),
+	            React.createElement('input', { className: 'book-edit ISBN13-input', valueLink: this.linkState('ISBN13') }),
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'ISBN10: '
+	            ),
+	            React.createElement('input', { className: 'book-edit ISBN10-input', valueLink: this.linkState('ISBN10') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections', id: 'book-edit-length' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              '# of pages: '
+	            ),
+	            React.createElement('input', { className: 'book-edit pages-input', valueLink: this.linkState('pages') }),
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'chapters: '
+	            ),
+	            React.createElement('input', { className: 'book-edit publisher-input', valueLink: this.linkState('chapters') })
+	          ),
+	          React.createElement(
+	            RadioGroup,
+	            {
+	              name: 'read',
+	              selectedValue: this.state.selectedValue,
+	              onChange: this.handleChange },
+	            function (Radio) {
+	              return React.createElement(
+	                'div',
+	                null,
+	                React.createElement(
+	                  'label',
+	                  null,
+	                  React.createElement(Radio, { value: "read" }),
+	                  'Read'
+	                ),
+	                React.createElement(
+	                  'label',
+	                  null,
+	                  React.createElement(Radio, { value: "toRead" }),
+	                  'To Read'
+	                )
+	              );
+	            }
+	          ),
+	          React.createElement(
+	            'button',
+	            { className: 'book-update-button', onClick: this.updateBook },
+	            'Update'
+	          )
+	        ),
+	        React.createElement(
+	          'button',
+	          { onClick: this.closeModal },
+	          'cancel'
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = BookPage;
+
+/***/ },
+/* 210 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(211);
+	
+
+
+/***/ },
+/* 211 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+	var ExecutionEnvironment = __webpack_require__(212);
+	var ModalPortal = React.createFactory(__webpack_require__(213));
+	var ariaAppHider = __webpack_require__(228);
+	var elementClass = __webpack_require__(229);
+	var renderSubtreeIntoContainer = __webpack_require__(158).unstable_renderSubtreeIntoContainer;
+	
+	var SafeHTMLElement = ExecutionEnvironment.canUseDOM ? window.HTMLElement : {};
+	
+	var Modal = module.exports = React.createClass({
+	
+	  displayName: 'Modal',
+	  statics: {
+	    setAppElement: ariaAppHider.setElement,
+	    injectCSS: function() {
+	      "production" !== process.env.NODE_ENV
+	        && console.warn('React-Modal: injectCSS has been deprecated ' +
+	                        'and no longer has any effect. It will be removed in a later version');
+	    }
+	  },
+	
+	  propTypes: {
+	    isOpen: React.PropTypes.bool.isRequired,
+	    style: React.PropTypes.shape({
+	      content: React.PropTypes.object,
+	      overlay: React.PropTypes.object
+	    }),
+	    appElement: React.PropTypes.instanceOf(SafeHTMLElement),
+	    onRequestClose: React.PropTypes.func,
+	    closeTimeoutMS: React.PropTypes.number,
+	    ariaHideApp: React.PropTypes.bool
+	  },
+	
+	  getDefaultProps: function () {
+	    return {
+	      isOpen: false,
+	      ariaHideApp: true,
+	      closeTimeoutMS: 0
+	    };
+	  },
+	
+	  componentDidMount: function() {
+	    this.node = document.createElement('div');
+	    this.node.className = 'ReactModalPortal';
+	    document.body.appendChild(this.node);
+	    this.renderPortal(this.props);
+	  },
+	
+	  componentWillReceiveProps: function(newProps) {
+	    this.renderPortal(newProps);
+	  },
+	
+	  componentWillUnmount: function() {
+	    ReactDOM.unmountComponentAtNode(this.node);
+	    document.body.removeChild(this.node);
+	  },
+	
+	  renderPortal: function(props) {
+	    if (props.isOpen) {
+	      elementClass(document.body).add('ReactModal__Body--open');
+	    } else {
+	      elementClass(document.body).remove('ReactModal__Body--open');
+	    }
+	
+	    if (props.ariaHideApp) {
+	      ariaAppHider.toggle(props.isOpen, props.appElement);
+	    }
+	    sanitizeProps(props);
+	    this.portal = renderSubtreeIntoContainer(this, ModalPortal(props), this.node);
+	  },
+	
+	  render: function () {
+	    return React.DOM.noscript();
+	  }
+	});
+	
+	function sanitizeProps(props) {
+	  delete props.ref;
+	}
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 212 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2015 Jed Watson.
+	  Based on code that is Copyright 2013-2015, Facebook, Inc.
+	  All rights reserved.
+	*/
+	
+	(function () {
+		'use strict';
+	
+		var canUseDOM = !!(
+			typeof window !== 'undefined' &&
+			window.document &&
+			window.document.createElement
+		);
+	
+		var ExecutionEnvironment = {
+	
+			canUseDOM: canUseDOM,
+	
+			canUseWorkers: typeof Worker !== 'undefined',
+	
+			canUseEventListeners:
+				canUseDOM && !!(window.addEventListener || window.attachEvent),
+	
+			canUseViewport: canUseDOM && !!window.screen
+	
+		};
+	
+		if (true) {
+			!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return ExecutionEnvironment;
+			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else if (typeof module !== 'undefined' && module.exports) {
+			module.exports = ExecutionEnvironment;
+		} else {
+			window.ExecutionEnvironment = ExecutionEnvironment;
+		}
+	
+	}());
+
+
+/***/ },
+/* 213 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var div = React.DOM.div;
+	var focusManager = __webpack_require__(214);
+	var scopeTab = __webpack_require__(216);
+	var Assign = __webpack_require__(217);
+	
+	
+	// so that our CSS is statically analyzable
+	var CLASS_NAMES = {
+	  overlay: {
+	    base: 'ReactModal__Overlay',
+	    afterOpen: 'ReactModal__Overlay--after-open',
+	    beforeClose: 'ReactModal__Overlay--before-close'
+	  },
+	  content: {
+	    base: 'ReactModal__Content',
+	    afterOpen: 'ReactModal__Content--after-open',
+	    beforeClose: 'ReactModal__Content--before-close'
+	  }
+	};
+	
+	var defaultStyles = {
+	  overlay: {
+	    position        : 'fixed',
+	    top             : 0,
+	    left            : 0,
+	    right           : 0,
+	    bottom          : 0,
+	    backgroundColor : 'rgba(255, 255, 255, 0.75)'
+	  },
+	  content: {
+	    position                : 'absolute',
+	    top                     : '40px',
+	    left                    : '40px',
+	    right                   : '40px',
+	    bottom                  : '40px',
+	    border                  : '1px solid #ccc',
+	    background              : '#fff',
+	    overflow                : 'auto',
+	    WebkitOverflowScrolling : 'touch',
+	    borderRadius            : '4px',
+	    outline                 : 'none',
+	    padding                 : '20px'
+	  }
+	};
+	
+	function stopPropagation(event) {
+	  event.stopPropagation();
+	}
+	
+	var ModalPortal = module.exports = React.createClass({
+	
+	  displayName: 'ModalPortal',
+	
+	  getDefaultProps: function() {
+	    return {
+	      style: {
+	        overlay: {},
+	        content: {}
+	      }
+	    };
+	  },
+	
+	  getInitialState: function() {
+	    return {
+	      afterOpen: false,
+	      beforeClose: false
+	    };
+	  },
+	
+	  componentDidMount: function() {
+	    // Focus needs to be set when mounting and already open
+	    if (this.props.isOpen) {
+	      this.setFocusAfterRender(true);
+	      this.open();
+	    }
+	  },
+	
+	  componentWillUnmount: function() {
+	    clearTimeout(this.closeTimer);
+	  },
+	
+	  componentWillReceiveProps: function(newProps) {
+	    // Focus only needs to be set once when the modal is being opened
+	    if (!this.props.isOpen && newProps.isOpen) {
+	      this.setFocusAfterRender(true);
+	      this.open();
+	    } else if (this.props.isOpen && !newProps.isOpen) {
+	      this.close();
+	    }
+	  },
+	
+	  componentDidUpdate: function () {
+	    if (this.focusAfterRender) {
+	      this.focusContent();
+	      this.setFocusAfterRender(false);
+	    }
+	  },
+	
+	  setFocusAfterRender: function (focus) {
+	    this.focusAfterRender = focus;
+	  },
+	
+	  open: function() {
+	    focusManager.setupScopedFocus(this.node);
+	    focusManager.markForFocusLater();
+	    this.setState({isOpen: true}, function() {
+	      this.setState({afterOpen: true});
+	    }.bind(this));
+	  },
+	
+	  close: function() {
+	    if (!this.ownerHandlesClose())
+	      return;
+	    if (this.props.closeTimeoutMS > 0)
+	      this.closeWithTimeout();
+	    else
+	      this.closeWithoutTimeout();
+	  },
+	
+	  focusContent: function() {
+	    this.refs.content.focus();
+	  },
+	
+	  closeWithTimeout: function() {
+	    this.setState({beforeClose: true}, function() {
+	      this.closeTimer = setTimeout(this.closeWithoutTimeout, this.props.closeTimeoutMS);
+	    }.bind(this));
+	  },
+	
+	  closeWithoutTimeout: function() {
+	    this.setState({
+	      afterOpen: false,
+	      beforeClose: false
+	    }, this.afterClose);
+	  },
+	
+	  afterClose: function() {
+	    focusManager.returnFocus();
+	    focusManager.teardownScopedFocus();
+	  },
+	
+	  handleKeyDown: function(event) {
+	    if (event.keyCode == 9 /*tab*/) scopeTab(this.refs.content, event);
+	    if (event.keyCode == 27 /*esc*/) this.requestClose();
+	  },
+	
+	  handleOverlayClick: function() {
+	    if (this.ownerHandlesClose())
+	      this.requestClose();
+	    else
+	      this.focusContent();
+	  },
+	
+	  requestClose: function() {
+	    if (this.ownerHandlesClose())
+	      this.props.onRequestClose();
+	  },
+	
+	  ownerHandlesClose: function() {
+	    return this.props.onRequestClose;
+	  },
+	
+	  shouldBeClosed: function() {
+	    return !this.props.isOpen && !this.state.beforeClose;
+	  },
+	
+	  buildClassName: function(which, additional) {
+	    var className = CLASS_NAMES[which].base;
+	    if (this.state.afterOpen)
+	      className += ' '+CLASS_NAMES[which].afterOpen;
+	    if (this.state.beforeClose)
+	      className += ' '+CLASS_NAMES[which].beforeClose;
+	    return additional ? className + ' ' + additional : className;
+	  },
+	
+	  render: function() {
+	    return this.shouldBeClosed() ? div() : (
+	      div({
+	        ref: "overlay",
+	        className: this.buildClassName('overlay', this.props.overlayClassName),
+	        style: Assign({}, defaultStyles.overlay, this.props.style.overlay || {}),
+	        onClick: this.handleOverlayClick
+	      },
+	        div({
+	          ref: "content",
+	          style: Assign({}, defaultStyles.content, this.props.style.content || {}),
+	          className: this.buildClassName('content', this.props.className),
+	          tabIndex: "-1",
+	          onClick: stopPropagation,
+	          onKeyDown: this.handleKeyDown
+	        },
+	          this.props.children
+	        )
+	      )
+	    );
+	  }
+	});
+
+
+/***/ },
+/* 214 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var findTabbable = __webpack_require__(215);
+	var modalElement = null;
+	var focusLaterElement = null;
+	var needToFocus = false;
+	
+	function handleBlur(event) {
+	  needToFocus = true;
+	}
+	
+	function handleFocus(event) {
+	  if (needToFocus) {
+	    needToFocus = false;
+	    if (!modalElement) {
+	      return;
+	    }
+	    // need to see how jQuery shims document.on('focusin') so we don't need the
+	    // setTimeout, firefox doesn't support focusin, if it did, we could focus
+	    // the element outside of a setTimeout. Side-effect of this implementation 
+	    // is that the document.body gets focus, and then we focus our element right 
+	    // after, seems fine.
+	    setTimeout(function() {
+	      if (modalElement.contains(document.activeElement))
+	        return;
+	      var el = (findTabbable(modalElement)[0] || modalElement);
+	      el.focus();
+	    }, 0);
+	  }
+	}
+	
+	exports.markForFocusLater = function() {
+	  focusLaterElement = document.activeElement;
+	};
+	
+	exports.returnFocus = function() {
+	  try {
+	    focusLaterElement.focus();
+	  }
+	  catch (e) {
+	    console.warn('You tried to return focus to '+focusLaterElement+' but it is not in the DOM anymore');
+	  }
+	  focusLaterElement = null;
+	};
+	
+	exports.setupScopedFocus = function(element) {
+	  modalElement = element;
+	
+	  if (window.addEventListener) {
+	    window.addEventListener('blur', handleBlur, false);
+	    document.addEventListener('focus', handleFocus, true);
+	  } else {
+	    window.attachEvent('onBlur', handleBlur);
+	    document.attachEvent('onFocus', handleFocus);
+	  }
+	};
+	
+	exports.teardownScopedFocus = function() {
+	  modalElement = null;
+	
+	  if (window.addEventListener) {
+	    window.removeEventListener('blur', handleBlur);
+	    document.removeEventListener('focus', handleFocus);
+	  } else {
+	    window.detachEvent('onBlur', handleBlur);
+	    document.detachEvent('onFocus', handleFocus);
+	  }
+	};
+	
+	
+
+
+/***/ },
+/* 215 */
+/***/ function(module, exports) {
+
+	/*!
+	 * Adapted from jQuery UI core
+	 *
+	 * http://jqueryui.com
+	 *
+	 * Copyright 2014 jQuery Foundation and other contributors
+	 * Released under the MIT license.
+	 * http://jquery.org/license
+	 *
+	 * http://api.jqueryui.com/category/ui-core/
+	 */
+	
+	function focusable(element, isTabIndexNotNaN) {
+	  var nodeName = element.nodeName.toLowerCase();
+	  return (/input|select|textarea|button|object/.test(nodeName) ?
+	    !element.disabled :
+	    "a" === nodeName ?
+	      element.href || isTabIndexNotNaN :
+	      isTabIndexNotNaN) && visible(element);
+	}
+	
+	function hidden(el) {
+	  return (el.offsetWidth <= 0 && el.offsetHeight <= 0) ||
+	    el.style.display === 'none';
+	}
+	
+	function visible(element) {
+	  while (element) {
+	    if (element === document.body) break;
+	    if (hidden(element)) return false;
+	    element = element.parentNode;
+	  }
+	  return true;
+	}
+	
+	function tabbable(element) {
+	  var tabIndex = element.getAttribute('tabindex');
+	  if (tabIndex === null) tabIndex = undefined;
+	  var isTabIndexNaN = isNaN(tabIndex);
+	  return (isTabIndexNaN || tabIndex >= 0) && focusable(element, !isTabIndexNaN);
+	}
+	
+	function findTabbableDescendants(element) {
+	  return [].slice.call(element.querySelectorAll('*'), 0).filter(function(el) {
+	    return tabbable(el);
+	  });
+	}
+	
+	module.exports = findTabbableDescendants;
+	
+
+
+/***/ },
+/* 216 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var findTabbable = __webpack_require__(215);
+	
+	module.exports = function(node, event) {
+	  var tabbable = findTabbable(node);
+	  var finalTabbable = tabbable[event.shiftKey ? 0 : tabbable.length - 1];
+	  var leavingFinalTabbable = (
+	    finalTabbable === document.activeElement ||
+	    // handle immediate shift+tab after opening with mouse
+	    node === document.activeElement
+	  );
+	  if (!leavingFinalTabbable) return;
+	  event.preventDefault();
+	  var target = tabbable[event.shiftKey ? tabbable.length - 1 : 0];
+	  target.focus();
+	};
+
+
+/***/ },
+/* 217 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * lodash 3.2.0 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var baseAssign = __webpack_require__(218),
+	    createAssigner = __webpack_require__(224),
+	    keys = __webpack_require__(220);
+	
+	/**
+	 * A specialized version of `_.assign` for customizing assigned values without
+	 * support for argument juggling, multiple sources, and `this` binding `customizer`
+	 * functions.
+	 *
+	 * @private
+	 * @param {Object} object The destination object.
+	 * @param {Object} source The source object.
+	 * @param {Function} customizer The function to customize assigned values.
+	 * @returns {Object} Returns `object`.
+	 */
+	function assignWith(object, source, customizer) {
+	  var index = -1,
+	      props = keys(source),
+	      length = props.length;
+	
+	  while (++index < length) {
+	    var key = props[index],
+	        value = object[key],
+	        result = customizer(value, source[key], key, object, source);
+	
+	    if ((result === result ? (result !== value) : (value === value)) ||
+	        (value === undefined && !(key in object))) {
+	      object[key] = result;
+	    }
+	  }
+	  return object;
+	}
+	
+	/**
+	 * Assigns own enumerable properties of source object(s) to the destination
+	 * object. Subsequent sources overwrite property assignments of previous sources.
+	 * If `customizer` is provided it is invoked to produce the assigned values.
+	 * The `customizer` is bound to `thisArg` and invoked with five arguments:
+	 * (objectValue, sourceValue, key, object, source).
+	 *
+	 * **Note:** This method mutates `object` and is based on
+	 * [`Object.assign`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @alias extend
+	 * @category Object
+	 * @param {Object} object The destination object.
+	 * @param {...Object} [sources] The source objects.
+	 * @param {Function} [customizer] The function to customize assigned values.
+	 * @param {*} [thisArg] The `this` binding of `customizer`.
+	 * @returns {Object} Returns `object`.
+	 * @example
+	 *
+	 * _.assign({ 'user': 'barney' }, { 'age': 40 }, { 'user': 'fred' });
+	 * // => { 'user': 'fred', 'age': 40 }
+	 *
+	 * // using a customizer callback
+	 * var defaults = _.partialRight(_.assign, function(value, other) {
+	 *   return _.isUndefined(value) ? other : value;
+	 * });
+	 *
+	 * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
+	 * // => { 'user': 'barney', 'age': 36 }
+	 */
+	var assign = createAssigner(function(object, source, customizer) {
+	  return customizer
+	    ? assignWith(object, source, customizer)
+	    : baseAssign(object, source);
+	});
+	
+	module.exports = assign;
+
+
+/***/ },
+/* 218 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * lodash 3.2.0 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var baseCopy = __webpack_require__(219),
+	    keys = __webpack_require__(220);
+	
+	/**
+	 * The base implementation of `_.assign` without support for argument juggling,
+	 * multiple sources, and `customizer` functions.
+	 *
+	 * @private
+	 * @param {Object} object The destination object.
+	 * @param {Object} source The source object.
+	 * @returns {Object} Returns `object`.
+	 */
+	function baseAssign(object, source) {
+	  return source == null
+	    ? object
+	    : baseCopy(source, keys(source), object);
+	}
+	
+	module.exports = baseAssign;
+
+
+/***/ },
+/* 219 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/**
+	 * Copies properties of `source` to `object`.
+	 *
+	 * @private
+	 * @param {Object} source The object to copy properties from.
+	 * @param {Array} props The property names to copy.
+	 * @param {Object} [object={}] The object to copy properties to.
+	 * @returns {Object} Returns `object`.
+	 */
+	function baseCopy(source, props, object) {
+	  object || (object = {});
+	
+	  var index = -1,
+	      length = props.length;
+	
+	  while (++index < length) {
+	    var key = props[index];
+	    object[key] = source[key];
+	  }
+	  return object;
+	}
+	
+	module.exports = baseCopy;
+
+
+/***/ },
+/* 220 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * lodash 3.1.2 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var getNative = __webpack_require__(221),
+	    isArguments = __webpack_require__(222),
+	    isArray = __webpack_require__(223);
+	
+	/** Used to detect unsigned integer values. */
+	var reIsUint = /^\d+$/;
+	
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeKeys = getNative(Object, 'keys');
+	
+	/**
+	 * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
+	 * of an array-like value.
+	 */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+	
+	/**
+	 * The base implementation of `_.property` without support for deep paths.
+	 *
+	 * @private
+	 * @param {string} key The key of the property to get.
+	 * @returns {Function} Returns the new function.
+	 */
+	function baseProperty(key) {
+	  return function(object) {
+	    return object == null ? undefined : object[key];
+	  };
+	}
+	
+	/**
+	 * Gets the "length" property value of `object`.
+	 *
+	 * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+	 * that affects Safari on at least iOS 8.1-8.3 ARM64.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {*} Returns the "length" value.
+	 */
+	var getLength = baseProperty('length');
+	
+	/**
+	 * Checks if `value` is array-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+	 */
+	function isArrayLike(value) {
+	  return value != null && isLength(getLength(value));
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like index.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+	 */
+	function isIndex(value, length) {
+	  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
+	  length = length == null ? MAX_SAFE_INTEGER : length;
+	  return value > -1 && value % 1 == 0 && value < length;
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+	
+	/**
+	 * A fallback implementation of `Object.keys` which creates an array of the
+	 * own enumerable property names of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 */
+	function shimKeys(object) {
+	  var props = keysIn(object),
+	      propsLength = props.length,
+	      length = propsLength && object.length;
+	
+	  var allowIndexes = !!length && isLength(length) &&
+	    (isArray(object) || isArguments(object));
+	
+	  var index = -1,
+	      result = [];
+	
+	  while (++index < propsLength) {
+	    var key = props[index];
+	    if ((allowIndexes && isIndex(key, length)) || hasOwnProperty.call(object, key)) {
+	      result.push(key);
+	    }
+	  }
+	  return result;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(1);
+	 * // => false
+	 */
+	function isObject(value) {
+	  // Avoid a V8 JIT bug in Chrome 19-20.
+	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	/**
+	 * Creates an array of the own enumerable property names of `object`.
+	 *
+	 * **Note:** Non-object values are coerced to objects. See the
+	 * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
+	 * for more details.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.keys(new Foo);
+	 * // => ['a', 'b'] (iteration order is not guaranteed)
+	 *
+	 * _.keys('hi');
+	 * // => ['0', '1']
+	 */
+	var keys = !nativeKeys ? shimKeys : function(object) {
+	  var Ctor = object == null ? undefined : object.constructor;
+	  if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
+	      (typeof object != 'function' && isArrayLike(object))) {
+	    return shimKeys(object);
+	  }
+	  return isObject(object) ? nativeKeys(object) : [];
+	};
+	
+	/**
+	 * Creates an array of the own and inherited enumerable property names of `object`.
+	 *
+	 * **Note:** Non-object values are coerced to objects.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.keysIn(new Foo);
+	 * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
+	 */
+	function keysIn(object) {
+	  if (object == null) {
+	    return [];
+	  }
+	  if (!isObject(object)) {
+	    object = Object(object);
+	  }
+	  var length = object.length;
+	  length = (length && isLength(length) &&
+	    (isArray(object) || isArguments(object)) && length) || 0;
+	
+	  var Ctor = object.constructor,
+	      index = -1,
+	      isProto = typeof Ctor == 'function' && Ctor.prototype === object,
+	      result = Array(length),
+	      skipIndexes = length > 0;
+	
+	  while (++index < length) {
+	    result[index] = (index + '');
+	  }
+	  for (var key in object) {
+	    if (!(skipIndexes && isIndex(key, length)) &&
+	        !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+	      result.push(key);
+	    }
+	  }
+	  return result;
+	}
+	
+	module.exports = keys;
+
+
+/***/ },
+/* 221 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.9.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** `Object#toString` result references. */
+	var funcTag = '[object Function]';
+	
+	/** Used to detect host constructors (Safari > 5). */
+	var reIsHostCtor = /^\[object .+?Constructor\]$/;
+	
+	/**
+	 * Checks if `value` is object-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to resolve the decompiled source of functions. */
+	var fnToString = Function.prototype.toString;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objToString = objectProto.toString;
+	
+	/** Used to detect if a method is native. */
+	var reIsNative = RegExp('^' +
+	  fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
+	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+	);
+	
+	/**
+	 * Gets the native function at `key` of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {string} key The key of the method to get.
+	 * @returns {*} Returns the function if it's native, else `undefined`.
+	 */
+	function getNative(object, key) {
+	  var value = object == null ? undefined : object[key];
+	  return isNative(value) ? value : undefined;
+	}
+	
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in older versions of Chrome and Safari which return 'function' for regexes
+	  // and Safari 8 equivalents which return 'object' for typed array constructors.
+	  return isObject(value) && objToString.call(value) == funcTag;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(1);
+	 * // => false
+	 */
+	function isObject(value) {
+	  // Avoid a V8 JIT bug in Chrome 19-20.
+	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	/**
+	 * Checks if `value` is a native function.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+	 * @example
+	 *
+	 * _.isNative(Array.prototype.push);
+	 * // => true
+	 *
+	 * _.isNative(_);
+	 * // => false
+	 */
+	function isNative(value) {
+	  if (value == null) {
+	    return false;
+	  }
+	  if (isFunction(value)) {
+	    return reIsNative.test(fnToString.call(value));
+	  }
+	  return isObjectLike(value) && reIsHostCtor.test(value);
+	}
+	
+	module.exports = getNative;
+
+
+/***/ },
+/* 222 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.0.7 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modularize exports="npm" -o ./`
+	 * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** Used as references for various `Number` constants. */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+	
+	/** `Object#toString` result references. */
+	var argsTag = '[object Arguments]',
+	    funcTag = '[object Function]',
+	    genTag = '[object GeneratorFunction]';
+	
+	/** Used for built-in method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objectToString = objectProto.toString;
+	
+	/** Built-in value references. */
+	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+	
+	/**
+	 * The base implementation of `_.property` without support for deep paths.
+	 *
+	 * @private
+	 * @param {string} key The key of the property to get.
+	 * @returns {Function} Returns the new function.
+	 */
+	function baseProperty(key) {
+	  return function(object) {
+	    return object == null ? undefined : object[key];
+	  };
+	}
+	
+	/**
+	 * Gets the "length" property value of `object`.
+	 *
+	 * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+	 * that affects Safari on at least iOS 8.1-8.3 ARM64.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {*} Returns the "length" value.
+	 */
+	var getLength = baseProperty('length');
+	
+	/**
+	 * Checks if `value` is likely an `arguments` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isArguments(function() { return arguments; }());
+	 * // => true
+	 *
+	 * _.isArguments([1, 2, 3]);
+	 * // => false
+	 */
+	function isArguments(value) {
+	  // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
+	  return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
+	    (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
+	}
+	
+	/**
+	 * Checks if `value` is array-like. A value is considered array-like if it's
+	 * not a function and has a `value.length` that's an integer greater than or
+	 * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+	 * @example
+	 *
+	 * _.isArrayLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArrayLike(document.body.children);
+	 * // => true
+	 *
+	 * _.isArrayLike('abc');
+	 * // => true
+	 *
+	 * _.isArrayLike(_.noop);
+	 * // => false
+	 */
+	function isArrayLike(value) {
+	  return value != null &&
+	    !(typeof value == 'function' && isFunction(value)) && isLength(getLength(value));
+	}
+	
+	/**
+	 * This method is like `_.isArrayLike` except that it also checks if `value`
+	 * is an object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an array-like object, else `false`.
+	 * @example
+	 *
+	 * _.isArrayLikeObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArrayLikeObject(document.body.children);
+	 * // => true
+	 *
+	 * _.isArrayLikeObject('abc');
+	 * // => false
+	 *
+	 * _.isArrayLikeObject(_.noop);
+	 * // => false
+	 */
+	function isArrayLikeObject(value) {
+	  return isObjectLike(value) && isArrayLike(value);
+	}
+	
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in Safari 8 which returns 'object' for typed array constructors, and
+	  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+	  var tag = isObject(value) ? objectToString.call(value) : '';
+	  return tag == funcTag || tag == genTag;
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This function is loosely based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 * @example
+	 *
+	 * _.isLength(3);
+	 * // => true
+	 *
+	 * _.isLength(Number.MIN_VALUE);
+	 * // => false
+	 *
+	 * _.isLength(Infinity);
+	 * // => false
+	 *
+	 * _.isLength('3');
+	 * // => false
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' &&
+	    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(_.noop);
+	 * // => true
+	 *
+	 * _.isObject(null);
+	 * // => false
+	 */
+	function isObject(value) {
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	module.exports = isArguments;
+
+
+/***/ },
+/* 223 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.0.4 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** `Object#toString` result references. */
+	var arrayTag = '[object Array]',
+	    funcTag = '[object Function]';
+	
+	/** Used to detect host constructors (Safari > 5). */
+	var reIsHostCtor = /^\[object .+?Constructor\]$/;
+	
+	/**
+	 * Checks if `value` is object-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to resolve the decompiled source of functions. */
+	var fnToString = Function.prototype.toString;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objToString = objectProto.toString;
+	
+	/** Used to detect if a method is native. */
+	var reIsNative = RegExp('^' +
+	  fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
+	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+	);
+	
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeIsArray = getNative(Array, 'isArray');
+	
+	/**
+	 * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
+	 * of an array-like value.
+	 */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+	
+	/**
+	 * Gets the native function at `key` of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {string} key The key of the method to get.
+	 * @returns {*} Returns the function if it's native, else `undefined`.
+	 */
+	function getNative(object, key) {
+	  var value = object == null ? undefined : object[key];
+	  return isNative(value) ? value : undefined;
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+	
+	/**
+	 * Checks if `value` is classified as an `Array` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isArray([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArray(function() { return arguments; }());
+	 * // => false
+	 */
+	var isArray = nativeIsArray || function(value) {
+	  return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
+	};
+	
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in older versions of Chrome and Safari which return 'function' for regexes
+	  // and Safari 8 equivalents which return 'object' for typed array constructors.
+	  return isObject(value) && objToString.call(value) == funcTag;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(1);
+	 * // => false
+	 */
+	function isObject(value) {
+	  // Avoid a V8 JIT bug in Chrome 19-20.
+	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	/**
+	 * Checks if `value` is a native function.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+	 * @example
+	 *
+	 * _.isNative(Array.prototype.push);
+	 * // => true
+	 *
+	 * _.isNative(_);
+	 * // => false
+	 */
+	function isNative(value) {
+	  if (value == null) {
+	    return false;
+	  }
+	  if (isFunction(value)) {
+	    return reIsNative.test(fnToString.call(value));
+	  }
+	  return isObjectLike(value) && reIsHostCtor.test(value);
+	}
+	
+	module.exports = isArray;
+
+
+/***/ },
+/* 224 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * lodash 3.1.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	var bindCallback = __webpack_require__(225),
+	    isIterateeCall = __webpack_require__(226),
+	    restParam = __webpack_require__(227);
+	
+	/**
+	 * Creates a function that assigns properties of source object(s) to a given
+	 * destination object.
+	 *
+	 * **Note:** This function is used to create `_.assign`, `_.defaults`, and `_.merge`.
+	 *
+	 * @private
+	 * @param {Function} assigner The function to assign values.
+	 * @returns {Function} Returns the new assigner function.
+	 */
+	function createAssigner(assigner) {
+	  return restParam(function(object, sources) {
+	    var index = -1,
+	        length = object == null ? 0 : sources.length,
+	        customizer = length > 2 ? sources[length - 2] : undefined,
+	        guard = length > 2 ? sources[2] : undefined,
+	        thisArg = length > 1 ? sources[length - 1] : undefined;
+	
+	    if (typeof customizer == 'function') {
+	      customizer = bindCallback(customizer, thisArg, 5);
+	      length -= 2;
+	    } else {
+	      customizer = typeof thisArg == 'function' ? thisArg : undefined;
+	      length -= (customizer ? 1 : 0);
+	    }
+	    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+	      customizer = length < 3 ? undefined : customizer;
+	      length = 1;
+	    }
+	    while (++index < length) {
+	      var source = sources[index];
+	      if (source) {
+	        assigner(object, source, customizer);
+	      }
+	    }
+	    return object;
+	  });
+	}
+	
+	module.exports = createAssigner;
+
+
+/***/ },
+/* 225 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/**
+	 * A specialized version of `baseCallback` which only supports `this` binding
+	 * and specifying the number of arguments to provide to `func`.
+	 *
+	 * @private
+	 * @param {Function} func The function to bind.
+	 * @param {*} thisArg The `this` binding of `func`.
+	 * @param {number} [argCount] The number of arguments to provide to `func`.
+	 * @returns {Function} Returns the callback.
+	 */
+	function bindCallback(func, thisArg, argCount) {
+	  if (typeof func != 'function') {
+	    return identity;
+	  }
+	  if (thisArg === undefined) {
+	    return func;
+	  }
+	  switch (argCount) {
+	    case 1: return function(value) {
+	      return func.call(thisArg, value);
+	    };
+	    case 3: return function(value, index, collection) {
+	      return func.call(thisArg, value, index, collection);
+	    };
+	    case 4: return function(accumulator, value, index, collection) {
+	      return func.call(thisArg, accumulator, value, index, collection);
+	    };
+	    case 5: return function(value, other, key, object, source) {
+	      return func.call(thisArg, value, other, key, object, source);
+	    };
+	  }
+	  return function() {
+	    return func.apply(thisArg, arguments);
+	  };
+	}
+	
+	/**
+	 * This method returns the first argument provided to it.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Utility
+	 * @param {*} value Any value.
+	 * @returns {*} Returns `value`.
+	 * @example
+	 *
+	 * var object = { 'user': 'fred' };
+	 *
+	 * _.identity(object) === object;
+	 * // => true
+	 */
+	function identity(value) {
+	  return value;
+	}
+	
+	module.exports = bindCallback;
+
+
+/***/ },
+/* 226 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.0.9 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** Used to detect unsigned integer values. */
+	var reIsUint = /^\d+$/;
+	
+	/**
+	 * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+	 * of an array-like value.
+	 */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+	
+	/**
+	 * The base implementation of `_.property` without support for deep paths.
+	 *
+	 * @private
+	 * @param {string} key The key of the property to get.
+	 * @returns {Function} Returns the new function.
+	 */
+	function baseProperty(key) {
+	  return function(object) {
+	    return object == null ? undefined : object[key];
+	  };
+	}
+	
+	/**
+	 * Gets the "length" property value of `object`.
+	 *
+	 * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+	 * that affects Safari on at least iOS 8.1-8.3 ARM64.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {*} Returns the "length" value.
+	 */
+	var getLength = baseProperty('length');
+	
+	/**
+	 * Checks if `value` is array-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+	 */
+	function isArrayLike(value) {
+	  return value != null && isLength(getLength(value));
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like index.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+	 */
+	function isIndex(value, length) {
+	  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
+	  length = length == null ? MAX_SAFE_INTEGER : length;
+	  return value > -1 && value % 1 == 0 && value < length;
+	}
+	
+	/**
+	 * Checks if the provided arguments are from an iteratee call.
+	 *
+	 * @private
+	 * @param {*} value The potential iteratee value argument.
+	 * @param {*} index The potential iteratee index or key argument.
+	 * @param {*} object The potential iteratee object argument.
+	 * @returns {boolean} Returns `true` if the arguments are from an iteratee call, else `false`.
+	 */
+	function isIterateeCall(value, index, object) {
+	  if (!isObject(object)) {
+	    return false;
+	  }
+	  var type = typeof index;
+	  if (type == 'number'
+	      ? (isArrayLike(object) && isIndex(index, object.length))
+	      : (type == 'string' && index in object)) {
+	    var other = object[index];
+	    return value === value ? (value === other) : (other !== other);
+	  }
+	  return false;
+	}
+	
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+	
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(1);
+	 * // => false
+	 */
+	function isObject(value) {
+	  // Avoid a V8 JIT bug in Chrome 19-20.
+	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	module.exports = isIterateeCall;
+
+
+/***/ },
+/* 227 */
+/***/ function(module, exports) {
+
+	/**
+	 * lodash 3.6.1 (Custom Build) <https://lodash.com/>
+	 * Build: `lodash modern modularize exports="npm" -o ./`
+	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+	 * Available under MIT license <https://lodash.com/license>
+	 */
+	
+	/** Used as the `TypeError` message for "Functions" methods. */
+	var FUNC_ERROR_TEXT = 'Expected a function';
+	
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeMax = Math.max;
+	
+	/**
+	 * Creates a function that invokes `func` with the `this` binding of the
+	 * created function and arguments from `start` and beyond provided as an array.
+	 *
+	 * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Function
+	 * @param {Function} func The function to apply a rest parameter to.
+	 * @param {number} [start=func.length-1] The start position of the rest parameter.
+	 * @returns {Function} Returns the new function.
+	 * @example
+	 *
+	 * var say = _.restParam(function(what, names) {
+	 *   return what + ' ' + _.initial(names).join(', ') +
+	 *     (_.size(names) > 1 ? ', & ' : '') + _.last(names);
+	 * });
+	 *
+	 * say('hello', 'fred', 'barney', 'pebbles');
+	 * // => 'hello fred, barney, & pebbles'
+	 */
+	function restParam(func, start) {
+	  if (typeof func != 'function') {
+	    throw new TypeError(FUNC_ERROR_TEXT);
+	  }
+	  start = nativeMax(start === undefined ? (func.length - 1) : (+start || 0), 0);
+	  return function() {
+	    var args = arguments,
+	        index = -1,
+	        length = nativeMax(args.length - start, 0),
+	        rest = Array(length);
+	
+	    while (++index < length) {
+	      rest[index] = args[start + index];
+	    }
+	    switch (start) {
+	      case 0: return func.call(this, rest);
+	      case 1: return func.call(this, args[0], rest);
+	      case 2: return func.call(this, args[0], args[1], rest);
+	    }
+	    var otherArgs = Array(start + 1);
+	    index = -1;
+	    while (++index < start) {
+	      otherArgs[index] = args[index];
+	    }
+	    otherArgs[start] = rest;
+	    return func.apply(this, otherArgs);
+	  };
+	}
+	
+	module.exports = restParam;
+
+
+/***/ },
+/* 228 */
+/***/ function(module, exports) {
+
+	var _element = typeof document !== 'undefined' ? document.body : null;
+	
+	function setElement(element) {
+	  if (typeof element === 'string') {
+	    var el = document.querySelectorAll(element);
+	    element = 'length' in el ? el[0] : el;
+	  }
+	  _element = element || _element;
+	}
+	
+	function hide(appElement) {
+	  validateElement(appElement);
+	  (appElement || _element).setAttribute('aria-hidden', 'true');
+	}
+	
+	function show(appElement) {
+	  validateElement(appElement);
+	  (appElement || _element).removeAttribute('aria-hidden');
+	}
+	
+	function toggle(shouldHide, appElement) {
+	  if (shouldHide)
+	    hide(appElement);
+	  else
+	    show(appElement);
+	}
+	
+	function validateElement(appElement) {
+	  if (!appElement && !_element)
+	    throw new Error('react-modal: You must set an element with `Modal.setAppElement(el)` to make this accessible');
+	}
+	
+	function resetForTesting() {
+	  _element = document.body;
+	}
+	
+	exports.toggle = toggle;
+	exports.setElement = setElement;
+	exports.show = show;
+	exports.hide = hide;
+	exports.resetForTesting = resetForTesting;
+
+
+/***/ },
+/* 229 */
+/***/ function(module, exports) {
+
+	module.exports = function(opts) {
+	  return new ElementClass(opts)
+	}
+	
+	function indexOf(arr, prop) {
+	  if (arr.indexOf) return arr.indexOf(prop)
+	  for (var i = 0, len = arr.length; i < len; i++)
+	    if (arr[i] === prop) return i
+	  return -1
+	}
+	
+	function ElementClass(opts) {
+	  if (!(this instanceof ElementClass)) return new ElementClass(opts)
+	  var self = this
+	  if (!opts) opts = {}
+	
+	  // similar doing instanceof HTMLElement but works in IE8
+	  if (opts.nodeType) opts = {el: opts}
+	
+	  this.opts = opts
+	  this.el = opts.el || document.body
+	  if (typeof this.el !== 'object') this.el = document.querySelector(this.el)
+	}
+	
+	ElementClass.prototype.add = function(className) {
+	  var el = this.el
+	  if (!el) return
+	  if (el.className === "") return el.className = className
+	  var classes = el.className.split(' ')
+	  if (indexOf(classes, className) > -1) return classes
+	  classes.push(className)
+	  el.className = classes.join(' ')
+	  return classes
+	}
+	
+	ElementClass.prototype.remove = function(className) {
+	  var el = this.el
+	  if (!el) return
+	  if (el.className === "") return
+	  var classes = el.className.split(' ')
+	  var idx = indexOf(classes, className)
+	  if (idx > -1) classes.splice(idx, 1)
+	  el.className = classes.join(' ')
+	  return classes
+	}
+	
+	ElementClass.prototype.has = function(className) {
+	  var el = this.el
+	  if (!el) return
+	  var classes = el.className.split(' ')
+	  return indexOf(classes, className) > -1
+	}
+	
+	ElementClass.prototype.toggle = function(className) {
+	  var el = this.el
+	  if (!el) return
+	  if (this.has(className)) this.remove(className)
+	  else this.add(className)
+	}
+
+
+/***/ },
+/* 230 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(231);
+
+/***/ },
+/* 231 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule LinkedStateMixin
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	var ReactLink = __webpack_require__(232);
+	var ReactStateSetters = __webpack_require__(233);
+	
+	/**
+	 * A simple mixin around ReactLink.forState().
+	 */
+	var LinkedStateMixin = {
+	  /**
+	   * Create a ReactLink that's linked to part of this component's state. The
+	   * ReactLink will have the current value of this.state[key] and will call
+	   * setState() when a change is requested.
+	   *
+	   * @param {string} key state key to update. Note: you may want to use keyOf()
+	   * if you're using Google Closure Compiler advanced mode.
+	   * @return {ReactLink} ReactLink instance linking to the state.
+	   */
+	  linkState: function (key) {
+	    return new ReactLink(this.state[key], ReactStateSetters.createStateKeySetter(this, key));
+	  }
+	};
+	
+	module.exports = LinkedStateMixin;
+
+/***/ },
+/* 232 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactLink
+	 * @typechecks static-only
+	 */
+	
+	'use strict';
+	
+	/**
+	 * ReactLink encapsulates a common pattern in which a component wants to modify
+	 * a prop received from its parent. ReactLink allows the parent to pass down a
+	 * value coupled with a callback that, when invoked, expresses an intent to
+	 * modify that value. For example:
+	 *
+	 * React.createClass({
+	 *   getInitialState: function() {
+	 *     return {value: ''};
+	 *   },
+	 *   render: function() {
+	 *     var valueLink = new ReactLink(this.state.value, this._handleValueChange);
+	 *     return <input valueLink={valueLink} />;
+	 *   },
+	 *   _handleValueChange: function(newValue) {
+	 *     this.setState({value: newValue});
+	 *   }
+	 * });
+	 *
+	 * We have provided some sugary mixins to make the creation and
+	 * consumption of ReactLink easier; see LinkedValueUtils and LinkedStateMixin.
+	 */
+	
+	var React = __webpack_require__(2);
+	
+	/**
+	 * @param {*} value current value of the link
+	 * @param {function} requestChange callback to request a change
+	 */
+	function ReactLink(value, requestChange) {
+	  this.value = value;
+	  this.requestChange = requestChange;
+	}
+	
+	/**
+	 * Creates a PropType that enforces the ReactLink API and optionally checks the
+	 * type of the value being passed inside the link. Example:
+	 *
+	 * MyComponent.propTypes = {
+	 *   tabIndexLink: ReactLink.PropTypes.link(React.PropTypes.number)
+	 * }
+	 */
+	function createLinkTypeChecker(linkType) {
+	  var shapes = {
+	    value: typeof linkType === 'undefined' ? React.PropTypes.any.isRequired : linkType.isRequired,
+	    requestChange: React.PropTypes.func.isRequired
+	  };
+	  return React.PropTypes.shape(shapes);
+	}
+	
+	ReactLink.PropTypes = {
+	  link: createLinkTypeChecker
+	};
+	
+	module.exports = ReactLink;
+
+/***/ },
+/* 233 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactStateSetters
+	 */
+	
+	'use strict';
+	
+	var ReactStateSetters = {
+	  /**
+	   * Returns a function that calls the provided function, and uses the result
+	   * of that to set the component's state.
+	   *
+	   * @param {ReactCompositeComponent} component
+	   * @param {function} funcReturningState Returned callback uses this to
+	   *                                      determine how to update state.
+	   * @return {function} callback that when invoked uses funcReturningState to
+	   *                    determined the object literal to setState.
+	   */
+	  createStateSetter: function (component, funcReturningState) {
+	    return function (a, b, c, d, e, f) {
+	      var partialState = funcReturningState.call(component, a, b, c, d, e, f);
+	      if (partialState) {
+	        component.setState(partialState);
+	      }
+	    };
+	  },
+	
+	  /**
+	   * Returns a single-argument callback that can be used to update a single
+	   * key in the component's state.
+	   *
+	   * Note: this is memoized function, which makes it inexpensive to call.
+	   *
+	   * @param {ReactCompositeComponent} component
+	   * @param {string} key The key in the state that you should update.
+	   * @return {function} callback of 1 argument which calls setState() with
+	   *                    the provided keyName and callback argument.
+	   */
+	  createStateKeySetter: function (component, key) {
+	    // Memoize the setters.
+	    var cache = component.__keySetters || (component.__keySetters = {});
+	    return cache[key] || (cache[key] = createStateKeySetter(component, key));
+	  }
+	};
+	
+	function createStateKeySetter(component, key) {
+	  // Partial state is allocated outside of the function closure so it can be
+	  // reused with every call, avoiding memory allocation when this function
+	  // is called.
+	  var partialState = {};
+	  return function stateKeySetter(value) {
+	    partialState[key] = value;
+	    component.setState(partialState);
+	  };
+	}
+	
+	ReactStateSetters.Mixin = {
+	  /**
+	   * Returns a function that calls the provided function, and uses the result
+	   * of that to set the component's state.
+	   *
+	   * For example, these statements are equivalent:
+	   *
+	   *   this.setState({x: 1});
+	   *   this.createStateSetter(function(xValue) {
+	   *     return {x: xValue};
+	   *   })(1);
+	   *
+	   * @param {function} funcReturningState Returned callback uses this to
+	   *                                      determine how to update state.
+	   * @return {function} callback that when invoked uses funcReturningState to
+	   *                    determined the object literal to setState.
+	   */
+	  createStateSetter: function (funcReturningState) {
+	    return ReactStateSetters.createStateSetter(this, funcReturningState);
+	  },
+	
+	  /**
+	   * Returns a single-argument callback that can be used to update a single
+	   * key in the component's state.
+	   *
+	   * For example, these statements are equivalent:
+	   *
+	   *   this.setState({x: 1});
+	   *   this.createStateKeySetter('x')(1);
+	   *
+	   * Note: this is memoized function, which makes it inexpensive to call.
+	   *
+	   * @param {string} key The key in the state that you should update.
+	   * @return {function} callback of 1 argument which calls setState() with
+	   *                    the provided keyName and callback argument.
+	   */
+	  createStateKeySetter: function (key) {
+	    return ReactStateSetters.createStateKeySetter(this, key);
+	  }
+	};
+	
+	module.exports = ReactStateSetters;
+
+/***/ },
+/* 234 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// /lib contains the transpiled code. It's ignored by git but picked up by
+	// npm publish. See package.json's "prerelease" and "build" scripts
+	module.exports = __webpack_require__(235);
+
+
+/***/ },
+/* 235 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, module, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
+	    factory(exports, module, require('react'));
+	  } else {
+	    var mod = {
+	      exports: {}
+	    };
+	    factory(mod.exports, mod, global.React);
+	    global.RadioGroup = mod.exports;
+	  }
+	})(this, function (exports, module, _react) {
+	  'use strict';
+	
+	  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	  var _React = _interopRequireDefault(_react);
+	
+	  function radio(name, selectedValue, onChange) {
+	    return _React['default'].createClass({
+	      render: function render() {
+	        var optional = {};
+	        if (selectedValue !== undefined) {
+	          optional.checked = this.props.value === selectedValue;
+	        }
+	        if (typeof onChange === 'function') {
+	          optional.onChange = onChange.bind(null, this.props.value);
+	        }
+	
+	        return _React['default'].createElement('input', _extends({}, this.props, {
+	          type: 'radio',
+	          name: name
+	        }, optional));
+	      }
+	    });
+	  }
+	
+	  module.exports = _React['default'].createClass({
+	    displayName: 'index',
+	
+	    propTypes: {
+	      name: _react.PropTypes.string,
+	      selectedValue: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.number, _react.PropTypes.bool]),
+	      onChange: _react.PropTypes.func,
+	      children: _react.PropTypes.func.isRequired
+	    },
+	
+	    render: function render() {
+	      var _props = this.props;
+	      var name = _props.name;
+	      var selectedValue = _props.selectedValue;
+	      var onChange = _props.onChange;
+	      var children = _props.children;
+	
+	      var renderedChildren = children(radio(name, selectedValue, onChange));
+	      return renderedChildren && _React['default'].Children.only(renderedChildren);
+	    }
+	  });
+	});
+
+/***/ },
+/* 236 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var ApiActions = __webpack_require__(237);
+	
+	var APIUtil = {
+	  fetchBookResults: function fetchBookResults(query) {
+	    var uri = "https://www.googleapis.com/books/v1/volumes?q=" + query;
+	    $.get(uri, {}, function (bookList) {
+	
+	      ApiActions.ReceiveActions(bookList);
+	    });
+	  },
+	  getInitialBookIndex: function getInitialBookIndex() {
+	
+	    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+selling+novels+all+time";
+	    $.get(uri, { maxResults: 40 }, function (bookList) {
+	
+	      var newBookList = bookList.items.map(function (book, index) {
+	        return APIUtil.makeBookObject(book);
+	      });
+	      ApiActions.ReceiveInitial(newBookList);
+	    });
+	  },
+	  logoutUser: function logoutUser() {
+	
+	    $.ajax({
+	      url: '/api/session',
+	      type: 'DELETE',
+	      success: function success(payload) {
+	        console.log("deleted");
+	        ApiActions.receiveUser(payload);
+	      }
+	    });
+	  },
+	  addToInitial: function addToInitial() {
+	    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+classic+novels";
+	    $.get(uri, { maxResults: 40 }, function (bookList) {
+	      var newBookList = bookList.items.map(function (book, index) {
+	        return APIUtil.makeBookObject(book);
+	      });
+	      ApiActions.AddToInitial(newBookList);
+	    });
+	  },
+	  createBook: function createBook(bookItem) {
+	
+	    $.post('/api/books', bookItem, function (payload) {
+	
+	      ApiActions.ReceiveAddedBook(payload);
+	    });
+	  },
+	  createReview: function createReview(data) {
+	    $.post('/api/reviews', { review: data }, function (bench) {
+	      ApiActions.receiveAll([bench]);
+	    });
+	  },
+	  getCurrentBook: function getCurrentBook() {
+	
+	    $.get('/api/user', {}, function (book) {
+	
+	      ApiActions.updateCurrentBook(book);
+	    });
+	  },
+	  updateUser: function updateUser(params) {
+	
+	    $.ajax({
+	      url: '/api/user',
+	      type: 'PATCH',
+	      data: params,
+	      success: function success(book) {
+	        // Do something with the result
+	
+	      } });
+	  },
+	  makeBookObject: function makeBookObject(bookData) {
+	    var chosen = bookData.volumeInfo;
+	    var newBook = { title: chosen.title,
+	      description: chosen.description,
+	      publishing: chosen.publisher,
+	      pages: chosen.pageCount,
+	      language: chosen.language,
+	      read: "toRead"
+	    };
+	    if (chosen.imageLinks !== undefined) {
+	      newBook.image = chosen.imageLinks.thumbnail;
+	    }
+	    if (chosen.authors !== undefined) {
+	      newBook.author = chosen.authors[0];
+	    }
+	    if (chosen.industryIdentifiers !== undefined) {
+	      if (chosen.industryIdentifiers[0] !== undefined) {
+	        newBook.ISBN13 = chosen.industryIdentifiers[0].identifier;
+	      }
+	      if (chosen.industryIdentifiers[1] !== undefined) {
+	        newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
+	      }
+	    }
+	    return newBook;
+	  },
+	  getUserBooks: function getUserBooks() {
+	    $.get('/api/books', {}, function (books) {
+	      ApiActions.receiveUserBooks(books);
+	    });
+	  },
+	  createNote: function createNote(noteHash) {
+	
+	    $.post('/api/notes', { note: noteHash }, function (payload) {
+	
+	      ApiActions.addNote(payload);
+	    });
+	  },
+	  fetchNotes: function fetchNotes(bookId) {
+	    $.get('api/notes', { book_id: bookId }, function (notes) {
+	      ApiActions.receiveNotes(notes);
+	    });
+	  },
+	  deleteNote: function deleteNote(noteId) {
+	    var uri = '/api/notes/' + noteId;
+	    $.ajax({
+	      url: uri,
+	      type: 'DELETE',
+	      success: function success(notes) {
+	        // Do something with the result
+	        ApiActions.receiveNotes(notes);
+	      } });
+	  },
+	  getCurrentUser: function getCurrentUser() {
+	    $.get('/api/session', {}, function (user) {
+	      ApiActions.receiveUser(user);
+	    });
+	  },
+	  signIn: function signIn(username, password) {
+	    $.post('/api/session', { username: username, password: password }, function (user) {
+	      ApiActions.receiveUser(user);
+	    });
+	  },
+	  createUser: function createUser(username, password) {
+	    $.post('/api/user', { username: username, password: password }, function (user) {
+	      ApiActions.receiveUser(user);
+	    });
+	  },
+	  createAnalysis: function createAnalysis(analysisParams) {
+	    $.post('/api/analyses', { analysis: analysisParams }, function (analysis) {
+	      ApiActions.receiveNewAnalysis(analysis);
+	    });
+	  },
+	  fetchAnalyses: function fetchAnalyses(analysisParams) {
+	    $.get('/api/analyses', { analysis: {} }, function (analyses) {
+	      ApiActions.receiveAnalyses(analyses);
+	    });
+	  },
+	  fetchAnalysis: function fetchAnalysis(analysisId) {
+	    $.get('api/analyses', { id: analysisId }, function (analysis) {
+	      ApiActions.receiveAnalysis(analysis);
+	    });
+	  },
+	  updateAnalysis: function updateAnalysis(analysisParams) {
+	    $.ajax({
+	      url: '/api/analyses',
+	      type: 'PATCH',
+	      data: { analysis: analysisParams },
+	      success: function success(analysis) {
+	        // Do something with the result
+	        console.log(analysis);
+	      } });
+	  },
+	  updateBook: function updateBook(bookId, bookParams) {
+	    var uri = 'api/books/' + bookId;
+	
+	    $.ajax({
+	      url: uri,
+	      type: 'PATCH',
+	      data: bookParams,
+	      success: function success(books) {
+	        // Do something with the result
+	
+	        ApiActions.receiveUserBooks(books);
+	      } });
+	  },
+	  deleteBook: function deleteBook(bookId) {
+	    var uri = 'api/books/' + bookId;
+	    $.ajax({
+	      url: uri,
+	      type: 'DELETE',
+	
+	      success: function success(books) {
+	        // Do something with the result
+	
+	        ApiActions.receiveUserBooks(books);
+	      } });
+	  }
+	
+	};
+	
+	module.exports = APIUtil;
+
+/***/ },
+/* 237 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var AppDispatcher = __webpack_require__(238);
+	var BookSearchConstants = __webpack_require__(242);
+	var BookShelfConstants = __webpack_require__(243);
+	var NoteConstants = __webpack_require__(244);
+	var UserConstants = __webpack_require__(245);
+	var AnalysisConstants = __webpack_require__(246);
+	
+	var ApiActions = {
+	
+	  ReceiveActions: function ReceiveActions(bookList) {
+	
+	    AppDispatcher.dispatch({
+	      actionType: BookSearchConstants.SearchResultsReceived,
+	      results: bookList.items
+	    });
+	  },
+	  ReceiveInitial: function ReceiveInitial(bookList) {
+	
+	    AppDispatcher.dispatch({
+	      actionType: BookSearchConstants.InitialResultsReceived,
+	      results: bookList
+	    });
+	  },
+	  receiveUserBooks: function receiveUserBooks(books) {
+	
+	    AppDispatcher.dispatch({
+	      actionType: BookShelfConstants.ReceiveUserBooks,
+	      books: books
+	    });
+	  },
+	  ReceiveAddedBook: function ReceiveAddedBook(book) {
+	    AppDispatcher.dispatch({
+	      actionType: BookShelfConstants.ReceiveAddedBook,
+	      book: book
+	    });
+	  },
+	  updateCurrentBook: function updateCurrentBook(book) {
+	
+	    AppDispatcher.dispatch({
+	      actionType: BookSearchConstants.ReceiveCurrentBook,
+	      book: book
+	    });
+	  },
+	  emptyShelves: function emptyShelves() {
+	
+	    AppDispatcher.dispatch({
+	      actionType: BookShelfConstants.EmptyShelves
+	    });
+	  },
+	  deleteCurrentBook: function deleteCurrentBook() {
+	    AppDispatcher.dispatch({
+	      actionType: BookSearchConstants.DeleteCurrentBook
+	    });
+	  },
+	  AddToInitial: function AddToInitial(newBookList) {
+	    AppDispatcher.dispatch({
+	      actionType: BookSearchConstants.AddInitialReceived,
+	      results: newBookList
+	    });
+	  },
+	  receiveNotes: function receiveNotes(notes) {
+	    AppDispatcher.dispatch({
+	      actionType: NoteConstants.ReceiveNotes,
+	      results: notes
+	    });
+	  },
+	  addNote: function addNote(payload) {
+	    AppDispatcher.dispatch({
+	      actionType: NoteConstants.AddNote,
+	      result: payload
+	    });
+	  },
+	  receiveUser: function receiveUser(user) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.ReceiveUser,
+	      results: user
+	    });
+	  },
+	  receiveNewAnalysis: function receiveNewAnalysis(analysis) {
+	    AppDispatcher.dispatch({
+	      actionType: AnalysisConstants.RecieveNewAnalysis,
+	      results: analysis
+	    });
+	  },
+	  receiveAnalyses: function receiveAnalyses(analyses) {
+	    AppDispatcher.dispatch({
+	      actionType: AnalysisConstants.ReceiveAnalyses,
+	      results: analyses
+	    });
+	  },
+	  receiveAnalysis: function receiveAnalysis(analysis) {
+	    AppDispatcher.dispatch({
+	      actionType: AnalysisConstants.ReceiveAnalysis,
+	      results: analysis
+	    });
+	  },
+	  demandLogin: function demandLogin(need) {
+	    AppDispatcher.dispatch({
+	      actionType: UserConstants.UpdateNeeds,
+	      need: need
+	    });
+	  }
+	};
+	
+	module.exports = ApiActions;
+
+/***/ },
+/* 238 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Dispatcher = __webpack_require__(239).Dispatcher;
+	
+	module.exports = new Dispatcher();
+
+/***/ },
+/* 239 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright (c) 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 */
+	
+	module.exports.Dispatcher = __webpack_require__(240);
+
+
+/***/ },
+/* 240 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright (c) 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule Dispatcher
+	 * 
+	 * @preventMunge
+	 */
+	
+	'use strict';
+	
+	exports.__esModule = true;
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var invariant = __webpack_require__(241);
+	
+	var _prefix = 'ID_';
+	
+	/**
+	 * Dispatcher is used to broadcast payloads to registered callbacks. This is
+	 * different from generic pub-sub systems in two ways:
+	 *
+	 *   1) Callbacks are not subscribed to particular events. Every payload is
+	 *      dispatched to every registered callback.
+	 *   2) Callbacks can be deferred in whole or part until other callbacks have
+	 *      been executed.
+	 *
+	 * For example, consider this hypothetical flight destination form, which
+	 * selects a default city when a country is selected:
+	 *
+	 *   var flightDispatcher = new Dispatcher();
+	 *
+	 *   // Keeps track of which country is selected
+	 *   var CountryStore = {country: null};
+	 *
+	 *   // Keeps track of which city is selected
+	 *   var CityStore = {city: null};
+	 *
+	 *   // Keeps track of the base flight price of the selected city
+	 *   var FlightPriceStore = {price: null}
+	 *
+	 * When a user changes the selected city, we dispatch the payload:
+	 *
+	 *   flightDispatcher.dispatch({
+	 *     actionType: 'city-update',
+	 *     selectedCity: 'paris'
+	 *   });
+	 *
+	 * This payload is digested by `CityStore`:
+	 *
+	 *   flightDispatcher.register(function(payload) {
+	 *     if (payload.actionType === 'city-update') {
+	 *       CityStore.city = payload.selectedCity;
+	 *     }
+	 *   });
+	 *
+	 * When the user selects a country, we dispatch the payload:
+	 *
+	 *   flightDispatcher.dispatch({
+	 *     actionType: 'country-update',
+	 *     selectedCountry: 'australia'
+	 *   });
+	 *
+	 * This payload is digested by both stores:
+	 *
+	 *   CountryStore.dispatchToken = flightDispatcher.register(function(payload) {
+	 *     if (payload.actionType === 'country-update') {
+	 *       CountryStore.country = payload.selectedCountry;
+	 *     }
+	 *   });
+	 *
+	 * When the callback to update `CountryStore` is registered, we save a reference
+	 * to the returned token. Using this token with `waitFor()`, we can guarantee
+	 * that `CountryStore` is updated before the callback that updates `CityStore`
+	 * needs to query its data.
+	 *
+	 *   CityStore.dispatchToken = flightDispatcher.register(function(payload) {
+	 *     if (payload.actionType === 'country-update') {
+	 *       // `CountryStore.country` may not be updated.
+	 *       flightDispatcher.waitFor([CountryStore.dispatchToken]);
+	 *       // `CountryStore.country` is now guaranteed to be updated.
+	 *
+	 *       // Select the default city for the new country
+	 *       CityStore.city = getDefaultCityForCountry(CountryStore.country);
+	 *     }
+	 *   });
+	 *
+	 * The usage of `waitFor()` can be chained, for example:
+	 *
+	 *   FlightPriceStore.dispatchToken =
+	 *     flightDispatcher.register(function(payload) {
+	 *       switch (payload.actionType) {
+	 *         case 'country-update':
+	 *         case 'city-update':
+	 *           flightDispatcher.waitFor([CityStore.dispatchToken]);
+	 *           FlightPriceStore.price =
+	 *             getFlightPriceStore(CountryStore.country, CityStore.city);
+	 *           break;
+	 *     }
+	 *   });
+	 *
+	 * The `country-update` payload will be guaranteed to invoke the stores'
+	 * registered callbacks in order: `CountryStore`, `CityStore`, then
+	 * `FlightPriceStore`.
+	 */
+	
+	var Dispatcher = (function () {
+	  function Dispatcher() {
+	    _classCallCheck(this, Dispatcher);
+	
+	    this._callbacks = {};
+	    this._isDispatching = false;
+	    this._isHandled = {};
+	    this._isPending = {};
+	    this._lastID = 1;
+	  }
+	
+	  /**
+	   * Registers a callback to be invoked with every dispatched payload. Returns
+	   * a token that can be used with `waitFor()`.
+	   */
+	
+	  Dispatcher.prototype.register = function register(callback) {
+	    var id = _prefix + this._lastID++;
+	    this._callbacks[id] = callback;
+	    return id;
+	  };
+	
+	  /**
+	   * Removes a callback based on its token.
+	   */
+	
+	  Dispatcher.prototype.unregister = function unregister(id) {
+	    !this._callbacks[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.unregister(...): `%s` does not map to a registered callback.', id) : invariant(false) : undefined;
+	    delete this._callbacks[id];
+	  };
+	
+	  /**
+	   * Waits for the callbacks specified to be invoked before continuing execution
+	   * of the current callback. This method should only be used by a callback in
+	   * response to a dispatched payload.
+	   */
+	
+	  Dispatcher.prototype.waitFor = function waitFor(ids) {
+	    !this._isDispatching ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): Must be invoked while dispatching.') : invariant(false) : undefined;
+	    for (var ii = 0; ii < ids.length; ii++) {
+	      var id = ids[ii];
+	      if (this._isPending[id]) {
+	        !this._isHandled[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): Circular dependency detected while ' + 'waiting for `%s`.', id) : invariant(false) : undefined;
+	        continue;
+	      }
+	      !this._callbacks[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): `%s` does not map to a registered callback.', id) : invariant(false) : undefined;
+	      this._invokeCallback(id);
+	    }
+	  };
+	
+	  /**
+	   * Dispatches a payload to all registered callbacks.
+	   */
+	
+	  Dispatcher.prototype.dispatch = function dispatch(payload) {
+	    !!this._isDispatching ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.') : invariant(false) : undefined;
+	    this._startDispatching(payload);
+	    try {
+	      for (var id in this._callbacks) {
+	        if (this._isPending[id]) {
+	          continue;
+	        }
+	        this._invokeCallback(id);
+	      }
+	    } finally {
+	      this._stopDispatching();
+	    }
+	  };
+	
+	  /**
+	   * Is this Dispatcher currently dispatching.
+	   */
+	
+	  Dispatcher.prototype.isDispatching = function isDispatching() {
+	    return this._isDispatching;
+	  };
+	
+	  /**
+	   * Call the callback stored with the given id. Also do some internal
+	   * bookkeeping.
+	   *
+	   * @internal
+	   */
+	
+	  Dispatcher.prototype._invokeCallback = function _invokeCallback(id) {
+	    this._isPending[id] = true;
+	    this._callbacks[id](this._pendingPayload);
+	    this._isHandled[id] = true;
+	  };
+	
+	  /**
+	   * Set up bookkeeping needed when dispatching.
+	   *
+	   * @internal
+	   */
+	
+	  Dispatcher.prototype._startDispatching = function _startDispatching(payload) {
+	    for (var id in this._callbacks) {
+	      this._isPending[id] = false;
+	      this._isHandled[id] = false;
+	    }
+	    this._pendingPayload = payload;
+	    this._isDispatching = true;
+	  };
+	
+	  /**
+	   * Clear bookkeeping used for dispatching.
+	   *
+	   * @internal
+	   */
+	
+	  Dispatcher.prototype._stopDispatching = function _stopDispatching() {
+	    delete this._pendingPayload;
+	    this._isDispatching = false;
+	  };
+	
+	  return Dispatcher;
+	})();
+	
+	module.exports = Dispatcher;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 241 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule invariant
+	 */
+	
+	"use strict";
+	
+	/**
+	 * Use invariant() to assert state which your program assumes to be true.
+	 *
+	 * Provide sprintf-style format (only %s is supported) and arguments
+	 * to provide information about what broke and what you were
+	 * expecting.
+	 *
+	 * The invariant message will be stripped in production, but the invariant
+	 * will remain to ensure logic does not differ in production.
+	 */
+	
+	var invariant = function (condition, format, a, b, c, d, e, f) {
+	  if (process.env.NODE_ENV !== 'production') {
+	    if (format === undefined) {
+	      throw new Error('invariant requires an error message argument');
+	    }
+	  }
+	
+	  if (!condition) {
+	    var error;
+	    if (format === undefined) {
+	      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+	    } else {
+	      var args = [a, b, c, d, e, f];
+	      var argIndex = 0;
+	      error = new Error('Invariant Violation: ' + format.replace(/%s/g, function () {
+	        return args[argIndex++];
+	      }));
+	    }
+	
+	    error.framesToPop = 1; // we don't care about invariant's own frame
+	    throw error;
+	  }
+	};
+	
+	module.exports = invariant;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 242 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	var BookSearchConstants = {
+	  SearchResultsReceived: "RESULTS_RECEIVED",
+	  InitialResultsReceived: "INITIAL_RESULTS_RECIEVED",
+	  ReceiveCurrentBook: "RECEIVE_CURRENT_BOOK",
+	  AddInitialReceived: "ADD_INITIAL_RECEIVED",
+	  DeleteCurrentBook: "DELETE_CURRENT_BOOK",
+	  UpdateCurrentBook: "RECIEVE_ADDED_BOOK"
+	};
+	
+	module.exports = BookSearchConstants;
+
+/***/ },
+/* 243 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	var BookShelfConstants = {
+	  ReceiveUserBooks: "RECEIVE_USER_BOOKS",
+	  ReceiveAddedBook: "RECIEVE_ADDED_BOOK",
+	  EmptyShelves: "EMPTY_SHELVES"
+	};
+	
+	module.exports = BookShelfConstants;
+
+/***/ },
+/* 244 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	var NoteConstants = {
+	  ReceiveNotes: "NOTES_RECEIVED",
+	  AddNote: "ADD_NOTE"
+	
+	};
+	
+	module.exports = NoteConstants;
+
+/***/ },
+/* 245 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	var UserConstants = {
+	  RegisterUser: "REGISTER_USER",
+	  ReceiveUser: "RECEIVE_USER",
+	  UpdateNeeds: "UPDATE_NEEDS"
+	};
+	
+	module.exports = UserConstants;
+
+/***/ },
+/* 246 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	var AnalysisConstants = {
+	  ReceiveNewAnalysis: "RECEIVE_NEW_ANALYSIS",
+	  ReceiveAnalyses: "RECEIVE_ANALYSES",
+	  ReceiveAnalysis: "RECEIVE_ANALYSIS"
+	};
+	
+	module.exports = AnalysisConstants;
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Store = __webpack_require__(248).Store;
 	var _searchResults = [];
 	var _initialResults = [];
 	var _currentBook = null;
-	var BookSearchConstants = __webpack_require__(227);
-	var AppDispatcher = __webpack_require__(228);
+	var BookSearchConstants = __webpack_require__(242);
+	var AppDispatcher = __webpack_require__(238);
 	var BookSearchStore = new Store(AppDispatcher);
-	var APIUtil = __webpack_require__(231);
+	var APIUtil = __webpack_require__(236);
 	
 	var resetSearchResults = function resetSearchResults(results) {
 	  _searchResults = [];
@@ -24284,7 +27706,7 @@
 	module.exports = BookSearchStore;
 
 /***/ },
-/* 209 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24296,15 +27718,15 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Container = __webpack_require__(210);
-	module.exports.MapStore = __webpack_require__(214);
-	module.exports.Mixin = __webpack_require__(226);
-	module.exports.ReduceStore = __webpack_require__(215);
-	module.exports.Store = __webpack_require__(216);
+	module.exports.Container = __webpack_require__(249);
+	module.exports.MapStore = __webpack_require__(252);
+	module.exports.Mixin = __webpack_require__(264);
+	module.exports.ReduceStore = __webpack_require__(253);
+	module.exports.Store = __webpack_require__(254);
 
 
 /***/ },
-/* 210 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24326,10 +27748,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStoreGroup = __webpack_require__(211);
+	var FluxStoreGroup = __webpack_require__(250);
 	
-	var invariant = __webpack_require__(212);
-	var shallowEqual = __webpack_require__(213);
+	var invariant = __webpack_require__(241);
+	var shallowEqual = __webpack_require__(251);
 	
 	var DEFAULT_OPTIONS = {
 	  pure: true,
@@ -24487,7 +27909,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 211 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24506,7 +27928,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(212);
+	var invariant = __webpack_require__(241);
 	
 	/**
 	 * FluxStoreGroup allows you to execute a callback on every dispatch after
@@ -24568,62 +27990,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 212 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule invariant
-	 */
-	
-	"use strict";
-	
-	/**
-	 * Use invariant() to assert state which your program assumes to be true.
-	 *
-	 * Provide sprintf-style format (only %s is supported) and arguments
-	 * to provide information about what broke and what you were
-	 * expecting.
-	 *
-	 * The invariant message will be stripped in production, but the invariant
-	 * will remain to ensure logic does not differ in production.
-	 */
-	
-	var invariant = function (condition, format, a, b, c, d, e, f) {
-	  if (process.env.NODE_ENV !== 'production') {
-	    if (format === undefined) {
-	      throw new Error('invariant requires an error message argument');
-	    }
-	  }
-	
-	  if (!condition) {
-	    var error;
-	    if (format === undefined) {
-	      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
-	    } else {
-	      var args = [a, b, c, d, e, f];
-	      var argIndex = 0;
-	      error = new Error('Invariant Violation: ' + format.replace(/%s/g, function () {
-	        return args[argIndex++];
-	      }));
-	    }
-	
-	    error.framesToPop = 1; // we don't care about invariant's own frame
-	    throw error;
-	  }
-	};
-	
-	module.exports = invariant;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ },
-/* 213 */
+/* 251 */
 /***/ function(module, exports) {
 
 	/**
@@ -24678,7 +28045,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 214 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24699,10 +28066,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxReduceStore = __webpack_require__(215);
-	var Immutable = __webpack_require__(225);
+	var FluxReduceStore = __webpack_require__(253);
+	var Immutable = __webpack_require__(263);
 	
-	var invariant = __webpack_require__(212);
+	var invariant = __webpack_require__(241);
 	
 	/**
 	 * This is a simple store. It allows caching key value pairs. An implementation
@@ -24828,7 +28195,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 215 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24849,10 +28216,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStore = __webpack_require__(216);
+	var FluxStore = __webpack_require__(254);
 	
-	var abstractMethod = __webpack_require__(224);
-	var invariant = __webpack_require__(212);
+	var abstractMethod = __webpack_require__(262);
+	var invariant = __webpack_require__(241);
 	
 	var FluxReduceStore = (function (_FluxStore) {
 	  _inherits(FluxReduceStore, _FluxStore);
@@ -24935,7 +28302,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 216 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -24954,11 +28321,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _require = __webpack_require__(217);
+	var _require = __webpack_require__(255);
 	
 	var EventEmitter = _require.EventEmitter;
 	
-	var invariant = __webpack_require__(212);
+	var invariant = __webpack_require__(241);
 	
 	/**
 	 * This class should be extended by the stores in your application, like so:
@@ -25118,7 +28485,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 217 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25131,14 +28498,14 @@
 	 */
 	
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(218)
+	  EventEmitter: __webpack_require__(256)
 	};
 	
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 218 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25157,11 +28524,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var EmitterSubscription = __webpack_require__(219);
-	var EventSubscriptionVendor = __webpack_require__(221);
+	var EmitterSubscription = __webpack_require__(257);
+	var EventSubscriptionVendor = __webpack_require__(259);
 	
-	var emptyFunction = __webpack_require__(223);
-	var invariant = __webpack_require__(222);
+	var emptyFunction = __webpack_require__(261);
+	var invariant = __webpack_require__(260);
 	
 	/**
 	 * @class BaseEventEmitter
@@ -25335,7 +28702,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 219 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25356,7 +28723,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var EventSubscription = __webpack_require__(220);
+	var EventSubscription = __webpack_require__(258);
 	
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -25388,7 +28755,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 220 */
+/* 258 */
 /***/ function(module, exports) {
 
 	/**
@@ -25442,7 +28809,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 221 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25461,7 +28828,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(222);
+	var invariant = __webpack_require__(260);
 	
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -25551,7 +28918,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 222 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25606,7 +28973,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 223 */
+/* 261 */
 /***/ function(module, exports) {
 
 	/**
@@ -25648,7 +29015,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 224 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -25665,7 +29032,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(212);
+	var invariant = __webpack_require__(241);
 	
 	function abstractMethod(className, methodName) {
 	   true ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Subclasses of %s must override %s() with their own implementation.', className, methodName) : invariant(false) : undefined;
@@ -25675,7 +29042,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 225 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -30662,7 +34029,7 @@
 	}));
 
 /***/ },
-/* 226 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -30679,9 +34046,9 @@
 	
 	'use strict';
 	
-	var FluxStoreGroup = __webpack_require__(211);
+	var FluxStoreGroup = __webpack_require__(250);
 	
-	var invariant = __webpack_require__(212);
+	var invariant = __webpack_require__(241);
 	
 	/**
 	 * `FluxContainer` should be preferred over this mixin, but it requires using
@@ -30785,4085 +34152,16 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 227 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	var BookSearchConstants = {
-	  SearchResultsReceived: "RESULTS_RECEIVED",
-	  InitialResultsReceived: "INITIAL_RESULTS_RECIEVED",
-	  ReceiveCurrentBook: "RECEIVE_CURRENT_BOOK",
-	  AddInitialReceived: "ADD_INITIAL_RECEIVED",
-	  DeleteCurrentBook: "DELETE_CURRENT_BOOK",
-	  UpdateCurrentBook: "RECIEVE_ADDED_BOOK"
-	};
-	
-	module.exports = BookSearchConstants;
-
-/***/ },
-/* 228 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var Dispatcher = __webpack_require__(229).Dispatcher;
-	
-	module.exports = new Dispatcher();
-
-/***/ },
-/* 229 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright (c) 2014-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 */
-	
-	module.exports.Dispatcher = __webpack_require__(230);
-
-
-/***/ },
-/* 230 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright (c) 2014-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule Dispatcher
-	 * 
-	 * @preventMunge
-	 */
-	
-	'use strict';
-	
-	exports.__esModule = true;
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	var invariant = __webpack_require__(212);
-	
-	var _prefix = 'ID_';
-	
-	/**
-	 * Dispatcher is used to broadcast payloads to registered callbacks. This is
-	 * different from generic pub-sub systems in two ways:
-	 *
-	 *   1) Callbacks are not subscribed to particular events. Every payload is
-	 *      dispatched to every registered callback.
-	 *   2) Callbacks can be deferred in whole or part until other callbacks have
-	 *      been executed.
-	 *
-	 * For example, consider this hypothetical flight destination form, which
-	 * selects a default city when a country is selected:
-	 *
-	 *   var flightDispatcher = new Dispatcher();
-	 *
-	 *   // Keeps track of which country is selected
-	 *   var CountryStore = {country: null};
-	 *
-	 *   // Keeps track of which city is selected
-	 *   var CityStore = {city: null};
-	 *
-	 *   // Keeps track of the base flight price of the selected city
-	 *   var FlightPriceStore = {price: null}
-	 *
-	 * When a user changes the selected city, we dispatch the payload:
-	 *
-	 *   flightDispatcher.dispatch({
-	 *     actionType: 'city-update',
-	 *     selectedCity: 'paris'
-	 *   });
-	 *
-	 * This payload is digested by `CityStore`:
-	 *
-	 *   flightDispatcher.register(function(payload) {
-	 *     if (payload.actionType === 'city-update') {
-	 *       CityStore.city = payload.selectedCity;
-	 *     }
-	 *   });
-	 *
-	 * When the user selects a country, we dispatch the payload:
-	 *
-	 *   flightDispatcher.dispatch({
-	 *     actionType: 'country-update',
-	 *     selectedCountry: 'australia'
-	 *   });
-	 *
-	 * This payload is digested by both stores:
-	 *
-	 *   CountryStore.dispatchToken = flightDispatcher.register(function(payload) {
-	 *     if (payload.actionType === 'country-update') {
-	 *       CountryStore.country = payload.selectedCountry;
-	 *     }
-	 *   });
-	 *
-	 * When the callback to update `CountryStore` is registered, we save a reference
-	 * to the returned token. Using this token with `waitFor()`, we can guarantee
-	 * that `CountryStore` is updated before the callback that updates `CityStore`
-	 * needs to query its data.
-	 *
-	 *   CityStore.dispatchToken = flightDispatcher.register(function(payload) {
-	 *     if (payload.actionType === 'country-update') {
-	 *       // `CountryStore.country` may not be updated.
-	 *       flightDispatcher.waitFor([CountryStore.dispatchToken]);
-	 *       // `CountryStore.country` is now guaranteed to be updated.
-	 *
-	 *       // Select the default city for the new country
-	 *       CityStore.city = getDefaultCityForCountry(CountryStore.country);
-	 *     }
-	 *   });
-	 *
-	 * The usage of `waitFor()` can be chained, for example:
-	 *
-	 *   FlightPriceStore.dispatchToken =
-	 *     flightDispatcher.register(function(payload) {
-	 *       switch (payload.actionType) {
-	 *         case 'country-update':
-	 *         case 'city-update':
-	 *           flightDispatcher.waitFor([CityStore.dispatchToken]);
-	 *           FlightPriceStore.price =
-	 *             getFlightPriceStore(CountryStore.country, CityStore.city);
-	 *           break;
-	 *     }
-	 *   });
-	 *
-	 * The `country-update` payload will be guaranteed to invoke the stores'
-	 * registered callbacks in order: `CountryStore`, `CityStore`, then
-	 * `FlightPriceStore`.
-	 */
-	
-	var Dispatcher = (function () {
-	  function Dispatcher() {
-	    _classCallCheck(this, Dispatcher);
-	
-	    this._callbacks = {};
-	    this._isDispatching = false;
-	    this._isHandled = {};
-	    this._isPending = {};
-	    this._lastID = 1;
-	  }
-	
-	  /**
-	   * Registers a callback to be invoked with every dispatched payload. Returns
-	   * a token that can be used with `waitFor()`.
-	   */
-	
-	  Dispatcher.prototype.register = function register(callback) {
-	    var id = _prefix + this._lastID++;
-	    this._callbacks[id] = callback;
-	    return id;
-	  };
-	
-	  /**
-	   * Removes a callback based on its token.
-	   */
-	
-	  Dispatcher.prototype.unregister = function unregister(id) {
-	    !this._callbacks[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.unregister(...): `%s` does not map to a registered callback.', id) : invariant(false) : undefined;
-	    delete this._callbacks[id];
-	  };
-	
-	  /**
-	   * Waits for the callbacks specified to be invoked before continuing execution
-	   * of the current callback. This method should only be used by a callback in
-	   * response to a dispatched payload.
-	   */
-	
-	  Dispatcher.prototype.waitFor = function waitFor(ids) {
-	    !this._isDispatching ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): Must be invoked while dispatching.') : invariant(false) : undefined;
-	    for (var ii = 0; ii < ids.length; ii++) {
-	      var id = ids[ii];
-	      if (this._isPending[id]) {
-	        !this._isHandled[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): Circular dependency detected while ' + 'waiting for `%s`.', id) : invariant(false) : undefined;
-	        continue;
-	      }
-	      !this._callbacks[id] ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatcher.waitFor(...): `%s` does not map to a registered callback.', id) : invariant(false) : undefined;
-	      this._invokeCallback(id);
-	    }
-	  };
-	
-	  /**
-	   * Dispatches a payload to all registered callbacks.
-	   */
-	
-	  Dispatcher.prototype.dispatch = function dispatch(payload) {
-	    !!this._isDispatching ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.') : invariant(false) : undefined;
-	    this._startDispatching(payload);
-	    try {
-	      for (var id in this._callbacks) {
-	        if (this._isPending[id]) {
-	          continue;
-	        }
-	        this._invokeCallback(id);
-	      }
-	    } finally {
-	      this._stopDispatching();
-	    }
-	  };
-	
-	  /**
-	   * Is this Dispatcher currently dispatching.
-	   */
-	
-	  Dispatcher.prototype.isDispatching = function isDispatching() {
-	    return this._isDispatching;
-	  };
-	
-	  /**
-	   * Call the callback stored with the given id. Also do some internal
-	   * bookkeeping.
-	   *
-	   * @internal
-	   */
-	
-	  Dispatcher.prototype._invokeCallback = function _invokeCallback(id) {
-	    this._isPending[id] = true;
-	    this._callbacks[id](this._pendingPayload);
-	    this._isHandled[id] = true;
-	  };
-	
-	  /**
-	   * Set up bookkeeping needed when dispatching.
-	   *
-	   * @internal
-	   */
-	
-	  Dispatcher.prototype._startDispatching = function _startDispatching(payload) {
-	    for (var id in this._callbacks) {
-	      this._isPending[id] = false;
-	      this._isHandled[id] = false;
-	    }
-	    this._pendingPayload = payload;
-	    this._isDispatching = true;
-	  };
-	
-	  /**
-	   * Clear bookkeeping used for dispatching.
-	   *
-	   * @internal
-	   */
-	
-	  Dispatcher.prototype._stopDispatching = function _stopDispatching() {
-	    delete this._pendingPayload;
-	    this._isDispatching = false;
-	  };
-	
-	  return Dispatcher;
-	})();
-	
-	module.exports = Dispatcher;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ },
-/* 231 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var ApiActions = __webpack_require__(232);
-	
-	var APIUtil = {
-	  fetchBookResults: function fetchBookResults(query) {
-	    var uri = "https://www.googleapis.com/books/v1/volumes?q=" + query;
-	    $.get(uri, {}, function (bookList) {
-	
-	      ApiActions.ReceiveActions(bookList);
-	    });
-	  },
-	  getInitialBookIndex: function getInitialBookIndex() {
-	
-	    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+selling+novels+all+time";
-	    $.get(uri, { maxResults: 40 }, function (bookList) {
-	
-	      var newBookList = bookList.items.map(function (book, index) {
-	        return APIUtil.makeBookObject(book);
-	      });
-	      ApiActions.ReceiveInitial(newBookList);
-	    });
-	  },
-	  logoutUser: function logoutUser() {
-	
-	    $.ajax({
-	      url: '/api/session',
-	      type: 'DELETE',
-	      success: function success(payload) {
-	        console.log("deleted");
-	        ApiActions.receiveUser(payload);
-	      }
-	    });
-	  },
-	  addToInitial: function addToInitial() {
-	    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+classic+novels";
-	    $.get(uri, { maxResults: 40 }, function (bookList) {
-	      var newBookList = bookList.items.map(function (book, index) {
-	        return APIUtil.makeBookObject(book);
-	      });
-	      ApiActions.AddToInitial(newBookList);
-	    });
-	  },
-	  createBook: function createBook(bookItem) {
-	
-	    $.post('/api/books', bookItem, function (payload) {
-	
-	      ApiActions.ReceiveAddedBook(payload);
-	    });
-	  },
-	  createReview: function createReview(data) {
-	    $.post('/api/reviews', { review: data }, function (bench) {
-	      ApiActions.receiveAll([bench]);
-	    });
-	  },
-	  getCurrentBook: function getCurrentBook() {
-	
-	    $.get('/api/user', {}, function (book) {
-	
-	      ApiActions.updateCurrentBook(book);
-	    });
-	  },
-	  updateUser: function updateUser(params) {
-	
-	    $.ajax({
-	      url: '/api/user',
-	      type: 'PATCH',
-	      data: params,
-	      success: function success(book) {
-	        // Do something with the result
-	
-	      } });
-	  },
-	  makeBookObject: function makeBookObject(bookData) {
-	    var chosen = bookData.volumeInfo;
-	    var newBook = { title: chosen.title,
-	      description: chosen.description,
-	      publishing: chosen.publisher,
-	      pages: chosen.pageCount,
-	      language: chosen.language,
-	      read: "toRead"
-	    };
-	    if (chosen.imageLinks !== undefined) {
-	      newBook.image = chosen.imageLinks.thumbnail;
-	    }
-	    if (chosen.authors !== undefined) {
-	      newBook.author = chosen.authors[0];
-	    }
-	    if (chosen.industryIdentifiers !== undefined) {
-	      if (chosen.industryIdentifiers[0] !== undefined) {
-	        newBook.ISBN13 = chosen.industryIdentifiers[0].identifier;
-	      }
-	      if (chosen.industryIdentifiers[1] !== undefined) {
-	        newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
-	      }
-	    }
-	    return newBook;
-	  },
-	  getUserBooks: function getUserBooks() {
-	    $.get('/api/books', {}, function (books) {
-	      ApiActions.receiveUserBooks(books);
-	    });
-	  },
-	  createNote: function createNote(noteHash) {
-	
-	    $.post('/api/notes', { note: noteHash }, function (payload) {
-	
-	      ApiActions.addNote(payload);
-	    });
-	  },
-	  fetchNotes: function fetchNotes(bookId) {
-	    $.get('api/notes', { book_id: bookId }, function (notes) {
-	      ApiActions.receiveNotes(notes);
-	    });
-	  },
-	  deleteNote: function deleteNote(noteId) {
-	    var uri = '/api/notes/' + noteId;
-	    $.ajax({
-	      url: uri,
-	      type: 'DELETE',
-	      success: function success(notes) {
-	        // Do something with the result
-	        ApiActions.receiveNotes(notes);
-	      } });
-	  },
-	  getCurrentUser: function getCurrentUser() {
-	    $.get('/api/session', {}, function (user) {
-	      ApiActions.receiveUser(user);
-	    });
-	  },
-	  signIn: function signIn(username, password) {
-	    $.post('/api/session', { username: username, password: password }, function (user) {
-	      ApiActions.receiveUser(user);
-	    });
-	  },
-	  createUser: function createUser(username, password) {
-	    $.post('/api/user', { username: username, password: password }, function (user) {
-	      ApiActions.receiveUser(user);
-	    });
-	  },
-	  createAnalysis: function createAnalysis(analysisParams) {
-	    $.post('/api/analyses', { analysis: analysisParams }, function (analysis) {
-	      ApiActions.receiveNewAnalysis(analysis);
-	    });
-	  },
-	  fetchAnalyses: function fetchAnalyses(analysisParams) {
-	    $.get('/api/analyses', { analysis: {} }, function (analyses) {
-	      ApiActions.receiveAnalyses(analyses);
-	    });
-	  },
-	  fetchAnalysis: function fetchAnalysis(analysisId) {
-	    $.get('api/analyses', { id: analysisId }, function (analysis) {
-	      ApiActions.receiveAnalysis(analysis);
-	    });
-	  },
-	  updateAnalysis: function updateAnalysis(analysisParams) {
-	    $.ajax({
-	      url: '/api/analyses',
-	      type: 'PATCH',
-	      data: { analysis: analysisParams },
-	      success: function success(analysis) {
-	        // Do something with the result
-	        console.log(analysis);
-	      } });
-	  },
-	  updateBook: function updateBook(bookId, bookParams) {
-	    var uri = 'api/books/' + bookId;
-	
-	    $.ajax({
-	      url: uri,
-	      type: 'PATCH',
-	      data: bookParams,
-	      success: function success(books) {
-	        // Do something with the result
-	
-	        ApiActions.receiveUserBooks(books);
-	      } });
-	  },
-	  deleteBook: function deleteBook(bookId) {
-	    var uri = 'api/books/' + bookId;
-	    $.ajax({
-	      url: uri,
-	      type: 'DELETE',
-	
-	      success: function success(books) {
-	        // Do something with the result
-	
-	        ApiActions.receiveUserBooks(books);
-	      } });
-	  }
-	
-	};
-	
-	module.exports = APIUtil;
-
-/***/ },
-/* 232 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var AppDispatcher = __webpack_require__(228);
-	var BookSearchConstants = __webpack_require__(227);
-	var BookShelfConstants = __webpack_require__(233);
-	var NoteConstants = __webpack_require__(234);
-	var UserConstants = __webpack_require__(235);
-	var AnalysisConstants = __webpack_require__(236);
-	
-	var ApiActions = {
-	
-	  ReceiveActions: function ReceiveActions(bookList) {
-	
-	    AppDispatcher.dispatch({
-	      actionType: BookSearchConstants.SearchResultsReceived,
-	      results: bookList.items
-	    });
-	  },
-	  ReceiveInitial: function ReceiveInitial(bookList) {
-	
-	    AppDispatcher.dispatch({
-	      actionType: BookSearchConstants.InitialResultsReceived,
-	      results: bookList
-	    });
-	  },
-	  receiveUserBooks: function receiveUserBooks(books) {
-	
-	    AppDispatcher.dispatch({
-	      actionType: BookShelfConstants.ReceiveUserBooks,
-	      books: books
-	    });
-	  },
-	  ReceiveAddedBook: function ReceiveAddedBook(book) {
-	    AppDispatcher.dispatch({
-	      actionType: BookShelfConstants.ReceiveAddedBook,
-	      book: book
-	    });
-	  },
-	  updateCurrentBook: function updateCurrentBook(book) {
-	
-	    AppDispatcher.dispatch({
-	      actionType: BookSearchConstants.ReceiveCurrentBook,
-	      book: book
-	    });
-	  },
-	  emptyShelves: function emptyShelves() {
-	
-	    AppDispatcher.dispatch({
-	      actionType: BookShelfConstants.EmptyShelves
-	    });
-	  },
-	  deleteCurrentBook: function deleteCurrentBook() {
-	    AppDispatcher.dispatch({
-	      actionType: BookSearchConstants.DeleteCurrentBook
-	    });
-	  },
-	  AddToInitial: function AddToInitial(newBookList) {
-	    AppDispatcher.dispatch({
-	      actionType: BookSearchConstants.AddInitialReceived,
-	      results: newBookList
-	    });
-	  },
-	  receiveNotes: function receiveNotes(notes) {
-	    AppDispatcher.dispatch({
-	      actionType: NoteConstants.ReceiveNotes,
-	      results: notes
-	    });
-	  },
-	  addNote: function addNote(payload) {
-	    AppDispatcher.dispatch({
-	      actionType: NoteConstants.AddNote,
-	      result: payload
-	    });
-	  },
-	  receiveUser: function receiveUser(user) {
-	    AppDispatcher.dispatch({
-	      actionType: UserConstants.ReceiveUser,
-	      results: user
-	    });
-	  },
-	  receiveNewAnalysis: function receiveNewAnalysis(analysis) {
-	    AppDispatcher.dispatch({
-	      actionType: AnalysisConstants.RecieveNewAnalysis,
-	      results: analysis
-	    });
-	  },
-	  receiveAnalyses: function receiveAnalyses(analyses) {
-	    AppDispatcher.dispatch({
-	      actionType: AnalysisConstants.ReceiveAnalyses,
-	      results: analyses
-	    });
-	  },
-	  receiveAnalysis: function receiveAnalysis(analysis) {
-	    AppDispatcher.dispatch({
-	      actionType: AnalysisConstants.ReceiveAnalysis,
-	      results: analysis
-	    });
-	  },
-	  demandLogin: function demandLogin(need) {
-	    AppDispatcher.dispatch({
-	      actionType: UserConstants.UpdateNeeds,
-	      need: need
-	    });
-	  }
-	};
-	
-	module.exports = ApiActions;
-
-/***/ },
-/* 233 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	var BookShelfConstants = {
-	  ReceiveUserBooks: "RECEIVE_USER_BOOKS",
-	  ReceiveAddedBook: "RECIEVE_ADDED_BOOK",
-	  EmptyShelves: "EMPTY_SHELVES"
-	};
-	
-	module.exports = BookShelfConstants;
-
-/***/ },
-/* 234 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	var NoteConstants = {
-	  ReceiveNotes: "NOTES_RECEIVED",
-	  AddNote: "ADD_NOTE"
-	
-	};
-	
-	module.exports = NoteConstants;
-
-/***/ },
-/* 235 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	var UserConstants = {
-	  RegisterUser: "REGISTER_USER",
-	  ReceiveUser: "RECEIVE_USER",
-	  UpdateNeeds: "UPDATE_NEEDS"
-	};
-	
-	module.exports = UserConstants;
-
-/***/ },
-/* 236 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	var AnalysisConstants = {
-	  ReceiveNewAnalysis: "RECEIVE_NEW_ANALYSIS",
-	  ReceiveAnalyses: "RECEIVE_ANALYSES",
-	  ReceiveAnalysis: "RECEIVE_ANALYSIS"
-	};
-	
-	module.exports = AnalysisConstants;
-
-/***/ },
-/* 237 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(208);
-	var ApiActions = __webpack_require__(232);
-	var History = __webpack_require__(159).History;
-	var APIUtil = __webpack_require__(231);
-	
-	var IndexItem = React.createClass({
-	  displayName: 'IndexItem',
-	
-	  mixins: [History],
-	  onClick: function onClick(event) {
-	    event.preventDefault();
-	    ApiActions.updateCurrentBook(this.props.book);
-	    // this.props.whenChosen();
-	    var bookToSend = this.props.book;
-	    bookToSend.read = "toRead";
-	    // APIUtil.createBook(bookToSend);
-	    var url = "/Desk";
-	    this.history.push({ pathname: url });
-	    // APIUtil.createBook(this.props.book);
-	    // this.history.push("/Desk");
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      'li',
-	      { className: 'InitialBooks hvr-grow', onClick: this.onClick },
-	      React.createElement('img', { src: this.props.book.image })
-	    );
-	  }
-	});
-	module.exports = IndexItem;
-
-/***/ },
-/* 238 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookSearchBar = __webpack_require__(239);
-	
-	var SearchArea = React.createClass({
-	  displayName: 'SearchArea',
-	
-	
-	  render: function render() {
-	    return React.createElement(
-	      'section',
-	      { id: 'popupbody' },
-	      React.createElement(BookSearchBar, { whenChosen: this.props.whenChosen })
-	    );
-	  }
-	});
-	
-	module.exports = SearchArea;
-
-/***/ },
-/* 239 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var APIUtil = __webpack_require__(231);
-	var BookSearchStore = __webpack_require__(208);
-	var BookConfirmation = __webpack_require__(240);
-	var SearchListItem = __webpack_require__(243);
-	var History = __webpack_require__(159).History;
-	
-	var BookSearchBar = React.createClass({
-	  displayName: 'BookSearchBar',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	
-	    this.leave = false;
-	    this.needToLoad = false;
-	
-	    return { value: "", searchResults: [], showGuesses: false };
-	  },
-	  handleChange: function handleChange(event) {
-	
-	    this.setState({ value: event.target.value });
-	
-	    if (this.state.value.length > 2 && !this.pending) {
-	      this.pending = true;
-	      this.loadBar.style.display = 'block';
-	      this.needToLoad = false;
-	      APIUtil.fetchBookResults(this.state.value);
-	      window.setTimeout(function () {
-	        this.pending = false;
-	        if (this.needToLoad) {
-	          this.pending = true;
-	          this.loadBar.style.display = 'block';
-	          this.needToLoad = false;
-	          APIUtil.fetchBookResults(this.state.value);
-	        }
-	      }.bind(this), 1800);
-	    } else if (this.state.value.length > 2) {
-	      this.needToLoad = true;
-	    } else {
-	      this.needToLoad = false;
-	      this.loadBar.style.display = 'none';
-	    }
-	  },
-	
-	  componentDidMount: function componentDidMount() {
-	    this.storeIndex = BookSearchStore.addListener(this._onChange);
-	    this.pending = false;
-	    this.loadBar = document.getElementById('loader');
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.storeIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    if (this.state.value.length > 0 && !this.leave) {
-	      this.loadBar.style.display = 'none';
-	      this.setState({ searchResults: BookSearchStore.all() });
-	    } else if (this.leave) {
-	      this.leave = false;
-	      var url = '/SearchResults';
-	      this.history.push({ pathname: url });
-	    } else {
-	      this.loadBar.style.display = 'none';
-	      this.setState({ searchResults: [] });
-	    }
-	  },
-	  searchBarMoveUp: function searchBarMoveUp() {
-	    // debugger;
-	    // this.refs.searchbar.style{{bottom: "10%"}}
-	    $("#landing-search-bar").css("bottom", "40%");
-	    this.setState({
-	      showGuesses: true
-	    });
-	    // setTimeout(function(){
-	    //     // debugger;
-	    // }.bind(this), 1800);
-	    // this.hideAutocomplete();
-	    // this.tempToken = setTimeout(this.showAutocomplete, 2000);
-	  },
-	  searchBarMoveBack: function searchBarMoveBack() {
-	    $("#landing-search-bar").css("bottom", "20%");
-	    // this.hideAutocomplete();
-	    // this.setState({
-	    //   showGuesses: false
-	    // });
-	
-	    // setTimeout(function(){
-	    //   this.setState({
-	    //     showGuesses: false,
-	    //   });
-	    //     // debugger;
-	    // }.bind(this), 500);
-	  },
-	  clickOption: function clickOption(book) {
-	
-	    var theChosen = book;
-	    var chosen = APIUtil.makeBookObject(book);
-	    BookSearchStore.resetCurrentBook(chosen);
-	    this.props.whenChosen();
-	  },
-	  click: function click(event) {
-	    event.preventDefault();
-	    // var theChosen = this.state.searchResults[0].volumeInfo.title;
-	    // var chosen = APIUtil.makeBookObject(this.state.searchResults[0]);
-	    // BookSearchStore.resetCurrentBook(chosen);
-	    // this.props.whenChosen();
-	
-	    this.leave = true;
-	    APIUtil.fetchBookResults(this.state.value);
-	  },
-	  removeSearchGuesses: function removeSearchGuesses() {
-	    this.setState({ showGuesses: false });
-	  },
-	  render: function render() {
-	    var that = this;
-	    if (this.state.showGuesses) {
-	      var guesses = this.state.searchResults.map(function (result, index) {
-	        return React.createElement(SearchListItem, { key: result.id, book: result, clickOption: this.clickOption });
-	      }, this);
-	    } else {
-	      guesses = null;
-	    }
-	
-	    return React.createElement(
-	      'div',
-	      { id: 'landing-search-bar' },
-	      React.createElement(
-	        'label',
-	        { id: 'BookSearchLabel' },
-	        'What book do you want to explore?'
-	      ),
-	      React.createElement('br', null),
-	      React.createElement(
-	        'form',
-	        { className: 'SearchForm' },
-	        React.createElement('input', { id: 'BookSearchInput',
-	          type: 'text',
-	          value: this.state.value,
-	          onChange: this.handleChange,
-	          onFocus: this.searchBarMoveUp,
-	          onBlur: this.searchBarMoveBack,
-	          placeholder: 'enter book title',
-	          list: 'search-options',
-	          autoComplete: 'off'
-	        }),
-	        React.createElement('button', { id: 'BookSearchButton', className: 'hvr-grow-shadow fa fa-search', onClick: this.click }),
-	        React.createElement('div', { id: 'loader', className: 'loader' }),
-	        React.createElement(
-	          'ul',
-	          { className: 'searchGuesses', id: 'search-options' },
-	          guesses
-	        )
-	      )
-	    );
-	  }
-	
-	});
-	module.exports = BookSearchBar;
-
-/***/ },
-/* 240 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var History = __webpack_require__(159).History;
-	var APIUtil = __webpack_require__(231);
-	var RadioGroup = __webpack_require__(241);
-	
-	var BookConfirmation = React.createClass({
-	  displayName: 'BookConfirmation',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	    return { selectedValue: 'reading' };
-	  },
-	  handleChange: function handleChange(value) {
-	    this.setState({ selectedValue: value });
-	  },
-	  yesClick: function yesClick(event) {
-	    event.preventDefault();
-	    var bookToSend = this.props.book;
-	    bookToSend.read = this.state.selectedValue;
-	    APIUtil.createBook(bookToSend);
-	    var url = "/Desk";
-	    this.history.push({ pathname: url });
-	    //reroute to User Show with Book Display
-	  },
-	  noClick: function noClick(event) {
-	    event.preventDefault();
-	    this.props.close();
-	    //closeWindow and reset state of parent
-	  },
-	  render: function render() {
-	    var chosen = this.props.book;
-	    return React.createElement(
-	      'section',
-	      { className: 'BookConfirmation' },
-	      React.createElement(
-	        'div',
-	        null,
-	        React.createElement(
-	          'h3',
-	          { className: 'confirmationQuestion' },
-	          'Is the following the correct book?'
-	        ),
-	        React.createElement(
-	          'h2',
-	          { className: 'confirmationTitle' },
-	          chosen.title
-	        ),
-	        React.createElement(
-	          'h3',
-	          { className: 'byLine' },
-	          ' by, ',
-	          chosen.author
-	        ),
-	        React.createElement('img', { className: 'confirmationImage', src: chosen.image }),
-	        React.createElement(
-	          RadioGroup,
-	          {
-	            name: 'fruit',
-	            selectedValue: this.state.selectedValue,
-	            onChange: this.handleChange },
-	          function (Radio) {
-	            return React.createElement(
-	              'div',
-	              null,
-	              React.createElement(
-	                'label',
-	                null,
-	                React.createElement(Radio, { value: 'read' }),
-	                'have read'
-	              ),
-	              React.createElement(
-	                'label',
-	                null,
-	                React.createElement(Radio, { value: 'toRead' }),
-	                'to read'
-	              ),
-	              React.createElement(
-	                'label',
-	                null,
-	                React.createElement(Radio, { value: 'reading' }),
-	                'reading'
-	              )
-	            );
-	          }
-	        )
-	      ),
-	      React.createElement(
-	        'button',
-	        { className: 'Confirmation', id: 'Yes', onClick: this.yesClick },
-	        'Yes'
-	      ),
-	      React.createElement(
-	        'button',
-	        { className: 'Confirmation', id: 'No', onClick: this.noClick },
-	        'Search Again'
-	      )
-	    );
-	  }
-	
-	});
-	module.exports = BookConfirmation;
-
-/***/ },
-/* 241 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// /lib contains the transpiled code. It's ignored by git but picked up by
-	// npm publish. See package.json's "prerelease" and "build" scripts
-	module.exports = __webpack_require__(242);
-
-
-/***/ },
-/* 242 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
-	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, module, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	  } else if (typeof exports !== 'undefined' && typeof module !== 'undefined') {
-	    factory(exports, module, require('react'));
-	  } else {
-	    var mod = {
-	      exports: {}
-	    };
-	    factory(mod.exports, mod, global.React);
-	    global.RadioGroup = mod.exports;
-	  }
-	})(this, function (exports, module, _react) {
-	  'use strict';
-	
-	  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	  var _React = _interopRequireDefault(_react);
-	
-	  function radio(name, selectedValue, onChange) {
-	    return _React['default'].createClass({
-	      render: function render() {
-	        var optional = {};
-	        if (selectedValue !== undefined) {
-	          optional.checked = this.props.value === selectedValue;
-	        }
-	        if (typeof onChange === 'function') {
-	          optional.onChange = onChange.bind(null, this.props.value);
-	        }
-	
-	        return _React['default'].createElement('input', _extends({}, this.props, {
-	          type: 'radio',
-	          name: name
-	        }, optional));
-	      }
-	    });
-	  }
-	
-	  module.exports = _React['default'].createClass({
-	    displayName: 'index',
-	
-	    propTypes: {
-	      name: _react.PropTypes.string,
-	      selectedValue: _react.PropTypes.oneOfType([_react.PropTypes.string, _react.PropTypes.number, _react.PropTypes.bool]),
-	      onChange: _react.PropTypes.func,
-	      children: _react.PropTypes.func.isRequired
-	    },
-	
-	    render: function render() {
-	      var _props = this.props;
-	      var name = _props.name;
-	      var selectedValue = _props.selectedValue;
-	      var onChange = _props.onChange;
-	      var children = _props.children;
-	
-	      var renderedChildren = children(radio(name, selectedValue, onChange));
-	      return renderedChildren && _React['default'].Children.only(renderedChildren);
-	    }
-	  });
-	});
-
-/***/ },
-/* 243 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(1);
-	var PropTypes = React.PropTypes;
-	
-	var SearchListItem = React.createClass({
-	  displayName: "SearchListItem",
-	
-	  click: function click(event) {
-	    event.preventDefault();
-	    this.props.clickOption(this.props.book);
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      "li",
-	      { onClick: this.click, className: "searchGuess", value: this.props.book.volumeInfo.title },
-	      this.props.book.volumeInfo.title
-	    );
-	  }
-	
-	});
-	
-	module.exports = SearchListItem;
-
-/***/ },
-/* 244 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(245);
-	
-
-
-/***/ },
-/* 245 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(158);
-	var ExecutionEnvironment = __webpack_require__(246);
-	var ModalPortal = React.createFactory(__webpack_require__(247));
-	var ariaAppHider = __webpack_require__(262);
-	var elementClass = __webpack_require__(263);
-	var renderSubtreeIntoContainer = __webpack_require__(158).unstable_renderSubtreeIntoContainer;
-	
-	var SafeHTMLElement = ExecutionEnvironment.canUseDOM ? window.HTMLElement : {};
-	
-	var Modal = module.exports = React.createClass({
-	
-	  displayName: 'Modal',
-	  statics: {
-	    setAppElement: ariaAppHider.setElement,
-	    injectCSS: function() {
-	      "production" !== process.env.NODE_ENV
-	        && console.warn('React-Modal: injectCSS has been deprecated ' +
-	                        'and no longer has any effect. It will be removed in a later version');
-	    }
-	  },
-	
-	  propTypes: {
-	    isOpen: React.PropTypes.bool.isRequired,
-	    style: React.PropTypes.shape({
-	      content: React.PropTypes.object,
-	      overlay: React.PropTypes.object
-	    }),
-	    appElement: React.PropTypes.instanceOf(SafeHTMLElement),
-	    onRequestClose: React.PropTypes.func,
-	    closeTimeoutMS: React.PropTypes.number,
-	    ariaHideApp: React.PropTypes.bool
-	  },
-	
-	  getDefaultProps: function () {
-	    return {
-	      isOpen: false,
-	      ariaHideApp: true,
-	      closeTimeoutMS: 0
-	    };
-	  },
-	
-	  componentDidMount: function() {
-	    this.node = document.createElement('div');
-	    this.node.className = 'ReactModalPortal';
-	    document.body.appendChild(this.node);
-	    this.renderPortal(this.props);
-	  },
-	
-	  componentWillReceiveProps: function(newProps) {
-	    this.renderPortal(newProps);
-	  },
-	
-	  componentWillUnmount: function() {
-	    ReactDOM.unmountComponentAtNode(this.node);
-	    document.body.removeChild(this.node);
-	  },
-	
-	  renderPortal: function(props) {
-	    if (props.isOpen) {
-	      elementClass(document.body).add('ReactModal__Body--open');
-	    } else {
-	      elementClass(document.body).remove('ReactModal__Body--open');
-	    }
-	
-	    if (props.ariaHideApp) {
-	      ariaAppHider.toggle(props.isOpen, props.appElement);
-	    }
-	    sanitizeProps(props);
-	    this.portal = renderSubtreeIntoContainer(this, ModalPortal(props), this.node);
-	  },
-	
-	  render: function () {
-	    return React.DOM.noscript();
-	  }
-	});
-	
-	function sanitizeProps(props) {
-	  delete props.ref;
-	}
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ },
-/* 246 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	  Copyright (c) 2015 Jed Watson.
-	  Based on code that is Copyright 2013-2015, Facebook, Inc.
-	  All rights reserved.
-	*/
-	
-	(function () {
-		'use strict';
-	
-		var canUseDOM = !!(
-			typeof window !== 'undefined' &&
-			window.document &&
-			window.document.createElement
-		);
-	
-		var ExecutionEnvironment = {
-	
-			canUseDOM: canUseDOM,
-	
-			canUseWorkers: typeof Worker !== 'undefined',
-	
-			canUseEventListeners:
-				canUseDOM && !!(window.addEventListener || window.attachEvent),
-	
-			canUseViewport: canUseDOM && !!window.screen
-	
-		};
-	
-		if (true) {
-			!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
-				return ExecutionEnvironment;
-			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else if (typeof module !== 'undefined' && module.exports) {
-			module.exports = ExecutionEnvironment;
-		} else {
-			window.ExecutionEnvironment = ExecutionEnvironment;
-		}
-	
-	}());
-
-
-/***/ },
-/* 247 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(1);
-	var div = React.DOM.div;
-	var focusManager = __webpack_require__(248);
-	var scopeTab = __webpack_require__(250);
-	var Assign = __webpack_require__(251);
-	
-	
-	// so that our CSS is statically analyzable
-	var CLASS_NAMES = {
-	  overlay: {
-	    base: 'ReactModal__Overlay',
-	    afterOpen: 'ReactModal__Overlay--after-open',
-	    beforeClose: 'ReactModal__Overlay--before-close'
-	  },
-	  content: {
-	    base: 'ReactModal__Content',
-	    afterOpen: 'ReactModal__Content--after-open',
-	    beforeClose: 'ReactModal__Content--before-close'
-	  }
-	};
-	
-	var defaultStyles = {
-	  overlay: {
-	    position        : 'fixed',
-	    top             : 0,
-	    left            : 0,
-	    right           : 0,
-	    bottom          : 0,
-	    backgroundColor : 'rgba(255, 255, 255, 0.75)'
-	  },
-	  content: {
-	    position                : 'absolute',
-	    top                     : '40px',
-	    left                    : '40px',
-	    right                   : '40px',
-	    bottom                  : '40px',
-	    border                  : '1px solid #ccc',
-	    background              : '#fff',
-	    overflow                : 'auto',
-	    WebkitOverflowScrolling : 'touch',
-	    borderRadius            : '4px',
-	    outline                 : 'none',
-	    padding                 : '20px'
-	  }
-	};
-	
-	function stopPropagation(event) {
-	  event.stopPropagation();
-	}
-	
-	var ModalPortal = module.exports = React.createClass({
-	
-	  displayName: 'ModalPortal',
-	
-	  getDefaultProps: function() {
-	    return {
-	      style: {
-	        overlay: {},
-	        content: {}
-	      }
-	    };
-	  },
-	
-	  getInitialState: function() {
-	    return {
-	      afterOpen: false,
-	      beforeClose: false
-	    };
-	  },
-	
-	  componentDidMount: function() {
-	    // Focus needs to be set when mounting and already open
-	    if (this.props.isOpen) {
-	      this.setFocusAfterRender(true);
-	      this.open();
-	    }
-	  },
-	
-	  componentWillUnmount: function() {
-	    clearTimeout(this.closeTimer);
-	  },
-	
-	  componentWillReceiveProps: function(newProps) {
-	    // Focus only needs to be set once when the modal is being opened
-	    if (!this.props.isOpen && newProps.isOpen) {
-	      this.setFocusAfterRender(true);
-	      this.open();
-	    } else if (this.props.isOpen && !newProps.isOpen) {
-	      this.close();
-	    }
-	  },
-	
-	  componentDidUpdate: function () {
-	    if (this.focusAfterRender) {
-	      this.focusContent();
-	      this.setFocusAfterRender(false);
-	    }
-	  },
-	
-	  setFocusAfterRender: function (focus) {
-	    this.focusAfterRender = focus;
-	  },
-	
-	  open: function() {
-	    focusManager.setupScopedFocus(this.node);
-	    focusManager.markForFocusLater();
-	    this.setState({isOpen: true}, function() {
-	      this.setState({afterOpen: true});
-	    }.bind(this));
-	  },
-	
-	  close: function() {
-	    if (!this.ownerHandlesClose())
-	      return;
-	    if (this.props.closeTimeoutMS > 0)
-	      this.closeWithTimeout();
-	    else
-	      this.closeWithoutTimeout();
-	  },
-	
-	  focusContent: function() {
-	    this.refs.content.focus();
-	  },
-	
-	  closeWithTimeout: function() {
-	    this.setState({beforeClose: true}, function() {
-	      this.closeTimer = setTimeout(this.closeWithoutTimeout, this.props.closeTimeoutMS);
-	    }.bind(this));
-	  },
-	
-	  closeWithoutTimeout: function() {
-	    this.setState({
-	      afterOpen: false,
-	      beforeClose: false
-	    }, this.afterClose);
-	  },
-	
-	  afterClose: function() {
-	    focusManager.returnFocus();
-	    focusManager.teardownScopedFocus();
-	  },
-	
-	  handleKeyDown: function(event) {
-	    if (event.keyCode == 9 /*tab*/) scopeTab(this.refs.content, event);
-	    if (event.keyCode == 27 /*esc*/) this.requestClose();
-	  },
-	
-	  handleOverlayClick: function() {
-	    if (this.ownerHandlesClose())
-	      this.requestClose();
-	    else
-	      this.focusContent();
-	  },
-	
-	  requestClose: function() {
-	    if (this.ownerHandlesClose())
-	      this.props.onRequestClose();
-	  },
-	
-	  ownerHandlesClose: function() {
-	    return this.props.onRequestClose;
-	  },
-	
-	  shouldBeClosed: function() {
-	    return !this.props.isOpen && !this.state.beforeClose;
-	  },
-	
-	  buildClassName: function(which, additional) {
-	    var className = CLASS_NAMES[which].base;
-	    if (this.state.afterOpen)
-	      className += ' '+CLASS_NAMES[which].afterOpen;
-	    if (this.state.beforeClose)
-	      className += ' '+CLASS_NAMES[which].beforeClose;
-	    return additional ? className + ' ' + additional : className;
-	  },
-	
-	  render: function() {
-	    return this.shouldBeClosed() ? div() : (
-	      div({
-	        ref: "overlay",
-	        className: this.buildClassName('overlay', this.props.overlayClassName),
-	        style: Assign({}, defaultStyles.overlay, this.props.style.overlay || {}),
-	        onClick: this.handleOverlayClick
-	      },
-	        div({
-	          ref: "content",
-	          style: Assign({}, defaultStyles.content, this.props.style.content || {}),
-	          className: this.buildClassName('content', this.props.className),
-	          tabIndex: "-1",
-	          onClick: stopPropagation,
-	          onKeyDown: this.handleKeyDown
-	        },
-	          this.props.children
-	        )
-	      )
-	    );
-	  }
-	});
-
-
-/***/ },
-/* 248 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var findTabbable = __webpack_require__(249);
-	var modalElement = null;
-	var focusLaterElement = null;
-	var needToFocus = false;
-	
-	function handleBlur(event) {
-	  needToFocus = true;
-	}
-	
-	function handleFocus(event) {
-	  if (needToFocus) {
-	    needToFocus = false;
-	    if (!modalElement) {
-	      return;
-	    }
-	    // need to see how jQuery shims document.on('focusin') so we don't need the
-	    // setTimeout, firefox doesn't support focusin, if it did, we could focus
-	    // the element outside of a setTimeout. Side-effect of this implementation 
-	    // is that the document.body gets focus, and then we focus our element right 
-	    // after, seems fine.
-	    setTimeout(function() {
-	      if (modalElement.contains(document.activeElement))
-	        return;
-	      var el = (findTabbable(modalElement)[0] || modalElement);
-	      el.focus();
-	    }, 0);
-	  }
-	}
-	
-	exports.markForFocusLater = function() {
-	  focusLaterElement = document.activeElement;
-	};
-	
-	exports.returnFocus = function() {
-	  try {
-	    focusLaterElement.focus();
-	  }
-	  catch (e) {
-	    console.warn('You tried to return focus to '+focusLaterElement+' but it is not in the DOM anymore');
-	  }
-	  focusLaterElement = null;
-	};
-	
-	exports.setupScopedFocus = function(element) {
-	  modalElement = element;
-	
-	  if (window.addEventListener) {
-	    window.addEventListener('blur', handleBlur, false);
-	    document.addEventListener('focus', handleFocus, true);
-	  } else {
-	    window.attachEvent('onBlur', handleBlur);
-	    document.attachEvent('onFocus', handleFocus);
-	  }
-	};
-	
-	exports.teardownScopedFocus = function() {
-	  modalElement = null;
-	
-	  if (window.addEventListener) {
-	    window.removeEventListener('blur', handleBlur);
-	    document.removeEventListener('focus', handleFocus);
-	  } else {
-	    window.detachEvent('onBlur', handleBlur);
-	    document.detachEvent('onFocus', handleFocus);
-	  }
-	};
-	
-	
-
-
-/***/ },
-/* 249 */
-/***/ function(module, exports) {
-
-	/*!
-	 * Adapted from jQuery UI core
-	 *
-	 * http://jqueryui.com
-	 *
-	 * Copyright 2014 jQuery Foundation and other contributors
-	 * Released under the MIT license.
-	 * http://jquery.org/license
-	 *
-	 * http://api.jqueryui.com/category/ui-core/
-	 */
-	
-	function focusable(element, isTabIndexNotNaN) {
-	  var nodeName = element.nodeName.toLowerCase();
-	  return (/input|select|textarea|button|object/.test(nodeName) ?
-	    !element.disabled :
-	    "a" === nodeName ?
-	      element.href || isTabIndexNotNaN :
-	      isTabIndexNotNaN) && visible(element);
-	}
-	
-	function hidden(el) {
-	  return (el.offsetWidth <= 0 && el.offsetHeight <= 0) ||
-	    el.style.display === 'none';
-	}
-	
-	function visible(element) {
-	  while (element) {
-	    if (element === document.body) break;
-	    if (hidden(element)) return false;
-	    element = element.parentNode;
-	  }
-	  return true;
-	}
-	
-	function tabbable(element) {
-	  var tabIndex = element.getAttribute('tabindex');
-	  if (tabIndex === null) tabIndex = undefined;
-	  var isTabIndexNaN = isNaN(tabIndex);
-	  return (isTabIndexNaN || tabIndex >= 0) && focusable(element, !isTabIndexNaN);
-	}
-	
-	function findTabbableDescendants(element) {
-	  return [].slice.call(element.querySelectorAll('*'), 0).filter(function(el) {
-	    return tabbable(el);
-	  });
-	}
-	
-	module.exports = findTabbableDescendants;
-	
-
-
-/***/ },
-/* 250 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var findTabbable = __webpack_require__(249);
-	
-	module.exports = function(node, event) {
-	  var tabbable = findTabbable(node);
-	  var finalTabbable = tabbable[event.shiftKey ? 0 : tabbable.length - 1];
-	  var leavingFinalTabbable = (
-	    finalTabbable === document.activeElement ||
-	    // handle immediate shift+tab after opening with mouse
-	    node === document.activeElement
-	  );
-	  if (!leavingFinalTabbable) return;
-	  event.preventDefault();
-	  var target = tabbable[event.shiftKey ? tabbable.length - 1 : 0];
-	  target.focus();
-	};
-
-
-/***/ },
-/* 251 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * lodash 3.2.0 (Custom Build) <https://lodash.com/>
-	 * Build: `lodash modern modularize exports="npm" -o ./`
-	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
-	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
-	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-	 * Available under MIT license <https://lodash.com/license>
-	 */
-	var baseAssign = __webpack_require__(252),
-	    createAssigner = __webpack_require__(258),
-	    keys = __webpack_require__(254);
-	
-	/**
-	 * A specialized version of `_.assign` for customizing assigned values without
-	 * support for argument juggling, multiple sources, and `this` binding `customizer`
-	 * functions.
-	 *
-	 * @private
-	 * @param {Object} object The destination object.
-	 * @param {Object} source The source object.
-	 * @param {Function} customizer The function to customize assigned values.
-	 * @returns {Object} Returns `object`.
-	 */
-	function assignWith(object, source, customizer) {
-	  var index = -1,
-	      props = keys(source),
-	      length = props.length;
-	
-	  while (++index < length) {
-	    var key = props[index],
-	        value = object[key],
-	        result = customizer(value, source[key], key, object, source);
-	
-	    if ((result === result ? (result !== value) : (value === value)) ||
-	        (value === undefined && !(key in object))) {
-	      object[key] = result;
-	    }
-	  }
-	  return object;
-	}
-	
-	/**
-	 * Assigns own enumerable properties of source object(s) to the destination
-	 * object. Subsequent sources overwrite property assignments of previous sources.
-	 * If `customizer` is provided it is invoked to produce the assigned values.
-	 * The `customizer` is bound to `thisArg` and invoked with five arguments:
-	 * (objectValue, sourceValue, key, object, source).
-	 *
-	 * **Note:** This method mutates `object` and is based on
-	 * [`Object.assign`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.assign).
-	 *
-	 * @static
-	 * @memberOf _
-	 * @alias extend
-	 * @category Object
-	 * @param {Object} object The destination object.
-	 * @param {...Object} [sources] The source objects.
-	 * @param {Function} [customizer] The function to customize assigned values.
-	 * @param {*} [thisArg] The `this` binding of `customizer`.
-	 * @returns {Object} Returns `object`.
-	 * @example
-	 *
-	 * _.assign({ 'user': 'barney' }, { 'age': 40 }, { 'user': 'fred' });
-	 * // => { 'user': 'fred', 'age': 40 }
-	 *
-	 * // using a customizer callback
-	 * var defaults = _.partialRight(_.assign, function(value, other) {
-	 *   return _.isUndefined(value) ? other : value;
-	 * });
-	 *
-	 * defaults({ 'user': 'barney' }, { 'age': 36 }, { 'user': 'fred' });
-	 * // => { 'user': 'barney', 'age': 36 }
-	 */
-	var assign = createAssigner(function(object, source, customizer) {
-	  return customizer
-	    ? assignWith(object, source, customizer)
-	    : baseAssign(object, source);
-	});
-	
-	module.exports = assign;
-
-
-/***/ },
-/* 252 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * lodash 3.2.0 (Custom Build) <https://lodash.com/>
-	 * Build: `lodash modern modularize exports="npm" -o ./`
-	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
-	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
-	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-	 * Available under MIT license <https://lodash.com/license>
-	 */
-	var baseCopy = __webpack_require__(253),
-	    keys = __webpack_require__(254);
-	
-	/**
-	 * The base implementation of `_.assign` without support for argument juggling,
-	 * multiple sources, and `customizer` functions.
-	 *
-	 * @private
-	 * @param {Object} object The destination object.
-	 * @param {Object} source The source object.
-	 * @returns {Object} Returns `object`.
-	 */
-	function baseAssign(object, source) {
-	  return source == null
-	    ? object
-	    : baseCopy(source, keys(source), object);
-	}
-	
-	module.exports = baseAssign;
-
-
-/***/ },
-/* 253 */
-/***/ function(module, exports) {
-
-	/**
-	 * lodash 3.0.1 (Custom Build) <https://lodash.com/>
-	 * Build: `lodash modern modularize exports="npm" -o ./`
-	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
-	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
-	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-	 * Available under MIT license <https://lodash.com/license>
-	 */
-	
-	/**
-	 * Copies properties of `source` to `object`.
-	 *
-	 * @private
-	 * @param {Object} source The object to copy properties from.
-	 * @param {Array} props The property names to copy.
-	 * @param {Object} [object={}] The object to copy properties to.
-	 * @returns {Object} Returns `object`.
-	 */
-	function baseCopy(source, props, object) {
-	  object || (object = {});
-	
-	  var index = -1,
-	      length = props.length;
-	
-	  while (++index < length) {
-	    var key = props[index];
-	    object[key] = source[key];
-	  }
-	  return object;
-	}
-	
-	module.exports = baseCopy;
-
-
-/***/ },
-/* 254 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * lodash 3.1.2 (Custom Build) <https://lodash.com/>
-	 * Build: `lodash modern modularize exports="npm" -o ./`
-	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
-	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
-	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-	 * Available under MIT license <https://lodash.com/license>
-	 */
-	var getNative = __webpack_require__(255),
-	    isArguments = __webpack_require__(256),
-	    isArray = __webpack_require__(257);
-	
-	/** Used to detect unsigned integer values. */
-	var reIsUint = /^\d+$/;
-	
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-	
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-	
-	/* Native method references for those with the same name as other `lodash` methods. */
-	var nativeKeys = getNative(Object, 'keys');
-	
-	/**
-	 * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
-	 * of an array-like value.
-	 */
-	var MAX_SAFE_INTEGER = 9007199254740991;
-	
-	/**
-	 * The base implementation of `_.property` without support for deep paths.
-	 *
-	 * @private
-	 * @param {string} key The key of the property to get.
-	 * @returns {Function} Returns the new function.
-	 */
-	function baseProperty(key) {
-	  return function(object) {
-	    return object == null ? undefined : object[key];
-	  };
-	}
-	
-	/**
-	 * Gets the "length" property value of `object`.
-	 *
-	 * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
-	 * that affects Safari on at least iOS 8.1-8.3 ARM64.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {*} Returns the "length" value.
-	 */
-	var getLength = baseProperty('length');
-	
-	/**
-	 * Checks if `value` is array-like.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
-	 */
-	function isArrayLike(value) {
-	  return value != null && isLength(getLength(value));
-	}
-	
-	/**
-	 * Checks if `value` is a valid array-like index.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
-	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
-	 */
-	function isIndex(value, length) {
-	  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
-	  length = length == null ? MAX_SAFE_INTEGER : length;
-	  return value > -1 && value % 1 == 0 && value < length;
-	}
-	
-	/**
-	 * Checks if `value` is a valid array-like length.
-	 *
-	 * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
-	 */
-	function isLength(value) {
-	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-	}
-	
-	/**
-	 * A fallback implementation of `Object.keys` which creates an array of the
-	 * own enumerable property names of `object`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 */
-	function shimKeys(object) {
-	  var props = keysIn(object),
-	      propsLength = props.length,
-	      length = propsLength && object.length;
-	
-	  var allowIndexes = !!length && isLength(length) &&
-	    (isArray(object) || isArguments(object));
-	
-	  var index = -1,
-	      result = [];
-	
-	  while (++index < propsLength) {
-	    var key = props[index];
-	    if ((allowIndexes && isIndex(key, length)) || hasOwnProperty.call(object, key)) {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-	
-	/**
-	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
-	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
-	 * @example
-	 *
-	 * _.isObject({});
-	 * // => true
-	 *
-	 * _.isObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObject(1);
-	 * // => false
-	 */
-	function isObject(value) {
-	  // Avoid a V8 JIT bug in Chrome 19-20.
-	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
-	  var type = typeof value;
-	  return !!value && (type == 'object' || type == 'function');
-	}
-	
-	/**
-	 * Creates an array of the own enumerable property names of `object`.
-	 *
-	 * **Note:** Non-object values are coerced to objects. See the
-	 * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
-	 * for more details.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 *   this.b = 2;
-	 * }
-	 *
-	 * Foo.prototype.c = 3;
-	 *
-	 * _.keys(new Foo);
-	 * // => ['a', 'b'] (iteration order is not guaranteed)
-	 *
-	 * _.keys('hi');
-	 * // => ['0', '1']
-	 */
-	var keys = !nativeKeys ? shimKeys : function(object) {
-	  var Ctor = object == null ? undefined : object.constructor;
-	  if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-	      (typeof object != 'function' && isArrayLike(object))) {
-	    return shimKeys(object);
-	  }
-	  return isObject(object) ? nativeKeys(object) : [];
-	};
-	
-	/**
-	 * Creates an array of the own and inherited enumerable property names of `object`.
-	 *
-	 * **Note:** Non-object values are coerced to objects.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 *   this.b = 2;
-	 * }
-	 *
-	 * Foo.prototype.c = 3;
-	 *
-	 * _.keysIn(new Foo);
-	 * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
-	 */
-	function keysIn(object) {
-	  if (object == null) {
-	    return [];
-	  }
-	  if (!isObject(object)) {
-	    object = Object(object);
-	  }
-	  var length = object.length;
-	  length = (length && isLength(length) &&
-	    (isArray(object) || isArguments(object)) && length) || 0;
-	
-	  var Ctor = object.constructor,
-	      index = -1,
-	      isProto = typeof Ctor == 'function' && Ctor.prototype === object,
-	      result = Array(length),
-	      skipIndexes = length > 0;
-	
-	  while (++index < length) {
-	    result[index] = (index + '');
-	  }
-	  for (var key in object) {
-	    if (!(skipIndexes && isIndex(key, length)) &&
-	        !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-	
-	module.exports = keys;
-
-
-/***/ },
-/* 255 */
-/***/ function(module, exports) {
-
-	/**
-	 * lodash 3.9.1 (Custom Build) <https://lodash.com/>
-	 * Build: `lodash modern modularize exports="npm" -o ./`
-	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
-	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
-	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-	 * Available under MIT license <https://lodash.com/license>
-	 */
-	
-	/** `Object#toString` result references. */
-	var funcTag = '[object Function]';
-	
-	/** Used to detect host constructors (Safari > 5). */
-	var reIsHostCtor = /^\[object .+?Constructor\]$/;
-	
-	/**
-	 * Checks if `value` is object-like.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-	 */
-	function isObjectLike(value) {
-	  return !!value && typeof value == 'object';
-	}
-	
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-	
-	/** Used to resolve the decompiled source of functions. */
-	var fnToString = Function.prototype.toString;
-	
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-	
-	/**
-	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objToString = objectProto.toString;
-	
-	/** Used to detect if a method is native. */
-	var reIsNative = RegExp('^' +
-	  fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
-	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
-	);
-	
-	/**
-	 * Gets the native function at `key` of `object`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {string} key The key of the method to get.
-	 * @returns {*} Returns the function if it's native, else `undefined`.
-	 */
-	function getNative(object, key) {
-	  var value = object == null ? undefined : object[key];
-	  return isNative(value) ? value : undefined;
-	}
-	
-	/**
-	 * Checks if `value` is classified as a `Function` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
-	 * @example
-	 *
-	 * _.isFunction(_);
-	 * // => true
-	 *
-	 * _.isFunction(/abc/);
-	 * // => false
-	 */
-	function isFunction(value) {
-	  // The use of `Object#toString` avoids issues with the `typeof` operator
-	  // in older versions of Chrome and Safari which return 'function' for regexes
-	  // and Safari 8 equivalents which return 'object' for typed array constructors.
-	  return isObject(value) && objToString.call(value) == funcTag;
-	}
-	
-	/**
-	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
-	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
-	 * @example
-	 *
-	 * _.isObject({});
-	 * // => true
-	 *
-	 * _.isObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObject(1);
-	 * // => false
-	 */
-	function isObject(value) {
-	  // Avoid a V8 JIT bug in Chrome 19-20.
-	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
-	  var type = typeof value;
-	  return !!value && (type == 'object' || type == 'function');
-	}
-	
-	/**
-	 * Checks if `value` is a native function.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
-	 * @example
-	 *
-	 * _.isNative(Array.prototype.push);
-	 * // => true
-	 *
-	 * _.isNative(_);
-	 * // => false
-	 */
-	function isNative(value) {
-	  if (value == null) {
-	    return false;
-	  }
-	  if (isFunction(value)) {
-	    return reIsNative.test(fnToString.call(value));
-	  }
-	  return isObjectLike(value) && reIsHostCtor.test(value);
-	}
-	
-	module.exports = getNative;
-
-
-/***/ },
-/* 256 */
-/***/ function(module, exports) {
-
-	/**
-	 * lodash 3.0.7 (Custom Build) <https://lodash.com/>
-	 * Build: `lodash modularize exports="npm" -o ./`
-	 * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
-	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
-	 * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-	 * Available under MIT license <https://lodash.com/license>
-	 */
-	
-	/** Used as references for various `Number` constants. */
-	var MAX_SAFE_INTEGER = 9007199254740991;
-	
-	/** `Object#toString` result references. */
-	var argsTag = '[object Arguments]',
-	    funcTag = '[object Function]',
-	    genTag = '[object GeneratorFunction]';
-	
-	/** Used for built-in method references. */
-	var objectProto = Object.prototype;
-	
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-	
-	/**
-	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objectToString = objectProto.toString;
-	
-	/** Built-in value references. */
-	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
-	
-	/**
-	 * The base implementation of `_.property` without support for deep paths.
-	 *
-	 * @private
-	 * @param {string} key The key of the property to get.
-	 * @returns {Function} Returns the new function.
-	 */
-	function baseProperty(key) {
-	  return function(object) {
-	    return object == null ? undefined : object[key];
-	  };
-	}
-	
-	/**
-	 * Gets the "length" property value of `object`.
-	 *
-	 * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
-	 * that affects Safari on at least iOS 8.1-8.3 ARM64.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {*} Returns the "length" value.
-	 */
-	var getLength = baseProperty('length');
-	
-	/**
-	 * Checks if `value` is likely an `arguments` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
-	 * @example
-	 *
-	 * _.isArguments(function() { return arguments; }());
-	 * // => true
-	 *
-	 * _.isArguments([1, 2, 3]);
-	 * // => false
-	 */
-	function isArguments(value) {
-	  // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
-	  return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
-	    (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
-	}
-	
-	/**
-	 * Checks if `value` is array-like. A value is considered array-like if it's
-	 * not a function and has a `value.length` that's an integer greater than or
-	 * equal to `0` and less than or equal to `Number.MAX_SAFE_INTEGER`.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
-	 * @example
-	 *
-	 * _.isArrayLike([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isArrayLike(document.body.children);
-	 * // => true
-	 *
-	 * _.isArrayLike('abc');
-	 * // => true
-	 *
-	 * _.isArrayLike(_.noop);
-	 * // => false
-	 */
-	function isArrayLike(value) {
-	  return value != null &&
-	    !(typeof value == 'function' && isFunction(value)) && isLength(getLength(value));
-	}
-	
-	/**
-	 * This method is like `_.isArrayLike` except that it also checks if `value`
-	 * is an object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an array-like object, else `false`.
-	 * @example
-	 *
-	 * _.isArrayLikeObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isArrayLikeObject(document.body.children);
-	 * // => true
-	 *
-	 * _.isArrayLikeObject('abc');
-	 * // => false
-	 *
-	 * _.isArrayLikeObject(_.noop);
-	 * // => false
-	 */
-	function isArrayLikeObject(value) {
-	  return isObjectLike(value) && isArrayLike(value);
-	}
-	
-	/**
-	 * Checks if `value` is classified as a `Function` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
-	 * @example
-	 *
-	 * _.isFunction(_);
-	 * // => true
-	 *
-	 * _.isFunction(/abc/);
-	 * // => false
-	 */
-	function isFunction(value) {
-	  // The use of `Object#toString` avoids issues with the `typeof` operator
-	  // in Safari 8 which returns 'object' for typed array constructors, and
-	  // PhantomJS 1.9 which returns 'function' for `NodeList` instances.
-	  var tag = isObject(value) ? objectToString.call(value) : '';
-	  return tag == funcTag || tag == genTag;
-	}
-	
-	/**
-	 * Checks if `value` is a valid array-like length.
-	 *
-	 * **Note:** This function is loosely based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
-	 * @example
-	 *
-	 * _.isLength(3);
-	 * // => true
-	 *
-	 * _.isLength(Number.MIN_VALUE);
-	 * // => false
-	 *
-	 * _.isLength(Infinity);
-	 * // => false
-	 *
-	 * _.isLength('3');
-	 * // => false
-	 */
-	function isLength(value) {
-	  return typeof value == 'number' &&
-	    value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-	}
-	
-	/**
-	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
-	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
-	 * @example
-	 *
-	 * _.isObject({});
-	 * // => true
-	 *
-	 * _.isObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObject(_.noop);
-	 * // => true
-	 *
-	 * _.isObject(null);
-	 * // => false
-	 */
-	function isObject(value) {
-	  var type = typeof value;
-	  return !!value && (type == 'object' || type == 'function');
-	}
-	
-	/**
-	 * Checks if `value` is object-like. A value is object-like if it's not `null`
-	 * and has a `typeof` result of "object".
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-	 * @example
-	 *
-	 * _.isObjectLike({});
-	 * // => true
-	 *
-	 * _.isObjectLike([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObjectLike(_.noop);
-	 * // => false
-	 *
-	 * _.isObjectLike(null);
-	 * // => false
-	 */
-	function isObjectLike(value) {
-	  return !!value && typeof value == 'object';
-	}
-	
-	module.exports = isArguments;
-
-
-/***/ },
-/* 257 */
-/***/ function(module, exports) {
-
-	/**
-	 * lodash 3.0.4 (Custom Build) <https://lodash.com/>
-	 * Build: `lodash modern modularize exports="npm" -o ./`
-	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
-	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
-	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-	 * Available under MIT license <https://lodash.com/license>
-	 */
-	
-	/** `Object#toString` result references. */
-	var arrayTag = '[object Array]',
-	    funcTag = '[object Function]';
-	
-	/** Used to detect host constructors (Safari > 5). */
-	var reIsHostCtor = /^\[object .+?Constructor\]$/;
-	
-	/**
-	 * Checks if `value` is object-like.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-	 */
-	function isObjectLike(value) {
-	  return !!value && typeof value == 'object';
-	}
-	
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-	
-	/** Used to resolve the decompiled source of functions. */
-	var fnToString = Function.prototype.toString;
-	
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-	
-	/**
-	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objToString = objectProto.toString;
-	
-	/** Used to detect if a method is native. */
-	var reIsNative = RegExp('^' +
-	  fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
-	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
-	);
-	
-	/* Native method references for those with the same name as other `lodash` methods. */
-	var nativeIsArray = getNative(Array, 'isArray');
-	
-	/**
-	 * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
-	 * of an array-like value.
-	 */
-	var MAX_SAFE_INTEGER = 9007199254740991;
-	
-	/**
-	 * Gets the native function at `key` of `object`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {string} key The key of the method to get.
-	 * @returns {*} Returns the function if it's native, else `undefined`.
-	 */
-	function getNative(object, key) {
-	  var value = object == null ? undefined : object[key];
-	  return isNative(value) ? value : undefined;
-	}
-	
-	/**
-	 * Checks if `value` is a valid array-like length.
-	 *
-	 * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
-	 */
-	function isLength(value) {
-	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-	}
-	
-	/**
-	 * Checks if `value` is classified as an `Array` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
-	 * @example
-	 *
-	 * _.isArray([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isArray(function() { return arguments; }());
-	 * // => false
-	 */
-	var isArray = nativeIsArray || function(value) {
-	  return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
-	};
-	
-	/**
-	 * Checks if `value` is classified as a `Function` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
-	 * @example
-	 *
-	 * _.isFunction(_);
-	 * // => true
-	 *
-	 * _.isFunction(/abc/);
-	 * // => false
-	 */
-	function isFunction(value) {
-	  // The use of `Object#toString` avoids issues with the `typeof` operator
-	  // in older versions of Chrome and Safari which return 'function' for regexes
-	  // and Safari 8 equivalents which return 'object' for typed array constructors.
-	  return isObject(value) && objToString.call(value) == funcTag;
-	}
-	
-	/**
-	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
-	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
-	 * @example
-	 *
-	 * _.isObject({});
-	 * // => true
-	 *
-	 * _.isObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObject(1);
-	 * // => false
-	 */
-	function isObject(value) {
-	  // Avoid a V8 JIT bug in Chrome 19-20.
-	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
-	  var type = typeof value;
-	  return !!value && (type == 'object' || type == 'function');
-	}
-	
-	/**
-	 * Checks if `value` is a native function.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
-	 * @example
-	 *
-	 * _.isNative(Array.prototype.push);
-	 * // => true
-	 *
-	 * _.isNative(_);
-	 * // => false
-	 */
-	function isNative(value) {
-	  if (value == null) {
-	    return false;
-	  }
-	  if (isFunction(value)) {
-	    return reIsNative.test(fnToString.call(value));
-	  }
-	  return isObjectLike(value) && reIsHostCtor.test(value);
-	}
-	
-	module.exports = isArray;
-
-
-/***/ },
-/* 258 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * lodash 3.1.1 (Custom Build) <https://lodash.com/>
-	 * Build: `lodash modern modularize exports="npm" -o ./`
-	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
-	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
-	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-	 * Available under MIT license <https://lodash.com/license>
-	 */
-	var bindCallback = __webpack_require__(259),
-	    isIterateeCall = __webpack_require__(260),
-	    restParam = __webpack_require__(261);
-	
-	/**
-	 * Creates a function that assigns properties of source object(s) to a given
-	 * destination object.
-	 *
-	 * **Note:** This function is used to create `_.assign`, `_.defaults`, and `_.merge`.
-	 *
-	 * @private
-	 * @param {Function} assigner The function to assign values.
-	 * @returns {Function} Returns the new assigner function.
-	 */
-	function createAssigner(assigner) {
-	  return restParam(function(object, sources) {
-	    var index = -1,
-	        length = object == null ? 0 : sources.length,
-	        customizer = length > 2 ? sources[length - 2] : undefined,
-	        guard = length > 2 ? sources[2] : undefined,
-	        thisArg = length > 1 ? sources[length - 1] : undefined;
-	
-	    if (typeof customizer == 'function') {
-	      customizer = bindCallback(customizer, thisArg, 5);
-	      length -= 2;
-	    } else {
-	      customizer = typeof thisArg == 'function' ? thisArg : undefined;
-	      length -= (customizer ? 1 : 0);
-	    }
-	    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
-	      customizer = length < 3 ? undefined : customizer;
-	      length = 1;
-	    }
-	    while (++index < length) {
-	      var source = sources[index];
-	      if (source) {
-	        assigner(object, source, customizer);
-	      }
-	    }
-	    return object;
-	  });
-	}
-	
-	module.exports = createAssigner;
-
-
-/***/ },
-/* 259 */
-/***/ function(module, exports) {
-
-	/**
-	 * lodash 3.0.1 (Custom Build) <https://lodash.com/>
-	 * Build: `lodash modern modularize exports="npm" -o ./`
-	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
-	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
-	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-	 * Available under MIT license <https://lodash.com/license>
-	 */
-	
-	/**
-	 * A specialized version of `baseCallback` which only supports `this` binding
-	 * and specifying the number of arguments to provide to `func`.
-	 *
-	 * @private
-	 * @param {Function} func The function to bind.
-	 * @param {*} thisArg The `this` binding of `func`.
-	 * @param {number} [argCount] The number of arguments to provide to `func`.
-	 * @returns {Function} Returns the callback.
-	 */
-	function bindCallback(func, thisArg, argCount) {
-	  if (typeof func != 'function') {
-	    return identity;
-	  }
-	  if (thisArg === undefined) {
-	    return func;
-	  }
-	  switch (argCount) {
-	    case 1: return function(value) {
-	      return func.call(thisArg, value);
-	    };
-	    case 3: return function(value, index, collection) {
-	      return func.call(thisArg, value, index, collection);
-	    };
-	    case 4: return function(accumulator, value, index, collection) {
-	      return func.call(thisArg, accumulator, value, index, collection);
-	    };
-	    case 5: return function(value, other, key, object, source) {
-	      return func.call(thisArg, value, other, key, object, source);
-	    };
-	  }
-	  return function() {
-	    return func.apply(thisArg, arguments);
-	  };
-	}
-	
-	/**
-	 * This method returns the first argument provided to it.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Utility
-	 * @param {*} value Any value.
-	 * @returns {*} Returns `value`.
-	 * @example
-	 *
-	 * var object = { 'user': 'fred' };
-	 *
-	 * _.identity(object) === object;
-	 * // => true
-	 */
-	function identity(value) {
-	  return value;
-	}
-	
-	module.exports = bindCallback;
-
-
-/***/ },
-/* 260 */
-/***/ function(module, exports) {
-
-	/**
-	 * lodash 3.0.9 (Custom Build) <https://lodash.com/>
-	 * Build: `lodash modern modularize exports="npm" -o ./`
-	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
-	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
-	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-	 * Available under MIT license <https://lodash.com/license>
-	 */
-	
-	/** Used to detect unsigned integer values. */
-	var reIsUint = /^\d+$/;
-	
-	/**
-	 * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
-	 * of an array-like value.
-	 */
-	var MAX_SAFE_INTEGER = 9007199254740991;
-	
-	/**
-	 * The base implementation of `_.property` without support for deep paths.
-	 *
-	 * @private
-	 * @param {string} key The key of the property to get.
-	 * @returns {Function} Returns the new function.
-	 */
-	function baseProperty(key) {
-	  return function(object) {
-	    return object == null ? undefined : object[key];
-	  };
-	}
-	
-	/**
-	 * Gets the "length" property value of `object`.
-	 *
-	 * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
-	 * that affects Safari on at least iOS 8.1-8.3 ARM64.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {*} Returns the "length" value.
-	 */
-	var getLength = baseProperty('length');
-	
-	/**
-	 * Checks if `value` is array-like.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
-	 */
-	function isArrayLike(value) {
-	  return value != null && isLength(getLength(value));
-	}
-	
-	/**
-	 * Checks if `value` is a valid array-like index.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
-	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
-	 */
-	function isIndex(value, length) {
-	  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
-	  length = length == null ? MAX_SAFE_INTEGER : length;
-	  return value > -1 && value % 1 == 0 && value < length;
-	}
-	
-	/**
-	 * Checks if the provided arguments are from an iteratee call.
-	 *
-	 * @private
-	 * @param {*} value The potential iteratee value argument.
-	 * @param {*} index The potential iteratee index or key argument.
-	 * @param {*} object The potential iteratee object argument.
-	 * @returns {boolean} Returns `true` if the arguments are from an iteratee call, else `false`.
-	 */
-	function isIterateeCall(value, index, object) {
-	  if (!isObject(object)) {
-	    return false;
-	  }
-	  var type = typeof index;
-	  if (type == 'number'
-	      ? (isArrayLike(object) && isIndex(index, object.length))
-	      : (type == 'string' && index in object)) {
-	    var other = object[index];
-	    return value === value ? (value === other) : (other !== other);
-	  }
-	  return false;
-	}
-	
-	/**
-	 * Checks if `value` is a valid array-like length.
-	 *
-	 * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
-	 */
-	function isLength(value) {
-	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-	}
-	
-	/**
-	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
-	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
-	 * @example
-	 *
-	 * _.isObject({});
-	 * // => true
-	 *
-	 * _.isObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObject(1);
-	 * // => false
-	 */
-	function isObject(value) {
-	  // Avoid a V8 JIT bug in Chrome 19-20.
-	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
-	  var type = typeof value;
-	  return !!value && (type == 'object' || type == 'function');
-	}
-	
-	module.exports = isIterateeCall;
-
-
-/***/ },
-/* 261 */
-/***/ function(module, exports) {
-
-	/**
-	 * lodash 3.6.1 (Custom Build) <https://lodash.com/>
-	 * Build: `lodash modern modularize exports="npm" -o ./`
-	 * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
-	 * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
-	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
-	 * Available under MIT license <https://lodash.com/license>
-	 */
-	
-	/** Used as the `TypeError` message for "Functions" methods. */
-	var FUNC_ERROR_TEXT = 'Expected a function';
-	
-	/* Native method references for those with the same name as other `lodash` methods. */
-	var nativeMax = Math.max;
-	
-	/**
-	 * Creates a function that invokes `func` with the `this` binding of the
-	 * created function and arguments from `start` and beyond provided as an array.
-	 *
-	 * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters).
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Function
-	 * @param {Function} func The function to apply a rest parameter to.
-	 * @param {number} [start=func.length-1] The start position of the rest parameter.
-	 * @returns {Function} Returns the new function.
-	 * @example
-	 *
-	 * var say = _.restParam(function(what, names) {
-	 *   return what + ' ' + _.initial(names).join(', ') +
-	 *     (_.size(names) > 1 ? ', & ' : '') + _.last(names);
-	 * });
-	 *
-	 * say('hello', 'fred', 'barney', 'pebbles');
-	 * // => 'hello fred, barney, & pebbles'
-	 */
-	function restParam(func, start) {
-	  if (typeof func != 'function') {
-	    throw new TypeError(FUNC_ERROR_TEXT);
-	  }
-	  start = nativeMax(start === undefined ? (func.length - 1) : (+start || 0), 0);
-	  return function() {
-	    var args = arguments,
-	        index = -1,
-	        length = nativeMax(args.length - start, 0),
-	        rest = Array(length);
-	
-	    while (++index < length) {
-	      rest[index] = args[start + index];
-	    }
-	    switch (start) {
-	      case 0: return func.call(this, rest);
-	      case 1: return func.call(this, args[0], rest);
-	      case 2: return func.call(this, args[0], args[1], rest);
-	    }
-	    var otherArgs = Array(start + 1);
-	    index = -1;
-	    while (++index < start) {
-	      otherArgs[index] = args[index];
-	    }
-	    otherArgs[start] = rest;
-	    return func.apply(this, otherArgs);
-	  };
-	}
-	
-	module.exports = restParam;
-
-
-/***/ },
-/* 262 */
-/***/ function(module, exports) {
-
-	var _element = typeof document !== 'undefined' ? document.body : null;
-	
-	function setElement(element) {
-	  if (typeof element === 'string') {
-	    var el = document.querySelectorAll(element);
-	    element = 'length' in el ? el[0] : el;
-	  }
-	  _element = element || _element;
-	}
-	
-	function hide(appElement) {
-	  validateElement(appElement);
-	  (appElement || _element).setAttribute('aria-hidden', 'true');
-	}
-	
-	function show(appElement) {
-	  validateElement(appElement);
-	  (appElement || _element).removeAttribute('aria-hidden');
-	}
-	
-	function toggle(shouldHide, appElement) {
-	  if (shouldHide)
-	    hide(appElement);
-	  else
-	    show(appElement);
-	}
-	
-	function validateElement(appElement) {
-	  if (!appElement && !_element)
-	    throw new Error('react-modal: You must set an element with `Modal.setAppElement(el)` to make this accessible');
-	}
-	
-	function resetForTesting() {
-	  _element = document.body;
-	}
-	
-	exports.toggle = toggle;
-	exports.setElement = setElement;
-	exports.show = show;
-	exports.hide = hide;
-	exports.resetForTesting = resetForTesting;
-
-
-/***/ },
-/* 263 */
-/***/ function(module, exports) {
-
-	module.exports = function(opts) {
-	  return new ElementClass(opts)
-	}
-	
-	function indexOf(arr, prop) {
-	  if (arr.indexOf) return arr.indexOf(prop)
-	  for (var i = 0, len = arr.length; i < len; i++)
-	    if (arr[i] === prop) return i
-	  return -1
-	}
-	
-	function ElementClass(opts) {
-	  if (!(this instanceof ElementClass)) return new ElementClass(opts)
-	  var self = this
-	  if (!opts) opts = {}
-	
-	  // similar doing instanceof HTMLElement but works in IE8
-	  if (opts.nodeType) opts = {el: opts}
-	
-	  this.opts = opts
-	  this.el = opts.el || document.body
-	  if (typeof this.el !== 'object') this.el = document.querySelector(this.el)
-	}
-	
-	ElementClass.prototype.add = function(className) {
-	  var el = this.el
-	  if (!el) return
-	  if (el.className === "") return el.className = className
-	  var classes = el.className.split(' ')
-	  if (indexOf(classes, className) > -1) return classes
-	  classes.push(className)
-	  el.className = classes.join(' ')
-	  return classes
-	}
-	
-	ElementClass.prototype.remove = function(className) {
-	  var el = this.el
-	  if (!el) return
-	  if (el.className === "") return
-	  var classes = el.className.split(' ')
-	  var idx = indexOf(classes, className)
-	  if (idx > -1) classes.splice(idx, 1)
-	  el.className = classes.join(' ')
-	  return classes
-	}
-	
-	ElementClass.prototype.has = function(className) {
-	  var el = this.el
-	  if (!el) return
-	  var classes = el.className.split(' ')
-	  return indexOf(classes, className) > -1
-	}
-	
-	ElementClass.prototype.toggle = function(className) {
-	  var el = this.el
-	  if (!el) return
-	  if (this.has(className)) this.remove(className)
-	  else this.add(className)
-	}
-
-
-/***/ },
-/* 264 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var LinkedStateMixin = __webpack_require__(265);
-	// var ReactRouter = require('react-router');
-	// var History = require('react-router').History;
-	var DropDown = __webpack_require__(269);
-	
-	var BookSearch = React.createClass({
-	  displayName: 'BookSearch',
-	
-	  // mixins: [LinkedStateMixin],
-	
-	  getInitialState: function getInitialState() {
-	    this.styleSheetShow = document.createElement('style');
-	    this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
-	    // this.styleSheetHide = document.createElement('style');
-	    // this.styleSheetHide.innerHTML = ".pac-container {display: none;}";
-	
-	    return {
-	      book: "",
-	      placeholder: "What book would you like to Explore?",
-	      showAutocomplete: false,
-	      showSpinner: false
-	    };
-	  },
-	
-	  searchBarMoveUp: function searchBarMoveUp() {
-	    // debugger;
-	    // this.refs.searchbar.style{{bottom: "10%"}}
-	    $("#landing-search-bar").css("bottom", "20%");
-	    setTimeout(function () {
-	      this.setState({
-	        showAutocomplete: true
-	      });
-	      // debugger;
-	    }.bind(this), 1800);
-	    // this.hideAutocomplete();
-	    // this.tempToken = setTimeout(this.showAutocomplete, 2000);
-	  },
-	
-	  // showAutocomplete: function() {
-	  //   // document.body.appendChild(this.styleSheetShow);
-	  //   document.body.appendChild(this.styleSheetShow);
-	  // },
-	  //
-	  // hideAutocomplete: function() {
-	  //   // clearTimeout(this.tempToken);
-	  //   // document.body.appendChild(this.styleSheetHide);
-	  // },
-	
-	  searchBarMoveBack: function searchBarMoveBack() {
-	    $("#landing-search-bar").css("bottom", "0%");
-	    // this.hideAutocomplete();
-	
-	    // setTimeout(function(){
-	    this.setState({
-	      showAutocomplete: false
-	    });
-	    //     // debugger;
-	    // }.bind(this), 500);
-	  },
-	
-	  handleSearch: function handleSearch(e) {
-	    if (arguments.length > 0) {
-	      e.preventDefault();
-	    }
-	
-	    // may use History mixins;
-	    // this.history.pushState(null, 'search/' + this.state.loc)
-	    // debugger;
-	
-	    if (this.state.loc === "") {
-	      this.setState({
-	        placeholder: "Please choose a book"
-	      });
-	    } else {
-	      setTimeout(this.redirectToSearch, 2000);
-	      this.setState({
-	        showSpinner: true
-	      });
-	    }
-	  },
-	
-	  redirectToSearch: function redirectToSearch() {
-	    // var loc = this.state.loc.replace(/\W+/g, "-");
-	    // console.log("pushStatefromsearch");
-	    // this.props.history.pushState(null, 'search/' + loc);
-	  },
-	
-	  handleLocChange: function handleLocChange(e) {
-	    // console.log(this.refs.locinput.value);
-	    this.setState({
-	      book: this.refs.locinput.value
-	    });
-	    if (this.refs.locinput.value > 0) {
-	      APIUtil.fetchBookResults(this.refs.locinput.value);
-	    }
-	    // autocomplete: needs to add a delay using setTimeout and clearTimeout to cancel if the user changes before timeout expires
-	  },
-	
-	  render: function render() {
-	    var org1 = React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'form',
-	        { className: 'form-horizontal', role: 'form', onSubmit: this.handleSearch },
-	        React.createElement(
-	          'div',
-	          { className: 'input-group input-group-lg' },
-	          React.createElement('input', {
-	            type: 'text',
-	            className: 'form-control',
-	
-	            placeholder: this.state.placeholder }),
-	          React.createElement(
-	            'span',
-	            { className: 'input-group-addon' },
-	            '@'
-	          )
-	        ),
-	        React.createElement(
-	          'button',
-	          null,
-	          'Search'
-	        )
-	      )
-	    );
-	
-	    var design1 = React.createElement(
-	      'div',
-	      { className: 'col-xs-12', id: 'landing-search-bar' },
-	      React.createElement(
-	        'div',
-	        { className: 'row' },
-	        React.createElement(
-	          'div',
-	          { className: 'col-xs-8 col-xs-offset-2' },
-	          React.createElement(
-	            'form',
-	            { role: 'form', onSubmit: this.handleSearch },
-	            React.createElement(
-	              'div',
-	              { className: 'input-group' },
-	              React.createElement('input', {
-	                type: 'text',
-	                className: 'form-control',
-	
-	                placeholder: this.state.placeholder }),
-	              React.createElement(
-	                'span',
-	                { className: 'input-group-button' },
-	                React.createElement(
-	                  'button',
-	                  { className: 'btn btn-default', type: 'button' },
-	                  'Search'
-	                )
-	              )
-	            )
-	          )
-	        )
-	      )
-	    );
-	    var buttonSubmit = React.createElement(
-	      'span',
-	      { className: 'input-group-btn' },
-	      React.createElement(
-	        'button',
-	        { className: 'btn btn-default', type: 'button', onClick: this.handleSearch },
-	        'Search'
-	      )
-	    );
-	
-	    var buttonProgress = React.createElement(
-	      'span',
-	      { className: 'input-group-btn' },
-	      React.createElement(
-	        'button',
-	        { className: 'btn btn-default', disabled: true },
-	        React.createElement(
-	          'div',
-	          { className: 'three-quarters-loader' },
-	          'Loading…'
-	        )
-	      )
-	    );
-	    var design2 = React.createElement(
-	      'div',
-	      { className: 'col-xs-12' },
-	      React.createElement(
-	        'div',
-	        { className: 'row' },
-	        React.createElement(
-	          'div',
-	          { className: 'col-xs-offset-2 col-xs-8' },
-	          React.createElement(
-	            'div',
-	            { className: 'col-xs-offset-2 col-xs-8' },
-	            React.createElement(
-	              'form',
-	              { className: 'input-group', role: 'form', onSubmit: this.handleSearch },
-	              React.createElement('input', {
-	                type: 'text',
-	                className: 'form-control center',
-	                id: 'landing-search-input',
-	                onChange: this.handleLocChange,
-	                placeholder: this.state.placeholder,
-	                ref: 'locinput',
-	                onFocus: this.searchBarMoveUp,
-	                onBlur: this.searchBarMoveBack }),
-	              this.state.showSpinner ? buttonProgress : buttonSubmit
-	            )
-	          )
-	        )
-	      )
-	    );
-	
-	    var showAutocomplete = this.state.loc !== "" && this.state.showAutocomplete;
-	    // console.log("toggle autocomplete: " + showAutocomplete)
-	    // var showAutocomplete = (this.state.loc !== "");
-	    return React.createElement(
-	      'div',
-	      { className: 'col-xs-12', id: 'landing-search-bar', ref: 'searchbar' },
-	      design2,
-	      showAutocomplete ? React.createElement(DropDown, {
-	        locinput: this.refs.locinput,
-	        handleSearch: this.handleSearch,
-	        handleLocChange: this.handleLocChange }) : ""
-	    );
-	  }
-	});
-	
-	module.exports = BookSearch;
-
-/***/ },
 /* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(266);
-
-/***/ },
-/* 266 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule LinkedStateMixin
-	 * @typechecks static-only
-	 */
-	
 	'use strict';
 	
-	var ReactLink = __webpack_require__(267);
-	var ReactStateSetters = __webpack_require__(268);
-	
-	/**
-	 * A simple mixin around ReactLink.forState().
-	 */
-	var LinkedStateMixin = {
-	  /**
-	   * Create a ReactLink that's linked to part of this component's state. The
-	   * ReactLink will have the current value of this.state[key] and will call
-	   * setState() when a change is requested.
-	   *
-	   * @param {string} key state key to update. Note: you may want to use keyOf()
-	   * if you're using Google Closure Compiler advanced mode.
-	   * @return {ReactLink} ReactLink instance linking to the state.
-	   */
-	  linkState: function (key) {
-	    return new ReactLink(this.state[key], ReactStateSetters.createStateKeySetter(this, key));
-	  }
-	};
-	
-	module.exports = LinkedStateMixin;
-
-/***/ },
-/* 267 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactLink
-	 * @typechecks static-only
-	 */
-	
-	'use strict';
-	
-	/**
-	 * ReactLink encapsulates a common pattern in which a component wants to modify
-	 * a prop received from its parent. ReactLink allows the parent to pass down a
-	 * value coupled with a callback that, when invoked, expresses an intent to
-	 * modify that value. For example:
-	 *
-	 * React.createClass({
-	 *   getInitialState: function() {
-	 *     return {value: ''};
-	 *   },
-	 *   render: function() {
-	 *     var valueLink = new ReactLink(this.state.value, this._handleValueChange);
-	 *     return <input valueLink={valueLink} />;
-	 *   },
-	 *   _handleValueChange: function(newValue) {
-	 *     this.setState({value: newValue});
-	 *   }
-	 * });
-	 *
-	 * We have provided some sugary mixins to make the creation and
-	 * consumption of ReactLink easier; see LinkedValueUtils and LinkedStateMixin.
-	 */
-	
-	var React = __webpack_require__(2);
-	
-	/**
-	 * @param {*} value current value of the link
-	 * @param {function} requestChange callback to request a change
-	 */
-	function ReactLink(value, requestChange) {
-	  this.value = value;
-	  this.requestChange = requestChange;
-	}
-	
-	/**
-	 * Creates a PropType that enforces the ReactLink API and optionally checks the
-	 * type of the value being passed inside the link. Example:
-	 *
-	 * MyComponent.propTypes = {
-	 *   tabIndexLink: ReactLink.PropTypes.link(React.PropTypes.number)
-	 * }
-	 */
-	function createLinkTypeChecker(linkType) {
-	  var shapes = {
-	    value: typeof linkType === 'undefined' ? React.PropTypes.any.isRequired : linkType.isRequired,
-	    requestChange: React.PropTypes.func.isRequired
-	  };
-	  return React.PropTypes.shape(shapes);
-	}
-	
-	ReactLink.PropTypes = {
-	  link: createLinkTypeChecker
-	};
-	
-	module.exports = ReactLink;
-
-/***/ },
-/* 268 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactStateSetters
-	 */
-	
-	'use strict';
-	
-	var ReactStateSetters = {
-	  /**
-	   * Returns a function that calls the provided function, and uses the result
-	   * of that to set the component's state.
-	   *
-	   * @param {ReactCompositeComponent} component
-	   * @param {function} funcReturningState Returned callback uses this to
-	   *                                      determine how to update state.
-	   * @return {function} callback that when invoked uses funcReturningState to
-	   *                    determined the object literal to setState.
-	   */
-	  createStateSetter: function (component, funcReturningState) {
-	    return function (a, b, c, d, e, f) {
-	      var partialState = funcReturningState.call(component, a, b, c, d, e, f);
-	      if (partialState) {
-	        component.setState(partialState);
-	      }
-	    };
-	  },
-	
-	  /**
-	   * Returns a single-argument callback that can be used to update a single
-	   * key in the component's state.
-	   *
-	   * Note: this is memoized function, which makes it inexpensive to call.
-	   *
-	   * @param {ReactCompositeComponent} component
-	   * @param {string} key The key in the state that you should update.
-	   * @return {function} callback of 1 argument which calls setState() with
-	   *                    the provided keyName and callback argument.
-	   */
-	  createStateKeySetter: function (component, key) {
-	    // Memoize the setters.
-	    var cache = component.__keySetters || (component.__keySetters = {});
-	    return cache[key] || (cache[key] = createStateKeySetter(component, key));
-	  }
-	};
-	
-	function createStateKeySetter(component, key) {
-	  // Partial state is allocated outside of the function closure so it can be
-	  // reused with every call, avoiding memory allocation when this function
-	  // is called.
-	  var partialState = {};
-	  return function stateKeySetter(value) {
-	    partialState[key] = value;
-	    component.setState(partialState);
-	  };
-	}
-	
-	ReactStateSetters.Mixin = {
-	  /**
-	   * Returns a function that calls the provided function, and uses the result
-	   * of that to set the component's state.
-	   *
-	   * For example, these statements are equivalent:
-	   *
-	   *   this.setState({x: 1});
-	   *   this.createStateSetter(function(xValue) {
-	   *     return {x: xValue};
-	   *   })(1);
-	   *
-	   * @param {function} funcReturningState Returned callback uses this to
-	   *                                      determine how to update state.
-	   * @return {function} callback that when invoked uses funcReturningState to
-	   *                    determined the object literal to setState.
-	   */
-	  createStateSetter: function (funcReturningState) {
-	    return ReactStateSetters.createStateSetter(this, funcReturningState);
-	  },
-	
-	  /**
-	   * Returns a single-argument callback that can be used to update a single
-	   * key in the component's state.
-	   *
-	   * For example, these statements are equivalent:
-	   *
-	   *   this.setState({x: 1});
-	   *   this.createStateKeySetter('x')(1);
-	   *
-	   * Note: this is memoized function, which makes it inexpensive to call.
-	   *
-	   * @param {string} key The key in the state that you should update.
-	   * @return {function} callback of 1 argument which calls setState() with
-	   *                    the provided keyName and callback argument.
-	   */
-	  createStateKeySetter: function (key) {
-	    return ReactStateSetters.createStateKeySetter(this, key);
-	  }
-	};
-	
-	module.exports = ReactStateSetters;
-
-/***/ },
-/* 269 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(158);
-	
-	var DropDown = React.createClass({
-	  displayName: 'DropDown',
-	
-	
-	  _fillInAddress: function _fillInAddress() {
-	    // debugger;
-	    this.props.handleLocChange();
-	    this.props.handleSearch();
-	  },
-	
-	  componentWillUnmount: function componentWillUnmount() {
-	    document.getElementById('html-body').removeChild(document.getElementsByClassName("pac-container")[0]);
-	    // ReactDOM.unmountComponentAtNode(document.getElementsByClassName("pac-container")[0]);
-	  },
-	
-	  componentDidMount: function componentDidMount() {
-	    // using Google Maps Places Autocomplete client version
-	    this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
-	    this.autofillOptions = {
-	      types: ['geocode']
-	    };
-	    // this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
-	    // // debugger;
-	    // this.autofill.addListener('place_changed', this._fillInAddress);
-	  },
-	
-	  // componentWillReceiveProps: function() {
-	  //   console.log("new autofill")
-	  //   this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
-	  //   this.autofillOptions = {
-	  //     types: ['geocode']
-	  //   };
-	  //   this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
-	  //   this.autofill.addListener('place_changed', this._fillInAddress);
-	  // },
-	
-	  render: function render() {
-	    return React.createElement('div', null);
-	  }
-	});
-	
-	module.exports = DropDown;
-
-/***/ },
-/* 270 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var Notebook = __webpack_require__(271);
-	var BS = __webpack_require__(280);
-	
-	var Desk = React.createClass({
-	  displayName: 'Desk',
-	
-	
-	  render: function render() {
-	
-	    return React.createElement(
-	      'section',
-	      { className: 'Desk', id: 'Desk' },
-	      React.createElement(Notebook, null),
-	      React.createElement(BS, null)
-	    );
-	  }
-	});
-	module.exports = Desk;
-
-/***/ },
-/* 271 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookPage = __webpack_require__(272);
-	var BookSearchStore = __webpack_require__(208);
-	var Tabs = __webpack_require__(274);
-	var Note = __webpack_require__(276);
-	var Reviews = __webpack_require__(279);
-	
-	var Notebook = React.createClass({
-	  displayName: 'Notebook',
-	
-	  getInitialState: function getInitialState() {
-	    this.tabs = ["Book Page", "Notes"];
-	    return { currentBook: BookSearchStore.currentBook(), tab: "Book Page", tabs: this.tabs };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.storeIndex = BookSearchStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.storeIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    var bookTemp = BookSearchStore.currentBook();
-	    if (bookTemp.id === undefined) {
-	      this.tabs = [];
-	    } else {
-	      this.tabs = ["Book Page", "Notes"];
-	    }
-	    this.setState({ currentBook: BookSearchStore.currentBook(), tabs: this.tabs });
-	  },
-	  changeTab: function changeTab(tab) {
-	    this.setState({ tab: tab });
-	  },
-	  changeTabOptions: function changeTabOptions(addNotes) {
-	    if (addNotes) {
-	      this.tabs = ["Book Page", "Notes"];
-	    } else {
-	      this.tabs = [];
-	    }
-	    this.setState({ tabs: this.tabs });
-	  },
-	
-	  render: function render() {
-	    if (this.state.currentBook) {
-	      var customStyle = {
-	        backgroundImage: 'url(' + this.state.currentBook.image + ')'
-	      };
-	      var currentTab;
-	      if (this.state.tab === "Book Page") {
-	        currentTab = React.createElement(BookPage, { currentBook: this.state.currentBook, changeTabs: this.changeTabOptions });
-	      } else if (this.state.tab === "Notes") {
-	        currentTab = React.createElement(Note, { currentBook: this.state.currentBook });
-	      }
-	
-	      return React.createElement(
-	        'section',
-	        { className: 'Notebook', id: 'page-flip' },
-	        React.createElement(
-	          'div',
-	          { id: 'page-area' },
-	          currentTab
-	        ),
-	        React.createElement(Tabs, { clickFunction: this.changeTab, tabOptions: this.tabs })
-	      );
-	    } else {
-	      return React.createElement(
-	        'div',
-	        null,
-	        'currently loading'
-	      );
-	    }
-	  }
-	
-	});
-	
-	module.exports = Notebook;
-
-/***/ },
-/* 272 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var Modal = __webpack_require__(244);
-	var LinkedStateMixin = __webpack_require__(265);
-	var RadioGroup = __webpack_require__(241);
-	var APIUtil = __webpack_require__(231);
-	var ApiActions = __webpack_require__(232);
-	var BookSearchStore = __webpack_require__(208);
-	var UserStore = __webpack_require__(273);
-	
-	var customStyles = {
-	  overlay: {
-	    position: 'fixed',
-	    top: 0,
-	    left: 0,
-	    right: 0,
-	    bottom: 0,
-	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
-	    zIndex: 20,
-	    backgroundImage: 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
-	    backgroundSize: 'cover'
-	  },
-	  content: {
-	    top: '50%',
-	    left: '50%',
-	    right: 'auto',
-	    bottom: 'auto',
-	    marginRight: '-50%',
-	    transform: 'translate(-50%, -50%)',
-	    width: '500px',
-	    backgroundImage: 'url(\'https://images.unsplash.com/photo-1457298483369-0a95d2b17fcd?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=f4fd0823787f85fcb27fd05027766a41\')',
-	    backgroundSize: 'cover',
-	    borderRadius: '10px'
-	  }
-	};
-	
-	var BookPage = React.createClass({
-	  displayName: 'BookPage',
-	
-	  mixins: [LinkedStateMixin],
-	  getInitialState: function getInitialState() {
-	    var book = BookSearchStore.currentBook();
-	    var inDatabase = true;
-	    if (book.id === undefined) {
-	      inDatabase = false;
-	    }
-	    return { modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
-	      ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
-	      description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
-	    if (!this.state.onShelf) {
-	      this.props.changeTabs(false);
-	    }
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.bookStoreIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    var book = BookSearchStore.currentBook();
-	    this.setState({ modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
-	      ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
-	      description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: true
-	    });
-	  },
-	
-	  openModal: function openModal() {
-	
-	    this.setState({ modalIsOpen: true });
-	  },
-	
-	  closeModal: function closeModal() {
-	    this.setState({ modalIsOpen: false });
-	  },
-	
-	  onClick: function onClick(event) {
-	    event.preventDefault();
-	    alert("congrats!");
-	  },
-	  markAsRead: function markAsRead(event) {
-	    event.preventDefault();
-	
-	    APIUtil.updateBook(this.props.currentBook.id, { read: "read" });
-	    this.setState({ selectedValue: "read" });
-	  },
-	  markAsUnread: function markAsUnread(event) {
-	    event.preventDefault();
-	
-	    APIUtil.updateBook(this.props.currentBook.id, { read: "toRead" });
-	    this.setState({ selectedValue: "toRead" });
-	  },
-	  editClick: function editClick(event) {
-	    event.preventDefault();
-	
-	    this.openModal();
-	  },
-	  deleteBook: function deleteBook(event) {
-	    event.preventDefault();
-	
-	    APIUtil.deleteBook(this.state.currentBook.id);
-	    this.props.changeTabs(false);
-	    this.setState({ onShelf: false });
-	  },
-	  addToShelf: function addToShelf(event) {
-	    event.preventDefault();
-	
-	    if (UserStore.loggedIn()) {
-	      APIUtil.createBook(this.state.currentBook);
-	      this.props.changeTabs(true);
-	      this.setState({ onShelf: true });
-	    } else {
-	      ApiActions.demandLogin();
-	    }
-	  },
-	  updateBook: function updateBook(event) {
-	    event.preventDefault();
-	    var pages, chapters, year;
-	
-	    // if(this.state.pages !== null && this.state.pages.length > 0){
-	    // }
-	    pages = parseInt(this.state.pages);
-	
-	    if (this.state.chapters !== null && this.statechapters !== undefined && this.state.chapters.length > 0) {
-	      chapters = parseInt(this.state.chapters);
-	    }
-	    // if(this.state.year !== null && this.state.year.length > 0){
-	    //   year = parseInt(this.state.year);
-	    // }
-	    year = parseInt(this.state.year);
-	    var oldBook = this.props.currentBook;
-	
-	    var newBook = {
-	
-	      publishing: this.state.publisher,
-	      genre: this.state.genre,
-	      year: year,
-	      read: this.state.selectedValue,
-	      ISBN13: this.state.ISBN13,
-	      ISBN10: this.state.ISBN10,
-	      author: this.state.author,
-	      image: this.state.image,
-	      language: this.state.language,
-	      pages: pages,
-	      chapters: chapters,
-	      description: this.state.description
-	
-	    };
-	
-	    APIUtil.updateBook(this.props.currentBook.id, newBook);
-	    this.closeModal();
-	    newBook.title = this.props.currentBook.title;
-	    newBook.id = this.props.currentBook.id;
-	    ApiActions.updateCurrentBook(newBook);
-	  },
-	  handleChange: function handleChange(value) {
-	    this.setState({ selectedValue: value });
-	  },
-	  render: function render() {
-	    var book = this.state.currentBook;
-	    // var bookStyle = { backgroundImage: 'url('+ book.image + ')'};
-	    var pages, language, publisher;
-	
-	    if (book.pages === null) {
-	      pages = "N/A";
-	    } else {
-	      pages = book.pages;
-	    }
-	    if (book.language === null) {
-	      language = "N/A";
-	    } else {
-	      language = book.language;
-	    }
-	    if (book.publishing === null) {
-	      publisher = "N/A";
-	    } else {
-	      publisher = book.publishing;
-	    }
-	    var deleteButton, addButton, markButton, editButton;
-	    if (this.state.onShelf) {
-	      deleteButton = false;
-	      addButton = true;
-	      markButton = false;
-	      editButton = true;
-	    } else {
-	      deleteButton = true;
-	      addButton = false;
-	      markButton = true;
-	      editButton = true;
-	    }
-	    var markFunction, markText;
-	
-	    if (this.state.selectedValue === "read") {
-	      markFunction = this.markAsUnread;
-	      markText = "Mark as Unread";
-	    } else {
-	      markFunction = this.markAsRead;
-	      markText = "Mark as Read";
-	    }
-	
-	    return React.createElement(
-	      'section',
-	      { className: 'BookPage', id: 'BookPageArea' },
-	      React.createElement(
-	        'div',
-	        { className: 'BookTitleArea' },
-	        React.createElement(
-	          'div',
-	          { className: 'BookTitle' },
-	          book.title
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'Author' },
-	          'by, ',
-	          book.author
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'BookPage', id: 'BookDescriptionBox' },
-	        React.createElement('img', { src: book.image, id: 'CoverPhoto' }),
-	        React.createElement(
-	          'p',
-	          { id: 'BookDescription' },
-	          book.description
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'BookPage', id: 'BookFooter' },
-	        React.createElement(
-	          'div',
-	          { className: 'BookFooter', id: 'pages' },
-	          'pages: ',
-	          pages
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'BookFooter', id: 'language' },
-	          'language: ',
-	          language
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'BookFooter', id: 'publisher' },
-	          'publisher: ',
-	          publisher
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'button-area' },
-	        React.createElement(
-	          'button',
-	          { className: 'book-button-area', id: 'edit-book-button', onClick: this.editClick, disabled: deleteButton },
-	          'Edit Book'
-	        ),
-	        React.createElement(
-	          'button',
-	          { className: 'book-button-area', id: 'mark-as-read', onClick: markFunction, disabled: deleteButton },
-	          markText
-	        ),
-	        React.createElement(
-	          'button',
-	          { className: 'book-button-area', id: 'delete-book', onClick: this.deleteBook, disabled: deleteButton },
-	          'Remove From Shelf'
-	        ),
-	        React.createElement(
-	          'button',
-	          { className: 'book-button-area', id: 'add-to-shelf', onClick: this.addToShelf, disabled: addButton },
-	          'Add To Shelf'
-	        )
-	      ),
-	      React.createElement(
-	        Modal,
-	        {
-	          isOpen: this.state.modalIsOpen,
-	          onRequestClose: this.closeModal,
-	          style: customStyles },
-	        React.createElement(
-	          'div',
-	          { className: 'book-edit-title' },
-	          ' ',
-	          this.state.currentBook.title
-	        ),
-	        React.createElement(
-	          'form',
-	          { className: 'book-edit-form' },
-	          React.createElement('textarea', { className: 'book-edit-description', rows: '15', cols: '60', name: 'comment',
-	            placeholder: 'Enter note here...', valueLink: this.linkState('description') }),
-	          React.createElement(
-	            'div',
-	            { className: 'book-edit-sections', id: 'book-edit-basic' },
-	            React.createElement(
-	              'label',
-	              { className: 'book-edit label' },
-	              'genre: '
-	            ),
-	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('genre') })
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'book-edit-sections' },
-	            React.createElement(
-	              'label',
-	              { className: 'book-edit label' },
-	              'publisher: '
-	            ),
-	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('publisher') })
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'book-edit-sections' },
-	            React.createElement(
-	              'label',
-	              { className: 'book-edit label' },
-	              'year published: '
-	            ),
-	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('year') })
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'book-edit-sections' },
-	            React.createElement(
-	              'label',
-	              { className: 'book-edit label' },
-	              'author: '
-	            ),
-	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('author') })
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'book-edit-sections' },
-	            React.createElement(
-	              'label',
-	              { className: 'book-edit label' },
-	              'language: '
-	            ),
-	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('language') })
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'book-edit-sections', id: 'book-edit-image' },
-	            React.createElement(
-	              'label',
-	              { className: 'book-edit label' },
-	              'image url: '
-	            ),
-	            React.createElement('input', { className: 'book-edit book-edit-input', id: 'book-edit-image', valueLink: this.linkState('image') })
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'book-edit-sections', id: 'book-edit-isbn' },
-	            React.createElement(
-	              'label',
-	              { className: 'book-edit label' },
-	              'ISBN13: '
-	            ),
-	            React.createElement('input', { className: 'book-edit ISBN13-input', valueLink: this.linkState('ISBN13') }),
-	            React.createElement(
-	              'label',
-	              { className: 'book-edit label' },
-	              'ISBN10: '
-	            ),
-	            React.createElement('input', { className: 'book-edit ISBN10-input', valueLink: this.linkState('ISBN10') })
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'book-edit-sections', id: 'book-edit-length' },
-	            React.createElement(
-	              'label',
-	              { className: 'book-edit label' },
-	              '# of pages: '
-	            ),
-	            React.createElement('input', { className: 'book-edit pages-input', valueLink: this.linkState('pages') }),
-	            React.createElement(
-	              'label',
-	              { className: 'book-edit label' },
-	              'chapters: '
-	            ),
-	            React.createElement('input', { className: 'book-edit publisher-input', valueLink: this.linkState('chapters') })
-	          ),
-	          React.createElement(
-	            RadioGroup,
-	            {
-	              name: 'read',
-	              selectedValue: this.state.selectedValue,
-	              onChange: this.handleChange },
-	            function (Radio) {
-	              return React.createElement(
-	                'div',
-	                null,
-	                React.createElement(
-	                  'label',
-	                  null,
-	                  React.createElement(Radio, { value: "read" }),
-	                  'Read'
-	                ),
-	                React.createElement(
-	                  'label',
-	                  null,
-	                  React.createElement(Radio, { value: "toRead" }),
-	                  'To Read'
-	                )
-	              );
-	            }
-	          ),
-	          React.createElement(
-	            'button',
-	            { className: 'book-update-button', onClick: this.updateBook },
-	            'Update'
-	          )
-	        ),
-	        React.createElement(
-	          'button',
-	          { onClick: this.closeModal },
-	          'cancel'
-	        )
-	      )
-	    );
-	  }
-	});
-	module.exports = BookPage;
-
-/***/ },
-/* 273 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var Store = __webpack_require__(209).Store;
+	var Store = __webpack_require__(248).Store;
 	var _users = [];
 	var needsToLogin = false;
-	var UserConstants = __webpack_require__(235);
-	var AppDispatcher = __webpack_require__(228);
+	var UserConstants = __webpack_require__(245);
+	var AppDispatcher = __webpack_require__(238);
 	var UserStore = new Store(AppDispatcher);
 	
 	var resetUser = function resetUser(user) {
@@ -34912,13 +34210,13 @@
 	module.exports = UserStore;
 
 /***/ },
-/* 274 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var Tab = __webpack_require__(275);
+	var Tab = __webpack_require__(267);
 	
 	var Tabs = React.createClass({
 	  displayName: 'Tabs',
@@ -34945,7 +34243,7 @@
 	module.exports = Tabs;
 
 /***/ },
-/* 275 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -34975,18 +34273,18 @@
 	module.exports = Tab;
 
 /***/ },
-/* 276 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var LinkedStateMixin = __webpack_require__(265);
-	var RadioGroup = __webpack_require__(241);
-	var APIUtil = __webpack_require__(231);
-	var NoteStore = __webpack_require__(277);
-	var NoteItem = __webpack_require__(278);
-	var Modal = __webpack_require__(244);
+	var LinkedStateMixin = __webpack_require__(230);
+	var RadioGroup = __webpack_require__(234);
+	var APIUtil = __webpack_require__(236);
+	var NoteStore = __webpack_require__(269);
+	var NoteItem = __webpack_require__(270);
+	var Modal = __webpack_require__(210);
 	
 	var customStyles = {
 	  overlay: {
@@ -35164,17 +34462,17 @@
 	module.exports = Note;
 
 /***/ },
-/* 277 */
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Store = __webpack_require__(209).Store;
+	var Store = __webpack_require__(248).Store;
 	var _notes = [];
-	var NoteConstants = __webpack_require__(234);
-	var AppDispatcher = __webpack_require__(228);
+	var NoteConstants = __webpack_require__(244);
+	var AppDispatcher = __webpack_require__(238);
 	var NoteStore = new Store(AppDispatcher);
-	var APIUtil = __webpack_require__(231);
+	var APIUtil = __webpack_require__(236);
 	
 	var resetNotes = function resetNotes(notes) {
 	
@@ -35216,14 +34514,14 @@
 	module.exports = NoteStore;
 
 /***/ },
-/* 278 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var PropTypes = React.PropTypes;
-	var APIUtil = __webpack_require__(231);
+	var APIUtil = __webpack_require__(236);
 	
 	var NoteItem = React.createClass({
 	  displayName: 'NoteItem',
@@ -35277,7 +34575,7 @@
 	module.exports = NoteItem;
 
 /***/ },
-/* 279 */
+/* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35297,14 +34595,14 @@
 	module.exports = Reviews;
 
 /***/ },
-/* 280 */
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var BookShelfStore = __webpack_require__(281);
-	var Shelf = __webpack_require__(282);
+	var BookShelfStore = __webpack_require__(273);
+	var Shelf = __webpack_require__(274);
 	
 	var History = __webpack_require__(159).History;
 	
@@ -35317,9 +34615,9 @@
 	    var reading = BookShelfStore.reading();
 	    var toRead = BookShelfStore.toRead();
 	    var allToRead = reading.concat(toRead);
-	    this.spinClass = 'fa fa-bars';
+	    this.spinClass = 'fa fa-times';
 	
-	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: false };
+	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: true };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
@@ -35364,7 +34662,6 @@
 	        React.createElement(
 	          'div',
 	          { className: 'FullBookShelf' },
-	          React.createElement('div', { className: 'bookshelf-spacer' }),
 	          React.createElement(
 	            'label',
 	            { className: 'ShelfLabel', id: 'ToRead' },
@@ -35378,23 +34675,6 @@
 	          ),
 	          React.createElement(Shelf, { books: this.state.readBooks, identifier: 'BooksRead' })
 	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'site-wrapper' },
-	        React.createElement(
-	          'div',
-	          { className: 'header' },
-	          React.createElement(
-	            'div',
-	            { className: 'menu-trigger', onClick: this.booksClick },
-	            React.createElement(
-	              'i',
-	              { className: this.spinClass },
-	              ' '
-	            )
-	          )
-	        )
 	      )
 	    );
 	  }
@@ -35402,15 +34682,15 @@
 	module.exports = BS;
 
 /***/ },
-/* 281 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Store = __webpack_require__(209).Store;
+	var Store = __webpack_require__(248).Store;
 	var _books = { read: [], toRead: [], reading: [] };
-	var BookShelfConstants = __webpack_require__(233);
-	var AppDispatcher = __webpack_require__(228);
+	var BookShelfConstants = __webpack_require__(243);
+	var AppDispatcher = __webpack_require__(238);
 	var BookShelfStore = new Store(AppDispatcher);
 	
 	var resetBooks = function resetBooks(results) {
@@ -35471,13 +34751,13 @@
 	module.exports = BookShelfStore;
 
 /***/ },
-/* 282 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var ShelfItem = __webpack_require__(283);
+	var ShelfItem = __webpack_require__(275);
 	
 	var Shelf = React.createClass({
 	  displayName: 'Shelf',
@@ -35510,15 +34790,15 @@
 	module.exports = Shelf;
 
 /***/ },
-/* 283 */
+/* 275 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(208);
-	var ApiActions = __webpack_require__(232);
-	var APIUtil = __webpack_require__(231);
+	var BookSearchStore = __webpack_require__(247);
+	var ApiActions = __webpack_require__(237);
+	var APIUtil = __webpack_require__(236);
 	
 	var ShelfItem = React.createClass({
 	  displayName: 'ShelfItem',
@@ -35530,10 +34810,20 @@
 	    ApiActions.updateCurrentBook(this.props.book);
 	    APIUtil.fetchNotes(this.props.book.id);
 	  },
+	  generateRandomHex: function generateRandomHex() {
+	    var possible = "0123456789abcdef".split("");
+	    var hex = "#";
+	    for (var i = 0; i < 6; i++) {
+	      hex += possible[Math.floor(Math.random() * 16)];
+	    }
+	    return hex;
+	  },
 	  render: function render() {
+	    var shelfStyle = { backgroundColor: this.generateRandomHex() };
+	
 	    return React.createElement(
 	      'li',
-	      { className: 'ShelfItem hvr-grow', id: this.props.theid, onClick: this.onClick },
+	      { className: 'ShelfItem hvr-grow', style: shelfStyle, id: this.props.theid, onClick: this.onClick },
 	      this.props.bookTitle
 	    );
 	  }
@@ -35542,19 +34832,19 @@
 	module.exports = ShelfItem;
 
 /***/ },
-/* 284 */
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
-	var APIUtil = __webpack_require__(231);
-	var Modal = __webpack_require__(244);
-	var LinkedStateMixin = __webpack_require__(265);
-	var UserStore = __webpack_require__(273);
-	var ApiActions = __webpack_require__(232);
-	var BookSearchStore = __webpack_require__(208);
+	var APIUtil = __webpack_require__(236);
+	var Modal = __webpack_require__(210);
+	var LinkedStateMixin = __webpack_require__(230);
+	var UserStore = __webpack_require__(265);
+	var ApiActions = __webpack_require__(237);
+	var BookSearchStore = __webpack_require__(247);
 	var customStyles = {
 	  overlay: {
 	    position: 'fixed',
@@ -35801,16 +35091,16 @@
 	module.exports = Navbar;
 
 /***/ },
-/* 285 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var PropTypes = React.PropTypes;
-	var AnalysisStore = __webpack_require__(286);
-	var APIUtil = __webpack_require__(231);
-	var UserStore = __webpack_require__(273);
+	var AnalysisStore = __webpack_require__(278);
+	var APIUtil = __webpack_require__(236);
+	var UserStore = __webpack_require__(265);
 	
 	var Analyses = React.createClass({
 	  displayName: 'Analyses',
@@ -35887,15 +35177,15 @@
 	module.exports = Analyses;
 
 /***/ },
-/* 286 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Store = __webpack_require__(209).Store;
+	var Store = __webpack_require__(248).Store;
 	var _analyses = [];
-	var AnalysesConstants = __webpack_require__(236);
-	var AppDispatcher = __webpack_require__(228);
+	var AnalysesConstants = __webpack_require__(246);
+	var AppDispatcher = __webpack_require__(238);
 	var AnalysesStore = new Store(AppDispatcher);
 	
 	var resetAnalyses = function resetAnalyses(results) {
@@ -35935,19 +35225,19 @@
 	module.exports = AnalysesStore;
 
 /***/ },
-/* 287 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var InitialBookIndex = __webpack_require__(207);
-	var SearchArea = __webpack_require__(238);
-	var BookSearchStore = __webpack_require__(208);
-	var BookConfirmation = __webpack_require__(240);
-	var Modal = __webpack_require__(244);
-	var BookSearch = __webpack_require__(264);
-	var APIUtil = __webpack_require__(231);
+	var InitialBookIndex = __webpack_require__(280);
+	var SearchArea = __webpack_require__(282);
+	var BookSearchStore = __webpack_require__(247);
+	var BookConfirmation = __webpack_require__(284);
+	var Modal = __webpack_require__(210);
+	var BookSearch = __webpack_require__(286);
+	var APIUtil = __webpack_require__(236);
 	var SearchResultItem = __webpack_require__(288);
 	var History = __webpack_require__(159).History;
 	
@@ -35996,19 +35286,721 @@
 	module.exports = SearchResults;
 
 /***/ },
+/* 280 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(247);
+	var APIUtil = __webpack_require__(236);
+	var IndexItem = __webpack_require__(281);
+	
+	var InitialBookIndex = React.createClass({
+	  displayName: 'InitialBookIndex',
+	
+	
+	  getInitialState: function getInitialState() {
+	    return { bookIndex: BookSearchStore.initialData() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    APIUtil.getInitialBookIndex();
+	    this.iIndex = BookSearchStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.iIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    this.setState({ bookIndex: BookSearchStore.initialData() });
+	  },
+	  render: function render() {
+	    var bookOptions;
+	    var that = this;
+	
+	    bookOptions = this.state.bookIndex.map(function (book, index) {
+	      return React.createElement(IndexItem, { key: index, book: book, whenChosen: this.props.whenChosen });
+	    }, this);
+	    return React.createElement(
+	      'div',
+	      { id: 'BookArea' },
+	      React.createElement(
+	        'ul',
+	        { className: 'book-list' },
+	        bookOptions
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = InitialBookIndex;
+
+/***/ },
+/* 281 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(247);
+	var ApiActions = __webpack_require__(237);
+	var History = __webpack_require__(159).History;
+	var APIUtil = __webpack_require__(236);
+	
+	var IndexItem = React.createClass({
+	  displayName: 'IndexItem',
+	
+	  mixins: [History],
+	  onClick: function onClick(event) {
+	    event.preventDefault();
+	    ApiActions.updateCurrentBook(this.props.book);
+	    // this.props.whenChosen();
+	    var bookToSend = this.props.book;
+	    bookToSend.read = "toRead";
+	    // APIUtil.createBook(bookToSend);
+	    var url = "/Desk";
+	    this.history.push({ pathname: url });
+	    // APIUtil.createBook(this.props.book);
+	    // this.history.push("/Desk");
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'li',
+	      { className: 'InitialBooks hvr-grow', onClick: this.onClick },
+	      React.createElement('img', { src: this.props.book.image })
+	    );
+	  }
+	});
+	module.exports = IndexItem;
+
+/***/ },
+/* 282 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookSearchBar = __webpack_require__(283);
+	
+	var SearchArea = React.createClass({
+	  displayName: 'SearchArea',
+	
+	
+	  render: function render() {
+	    return React.createElement(
+	      'section',
+	      { id: 'popupbody' },
+	      React.createElement(BookSearchBar, { whenChosen: this.props.whenChosen })
+	    );
+	  }
+	});
+	
+	module.exports = SearchArea;
+
+/***/ },
+/* 283 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var APIUtil = __webpack_require__(236);
+	var BookSearchStore = __webpack_require__(247);
+	var BookConfirmation = __webpack_require__(284);
+	var SearchListItem = __webpack_require__(285);
+	var History = __webpack_require__(159).History;
+	
+	var BookSearchBar = React.createClass({
+	  displayName: 'BookSearchBar',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	
+	    this.leave = false;
+	    this.needToLoad = false;
+	
+	    return { value: "", searchResults: [], showGuesses: false };
+	  },
+	  handleChange: function handleChange(event) {
+	
+	    this.setState({ value: event.target.value });
+	
+	    if (this.state.value.length > 2 && !this.pending) {
+	      this.pending = true;
+	      this.loadBar.style.display = 'block';
+	      this.needToLoad = false;
+	      APIUtil.fetchBookResults(this.state.value);
+	      window.setTimeout(function () {
+	        this.pending = false;
+	        if (this.needToLoad) {
+	          this.pending = true;
+	          this.loadBar.style.display = 'block';
+	          this.needToLoad = false;
+	          APIUtil.fetchBookResults(this.state.value);
+	        }
+	      }.bind(this), 1800);
+	    } else if (this.state.value.length > 2) {
+	      this.needToLoad = true;
+	    } else {
+	      this.needToLoad = false;
+	      this.loadBar.style.display = 'none';
+	    }
+	  },
+	
+	  componentDidMount: function componentDidMount() {
+	    this.storeIndex = BookSearchStore.addListener(this._onChange);
+	    this.pending = false;
+	    this.loadBar = document.getElementById('loader');
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.storeIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    if (this.state.value.length > 0 && !this.leave) {
+	      this.loadBar.style.display = 'none';
+	      this.setState({ searchResults: BookSearchStore.all() });
+	    } else if (this.leave) {
+	      this.leave = false;
+	      var url = '/SearchResults';
+	      this.history.push({ pathname: url });
+	    } else {
+	      this.loadBar.style.display = 'none';
+	      this.setState({ searchResults: [] });
+	    }
+	  },
+	  searchBarMoveUp: function searchBarMoveUp() {
+	    // debugger;
+	    // this.refs.searchbar.style{{bottom: "10%"}}
+	    $("#landing-search-bar").css("bottom", "40%");
+	    this.setState({
+	      showGuesses: true
+	    });
+	    // setTimeout(function(){
+	    //     // debugger;
+	    // }.bind(this), 1800);
+	    // this.hideAutocomplete();
+	    // this.tempToken = setTimeout(this.showAutocomplete, 2000);
+	  },
+	  searchBarMoveBack: function searchBarMoveBack() {
+	    $("#landing-search-bar").css("bottom", "20%");
+	    // this.hideAutocomplete();
+	    // this.setState({
+	    //   showGuesses: false
+	    // });
+	
+	    // setTimeout(function(){
+	    //   this.setState({
+	    //     showGuesses: false,
+	    //   });
+	    //     // debugger;
+	    // }.bind(this), 500);
+	  },
+	  clickOption: function clickOption(book) {
+	
+	    var theChosen = book;
+	    var chosen = APIUtil.makeBookObject(book);
+	    BookSearchStore.resetCurrentBook(chosen);
+	    this.props.whenChosen();
+	  },
+	  click: function click(event) {
+	    event.preventDefault();
+	    // var theChosen = this.state.searchResults[0].volumeInfo.title;
+	    // var chosen = APIUtil.makeBookObject(this.state.searchResults[0]);
+	    // BookSearchStore.resetCurrentBook(chosen);
+	    // this.props.whenChosen();
+	
+	    this.leave = true;
+	    APIUtil.fetchBookResults(this.state.value);
+	  },
+	  removeSearchGuesses: function removeSearchGuesses() {
+	    this.setState({ showGuesses: false });
+	  },
+	  render: function render() {
+	    var that = this;
+	    if (this.state.showGuesses) {
+	      var guesses = this.state.searchResults.map(function (result, index) {
+	        return React.createElement(SearchListItem, { key: result.id, book: result, clickOption: this.clickOption });
+	      }, this);
+	    } else {
+	      guesses = null;
+	    }
+	
+	    return React.createElement(
+	      'div',
+	      { id: 'landing-search-bar' },
+	      React.createElement(
+	        'label',
+	        { id: 'BookSearchLabel' },
+	        'What book do you want to explore?'
+	      ),
+	      React.createElement('br', null),
+	      React.createElement(
+	        'form',
+	        { className: 'SearchForm' },
+	        React.createElement('input', { id: 'BookSearchInput',
+	          type: 'text',
+	          value: this.state.value,
+	          onChange: this.handleChange,
+	          onFocus: this.searchBarMoveUp,
+	          onBlur: this.searchBarMoveBack,
+	          placeholder: 'enter book title',
+	          list: 'search-options',
+	          autoComplete: 'off'
+	        }),
+	        React.createElement('button', { id: 'BookSearchButton', className: 'hvr-grow-shadow fa fa-search', onClick: this.click }),
+	        React.createElement('div', { id: 'loader', className: 'loader' }),
+	        React.createElement(
+	          'ul',
+	          { className: 'searchGuesses', id: 'search-options' },
+	          guesses
+	        )
+	      )
+	    );
+	  }
+	
+	});
+	module.exports = BookSearchBar;
+
+/***/ },
+/* 284 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var History = __webpack_require__(159).History;
+	var APIUtil = __webpack_require__(236);
+	var RadioGroup = __webpack_require__(234);
+	
+	var BookConfirmation = React.createClass({
+	  displayName: 'BookConfirmation',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { selectedValue: 'reading' };
+	  },
+	  handleChange: function handleChange(value) {
+	    this.setState({ selectedValue: value });
+	  },
+	  yesClick: function yesClick(event) {
+	    event.preventDefault();
+	    var bookToSend = this.props.book;
+	    bookToSend.read = this.state.selectedValue;
+	    APIUtil.createBook(bookToSend);
+	    var url = "/Desk";
+	    this.history.push({ pathname: url });
+	    //reroute to User Show with Book Display
+	  },
+	  noClick: function noClick(event) {
+	    event.preventDefault();
+	    this.props.close();
+	    //closeWindow and reset state of parent
+	  },
+	  render: function render() {
+	    var chosen = this.props.book;
+	    return React.createElement(
+	      'section',
+	      { className: 'BookConfirmation' },
+	      React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'h3',
+	          { className: 'confirmationQuestion' },
+	          'Is the following the correct book?'
+	        ),
+	        React.createElement(
+	          'h2',
+	          { className: 'confirmationTitle' },
+	          chosen.title
+	        ),
+	        React.createElement(
+	          'h3',
+	          { className: 'byLine' },
+	          ' by, ',
+	          chosen.author
+	        ),
+	        React.createElement('img', { className: 'confirmationImage', src: chosen.image }),
+	        React.createElement(
+	          RadioGroup,
+	          {
+	            name: 'fruit',
+	            selectedValue: this.state.selectedValue,
+	            onChange: this.handleChange },
+	          function (Radio) {
+	            return React.createElement(
+	              'div',
+	              null,
+	              React.createElement(
+	                'label',
+	                null,
+	                React.createElement(Radio, { value: 'read' }),
+	                'have read'
+	              ),
+	              React.createElement(
+	                'label',
+	                null,
+	                React.createElement(Radio, { value: 'toRead' }),
+	                'to read'
+	              ),
+	              React.createElement(
+	                'label',
+	                null,
+	                React.createElement(Radio, { value: 'reading' }),
+	                'reading'
+	              )
+	            );
+	          }
+	        )
+	      ),
+	      React.createElement(
+	        'button',
+	        { className: 'Confirmation', id: 'Yes', onClick: this.yesClick },
+	        'Yes'
+	      ),
+	      React.createElement(
+	        'button',
+	        { className: 'Confirmation', id: 'No', onClick: this.noClick },
+	        'Search Again'
+	      )
+	    );
+	  }
+	
+	});
+	module.exports = BookConfirmation;
+
+/***/ },
+/* 285 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	
+	var SearchListItem = React.createClass({
+	  displayName: "SearchListItem",
+	
+	  click: function click(event) {
+	    event.preventDefault();
+	    this.props.clickOption(this.props.book);
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      "li",
+	      { onClick: this.click, className: "searchGuess", value: this.props.book.volumeInfo.title },
+	      this.props.book.volumeInfo.title
+	    );
+	  }
+	
+	});
+	
+	module.exports = SearchListItem;
+
+/***/ },
+/* 286 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var LinkedStateMixin = __webpack_require__(230);
+	// var ReactRouter = require('react-router');
+	// var History = require('react-router').History;
+	var DropDown = __webpack_require__(287);
+	
+	var BookSearch = React.createClass({
+	  displayName: 'BookSearch',
+	
+	  // mixins: [LinkedStateMixin],
+	
+	  getInitialState: function getInitialState() {
+	    this.styleSheetShow = document.createElement('style');
+	    this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
+	    // this.styleSheetHide = document.createElement('style');
+	    // this.styleSheetHide.innerHTML = ".pac-container {display: none;}";
+	
+	    return {
+	      book: "",
+	      placeholder: "What book would you like to Explore?",
+	      showAutocomplete: false,
+	      showSpinner: false
+	    };
+	  },
+	
+	  searchBarMoveUp: function searchBarMoveUp() {
+	    // debugger;
+	    // this.refs.searchbar.style{{bottom: "10%"}}
+	    $("#landing-search-bar").css("bottom", "20%");
+	    setTimeout(function () {
+	      this.setState({
+	        showAutocomplete: true
+	      });
+	      // debugger;
+	    }.bind(this), 1800);
+	    // this.hideAutocomplete();
+	    // this.tempToken = setTimeout(this.showAutocomplete, 2000);
+	  },
+	
+	  // showAutocomplete: function() {
+	  //   // document.body.appendChild(this.styleSheetShow);
+	  //   document.body.appendChild(this.styleSheetShow);
+	  // },
+	  //
+	  // hideAutocomplete: function() {
+	  //   // clearTimeout(this.tempToken);
+	  //   // document.body.appendChild(this.styleSheetHide);
+	  // },
+	
+	  searchBarMoveBack: function searchBarMoveBack() {
+	    $("#landing-search-bar").css("bottom", "0%");
+	    // this.hideAutocomplete();
+	
+	    // setTimeout(function(){
+	    this.setState({
+	      showAutocomplete: false
+	    });
+	    //     // debugger;
+	    // }.bind(this), 500);
+	  },
+	
+	  handleSearch: function handleSearch(e) {
+	    if (arguments.length > 0) {
+	      e.preventDefault();
+	    }
+	
+	    // may use History mixins;
+	    // this.history.pushState(null, 'search/' + this.state.loc)
+	    // debugger;
+	
+	    if (this.state.loc === "") {
+	      this.setState({
+	        placeholder: "Please choose a book"
+	      });
+	    } else {
+	      setTimeout(this.redirectToSearch, 2000);
+	      this.setState({
+	        showSpinner: true
+	      });
+	    }
+	  },
+	
+	  redirectToSearch: function redirectToSearch() {
+	    // var loc = this.state.loc.replace(/\W+/g, "-");
+	    // console.log("pushStatefromsearch");
+	    // this.props.history.pushState(null, 'search/' + loc);
+	  },
+	
+	  handleLocChange: function handleLocChange(e) {
+	    // console.log(this.refs.locinput.value);
+	    this.setState({
+	      book: this.refs.locinput.value
+	    });
+	    if (this.refs.locinput.value > 0) {
+	      APIUtil.fetchBookResults(this.refs.locinput.value);
+	    }
+	    // autocomplete: needs to add a delay using setTimeout and clearTimeout to cancel if the user changes before timeout expires
+	  },
+	
+	  render: function render() {
+	    var org1 = React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'form',
+	        { className: 'form-horizontal', role: 'form', onSubmit: this.handleSearch },
+	        React.createElement(
+	          'div',
+	          { className: 'input-group input-group-lg' },
+	          React.createElement('input', {
+	            type: 'text',
+	            className: 'form-control',
+	
+	            placeholder: this.state.placeholder }),
+	          React.createElement(
+	            'span',
+	            { className: 'input-group-addon' },
+	            '@'
+	          )
+	        ),
+	        React.createElement(
+	          'button',
+	          null,
+	          'Search'
+	        )
+	      )
+	    );
+	
+	    var design1 = React.createElement(
+	      'div',
+	      { className: 'col-xs-12', id: 'landing-search-bar' },
+	      React.createElement(
+	        'div',
+	        { className: 'row' },
+	        React.createElement(
+	          'div',
+	          { className: 'col-xs-8 col-xs-offset-2' },
+	          React.createElement(
+	            'form',
+	            { role: 'form', onSubmit: this.handleSearch },
+	            React.createElement(
+	              'div',
+	              { className: 'input-group' },
+	              React.createElement('input', {
+	                type: 'text',
+	                className: 'form-control',
+	
+	                placeholder: this.state.placeholder }),
+	              React.createElement(
+	                'span',
+	                { className: 'input-group-button' },
+	                React.createElement(
+	                  'button',
+	                  { className: 'btn btn-default', type: 'button' },
+	                  'Search'
+	                )
+	              )
+	            )
+	          )
+	        )
+	      )
+	    );
+	    var buttonSubmit = React.createElement(
+	      'span',
+	      { className: 'input-group-btn' },
+	      React.createElement(
+	        'button',
+	        { className: 'btn btn-default', type: 'button', onClick: this.handleSearch },
+	        'Search'
+	      )
+	    );
+	
+	    var buttonProgress = React.createElement(
+	      'span',
+	      { className: 'input-group-btn' },
+	      React.createElement(
+	        'button',
+	        { className: 'btn btn-default', disabled: true },
+	        React.createElement(
+	          'div',
+	          { className: 'three-quarters-loader' },
+	          'Loading…'
+	        )
+	      )
+	    );
+	    var design2 = React.createElement(
+	      'div',
+	      { className: 'col-xs-12' },
+	      React.createElement(
+	        'div',
+	        { className: 'row' },
+	        React.createElement(
+	          'div',
+	          { className: 'col-xs-offset-2 col-xs-8' },
+	          React.createElement(
+	            'div',
+	            { className: 'col-xs-offset-2 col-xs-8' },
+	            React.createElement(
+	              'form',
+	              { className: 'input-group', role: 'form', onSubmit: this.handleSearch },
+	              React.createElement('input', {
+	                type: 'text',
+	                className: 'form-control center',
+	                id: 'landing-search-input',
+	                onChange: this.handleLocChange,
+	                placeholder: this.state.placeholder,
+	                ref: 'locinput',
+	                onFocus: this.searchBarMoveUp,
+	                onBlur: this.searchBarMoveBack }),
+	              this.state.showSpinner ? buttonProgress : buttonSubmit
+	            )
+	          )
+	        )
+	      )
+	    );
+	
+	    var showAutocomplete = this.state.loc !== "" && this.state.showAutocomplete;
+	    // console.log("toggle autocomplete: " + showAutocomplete)
+	    // var showAutocomplete = (this.state.loc !== "");
+	    return React.createElement(
+	      'div',
+	      { className: 'col-xs-12', id: 'landing-search-bar', ref: 'searchbar' },
+	      design2,
+	      showAutocomplete ? React.createElement(DropDown, {
+	        locinput: this.refs.locinput,
+	        handleSearch: this.handleSearch,
+	        handleLocChange: this.handleLocChange }) : ""
+	    );
+	  }
+	});
+	
+	module.exports = BookSearch;
+
+/***/ },
+/* 287 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+	
+	var DropDown = React.createClass({
+	  displayName: 'DropDown',
+	
+	
+	  _fillInAddress: function _fillInAddress() {
+	    // debugger;
+	    this.props.handleLocChange();
+	    this.props.handleSearch();
+	  },
+	
+	  componentWillUnmount: function componentWillUnmount() {
+	    document.getElementById('html-body').removeChild(document.getElementsByClassName("pac-container")[0]);
+	    // ReactDOM.unmountComponentAtNode(document.getElementsByClassName("pac-container")[0]);
+	  },
+	
+	  componentDidMount: function componentDidMount() {
+	    // using Google Maps Places Autocomplete client version
+	    this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
+	    this.autofillOptions = {
+	      types: ['geocode']
+	    };
+	    // this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
+	    // // debugger;
+	    // this.autofill.addListener('place_changed', this._fillInAddress);
+	  },
+	
+	  // componentWillReceiveProps: function() {
+	  //   console.log("new autofill")
+	  //   this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
+	  //   this.autofillOptions = {
+	  //     types: ['geocode']
+	  //   };
+	  //   this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
+	  //   this.autofill.addListener('place_changed', this._fillInAddress);
+	  // },
+	
+	  render: function render() {
+	    return React.createElement('div', null);
+	  }
+	});
+	
+	module.exports = DropDown;
+
+/***/ },
 /* 288 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var InitialBookIndex = __webpack_require__(207);
-	var SearchArea = __webpack_require__(238);
-	var BookSearchStore = __webpack_require__(208);
-	var BookConfirmation = __webpack_require__(240);
-	var Modal = __webpack_require__(244);
-	var BookSearch = __webpack_require__(264);
-	var APIUtil = __webpack_require__(231);
+	var InitialBookIndex = __webpack_require__(280);
+	var SearchArea = __webpack_require__(282);
+	var BookSearchStore = __webpack_require__(247);
+	var BookConfirmation = __webpack_require__(284);
+	var Modal = __webpack_require__(210);
+	var BookSearch = __webpack_require__(286);
+	var APIUtil = __webpack_require__(236);
 	var History = __webpack_require__(159).History;
 	
 	var customStyles = {};

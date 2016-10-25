@@ -188,25 +188,23 @@ var BookPage = React.createClass({
     }else {
       publisher = book.publishing;
     }
-    var deleteButton, addButton, markButton, editButton, addDeleteButton;
+    var deleteButton, addButton, markButton, editButton, addDeleteButton, notes;
     if(this.state.onShelf){
       deleteButton = false;
       addButton = true;
       markButton = false;
       editButton = true;
       addDeleteButton = <button className="book-button-area" id="delete-book" onClick={this.deleteBook} disabled={deleteButton}>-</button>;
-
-
+      notes = <Note currentBook={this.props.currentBook} />;
     }else {
       deleteButton = true;
       addButton = false;
       markButton = true;
       editButton = true;
       addDeleteButton = <button className="book-button-area" id="add-to-shelf" onClick={this.addToShelf} disabled={addButton}>+</button>;
-
     }
-    var markFunction, markText;
 
+    var markFunction, markText;
     if(this.state.selectedValue === "read"){
       markFunction = this.markAsUnread;
       markText = "Mark as Unread";
@@ -223,7 +221,6 @@ var BookPage = React.createClass({
         <div className="BookTitleArea">
           <div className="BookTitle">{book.title}</div>
           <div className="Author">by, {book.author}</div>
-
         </div>
 
         <div className="BookPage" id="BookDescriptionBox">
@@ -237,7 +234,8 @@ var BookPage = React.createClass({
 
         </div>
         <button className="book-button-area" id="mark-as-read" onClick={markFunction} disabled={deleteButton}>{markText}</button>
-        <Note currentBook={this.props.currentBook} />
+        {notes}
+
 
 
         <Modal

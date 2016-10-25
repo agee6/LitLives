@@ -20,7 +20,7 @@ var IndexItem = React.createClass({
   },
   render: function(){
     return(
-      <li className="InitialBooks hvr-grow" onClick={this.onClick}><img src={this.props.book.image}></img></li>
+      <div className="InitialBooks" onClick={this.onClick}><img src={this.props.book.image}></img></div>
     );
   }
 })

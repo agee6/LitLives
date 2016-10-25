@@ -5,6 +5,7 @@ var APIUtil = require('../../util/APIUtil.js');
 var NoteStore = require('../../stores/NoteStore.js');
 var NoteItem = require('./NoteItem.jsx');
 var Modal = require('react-modal');
+var Editor = require('../Editor.jsx');
 
 var customStyles = {
   overlay : {
@@ -55,7 +56,7 @@ var Note = React.createClass({
     this.state.noteText = "";
     this.state.title = "";
     this.state.pageNumber = null;
-    this.state.chapter= null; 
+    this.state.chapter= null;
     this.closeModal();
 
 
@@ -122,6 +123,7 @@ var Note = React.createClass({
 
              <textarea className="NoteInput" rows="30" cols="100" name="comment"
                placeholder="Enter note here..." valueLink={this.linkState('noteText')}/>
+             <Editor />
              <br />
              <div className="note-location-input">
                <label className="note-input-label">associated page (optional):</label>

@@ -106,7 +106,7 @@ var APIUtil = {
   createNote: function(noteHash){
 
     $.post('/api/notes', {note: noteHash}, function(payload){
-    
+
       ApiActions.addNote(payload);
 
     });

@@ -28,9 +28,9 @@ var InitialBookIndex = React.createClass({
     }, this);
     return(
       <div id="BookArea">
-        <ul className="book-list">
+        <div className="book-list">
           {bookOptions}
-        </ul>
+        </div>
 
       </div>
 

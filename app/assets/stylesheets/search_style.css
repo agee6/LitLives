@@ -1,14 +1,3 @@
-.InitialBooks {
-  float: left;
-  height: 200px;
-  /*width: 100px;*/
-  z-index: 9;
-  /*box-shadow: 0px 0px 5px rgba(0,0,0,.3);*/
-  margin: 4px;
-  /*background-size: cover;*/
-  /*box-shadow: 10px 10px 10px 10px rgba(256,256,256,0.5);*/
-
-}
 #landing-search-bar {
   position: absolute;
   bottom: 20%;
@@ -106,11 +95,7 @@
   height: auto;
 
 }
-/*.NoteForm button:last-child{
-  width: auto;
-  margin-left: 40%;
-  margin-top: 50px;
-}*/
+
 .Confirmation{
   /*background-color: #261a0d;;*/
   height: 30px;
@@ -118,18 +103,9 @@
   margin: 10px;
 }
 #Yes{
-  /*position:absolute;
-  left: -100px;
-  top: 3%;*/
-
 
 }
 #No{
-  /*position:absolute;
-  left: 0%;
-  top: 10%;
-  width: 150px;*/
-
 
 }
 #searchGuess{
@@ -138,6 +114,7 @@
 }
 .BookArea {
   /*box-shadow: 12px 12px 12px 12px rgba(220,220,220,0.5);*/
+  align-content: center;
 }
 .InitialBooks:hover{
   box-shadow: 0px 0px 30px 10px rgba(220,220,220,0.5);
@@ -148,7 +125,7 @@
 }
 
 .loader {
-  display: none; 
+  display: none;
   position: absolute;
   margin: 10px auto;
   font-size: 10px;
@@ -192,4 +169,30 @@
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
+}
+.book-list{
+  text-align: center;
+}
+.InitialBooks {
+  /*float: left;*/
+  height: 200px;
+
+  z-index: 9;
+  /*box-shadow: 0px 0px 5px rgba(0,0,0,.3);*/
+  margin: 4px;
+  display: inline-block;
+  /*margin-left: auto;
+  margin-right: auto;*/
+  vertical-align: middle;
+  /*background-repeat: repeat-x;*/
+  /*background-size: cover;*/
+  /*box-shadow: 10px 10px 10px 10px rgba(256,256,256,0.5);*/
+  transition-duration: 0.3s;
+  transition-property: transform;
+}
+
+.InitialBooks:hover,
+.InitialBooks:focus,
+.InitialBooks:active {
+    transform: scale(1.1);
 }

@@ -1,5 +1,5 @@
 html, input {
-  font-family: "Baskerville"; 
+  font-family: "Baskerville";
 }
 
 
@@ -38,12 +38,7 @@ span{
 .logo:hover{
   cursor: pointer;
 }
-.userNameLabel{
-  color: #e4cdb4;
-  position: absolute;
-  top: 22px;
-  left: 100px;
-}
+
 #bookTitle {
   left: 150px;
 }

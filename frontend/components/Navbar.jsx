@@ -168,12 +168,10 @@ var Navbar = React.createClass({
         <nav className="header-nav group" >
 
            <div className="header-logo" onClick={this.searchClick}>
-             <img className="logo-corner" src="http://res.cloudinary.com/litlitves/image/upload/v1461114377/books-icon_f26trs.png" />
-
-             <div className='userNameLabel'> {quoteToUse}</div>
-
+             <div className="logo-image">LL</div>
 
            </div>
+           <div className='quote'> {quoteToUse}</div>
 
            <ul className="header-list group">
 

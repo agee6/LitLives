@@ -48787,13 +48787,17 @@
 	        React.createElement(
 	          'div',
 	          { className: 'header-logo', onClick: this.searchClick },
-	          React.createElement('img', { className: 'logo-corner', src: 'http://res.cloudinary.com/litlitves/image/upload/v1461114377/books-icon_f26trs.png' }),
 	          React.createElement(
 	            'div',
-	            { className: 'userNameLabel' },
-	            ' ',
-	            quoteToUse
+	            { className: 'logo-image' },
+	            'LL'
 	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'quote' },
+	          ' ',
+	          quoteToUse
 	        ),
 	        React.createElement(
 	          'ul',

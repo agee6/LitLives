@@ -58,11 +58,11 @@
 	var root = document.getElementById('reactContent');
 	// var cb = root.getAttribute("data-has-book");
 	var History = __webpack_require__(159).History;
-	var Navbar = __webpack_require__(424);
+	var Navbar = __webpack_require__(285);
 	var UserStore = __webpack_require__(273);
 	var ApiActions = __webpack_require__(232);
-	var Analyses = __webpack_require__(425);
-	var SearchResults = __webpack_require__(427);
+	var Analyses = __webpack_require__(286);
+	var SearchResults = __webpack_require__(288);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -34323,7 +34323,7 @@
 	
 	var React = __webpack_require__(1);
 	var Notebook = __webpack_require__(271);
-	var BS = __webpack_require__(420);
+	var BS = __webpack_require__(281);
 	
 	var Desk = React.createClass({
 	  displayName: 'Desk',
@@ -34350,9 +34350,9 @@
 	var React = __webpack_require__(1);
 	var BookPage = __webpack_require__(272);
 	var BookSearchStore = __webpack_require__(208);
-	var Tabs = __webpack_require__(417);
+	var Tabs = __webpack_require__(278);
 	var Note = __webpack_require__(274);
-	var Reviews = __webpack_require__(419);
+	var Reviews = __webpack_require__(280);
 	
 	var Notebook = React.createClass({
 	  displayName: 'Notebook',
@@ -34475,9 +34475,14 @@
 	    if (book.id === undefined) {
 	      inDatabase = false;
 	    }
+	    if (book.read === "read") {
+	      var finishedRead = true;
+	    } else {
+	      var finishedRead = false;
+	    }
 	    return { modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
 	      ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
-	      description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase };
+	      description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase, finished: finishedRead };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
@@ -34520,6 +34525,16 @@
 	
 	    APIUtil.updateBook(this.props.currentBook.id, { read: "toRead" });
 	    this.setState({ selectedValue: "toRead" });
+	  },
+	  checkRead: function checkRead(event) {
+	    event.preventDefault();
+	    if (this.state.selectedValue === "read") {
+	      APIUtil.updateBook(this.props.currentBook.id, { read: "toRead" });
+	      this.setState({ selectedValue: "toRead", finished: false });
+	    } else {
+	      APIUtil.updateBook(this.props.currentBook.id, { read: "read" });
+	      this.setState({ selectedValue: "read", finished: true });
+	    }
 	  },
 	  editClick: function editClick(event) {
 	    event.preventDefault();
@@ -34629,13 +34644,15 @@
 	      );
 	    }
 	
-	    var markFunction, markText;
+	    var markFunction, markText, markValue;
 	    if (this.state.selectedValue === "read") {
 	      markFunction = this.markAsUnread;
 	      markText = "Mark as Unread";
+	      markValue = true;
 	    } else {
 	      markFunction = this.markAsRead;
 	      markText = "Mark as Read";
+	      markValue = "false";
 	    }
 	
 	    return React.createElement(
@@ -34688,12 +34705,16 @@
 	          { className: 'BookFooter', id: 'publisher' },
 	          'publisher: ',
 	          publisher
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'BookFooter', id: 'read-check' },
+	          React.createElement(
+	            'input',
+	            { type: 'checkbox', checked: this.state.finished, onChange: this.checkRead },
+	            'Finished Reading?'
+	          )
 	        )
-	      ),
-	      React.createElement(
-	        'button',
-	        { className: 'book-button-area', id: 'mark-as-read', onClick: markFunction, disabled: deleteButton },
-	        markText
 	      ),
 	      notes,
 	      React.createElement(
@@ -34974,6 +34995,10 @@
 	    this.state.chapter = null;
 	    this.closeModal();
 	  },
+	  addNote: function addNote(noteText) {
+	    debugger;
+	    var noteHash = { body: noteText, page: pn, public: true, chapter: chap, book_id: this.props.currentBook.id };
+	  },
 	  handleChange: function handleChange(value) {
 	    this.setState({ selectedValue: value });
 	  },
@@ -35008,8 +35033,8 @@
 	    }
 	    var banana = this.props.currentBook.title;
 	    var NoteStyle = {
-	      backgroundImage: 'url(\'' + this.props.currentBook.image + '\')',
-	      backgroundSize: 'cover'
+	      // backgroundImage: 'url(\'' + this.props.currentBook.image + '\')',
+	      // backgroundSize: 'cover'
 	    };
 	
 	    return React.createElement(
@@ -35059,7 +35084,6 @@
 	          { className: 'NoteForm' },
 	          React.createElement('textarea', { className: 'NoteInput', rows: '30', cols: '100', name: 'comment',
 	            placeholder: 'Enter note here...', valueLink: this.linkState('noteText') }),
-	          React.createElement(Editor, null),
 	          React.createElement('br', null),
 	          React.createElement(
 	            'div',
@@ -35085,8 +35109,8 @@
 	        ),
 	        React.createElement(
 	          'button',
-	          { onClick: this.closeModal },
-	          'close'
+	          { className: 'close-button', onClick: this.closeModal },
+	          'x'
 	        )
 	      )
 	    );
@@ -35217,55 +35241,1121 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _react = __webpack_require__(1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactDom = __webpack_require__(158);
-	
-	var _reactDom2 = _interopRequireDefault(_reactDom);
-	
-	var _draftJs = __webpack_require__(278);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var MyEditor = function (_React$Component) {
-	  _inherits(MyEditor, _React$Component);
+	var React = __webpack_require__(1);
 	
-	  function MyEditor(props) {
-	    _classCallCheck(this, MyEditor);
+	var _require = __webpack_require__(290);
 	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(MyEditor).call(this, props));
+	var Editor = _require.Editor;
+	var EditorState = _require.EditorState;
+	var RichUtils = _require.RichUtils;
 	
-	    _this.state = { editorState: _draftJs.EditorState.createEmpty() };
+	var RichTextEditor = function (_React$Component) {
+	  _inherits(RichTextEditor, _React$Component);
+	
+	  function RichTextEditor(props) {
+	    _classCallCheck(this, RichTextEditor);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RichTextEditor).call(this, props));
+	
+	    _this.state = { editorState: EditorState.createEmpty() };
+	
+	    _this.focus = function () {
+	      return _this.refs.editor.focus();
+	    };
 	    _this.onChange = function (editorState) {
 	      return _this.setState({ editorState: editorState });
+	    };
+	
+	    _this.handleKeyCommand = function (command) {
+	      return _this._handleKeyCommand(command);
+	    };
+	    _this.onTab = function (e) {
+	      return _this._onTab(e);
+	    };
+	    _this.toggleBlockType = function (type) {
+	      return _this._toggleBlockType(type);
+	    };
+	    _this.toggleInlineStyle = function (style) {
+	      return _this._toggleInlineStyle(style);
+	    };
+	    _this.addNote = function (e) {
+	      return _this._addNote(e);
 	    };
 	    return _this;
 	  }
 	
-	  _createClass(MyEditor, [{
+	  _createClass(RichTextEditor, [{
+	    key: '_handleKeyCommand',
+	    value: function _handleKeyCommand(command) {
+	      var editorState = this.state.editorState;
+	
+	      var newState = RichUtils.handleKeyCommand(editorState, command);
+	      if (newState) {
+	        this.onChange(newState);
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: '_onTab',
+	    value: function _onTab(e) {
+	      var maxDepth = 4;
+	      this.onChange(RichUtils.onTab(e, this.state.editorState, maxDepth));
+	    }
+	  }, {
+	    key: '_toggleBlockType',
+	    value: function _toggleBlockType(blockType) {
+	      this.onChange(RichUtils.toggleBlockType(this.state.editorState, blockType));
+	    }
+	  }, {
+	    key: '_toggleInlineStyle',
+	    value: function _toggleInlineStyle(inlineStyle) {
+	      this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, inlineStyle));
+	    }
+	  }, {
+	    key: '_addNote',
+	    value: function _addNote(event) {
+	      event.preventDefault();
+	      debugger;
+	      this.props.addNote(this.state.editorState);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var editorState = this.state.editorState;
 	
-	      return _react2.default.createElement(_draftJs.Editor, { editorState: editorState, onChange: this.onChange });
+	      // If the user changes block type before entering any text, we can
+	      // either style the placeholder or hide it. Let's just hide it now.
+	
+	      var className = 'RichEditor-editor';
+	      var contentState = editorState.getCurrentContent();
+	      if (!contentState.hasText()) {
+	        if (contentState.getBlockMap().first().getType() !== 'unstyled') {
+	          className += ' RichEditor-hidePlaceholder';
+	        }
+	      }
+	
+	      return React.createElement(
+	        'div',
+	        { className: 'RichEditor-root' },
+	        React.createElement(BlockStyleControls, {
+	          editorState: editorState,
+	          onToggle: this.toggleBlockType
+	        }),
+	        React.createElement(InlineStyleControls, {
+	          editorState: editorState,
+	          onToggle: this.toggleInlineStyle
+	        }),
+	        React.createElement(
+	          'div',
+	          { className: className, onClick: this.focus },
+	          React.createElement(Editor, {
+	            blockStyleFn: getBlockStyle,
+	            customStyleMap: styleMap,
+	            editorState: editorState,
+	            handleKeyCommand: this.handleKeyCommand,
+	            onChange: this.onChange,
+	            onTab: this.onTab,
+	            placeholder: 'write a note...',
+	            ref: 'editor',
+	            spellCheck: true
+	          })
+	        ),
+	        React.createElement(
+	          'button',
+	          { onClick: this.addNote.bind(this) },
+	          'Add Note'
+	        )
+	      );
 	    }
 	  }]);
 	
-	  return MyEditor;
-	}(_react2.default.Component);
+	  return RichTextEditor;
+	}(React.Component);
 	
-	module.exports = MyEditor;
+	// Custom overrides for "code" style.
+	
+	
+	var styleMap = {
+	  CODE: {
+	    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+	    fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
+	    fontSize: 16,
+	    padding: 2
+	  }
+	};
+	
+	function getBlockStyle(block) {
+	  switch (block.getType()) {
+	    case 'blockquote':
+	      return 'RichEditor-blockquote';
+	    default:
+	      return null;
+	  }
+	}
+	
+	var StyleButton = function (_React$Component2) {
+	  _inherits(StyleButton, _React$Component2);
+	
+	  function StyleButton() {
+	    _classCallCheck(this, StyleButton);
+	
+	    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(StyleButton).call(this));
+	
+	    _this2.onToggle = function (e) {
+	      e.preventDefault();
+	      _this2.props.onToggle(_this2.props.style);
+	    };
+	    return _this2;
+	  }
+	
+	  _createClass(StyleButton, [{
+	    key: 'render',
+	    value: function render() {
+	      var className = 'RichEditor-styleButton';
+	      if (this.props.active) {
+	        className += ' RichEditor-activeButton';
+	      }
+	
+	      return React.createElement(
+	        'span',
+	        { className: className, onMouseDown: this.onToggle },
+	        this.props.label
+	      );
+	    }
+	  }]);
+	
+	  return StyleButton;
+	}(React.Component);
+	
+	var BLOCK_TYPES = [{ label: 'H1', style: 'header-one' }, { label: 'H2', style: 'header-two' }, { label: 'H3', style: 'header-three' }, { label: 'H4', style: 'header-four' }, { label: 'H5', style: 'header-five' }, { label: 'H6', style: 'header-six' }, { label: 'Blockquote', style: 'blockquote' }, { label: 'UL', style: 'unordered-list-item' }, { label: 'OL', style: 'ordered-list-item' }, { label: 'Code Block', style: 'code-block' }];
+	
+	var BlockStyleControls = function BlockStyleControls(props) {
+	  var editorState = props.editorState;
+	
+	  var selection = editorState.getSelection();
+	  var blockType = editorState.getCurrentContent().getBlockForKey(selection.getStartKey()).getType();
+	
+	  return React.createElement(
+	    'div',
+	    { className: 'RichEditor-controls' },
+	    BLOCK_TYPES.map(function (type) {
+	      return React.createElement(StyleButton, {
+	        key: type.label,
+	        active: type.style === blockType,
+	        label: type.label,
+	        onToggle: props.onToggle,
+	        style: type.style
+	      });
+	    })
+	  );
+	};
+	
+	var INLINE_STYLES = [{ label: 'Bold', style: 'BOLD' }, { label: 'Italic', style: 'ITALIC' }, { label: 'Underline', style: 'UNDERLINE' }, { label: 'Monospace', style: 'CODE' }];
+	
+	var InlineStyleControls = function InlineStyleControls(props) {
+	  var currentStyle = props.editorState.getCurrentInlineStyle();
+	  return React.createElement(
+	    'div',
+	    { className: 'RichEditor-controls' },
+	    INLINE_STYLES.map(function (type) {
+	      return React.createElement(StyleButton, {
+	        key: type.label,
+	        active: currentStyle.has(type.style),
+	        label: type.label,
+	        onToggle: props.onToggle,
+	        style: type.style
+	      });
+	    })
+	  );
+	};
+	
+	module.exports = RichTextEditor;
 
 /***/ },
 /* 278 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var Tab = __webpack_require__(279);
+	
+	var Tabs = React.createClass({
+	  displayName: 'Tabs',
+	
+	
+	  render: function render() {
+	    var tabList = this.props.tabOptions.map(function (tab) {
+	      return React.createElement(Tab, { clickFunc: this.props.clickFunction, tabName: tab, key: tab });
+	    }, this);
+	
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'ul',
+	        { className: 'tabsList' },
+	        tabList
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = Tabs;
+
+/***/ },
+/* 279 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	
+	var Tab = React.createClass({
+	  displayName: "Tab",
+	
+	
+	  tabClick: function tabClick(event) {
+	    event.preventDefault();
+	    this.props.clickFunc(this.props.tabName);
+	  },
+	
+	  render: function render() {
+	    return React.createElement(
+	      "li",
+	      { className: "tab", id: this.props.tabName, onClick: this.tabClick },
+	      this.props.tabName
+	    );
+	  }
+	
+	});
+	
+	module.exports = Tab;
+
+/***/ },
+/* 280 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	
+	var Reviews = React.createClass({
+	  displayName: 'Reviews',
+	
+	
+	  render: function render() {
+	    return React.createElement('div', null);
+	  }
+	
+	});
+	
+	module.exports = Reviews;
+
+/***/ },
+/* 281 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookShelfStore = __webpack_require__(282);
+	var Shelf = __webpack_require__(283);
+	
+	var History = __webpack_require__(159).History;
+	
+	var BS = React.createClass({
+	  displayName: 'BS',
+	
+	  mixins: [History],
+	
+	  getInitialState: function getInitialState() {
+	    var reading = BookShelfStore.reading();
+	    var toRead = BookShelfStore.toRead();
+	    var allToRead = reading.concat(toRead);
+	    this.spinClass = 'fa fa-times';
+	
+	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: true };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.bookShelfIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    var reading = BookShelfStore.reading();
+	    var toRead = BookShelfStore.toRead();
+	    var allToRead = reading.concat(toRead);
+	    this.setState({ readBooks: BookShelfStore.read(), toReadBooks: allToRead });
+	  },
+	  onAddClick: function onAddClick(event) {
+	    event.preventDefault();
+	    this.history.push({ pathname: "/Search" });
+	  },
+	  booksClick: function booksClick(event) {
+	    event.preventDefault();
+	    if (this.state.shelfVisible) {
+	      this.spinClass = 'fa fa-bars';
+	
+	      // this.menuClass='menu'
+	      this.setState({ shelfVisible: false });
+	    } else {
+	      this.spinClass = 'fa fa-times';
+	
+	      // this.menuClass='menu open'
+	      this.setState({ shelfVisible: true });
+	    }
+	    $('.menu').toggleClass('open', 200, 'easeOutQuad');
+	  },
+	  render: function render() {
+	
+	    return React.createElement(
+	      'section',
+	      { className: 'bookshelf' },
+	      React.createElement(
+	        'div',
+	        { className: 'menu' },
+	        React.createElement(
+	          'div',
+	          { className: 'FullBookShelf' },
+	          React.createElement(
+	            'label',
+	            { className: 'ShelfLabel', id: 'ToRead' },
+	            'To Read'
+	          ),
+	          React.createElement(Shelf, { books: this.state.toReadBooks, identifier: 'BooksToRead' }),
+	          React.createElement(
+	            'label',
+	            { className: 'ShelfLabel', id: 'Read' },
+	            'Read'
+	          ),
+	          React.createElement(Shelf, { books: this.state.readBooks, identifier: 'BooksRead' })
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = BS;
+
+/***/ },
+/* 282 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Store = __webpack_require__(209).Store;
+	var _books = { read: [], toRead: [], reading: [] };
+	var BookShelfConstants = __webpack_require__(233);
+	var AppDispatcher = __webpack_require__(228);
+	var BookShelfStore = new Store(AppDispatcher);
+	
+	var resetBooks = function resetBooks(results) {
+	  _books = {};
+	  _books = results;
+	};
+	var addBook = function addBook(book) {
+	  if (book.read === "read") {
+	    _books.read.push(book);
+	  } else if (book.read === "toRead") {
+	    _books.toRead.push(book);
+	  } else {
+	    _books.reading.push(book);
+	  }
+	};
+	
+	BookShelfStore.all = function () {
+	
+	  return _books;
+	};
+	BookShelfStore.empty = function () {
+	  _books = { read: [], toRead: [], reading: [] };
+	};
+	BookShelfStore.read = function () {
+	
+	  return _books.read;
+	};
+	BookShelfStore.toRead = function () {
+	
+	  return _books.toRead;
+	};
+	BookShelfStore.reading = function () {
+	
+	  return _books.reading;
+	};
+	
+	BookShelfStore.__onDispatch = function (payload) {
+	
+	  switch (payload.actionType) {
+	    case BookShelfConstants.ReceiveUserBooks:
+	
+	      var result = resetBooks(payload.books);
+	      BookShelfStore.__emitChange();
+	      break;
+	    case BookShelfConstants.ReceiveAddedBook:
+	      var added = addBook(payload.book);
+	      BookShelfStore.__emitChange();
+	      break;
+	    case BookShelfConstants.EmptyShelves:
+	      BookShelfStore.empty();
+	      BookShelfStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	window.BookShelfStore = BookShelfStore;
+	
+	module.exports = BookShelfStore;
+
+/***/ },
+/* 283 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var ShelfItem = __webpack_require__(284);
+	
+	var Shelf = React.createClass({
+	  displayName: 'Shelf',
+	
+	
+	  generateRandomHex: function generateRandomHex() {
+	    var possible = ["#B87333", "#E3A857", "#EDC9AF", "#FBCEB1", "#3D2B1F", "#654321", "#704214", "#7B3F00", "#964B00", "#826644", "#836953", "#996515"];
+	    var hex = possible[Math.floor(Math.random() * possible.length)];
+	    return hex;
+	  },
+	
+	  render: function render() {
+	    var theshelf = [];
+	    var theid;
+	    var theshelf = this.props.books.map(function (book, index) {
+	      if (index % 2 === 0) {
+	        theid = "book1";
+	      } else {
+	        theid = "book2";
+	      }
+	      return React.createElement(ShelfItem, { theid: theid, key: index, bookTitle: book.title, book: book, bookColor: this.generateRandomHex() });
+	    }, this);
+	    return React.createElement(
+	      'section',
+	      { className: 'Shelf', id: this.props.identifier },
+	      React.createElement(
+	        'ul',
+	        { id: 'ShelfBookList' },
+	        theshelf
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = Shelf;
+
+/***/ },
+/* 284 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(208);
+	var ApiActions = __webpack_require__(232);
+	var APIUtil = __webpack_require__(231);
+	
+	var ShelfItem = React.createClass({
+	  displayName: 'ShelfItem',
+	
+	  onClick: function onClick(event) {
+	    event.preventDefault();
+	
+	    APIUtil.updateUser({ current_book: this.props.book.id });
+	    ApiActions.updateCurrentBook(this.props.book);
+	    APIUtil.fetchNotes(this.props.book.id);
+	  },
+	  generateRandomHex: function generateRandomHex() {
+	    var possible = "0123456789abcdef".split("");
+	    var hex = "#";
+	    for (var i = 0; i < 6; i++) {
+	      hex += possible[Math.floor(Math.random() * 16)];
+	    }
+	    return hex;
+	  },
+	  render: function render() {
+	    var shelfStyle = { backgroundColor: this.props.bookColor };
+	
+	    return React.createElement(
+	      'li',
+	      { className: 'ShelfItem hvr-grow', style: shelfStyle, id: this.props.theid, onClick: this.onClick },
+	      this.props.bookTitle
+	    );
+	  }
+	});
+	
+	module.exports = ShelfItem;
+
+/***/ },
+/* 285 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var History = __webpack_require__(159).History;
+	var APIUtil = __webpack_require__(231);
+	var Modal = __webpack_require__(244);
+	var LinkedStateMixin = __webpack_require__(265);
+	var UserStore = __webpack_require__(273);
+	var ApiActions = __webpack_require__(232);
+	var BookSearchStore = __webpack_require__(208);
+	var customStyles = {
+	  overlay: {
+	    position: 'fixed',
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+	    backgroundImage: 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
+	    zIndex: 20,
+	    backgroundSize: 'cover'
+	  },
+	  // opacity           : 0.6
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    marginRight: '-50%',
+	    transform: 'translate(-50%, -50%)',
+	
+	    backgroundImage: 'url(\'https://images.unsplash.com/photo-1457298483369-0a95d2b17fcd?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=f4fd0823787f85fcb27fd05027766a41\')',
+	    backgroundSize: 'cover',
+	    borderRadius: '10px',
+	    filter: 'blur(\'4px\')',
+	    width: '300px',
+	    backgroundBlendMode: 'darken'
+	
+	  }
+	};
+	
+	var quotes = ["\"We read to know we are not alone.\" -C.S.Lewis", "\"A reader lives a thousand lives before he dies\" -George R.R. Martin", "\"You can never get a cup of tea large enough, or a book long enough to suit me\" -C.S.Lewis", "\"It is what you read when you don't have to that determines what you will be when you can't help it.\" -Oscar Wilde"];
+	
+	var Navbar = React.createClass({
+	  displayName: 'Navbar',
+	
+	  mixins: [History, LinkedStateMixin],
+	  getInitialState: function getInitialState() {
+	    this.toWhere = "/Search";
+	    return { loggedIn: UserStore.loggedIn(), username: null, password: null, modalIsOpen: false, message: "" };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.userIndex = UserStore.addListener(this._onChange);
+	  },
+	  searchClick: function searchClick(event) {
+	
+	    this.history.push({ pathname: "/Search" });
+	  },
+	  deskClick: function deskClick(event) {
+	    if (this.state.loggedIn) {
+	      this.history.push({ pathname: "/Desk" });
+	    } else {
+	      this.setState({ modalIsOpen: true, message: "login to continue" });
+	      this.toWhere = "/Desk";
+	    }
+	  },
+	  analysesClick: function analysesClick(event) {
+	    event.preventDefault();
+	    this.history.push({ pathname: "/Analyses" });
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
+	
+	  closeModal: function closeModal() {
+	
+	    this.setState({ modalIsOpen: false, message: "" });
+	  },
+	  signOutClick: function signOutClick(event) {
+	
+	    APIUtil.logoutUser();
+	
+	    ApiActions.emptyShelves();
+	    ApiActions.deleteCurrentBook();
+	
+	    this.history.push({ pathname: "/Search" });
+	  },
+	  signClick: function signClick(event) {
+	    event.preventDefault();
+	    this.clicked = true;
+	
+	    if (this.state.password !== null && this.state.password.length >= 6) {
+	      APIUtil.signIn(this.state.username, this.state.password);
+	    } else {
+	      this.state.password = "";
+	      this.setState({ message: "invalid password, must be at least 6 digits please try again" });
+	    }
+	  },
+	  _onChange: function _onChange() {
+	
+	    if (UserStore.loggedIn()) {
+	      this.closeModal();
+	      this.setState({ loggedIn: UserStore.loggedIn() });
+	      this.history.push({ pathname: this.toWhere });
+	    } else {
+	      if (this.clicked) {
+	        this.setState({ message: "unsuccessful, please try again", loggedIn: UserStore.loggedIn() });
+	      } else {
+	        if (UserStore.needsToLogin()) {
+	          this.openModal();
+	          this.setState({ loggedIn: UserStore.loggedIn(), message: "login to continue" });
+	        }
+	      }
+	    }
+	  },
+	  signUpClick: function signUpClick(event) {
+	    event.preventDefault();
+	
+	    this.clicked = true;
+	    if (this.state.username !== "" && this.state.password !== "") {
+	      APIUtil.createUser(this.state.username, this.state.password);
+	    } else {
+	      this.setState({ message: "invalid password please try again" });
+	    }
+	    debugger;
+	  },
+	  logInAsGuest: function logInAsGuest(event) {
+	    event.preventDefault();
+	
+	    this.clicked = true;
+	    APIUtil.signIn("guest_user", "password");
+	  },
+	  render: function render() {
+	    var signB;
+	    var un;
+	    var cb;
+	
+	    if (this.state.loggedIn) {
+	      signB = React.createElement(
+	        'li',
+	        { className: 'nav-right', id: 'NavUser', onClick: this.signOutClick },
+	        'Sign Out'
+	      );
+	      un = UserStore.currentUser().username;
+	      if (BookSearchStore.currentBook() !== null) {
+	        // cb = <div className="userNameLabel" id="bookTitle"> is currently exploring {BookSearchStore.currentBook().title}</div>;
+	        cb = { backgroundImage: "url(" + BookSearchStore.currentBook().image + ")" };
+	      } else {
+	        cb = null;
+	      }
+	    } else {
+	      signB = React.createElement(
+	        'li',
+	        { className: 'nav-right', id: 'NavUser', onClick: this.openModal },
+	        'Sign in/up!'
+	      );
+	    }
+	    var quoteToUse = quotes[Math.floor(Math.random() * quotes.length)];
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'Navbar' },
+	      React.createElement(
+	        'nav',
+	        { className: 'header-nav group' },
+	        React.createElement(
+	          'div',
+	          { className: 'header-logo', onClick: this.searchClick },
+	          React.createElement(
+	            'div',
+	            { className: 'logo-image' },
+	            'LL'
+	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'quote' },
+	          ' ',
+	          quoteToUse
+	        ),
+	        React.createElement(
+	          'ul',
+	          { className: 'header-list group' },
+	          React.createElement(
+	            'li',
+	            { className: 'nav-right', id: 'NavSearch', onClick: this.searchClick },
+	            'Search'
+	          ),
+	          React.createElement(
+	            'li',
+	            { className: 'nav-right', id: 'NavDesk', onClick: this.deskClick },
+	            'Desk'
+	          ),
+	          signB
+	        )
+	      ),
+	      React.createElement(
+	        Modal,
+	        {
+	          isOpen: this.state.modalIsOpen,
+	          onRequestClose: this.closeModal,
+	          style: customStyles },
+	        React.createElement(
+	          'p',
+	          { className: 'loginMessage' },
+	          ' ',
+	          this.state.message
+	        ),
+	        React.createElement(
+	          'form',
+	          { className: 'NoteForm' },
+	          React.createElement(
+	            'div',
+	            { className: 'UserNameArea' },
+	            React.createElement('input', { type: 'text', className: 'UserNameInput', valueLink: this.linkState('username'), placeholder: 'enter a valid username' })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'PasswordArea' },
+	            React.createElement('input', { type: 'password', className: 'PasswordInput', placeholder: 'enter a 6 digit password', valueLink: this.linkState('password') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'LoginButtonArea' },
+	            React.createElement(
+	              'button',
+	              { className: 'SignButton', onClick: this.signClick },
+	              'Sign In!'
+	            ),
+	            React.createElement(
+	              'button',
+	              { className: 'SignButton', onClick: this.signUpClick },
+	              'Sign Up!'
+	            ),
+	            React.createElement(
+	              'div',
+	              { className: 'DividingOr' },
+	              '----------OR----------'
+	            ),
+	            React.createElement(
+	              'button',
+	              { className: 'SignButton', onClick: this.logInAsGuest },
+	              'Login as Guest'
+	            )
+	          )
+	        ),
+	        React.createElement(
+	          'button',
+	          { onClick: this.closeModal },
+	          'close'
+	        )
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = Navbar;
+
+/***/ },
+/* 286 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	var AnalysisStore = __webpack_require__(287);
+	var APIUtil = __webpack_require__(231);
+	var UserStore = __webpack_require__(273);
+	
+	var Analyses = React.createClass({
+	  displayName: 'Analyses',
+	
+	
+	  getInitialState: function getInitialState() {
+	    return { analyses: AnalysisStore.all(), loggedIn: UserStore.loggedIn() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    APIUtil.fetchAnalyses({});
+	    this.analysesIndex = AnalysisStore.addListener(this._onChange);
+	    this.userIndex = UserStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.analysesIndex.remove();
+	    this.userIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    this.setState({ analyses: AnalysisStore.all(), loggedIn: UserStore.loggedIn() });
+	  },
+	  createClick: function createClick(event) {
+	    event.preventDefault();
+	    console.log("openModal?");
+	  },
+	  deskView: function deskView(event) {
+	    event.preventDefault();
+	    console.log("go to Desk page?");
+	  },
+	
+	  render: function render() {
+	    var createButton, userView;
+	    var analysisList = this.state.analyses.map(function (analysis) {
+	      return React.createElement(AnalysisListItem, { analysis: analysis, key: analysis.id });
+	    }, this);
+	    if (this.state.loggedIn) {
+	      createButton = React.createElement(
+	        'button',
+	        { className: 'analysis-header', id: 'create-button', onClick: this.createClick },
+	        'Create New'
+	      );
+	      userView = React.createElement(
+	        'button',
+	        { className: 'analysis-header', id: 'user-view', onClick: this.deskView },
+	        'View Your Reviews'
+	      );
+	    } else {
+	      createButton = React.createElement('div', null);
+	      userView = React.createElement('div', null);
+	    }
+	    return React.createElement(
+	      'div',
+	      { className: 'analysis-index', id: 'analysis-index-main' },
+	      React.createElement(
+	        'div',
+	        { className: 'analysis-index', id: 'analysis-header' },
+	        createButton,
+	        userView
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'analysis-index', id: 'analysis-body' },
+	        analysisList
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'analysis-index', id: 'analysis-footer' },
+	        React.createElement('button', { className: 'login', onClick: this.Click })
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = Analyses;
+
+/***/ },
+/* 287 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Store = __webpack_require__(209).Store;
+	var _analyses = [];
+	var AnalysesConstants = __webpack_require__(236);
+	var AppDispatcher = __webpack_require__(228);
+	var AnalysesStore = new Store(AppDispatcher);
+	
+	var resetAnalyses = function resetAnalyses(results) {
+	  _analyses = results;
+	};
+	var addAnalysis = function addAnalysis(anal) {
+	  _analyses.push(anal);
+	};
+	
+	AnalysesStore.all = function () {
+	
+	  return _analyses;
+	};
+	AnalysesStore.empty = function () {
+	  _analyses = [];
+	};
+	
+	AnalysesStore.__onDispatch = function (payload) {
+	
+	  switch (payload.actionType) {
+	    case AnalysesConstants.ReceiveAnalyses:
+	
+	      var result = resetAnalyses(payload.results);
+	      AnalysesStore.__emitChange();
+	      break;
+	    case AnalysesConstants.ReceiveNewAnalysis:
+	      var added = addAnalysis(payload.results);
+	      AnalysesStore.__emitChange();
+	      break;
+	    case AnalysesConstants.ReceiveAnalysis:
+	      // AnalysesStore.empty();
+	      AnalysesStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = AnalysesStore;
+
+/***/ },
+/* 288 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var InitialBookIndex = __webpack_require__(207);
+	var SearchArea = __webpack_require__(238);
+	var BookSearchStore = __webpack_require__(208);
+	var BookConfirmation = __webpack_require__(240);
+	var Modal = __webpack_require__(244);
+	var BookSearch = __webpack_require__(264);
+	var APIUtil = __webpack_require__(231);
+	var SearchResultItem = __webpack_require__(289);
+	var History = __webpack_require__(159).History;
+	
+	var SearchResults = React.createClass({
+	  displayName: 'SearchResults',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { chosen: BookSearchStore.currentBook(), currentBooks: BookSearchStore.all() };
+	  },
+	  bookChosen: function bookChosen() {
+	    // this.openModal();
+	    event.preventDefault();
+	    var bookToSend = BookSearchStore.currentBook();
+	    bookToSend.read = "toRead";
+	    // APIUtil.createBook(bookToSend);
+	    var url = "/Desk";
+	    this.history.push({ pathname: url });
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
+	
+	  closeModal: function closeModal() {
+	    BookSearchStore.resetCurrentBook(null);
+	    this.setState({ modalIsOpen: false });
+	  },
+	  render: function render() {
+	
+	    var searchResults = [];
+	    for (var i = 0; i < this.state.currentBooks.length; i++) {
+	      searchResults.push(React.createElement(SearchResultItem, { book: this.state.currentBooks[i] }));
+	    }
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'homePage' },
+	      React.createElement(
+	        'ul',
+	        { className: 'search-results-list' },
+	        searchResults
+	      )
+	    );
+	  }
+	});
+	module.exports = SearchResults;
+
+/***/ },
+/* 289 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var InitialBookIndex = __webpack_require__(207);
+	var SearchArea = __webpack_require__(238);
+	var BookSearchStore = __webpack_require__(208);
+	var BookConfirmation = __webpack_require__(240);
+	var Modal = __webpack_require__(244);
+	var BookSearch = __webpack_require__(264);
+	var APIUtil = __webpack_require__(231);
+	var History = __webpack_require__(159).History;
+	
+	var customStyles = {};
+	
+	var SearchResultsItem = React.createClass({
+	  displayName: 'SearchResultsItem',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
+	  },
+	  bookChosen: function bookChosen() {
+	    // this.openModal();
+	    var chosen = APIUtil.makeBookObject(this.props.book);
+	    BookSearchStore.resetCurrentBook(chosen);
+	    event.preventDefault();
+	    var bookToSend = BookSearchStore.currentBook();
+	    bookToSend.read = "toRead";
+	    // APIUtil.createBook(bookToSend);
+	    var url = "/Desk";
+	    this.history.push({ pathname: url });
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
+	
+	  closeModal: function closeModal() {
+	    BookSearchStore.resetCurrentBook(null);
+	    this.setState({ modalIsOpen: false });
+	  },
+	  render: function render() {
+	    var imageLink, title, author, numPages, category;
+	    if (this.props.book.volumeInfo.imageLinks !== undefined) {
+	      imageLink = this.props.book.volumeInfo.imageLinks.thumbnail;
+	    } else {
+	      imageLink = "http://res.cloudinary.com/litlitves/image/upload/v1474661342/imageNotAvailable_fhql9f.jpg";
+	    }
+	    if (this.props.book.volumeInfo.categories !== undefined) {
+	      category = "category: " + this.props.book.volumeInfo.categories[0];
+	    } else {
+	      category = null;
+	    }
+	    if (this.props.book.volumeInfo.authors !== undefined) {
+	      author = "by, " + this.props.book.volumeInfo.authors[0];
+	    }
+	
+	    return React.createElement(
+	      'li',
+	      { className: 'search-result-item', onClick: this.bookChosen },
+	      React.createElement('img', { className: 'search-result-image', src: imageLink }),
+	      React.createElement(
+	        'div',
+	        { className: 'data-area' },
+	        React.createElement(
+	          'div',
+	          { className: 'result-title' },
+	          this.props.book.volumeInfo.title
+	        ),
+	        React.createElement(
+	          'div',
+	          null,
+	          this.props.book.volumeInfo.subtitle
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'result-author' },
+	          author
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'result-category' },
+	          category
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = SearchResultsItem;
+
+/***/ },
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35281,30 +36371,30 @@
 	
 	'use strict';
 	
-	var AtomicBlockUtils = __webpack_require__(279);
-	var BlockMapBuilder = __webpack_require__(280);
-	var CharacterMetadata = __webpack_require__(281);
-	var CompositeDraftDecorator = __webpack_require__(315);
-	var ContentBlock = __webpack_require__(282);
-	var ContentState = __webpack_require__(307);
-	var DefaultDraftBlockRenderMap = __webpack_require__(316);
-	var DefaultDraftInlineStyle = __webpack_require__(318);
-	var DraftEditor = __webpack_require__(319);
-	var DraftEditorBlock = __webpack_require__(325);
-	var DraftModifier = __webpack_require__(284);
-	var DraftEntity = __webpack_require__(289);
-	var DraftEntityInstance = __webpack_require__(291);
-	var EditorState = __webpack_require__(304);
-	var KeyBindingUtil = __webpack_require__(374);
-	var RichTextEditorUtil = __webpack_require__(405);
-	var SelectionState = __webpack_require__(308);
+	var AtomicBlockUtils = __webpack_require__(291);
+	var BlockMapBuilder = __webpack_require__(292);
+	var CharacterMetadata = __webpack_require__(293);
+	var CompositeDraftDecorator = __webpack_require__(327);
+	var ContentBlock = __webpack_require__(294);
+	var ContentState = __webpack_require__(319);
+	var DefaultDraftBlockRenderMap = __webpack_require__(328);
+	var DefaultDraftInlineStyle = __webpack_require__(330);
+	var DraftEditor = __webpack_require__(331);
+	var DraftEditorBlock = __webpack_require__(337);
+	var DraftModifier = __webpack_require__(296);
+	var DraftEntity = __webpack_require__(301);
+	var DraftEntityInstance = __webpack_require__(303);
+	var EditorState = __webpack_require__(316);
+	var KeyBindingUtil = __webpack_require__(386);
+	var RichTextEditorUtil = __webpack_require__(417);
+	var SelectionState = __webpack_require__(320);
 	
-	var convertFromDraftStateToRaw = __webpack_require__(407);
-	var convertFromHTMLToContentBlocks = __webpack_require__(397);
-	var convertFromRawToDraftState = __webpack_require__(411);
-	var generateRandomKey = __webpack_require__(296);
-	var getDefaultKeyBinding = __webpack_require__(404);
-	var getVisibleSelectionRect = __webpack_require__(415);
+	var convertFromDraftStateToRaw = __webpack_require__(419);
+	var convertFromHTMLToContentBlocks = __webpack_require__(409);
+	var convertFromRawToDraftState = __webpack_require__(423);
+	var generateRandomKey = __webpack_require__(308);
+	var getDefaultKeyBinding = __webpack_require__(416);
+	var getVisibleSelectionRect = __webpack_require__(427);
 	
 	var DraftPublic = {
 	  Editor: DraftEditor,
@@ -35340,7 +36430,7 @@
 	module.exports = DraftPublic;
 
 /***/ },
-/* 279 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35358,14 +36448,14 @@
 	
 	'use strict';
 	
-	var BlockMapBuilder = __webpack_require__(280);
-	var CharacterMetadata = __webpack_require__(281);
-	var ContentBlock = __webpack_require__(282);
-	var DraftModifier = __webpack_require__(284);
-	var EditorState = __webpack_require__(304);
+	var BlockMapBuilder = __webpack_require__(292);
+	var CharacterMetadata = __webpack_require__(293);
+	var ContentBlock = __webpack_require__(294);
+	var DraftModifier = __webpack_require__(296);
+	var EditorState = __webpack_require__(316);
 	var Immutable = __webpack_require__(225);
 	
-	var generateRandomKey = __webpack_require__(296);
+	var generateRandomKey = __webpack_require__(308);
 	
 	var List = Immutable.List;
 	var Repeat = Immutable.Repeat;
@@ -35414,7 +36504,7 @@
 	module.exports = AtomicBlockUtils;
 
 /***/ },
-/* 280 */
+/* 292 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35447,7 +36537,7 @@
 	module.exports = BlockMapBuilder;
 
 /***/ },
-/* 281 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35560,7 +36650,7 @@
 	module.exports = CharacterMetadata;
 
 /***/ },
-/* 282 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35585,7 +36675,7 @@
 	
 	var Immutable = __webpack_require__(225);
 	
-	var findRangesImmutable = __webpack_require__(283);
+	var findRangesImmutable = __webpack_require__(295);
 	
 	var List = Immutable.List;
 	var Map = Immutable.Map;
@@ -35685,7 +36775,7 @@
 	module.exports = ContentBlock;
 
 /***/ },
-/* 283 */
+/* 295 */
 /***/ function(module, exports) {
 
 	/**
@@ -35734,7 +36824,7 @@
 	module.exports = findRangesImmutable;
 
 /***/ },
-/* 284 */
+/* 296 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -35752,20 +36842,20 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(281);
-	var ContentStateInlineStyle = __webpack_require__(285);
+	var CharacterMetadata = __webpack_require__(293);
+	var ContentStateInlineStyle = __webpack_require__(297);
 	var Immutable = __webpack_require__(225);
 	
-	var applyEntityToContentState = __webpack_require__(286);
-	var getCharacterRemovalRange = __webpack_require__(288);
-	var getContentStateFragment = __webpack_require__(295);
-	var insertFragmentIntoContentState = __webpack_require__(298);
-	var insertTextIntoContentState = __webpack_require__(300);
-	var invariant = __webpack_require__(292);
-	var modifyBlockForContentState = __webpack_require__(301);
-	var removeEntitiesAtEdges = __webpack_require__(297);
-	var removeRangeFromContentState = __webpack_require__(302);
-	var splitBlockInContentState = __webpack_require__(303);
+	var applyEntityToContentState = __webpack_require__(298);
+	var getCharacterRemovalRange = __webpack_require__(300);
+	var getContentStateFragment = __webpack_require__(307);
+	var insertFragmentIntoContentState = __webpack_require__(310);
+	var insertTextIntoContentState = __webpack_require__(312);
+	var invariant = __webpack_require__(304);
+	var modifyBlockForContentState = __webpack_require__(313);
+	var removeEntitiesAtEdges = __webpack_require__(309);
+	var removeRangeFromContentState = __webpack_require__(314);
+	var splitBlockInContentState = __webpack_require__(315);
 	
 	var OrderedSet = Immutable.OrderedSet;
 	
@@ -35877,7 +36967,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 285 */
+/* 297 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35895,7 +36985,7 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(281);
+	var CharacterMetadata = __webpack_require__(293);
 	
 	var _require = __webpack_require__(225);
 	
@@ -35956,7 +37046,7 @@
 	module.exports = ContentStateInlineStyle;
 
 /***/ },
-/* 286 */
+/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35976,7 +37066,7 @@
 	
 	var Immutable = __webpack_require__(225);
 	
-	var applyEntityToContentBlock = __webpack_require__(287);
+	var applyEntityToContentBlock = __webpack_require__(299);
 	
 	function applyEntityToContentState(contentState, selectionState, entityKey) {
 	  var blockMap = contentState.getBlockMap();
@@ -36005,7 +37095,7 @@
 	module.exports = applyEntityToContentState;
 
 /***/ },
-/* 287 */
+/* 299 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -36023,7 +37113,7 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(281);
+	var CharacterMetadata = __webpack_require__(293);
 	
 	function applyEntityToContentBlock(contentBlock, start, end, entityKey) {
 	  var characterList = contentBlock.getCharacterList();
@@ -36037,7 +37127,7 @@
 	module.exports = applyEntityToContentBlock;
 
 /***/ },
-/* 288 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -36055,11 +37145,11 @@
 	
 	'use strict';
 	
-	var DraftEntity = __webpack_require__(289);
-	var DraftEntitySegments = __webpack_require__(293);
+	var DraftEntity = __webpack_require__(301);
+	var DraftEntitySegments = __webpack_require__(305);
 	
-	var getRangesForDraftEntity = __webpack_require__(294);
-	var invariant = __webpack_require__(292);
+	var getRangesForDraftEntity = __webpack_require__(306);
+	var invariant = __webpack_require__(304);
 	
 	/**
 	 * Given a SelectionState and a removal direction, determine the entire range
@@ -36120,12 +37210,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 289 */
+/* 301 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
-	var _assign = __webpack_require__(290);
+	var _assign = __webpack_require__(302);
 	
 	var _extends = _assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
@@ -36142,10 +37232,10 @@
 	 * 
 	 */
 	
-	var DraftEntityInstance = __webpack_require__(291);
+	var DraftEntityInstance = __webpack_require__(303);
 	var Immutable = __webpack_require__(225);
 	
-	var invariant = __webpack_require__(292);
+	var invariant = __webpack_require__(304);
 	
 	var Map = Immutable.Map;
 	
@@ -36225,7 +37315,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 290 */
+/* 302 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -36314,7 +37404,7 @@
 
 
 /***/ },
-/* 291 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -36387,7 +37477,7 @@
 	module.exports = DraftEntityInstance;
 
 /***/ },
-/* 292 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -36442,7 +37532,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 293 */
+/* 305 */
 /***/ function(module, exports) {
 
 	/**
@@ -36546,7 +37636,7 @@
 	module.exports = DraftEntitySegments;
 
 /***/ },
-/* 294 */
+/* 306 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -36564,7 +37654,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(292);
+	var invariant = __webpack_require__(304);
 	
 	/**
 	 * Obtain the start and end positions of the range that has the
@@ -36591,7 +37681,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 295 */
+/* 307 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -36609,8 +37699,8 @@
 	
 	'use strict';
 	
-	var generateRandomKey = __webpack_require__(296);
-	var removeEntitiesAtEdges = __webpack_require__(297);
+	var generateRandomKey = __webpack_require__(308);
+	var removeEntitiesAtEdges = __webpack_require__(309);
 	
 	function getContentStateFragment(contentState, selectionState) {
 	  var startKey = selectionState.getStartKey();
@@ -36667,7 +37757,7 @@
 	module.exports = getContentStateFragment;
 
 /***/ },
-/* 296 */
+/* 308 */
 /***/ function(module, exports) {
 
 	/**
@@ -36700,7 +37790,7 @@
 	module.exports = generateRandomKey;
 
 /***/ },
-/* 297 */
+/* 309 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -36717,11 +37807,11 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(281);
-	var DraftEntity = __webpack_require__(289);
+	var CharacterMetadata = __webpack_require__(293);
+	var DraftEntity = __webpack_require__(301);
 	
-	var findRangesImmutable = __webpack_require__(283);
-	var invariant = __webpack_require__(292);
+	var findRangesImmutable = __webpack_require__(295);
+	var invariant = __webpack_require__(304);
 	
 	function removeEntitiesAtEdges(contentState, selectionState) {
 	  var blockMap = contentState.getBlockMap();
@@ -36807,7 +37897,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 298 */
+/* 310 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -36825,11 +37915,11 @@
 	
 	'use strict';
 	
-	var BlockMapBuilder = __webpack_require__(280);
+	var BlockMapBuilder = __webpack_require__(292);
 	
-	var generateRandomKey = __webpack_require__(296);
-	var insertIntoList = __webpack_require__(299);
-	var invariant = __webpack_require__(292);
+	var generateRandomKey = __webpack_require__(308);
+	var insertIntoList = __webpack_require__(311);
+	var invariant = __webpack_require__(304);
 	
 	function insertFragmentIntoContentState(contentState, selectionState, fragment) {
 	  !selectionState.isCollapsed() ? process.env.NODE_ENV !== 'production' ? invariant(false, '`insertFragment` should only be called with a collapsed selection state.') : invariant(false) : void 0;
@@ -36939,7 +38029,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 299 */
+/* 311 */
 /***/ function(module, exports) {
 
 	/**
@@ -36979,7 +38069,7 @@
 	module.exports = insertIntoList;
 
 /***/ },
-/* 300 */
+/* 312 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -36999,8 +38089,8 @@
 	
 	var Immutable = __webpack_require__(225);
 	
-	var insertIntoList = __webpack_require__(299);
-	var invariant = __webpack_require__(292);
+	var insertIntoList = __webpack_require__(311);
+	var invariant = __webpack_require__(304);
 	
 	var Repeat = Immutable.Repeat;
 	
@@ -37039,7 +38129,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 301 */
+/* 313 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37082,7 +38172,7 @@
 	module.exports = modifyBlockForContentState;
 
 /***/ },
-/* 302 */
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37178,7 +38268,7 @@
 	module.exports = removeRangeFromContentState;
 
 /***/ },
-/* 303 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -37198,8 +38288,8 @@
 	
 	var Immutable = __webpack_require__(225);
 	
-	var generateRandomKey = __webpack_require__(296);
-	var invariant = __webpack_require__(292);
+	var generateRandomKey = __webpack_require__(308);
+	var invariant = __webpack_require__(304);
 	
 	var Map = Immutable.Map;
 	
@@ -37253,7 +38343,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 304 */
+/* 316 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37270,17 +38360,17 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(290);
+	var _assign = __webpack_require__(302);
 	
 	var _extends = _assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var BlockTree = __webpack_require__(305);
-	var ContentState = __webpack_require__(307);
-	var EditorBidiService = __webpack_require__(310);
+	var BlockTree = __webpack_require__(317);
+	var ContentState = __webpack_require__(319);
+	var EditorBidiService = __webpack_require__(322);
 	var Immutable = __webpack_require__(225);
-	var SelectionState = __webpack_require__(308);
+	var SelectionState = __webpack_require__(320);
 	
 	var OrderedSet = Immutable.OrderedSet;
 	var Record = Immutable.Record;
@@ -37819,7 +38909,7 @@
 	module.exports = EditorState;
 
 /***/ },
-/* 305 */
+/* 317 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37838,8 +38928,8 @@
 	
 	var Immutable = __webpack_require__(225);
 	
-	var emptyFunction = __webpack_require__(306);
-	var findRangesImmutable = __webpack_require__(283);
+	var emptyFunction = __webpack_require__(318);
+	var findRangesImmutable = __webpack_require__(295);
 	
 	var List = Immutable.List;
 	var Repeat = Immutable.Repeat;
@@ -37936,7 +39026,7 @@
 	module.exports = BlockTree;
 
 /***/ },
-/* 306 */
+/* 318 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -37979,7 +39069,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 307 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -38003,14 +39093,14 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var BlockMapBuilder = __webpack_require__(280);
-	var CharacterMetadata = __webpack_require__(281);
-	var ContentBlock = __webpack_require__(282);
+	var BlockMapBuilder = __webpack_require__(292);
+	var CharacterMetadata = __webpack_require__(293);
+	var ContentBlock = __webpack_require__(294);
 	var Immutable = __webpack_require__(225);
-	var SelectionState = __webpack_require__(308);
+	var SelectionState = __webpack_require__(320);
 	
-	var generateRandomKey = __webpack_require__(296);
-	var sanitizeDraftText = __webpack_require__(309);
+	var generateRandomKey = __webpack_require__(308);
+	var sanitizeDraftText = __webpack_require__(321);
 	
 	var List = Immutable.List;
 	var Record = Immutable.Record;
@@ -38130,7 +39220,7 @@
 	module.exports = ContentState;
 
 /***/ },
-/* 308 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -38269,7 +39359,7 @@
 	module.exports = SelectionState;
 
 /***/ },
-/* 309 */
+/* 321 */
 /***/ function(module, exports) {
 
 	/**
@@ -38295,7 +39385,7 @@
 	module.exports = sanitizeDraftText;
 
 /***/ },
-/* 310 */
+/* 322 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -38314,9 +39404,9 @@
 	'use strict';
 	
 	var Immutable = __webpack_require__(225);
-	var UnicodeBidiService = __webpack_require__(311);
+	var UnicodeBidiService = __webpack_require__(323);
 	
-	var nullthrows = __webpack_require__(314);
+	var nullthrows = __webpack_require__(326);
 	
 	var OrderedMap = Immutable.OrderedMap;
 	
@@ -38348,7 +39438,7 @@
 	module.exports = EditorBidiService;
 
 /***/ },
-/* 311 */
+/* 323 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -38397,10 +39487,10 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var UnicodeBidi = __webpack_require__(312);
-	var UnicodeBidiDirection = __webpack_require__(313);
+	var UnicodeBidi = __webpack_require__(324);
+	var UnicodeBidiDirection = __webpack_require__(325);
 	
-	var invariant = __webpack_require__(292);
+	var invariant = __webpack_require__(304);
 	
 	var UnicodeBidiService = function () {
 	
@@ -38454,7 +39544,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 312 */
+/* 324 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -38479,9 +39569,9 @@
 	
 	'use strict';
 	
-	var UnicodeBidiDirection = __webpack_require__(313);
+	var UnicodeBidiDirection = __webpack_require__(325);
 	
-	var invariant = __webpack_require__(292);
+	var invariant = __webpack_require__(304);
 	
 	/**
 	 * RegExp ranges of characters with a *Strong* Bidi_Class value.
@@ -38616,7 +39706,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 313 */
+/* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -38647,7 +39737,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(292);
+	var invariant = __webpack_require__(304);
 	
 	var NEUTRAL = 'NEUTRAL'; // No strong direction
 	var LTR = 'LTR'; // Left-to-Right direction
@@ -38730,7 +39820,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 314 */
+/* 326 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -38756,7 +39846,7 @@
 	module.exports = nullthrows;
 
 /***/ },
-/* 315 */
+/* 327 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -38874,7 +39964,7 @@
 	module.exports = CompositeDraftDecorator;
 
 /***/ },
-/* 316 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -38897,7 +39987,7 @@
 	
 	var React = __webpack_require__(1);
 	
-	var cx = __webpack_require__(317);
+	var cx = __webpack_require__(329);
 	
 	var UL_WRAP = React.createElement('ul', { className: cx('public/DraftStyleDefault/ul') });
 	var OL_WRAP = React.createElement('ol', { className: cx('public/DraftStyleDefault/ol') });
@@ -38946,7 +40036,7 @@
 	});
 
 /***/ },
-/* 317 */
+/* 329 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38992,7 +40082,7 @@
 	module.exports = cx;
 
 /***/ },
-/* 318 */
+/* 330 */
 /***/ function(module, exports) {
 
 	/**
@@ -39033,7 +40123,7 @@
 	};
 
 /***/ },
-/* 319 */
+/* 331 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -39051,7 +40141,7 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(290);
+	var _assign = __webpack_require__(302);
 	
 	var _extends = _assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
@@ -39061,26 +40151,26 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var DefaultDraftBlockRenderMap = __webpack_require__(316);
-	var DefaultDraftInlineStyle = __webpack_require__(318);
-	var DraftEditorCompositionHandler = __webpack_require__(320);
-	var DraftEditorContents = __webpack_require__(324);
-	var DraftEditorDragHandler = __webpack_require__(353);
-	var DraftEditorEditHandler = __webpack_require__(362);
-	var DraftEditorPlaceholder = __webpack_require__(403);
-	var EditorState = __webpack_require__(304);
+	var DefaultDraftBlockRenderMap = __webpack_require__(328);
+	var DefaultDraftInlineStyle = __webpack_require__(330);
+	var DraftEditorCompositionHandler = __webpack_require__(332);
+	var DraftEditorContents = __webpack_require__(336);
+	var DraftEditorDragHandler = __webpack_require__(365);
+	var DraftEditorEditHandler = __webpack_require__(374);
+	var DraftEditorPlaceholder = __webpack_require__(415);
+	var EditorState = __webpack_require__(316);
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var Scroll = __webpack_require__(341);
-	var Style = __webpack_require__(342);
-	var UserAgent = __webpack_require__(328);
+	var Scroll = __webpack_require__(353);
+	var Style = __webpack_require__(354);
+	var UserAgent = __webpack_require__(340);
 	
-	var cx = __webpack_require__(317);
-	var emptyFunction = __webpack_require__(306);
-	var generateRandomKey = __webpack_require__(296);
-	var getDefaultKeyBinding = __webpack_require__(404);
-	var nullthrows = __webpack_require__(314);
-	var getScrollPosition = __webpack_require__(348);
+	var cx = __webpack_require__(329);
+	var emptyFunction = __webpack_require__(318);
+	var generateRandomKey = __webpack_require__(308);
+	var getDefaultKeyBinding = __webpack_require__(416);
+	var nullthrows = __webpack_require__(326);
+	var getScrollPosition = __webpack_require__(360);
 	
 	var isIE = UserAgent.isBrowser('IE');
 	
@@ -39488,7 +40578,7 @@
 	module.exports = DraftEditor;
 
 /***/ },
-/* 320 */
+/* 332 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -39505,12 +40595,12 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(284);
-	var EditorState = __webpack_require__(304);
-	var Keys = __webpack_require__(321);
+	var DraftModifier = __webpack_require__(296);
+	var EditorState = __webpack_require__(316);
+	var Keys = __webpack_require__(333);
 	
-	var getEntityKeyForSelection = __webpack_require__(322);
-	var isSelectionAtLeafStart = __webpack_require__(323);
+	var getEntityKeyForSelection = __webpack_require__(334);
+	var isSelectionAtLeafStart = __webpack_require__(335);
 	
 	/**
 	 * Millisecond delay to allow `compositionstart` to fire again upon
@@ -39656,7 +40746,7 @@
 	module.exports = DraftEditorCompositionHandler;
 
 /***/ },
-/* 321 */
+/* 333 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -39697,7 +40787,7 @@
 	};
 
 /***/ },
-/* 322 */
+/* 334 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -39715,7 +40805,7 @@
 	
 	'use strict';
 	
-	var DraftEntity = __webpack_require__(289);
+	var DraftEntity = __webpack_require__(301);
 	
 	/**
 	 * Return the entity key that should be used when inserting text for the
@@ -39759,7 +40849,7 @@
 	module.exports = getEntityKeyForSelection;
 
 /***/ },
-/* 323 */
+/* 335 */
 /***/ function(module, exports) {
 
 	/**
@@ -39812,7 +40902,7 @@
 	module.exports = isSelectionAtLeafStart;
 
 /***/ },
-/* 324 */
+/* 336 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -39830,7 +40920,7 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(290);
+	var _assign = __webpack_require__(302);
 	
 	var _extends = _assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
@@ -39840,14 +40930,14 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var DraftEditorBlock = __webpack_require__(325);
-	var DraftOffsetKey = __webpack_require__(340);
-	var EditorState = __webpack_require__(304);
+	var DraftEditorBlock = __webpack_require__(337);
+	var DraftOffsetKey = __webpack_require__(352);
+	var EditorState = __webpack_require__(316);
 	var React = __webpack_require__(1);
 	
-	var cx = __webpack_require__(317);
-	var joinClasses = __webpack_require__(352);
-	var nullthrows = __webpack_require__(314);
+	var cx = __webpack_require__(329);
+	var joinClasses = __webpack_require__(364);
+	var nullthrows = __webpack_require__(326);
 	
 	/**
 	 * `DraftEditorContents` is the container component for all block components
@@ -40059,7 +41149,7 @@
 	module.exports = DraftEditorContents;
 
 /***/ },
-/* 325 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -40077,7 +41167,7 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(290);
+	var _assign = __webpack_require__(302);
 	
 	var _extends = _assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
@@ -40087,22 +41177,22 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var ContentBlock = __webpack_require__(282);
-	var DraftEditorLeaf = __webpack_require__(326);
-	var DraftOffsetKey = __webpack_require__(340);
+	var ContentBlock = __webpack_require__(294);
+	var DraftEditorLeaf = __webpack_require__(338);
+	var DraftOffsetKey = __webpack_require__(352);
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var Scroll = __webpack_require__(341);
-	var SelectionState = __webpack_require__(308);
-	var Style = __webpack_require__(342);
-	var UnicodeBidi = __webpack_require__(312);
-	var UnicodeBidiDirection = __webpack_require__(313);
+	var Scroll = __webpack_require__(353);
+	var SelectionState = __webpack_require__(320);
+	var Style = __webpack_require__(354);
+	var UnicodeBidi = __webpack_require__(324);
+	var UnicodeBidiDirection = __webpack_require__(325);
 	
-	var cx = __webpack_require__(317);
-	var getElementPosition = __webpack_require__(346);
-	var getScrollPosition = __webpack_require__(348);
-	var getViewportDimensions = __webpack_require__(351);
-	var nullthrows = __webpack_require__(314);
+	var cx = __webpack_require__(329);
+	var getElementPosition = __webpack_require__(358);
+	var getScrollPosition = __webpack_require__(360);
+	var getViewportDimensions = __webpack_require__(363);
+	var nullthrows = __webpack_require__(326);
 	
 	var SCROLL_BUFFER = 10;
 	
@@ -40270,7 +41360,7 @@
 	module.exports = DraftEditorBlock;
 
 /***/ },
-/* 326 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -40288,7 +41378,7 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(290);
+	var _assign = __webpack_require__(302);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -40296,12 +41386,12 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var DraftEditorTextNode = __webpack_require__(327);
+	var DraftEditorTextNode = __webpack_require__(339);
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var SelectionState = __webpack_require__(308);
+	var SelectionState = __webpack_require__(320);
 	
-	var setDraftEditorSelection = __webpack_require__(335);
+	var setDraftEditorSelection = __webpack_require__(347);
 	
 	/**
 	 * All leaf nodes in the editor are spans with single text nodes. Leaf
@@ -40434,7 +41524,7 @@
 	module.exports = DraftEditorLeaf;
 
 /***/ },
-/* 327 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -40460,7 +41550,7 @@
 	
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var UserAgent = __webpack_require__(328);
+	var UserAgent = __webpack_require__(340);
 	
 	// In IE, spans with <br> tags render as two newlines. By rendering a span
 	// with only a newline character, we can be sure to render a single line.
@@ -40547,7 +41637,7 @@
 	module.exports = DraftEditorTextNode;
 
 /***/ },
-/* 328 */
+/* 340 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -40562,11 +41652,11 @@
 	
 	'use strict';
 	
-	var UserAgentData = __webpack_require__(329);
-	var VersionRange = __webpack_require__(332);
+	var UserAgentData = __webpack_require__(341);
+	var VersionRange = __webpack_require__(344);
 	
-	var mapObject = __webpack_require__(333);
-	var memoizeStringOnly = __webpack_require__(334);
+	var mapObject = __webpack_require__(345);
+	var memoizeStringOnly = __webpack_require__(346);
 	
 	/**
 	 * Checks to see whether `name` and `version` satisfy `query`.
@@ -40793,7 +41883,7 @@
 	module.exports = mapObject(UserAgent, memoizeStringOnly);
 
 /***/ },
-/* 329 */
+/* 341 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -40819,7 +41909,7 @@
 	
 	'use strict';
 	
-	var UAParser = __webpack_require__(330);
+	var UAParser = __webpack_require__(342);
 	
 	var UNKNOWN = 'Unknown';
 	
@@ -40880,7 +41970,7 @@
 	module.exports = uaData;
 
 /***/ },
-/* 330 */
+/* 342 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -41732,7 +42822,7 @@
 	        exports.UAParser = UAParser;
 	    } else {
 	        // requirejs env (optional)
-	        if ("function" === FUNC_TYPE && __webpack_require__(331)) {
+	        if ("function" === FUNC_TYPE && __webpack_require__(343)) {
 	            !(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
 	                return UAParser;
 	            }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -41767,7 +42857,7 @@
 
 
 /***/ },
-/* 331 */
+/* 343 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -41775,7 +42865,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 332 */
+/* 344 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -41790,7 +42880,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(292);
+	var invariant = __webpack_require__(304);
 	
 	var componentRegex = /\./;
 	var orRegex = /\|\|/;
@@ -42166,7 +43256,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 333 */
+/* 345 */
 /***/ function(module, exports) {
 
 	/**
@@ -42221,7 +43311,7 @@
 	module.exports = mapObject;
 
 /***/ },
-/* 334 */
+/* 346 */
 /***/ function(module, exports) {
 
 	/**
@@ -42255,7 +43345,7 @@
 	module.exports = memoizeStringOnly;
 
 /***/ },
-/* 335 */
+/* 347 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -42273,8 +43363,8 @@
 	
 	'use strict';
 	
-	var containsNode = __webpack_require__(336);
-	var getActiveElement = __webpack_require__(339);
+	var containsNode = __webpack_require__(348);
+	var getActiveElement = __webpack_require__(351);
 	
 	/**
 	 * In modern non-IE browsers, we can support both forward and backward
@@ -42394,7 +43484,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 336 */
+/* 348 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42410,7 +43500,7 @@
 	 * 
 	 */
 	
-	var isTextNode = __webpack_require__(337);
+	var isTextNode = __webpack_require__(349);
 	
 	/*eslint-disable no-bitwise */
 	
@@ -42438,7 +43528,7 @@
 	module.exports = containsNode;
 
 /***/ },
-/* 337 */
+/* 349 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42454,7 +43544,7 @@
 	 * @typechecks
 	 */
 	
-	var isNode = __webpack_require__(338);
+	var isNode = __webpack_require__(350);
 	
 	/**
 	 * @param {*} object The object to check.
@@ -42467,7 +43557,7 @@
 	module.exports = isTextNode;
 
 /***/ },
-/* 338 */
+/* 350 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -42494,7 +43584,7 @@
 	module.exports = isNode;
 
 /***/ },
-/* 339 */
+/* 351 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -42533,7 +43623,7 @@
 	module.exports = getActiveElement;
 
 /***/ },
-/* 340 */
+/* 352 */
 /***/ function(module, exports) {
 
 	/**
@@ -42575,7 +43665,7 @@
 	module.exports = DraftOffsetKey;
 
 /***/ },
-/* 341 */
+/* 353 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -42665,7 +43755,7 @@
 	module.exports = Scroll;
 
 /***/ },
-/* 342 */
+/* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42681,7 +43771,7 @@
 	 * @typechecks
 	 */
 	
-	var getStyleProperty = __webpack_require__(343);
+	var getStyleProperty = __webpack_require__(355);
 	
 	/**
 	 * @param {DOMNode} element [description]
@@ -42733,7 +43823,7 @@
 	module.exports = Style;
 
 /***/ },
-/* 343 */
+/* 355 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42749,8 +43839,8 @@
 	 * @typechecks
 	 */
 	
-	var camelize = __webpack_require__(344);
-	var hyphenate = __webpack_require__(345);
+	var camelize = __webpack_require__(356);
+	var hyphenate = __webpack_require__(357);
 	
 	function asString(value) /*?string*/{
 	  return value == null ? value : String(value);
@@ -42791,7 +43881,7 @@
 	module.exports = getStyleProperty;
 
 /***/ },
-/* 344 */
+/* 356 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -42827,7 +43917,7 @@
 	module.exports = camelize;
 
 /***/ },
-/* 345 */
+/* 357 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -42864,7 +43954,7 @@
 	module.exports = hyphenate;
 
 /***/ },
-/* 346 */
+/* 358 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42880,7 +43970,7 @@
 	 * @typechecks
 	 */
 	
-	var getElementRect = __webpack_require__(347);
+	var getElementRect = __webpack_require__(359);
 	
 	/**
 	 * Gets an element's position in pixels relative to the viewport. The returned
@@ -42902,7 +43992,7 @@
 	module.exports = getElementPosition;
 
 /***/ },
-/* 347 */
+/* 359 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42918,7 +44008,7 @@
 	 * @typechecks
 	 */
 	
-	var containsNode = __webpack_require__(336);
+	var containsNode = __webpack_require__(348);
 	
 	/**
 	 * Gets an element's bounding rect in pixels relative to the viewport.
@@ -42957,7 +44047,7 @@
 	module.exports = getElementRect;
 
 /***/ },
-/* 348 */
+/* 360 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -42973,8 +44063,8 @@
 	
 	'use strict';
 	
-	var getDocumentScrollElement = __webpack_require__(349);
-	var getUnboundedScrollPosition = __webpack_require__(350);
+	var getDocumentScrollElement = __webpack_require__(361);
+	var getUnboundedScrollPosition = __webpack_require__(362);
 	
 	/**
 	 * Gets the scroll position of the supplied element or window.
@@ -43009,7 +44099,7 @@
 	module.exports = getScrollPosition;
 
 /***/ },
-/* 349 */
+/* 361 */
 /***/ function(module, exports) {
 
 	/**
@@ -43044,7 +44134,7 @@
 	module.exports = getDocumentScrollElement;
 
 /***/ },
-/* 350 */
+/* 362 */
 /***/ function(module, exports) {
 
 	/**
@@ -43087,7 +44177,7 @@
 	module.exports = getUnboundedScrollPosition;
 
 /***/ },
-/* 351 */
+/* 363 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -43151,7 +44241,7 @@
 	module.exports = getViewportDimensions;
 
 /***/ },
-/* 352 */
+/* 364 */
 /***/ function(module, exports) {
 
 	/**
@@ -43195,7 +44285,7 @@
 	module.exports = joinClasses;
 
 /***/ },
-/* 353 */
+/* 365 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -43213,16 +44303,16 @@
 	
 	'use strict';
 	
-	var DataTransfer = __webpack_require__(354);
-	var DraftModifier = __webpack_require__(284);
-	var EditorState = __webpack_require__(304);
+	var DataTransfer = __webpack_require__(366);
+	var DraftModifier = __webpack_require__(296);
+	var EditorState = __webpack_require__(316);
 	
-	var findAncestorOffsetKey = __webpack_require__(357);
-	var getTextContentFromFiles = __webpack_require__(359);
-	var getUpdatedSelectionState = __webpack_require__(360);
-	var nullthrows = __webpack_require__(314);
+	var findAncestorOffsetKey = __webpack_require__(369);
+	var getTextContentFromFiles = __webpack_require__(371);
+	var getUpdatedSelectionState = __webpack_require__(372);
+	var nullthrows = __webpack_require__(326);
 	
-	var isEventHandled = __webpack_require__(361);
+	var isEventHandled = __webpack_require__(373);
 	
 	/**
 	 * Get a SelectionState for the supplied mouse event.
@@ -43319,7 +44409,7 @@
 	module.exports = DraftEditorDragHandler;
 
 /***/ },
-/* 354 */
+/* 366 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43337,10 +44427,10 @@
 	 * @typechecks
 	 */
 	
-	var PhotosMimeType = __webpack_require__(355);
+	var PhotosMimeType = __webpack_require__(367);
 	
-	var createArrayFromMixed = __webpack_require__(356);
-	var emptyFunction = __webpack_require__(306);
+	var createArrayFromMixed = __webpack_require__(368);
+	var emptyFunction = __webpack_require__(318);
 	
 	var CR_LF_REGEX = new RegExp('\r\n', 'g');
 	var LF_ONLY = '\n';
@@ -43545,7 +44635,7 @@
 	module.exports = DataTransfer;
 
 /***/ },
-/* 355 */
+/* 367 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -43578,7 +44668,7 @@
 	module.exports = PhotosMimeType;
 
 /***/ },
-/* 356 */
+/* 368 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -43594,7 +44684,7 @@
 	 * @typechecks
 	 */
 	
-	var invariant = __webpack_require__(292);
+	var invariant = __webpack_require__(304);
 	
 	/**
 	 * Convert array-like objects to arrays.
@@ -43710,7 +44800,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 357 */
+/* 369 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -43728,7 +44818,7 @@
 	
 	'use strict';
 	
-	var getSelectionOffsetKeyForNode = __webpack_require__(358);
+	var getSelectionOffsetKeyForNode = __webpack_require__(370);
 	
 	/**
 	 * Get the key from the node's nearest offset-aware ancestor.
@@ -43748,7 +44838,7 @@
 	module.exports = findAncestorOffsetKey;
 
 /***/ },
-/* 358 */
+/* 370 */
 /***/ function(module, exports) {
 
 	/**
@@ -43790,7 +44880,7 @@
 	module.exports = getSelectionOffsetKeyForNode;
 
 /***/ },
-/* 359 */
+/* 371 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -43871,7 +44961,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 360 */
+/* 372 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -43888,9 +44978,9 @@
 	
 	'use strict';
 	
-	var DraftOffsetKey = __webpack_require__(340);
+	var DraftOffsetKey = __webpack_require__(352);
 	
-	var nullthrows = __webpack_require__(314);
+	var nullthrows = __webpack_require__(326);
 	
 	function getUpdatedSelectionState(editorState, anchorKey, anchorOffset, focusKey, focusOffset) {
 	  var selection = nullthrows(editorState.getSelection());
@@ -43952,7 +45042,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 361 */
+/* 373 */
 /***/ function(module, exports) {
 
 	/**
@@ -43981,7 +45071,7 @@
 	module.exports = isEventHandled;
 
 /***/ },
-/* 362 */
+/* 374 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -43998,18 +45088,18 @@
 	
 	'use strict';
 	
-	var onBeforeInput = __webpack_require__(363);
-	var onBlur = __webpack_require__(364);
-	var onCompositionStart = __webpack_require__(365);
-	var onCopy = __webpack_require__(366);
-	var onCut = __webpack_require__(368);
-	var onDragOver = __webpack_require__(369);
-	var onDragStart = __webpack_require__(370);
-	var onFocus = __webpack_require__(371);
-	var onInput = __webpack_require__(372);
-	var onKeyDown = __webpack_require__(373);
-	var onPaste = __webpack_require__(395);
-	var onSelect = __webpack_require__(401);
+	var onBeforeInput = __webpack_require__(375);
+	var onBlur = __webpack_require__(376);
+	var onCompositionStart = __webpack_require__(377);
+	var onCopy = __webpack_require__(378);
+	var onCut = __webpack_require__(380);
+	var onDragOver = __webpack_require__(381);
+	var onDragStart = __webpack_require__(382);
+	var onFocus = __webpack_require__(383);
+	var onInput = __webpack_require__(384);
+	var onKeyDown = __webpack_require__(385);
+	var onPaste = __webpack_require__(407);
+	var onSelect = __webpack_require__(413);
 	
 	var DraftEditorEditHandler = {
 	  onBeforeInput: onBeforeInput,
@@ -44029,7 +45119,7 @@
 	module.exports = DraftEditorEditHandler;
 
 /***/ },
-/* 363 */
+/* 375 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44046,16 +45136,16 @@
 	
 	'use strict';
 	
-	var BlockTree = __webpack_require__(305);
-	var DraftModifier = __webpack_require__(284);
-	var EditorState = __webpack_require__(304);
-	var UserAgent = __webpack_require__(328);
+	var BlockTree = __webpack_require__(317);
+	var DraftModifier = __webpack_require__(296);
+	var EditorState = __webpack_require__(316);
+	var UserAgent = __webpack_require__(340);
 	
-	var getEntityKeyForSelection = __webpack_require__(322);
-	var isSelectionAtLeafStart = __webpack_require__(323);
-	var nullthrows = __webpack_require__(314);
+	var getEntityKeyForSelection = __webpack_require__(334);
+	var isSelectionAtLeafStart = __webpack_require__(335);
+	var nullthrows = __webpack_require__(326);
 	
-	var isEventHandled = __webpack_require__(361);
+	var isEventHandled = __webpack_require__(373);
 	
 	// When nothing is focused, Firefox regards two characters, `'` and `/`, as
 	// commands that should open and focus the "quickfind" search bar. This should
@@ -44154,7 +45244,7 @@
 	module.exports = editOnBeforeInput;
 
 /***/ },
-/* 364 */
+/* 376 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -44171,10 +45261,10 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(304);
-	var UserAgent = __webpack_require__(328);
+	var EditorState = __webpack_require__(316);
+	var UserAgent = __webpack_require__(340);
 	
-	var getActiveElement = __webpack_require__(339);
+	var getActiveElement = __webpack_require__(351);
 	
 	var isWebKit = UserAgent.isEngine('WebKit');
 	
@@ -44204,7 +45294,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 365 */
+/* 377 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44221,7 +45311,7 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(304);
+	var EditorState = __webpack_require__(316);
 	
 	/**
 	 * The user has begun using an IME input system. Switching to `composite` mode
@@ -44236,7 +45326,7 @@
 	module.exports = editOnCompositionStart;
 
 /***/ },
-/* 366 */
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44253,7 +45343,7 @@
 	
 	'use strict';
 	
-	var getFragmentFromSelection = __webpack_require__(367);
+	var getFragmentFromSelection = __webpack_require__(379);
 	
 	/**
 	 * If we have a selection, create a ContentState fragment and store
@@ -44276,7 +45366,7 @@
 	module.exports = editOnCopy;
 
 /***/ },
-/* 367 */
+/* 379 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44293,7 +45383,7 @@
 	
 	'use strict';
 	
-	var getContentStateFragment = __webpack_require__(295);
+	var getContentStateFragment = __webpack_require__(307);
 	
 	function getFragmentFromSelection(editorState) {
 	  var selectionState = editorState.getSelection();
@@ -44308,7 +45398,7 @@
 	module.exports = getFragmentFromSelection;
 
 /***/ },
-/* 368 */
+/* 380 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44325,12 +45415,12 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(284);
-	var EditorState = __webpack_require__(304);
-	var Style = __webpack_require__(342);
+	var DraftModifier = __webpack_require__(296);
+	var EditorState = __webpack_require__(316);
+	var Style = __webpack_require__(354);
 	
-	var getFragmentFromSelection = __webpack_require__(367);
-	var getScrollPosition = __webpack_require__(348);
+	var getFragmentFromSelection = __webpack_require__(379);
+	var getScrollPosition = __webpack_require__(360);
 	
 	/**
 	 * On `cut` events, native behavior is allowed to occur so that the system
@@ -44387,7 +45477,7 @@
 	module.exports = editOnCut;
 
 /***/ },
-/* 369 */
+/* 381 */
 /***/ function(module, exports) {
 
 	/**
@@ -44417,7 +45507,7 @@
 	module.exports = editOnDragOver;
 
 /***/ },
-/* 370 */
+/* 382 */
 /***/ function(module, exports) {
 
 	/**
@@ -44446,7 +45536,7 @@
 	module.exports = editOnDragStart;
 
 /***/ },
-/* 371 */
+/* 383 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44463,7 +45553,7 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(304);
+	var EditorState = __webpack_require__(316);
 	
 	function editOnFocus(e) {
 	  var editorState = this.props.editorState;
@@ -44487,7 +45577,7 @@
 	module.exports = editOnFocus;
 
 /***/ },
-/* 372 */
+/* 384 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -44504,14 +45594,14 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(284);
-	var DraftOffsetKey = __webpack_require__(340);
-	var EditorState = __webpack_require__(304);
-	var Entity = __webpack_require__(289);
-	var UserAgent = __webpack_require__(328);
+	var DraftModifier = __webpack_require__(296);
+	var DraftOffsetKey = __webpack_require__(352);
+	var EditorState = __webpack_require__(316);
+	var Entity = __webpack_require__(301);
+	var UserAgent = __webpack_require__(340);
 	
-	var findAncestorOffsetKey = __webpack_require__(357);
-	var nullthrows = __webpack_require__(314);
+	var findAncestorOffsetKey = __webpack_require__(369);
+	var nullthrows = __webpack_require__(326);
 	
 	var isGecko = UserAgent.isEngine('Gecko');
 	
@@ -44635,7 +45725,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 373 */
+/* 385 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44652,25 +45742,25 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(284);
-	var EditorState = __webpack_require__(304);
-	var KeyBindingUtil = __webpack_require__(374);
-	var Keys = __webpack_require__(321);
-	var SecondaryClipboard = __webpack_require__(375);
-	var UserAgent = __webpack_require__(328);
+	var DraftModifier = __webpack_require__(296);
+	var EditorState = __webpack_require__(316);
+	var KeyBindingUtil = __webpack_require__(386);
+	var Keys = __webpack_require__(333);
+	var SecondaryClipboard = __webpack_require__(387);
+	var UserAgent = __webpack_require__(340);
 	
-	var keyCommandBackspaceToStartOfLine = __webpack_require__(376);
-	var keyCommandBackspaceWord = __webpack_require__(383);
-	var keyCommandDeleteWord = __webpack_require__(386);
-	var keyCommandInsertNewline = __webpack_require__(388);
-	var keyCommandPlainBackspace = __webpack_require__(389);
-	var keyCommandPlainDelete = __webpack_require__(390);
-	var keyCommandMoveSelectionToEndOfBlock = __webpack_require__(391);
-	var keyCommandMoveSelectionToStartOfBlock = __webpack_require__(392);
-	var keyCommandTransposeCharacters = __webpack_require__(393);
-	var keyCommandUndo = __webpack_require__(394);
+	var keyCommandBackspaceToStartOfLine = __webpack_require__(388);
+	var keyCommandBackspaceWord = __webpack_require__(395);
+	var keyCommandDeleteWord = __webpack_require__(398);
+	var keyCommandInsertNewline = __webpack_require__(400);
+	var keyCommandPlainBackspace = __webpack_require__(401);
+	var keyCommandPlainDelete = __webpack_require__(402);
+	var keyCommandMoveSelectionToEndOfBlock = __webpack_require__(403);
+	var keyCommandMoveSelectionToStartOfBlock = __webpack_require__(404);
+	var keyCommandTransposeCharacters = __webpack_require__(405);
+	var keyCommandUndo = __webpack_require__(406);
 	
-	var isEventHandled = __webpack_require__(361);
+	var isEventHandled = __webpack_require__(373);
 	
 	var isOptionKeyCommand = KeyBindingUtil.isOptionKeyCommand;
 	
@@ -44788,7 +45878,7 @@
 	module.exports = editOnKeyDown;
 
 /***/ },
-/* 374 */
+/* 386 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44806,7 +45896,7 @@
 	
 	'use strict';
 	
-	var UserAgent = __webpack_require__(328);
+	var UserAgent = __webpack_require__(340);
 	
 	var isOSX = UserAgent.isPlatform('Mac OS X');
 	
@@ -44832,7 +45922,7 @@
 	module.exports = KeyBindingUtil;
 
 /***/ },
-/* 375 */
+/* 387 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44849,11 +45939,11 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(284);
-	var EditorState = __webpack_require__(304);
+	var DraftModifier = __webpack_require__(296);
+	var EditorState = __webpack_require__(316);
 	
-	var getContentStateFragment = __webpack_require__(295);
-	var nullthrows = __webpack_require__(314);
+	var getContentStateFragment = __webpack_require__(307);
+	var nullthrows = __webpack_require__(326);
 	
 	var clipboard = null;
 	
@@ -44906,7 +45996,7 @@
 	module.exports = SecondaryClipboard;
 
 /***/ },
-/* 376 */
+/* 388 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -44923,12 +46013,12 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(304);
+	var EditorState = __webpack_require__(316);
 	
-	var expandRangeToStartOfLine = __webpack_require__(377);
-	var getDraftEditorSelectionWithNodes = __webpack_require__(380);
-	var moveSelectionBackward = __webpack_require__(381);
-	var removeTextWithStrategy = __webpack_require__(382);
+	var expandRangeToStartOfLine = __webpack_require__(389);
+	var getDraftEditorSelectionWithNodes = __webpack_require__(392);
+	var moveSelectionBackward = __webpack_require__(393);
+	var removeTextWithStrategy = __webpack_require__(394);
 	
 	function keyCommandBackspaceToStartOfLine(editorState) {
 	  var afterRemoval = removeTextWithStrategy(editorState, function (strategyState) {
@@ -44955,7 +46045,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 377 */
+/* 389 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -44973,10 +46063,10 @@
 	 * 
 	 */
 	
-	var UnicodeUtils = __webpack_require__(378);
+	var UnicodeUtils = __webpack_require__(390);
 	
-	var getRangeClientRects = __webpack_require__(379);
-	var invariant = __webpack_require__(292);
+	var getRangeClientRects = __webpack_require__(391);
+	var invariant = __webpack_require__(304);
 	
 	/**
 	 * Return the computed line height, in pixels, for the provided element.
@@ -45150,7 +46240,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 378 */
+/* 390 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -45177,7 +46267,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(292);
+	var invariant = __webpack_require__(304);
 	
 	// These two ranges are consecutive so anything in [HIGH_START, LOW_END] is a
 	// surrogate code unit.
@@ -45370,7 +46460,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 379 */
+/* 391 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -45388,9 +46478,9 @@
 	
 	'use strict';
 	
-	var UserAgent = __webpack_require__(328);
+	var UserAgent = __webpack_require__(340);
 	
-	var invariant = __webpack_require__(292);
+	var invariant = __webpack_require__(304);
 	
 	var isChrome = UserAgent.isBrowser('Chrome');
 	
@@ -45439,7 +46529,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 380 */
+/* 392 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -45457,11 +46547,11 @@
 	
 	'use strict';
 	
-	var findAncestorOffsetKey = __webpack_require__(357);
-	var getSelectionOffsetKeyForNode = __webpack_require__(358);
-	var getUpdatedSelectionState = __webpack_require__(360);
-	var invariant = __webpack_require__(292);
-	var nullthrows = __webpack_require__(314);
+	var findAncestorOffsetKey = __webpack_require__(369);
+	var getSelectionOffsetKeyForNode = __webpack_require__(370);
+	var getUpdatedSelectionState = __webpack_require__(372);
+	var invariant = __webpack_require__(304);
+	var nullthrows = __webpack_require__(326);
 	
 	/**
 	 * Convert the current selection range to an anchor/focus pair of offset keys
@@ -45624,7 +46714,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 381 */
+/* 393 */
 /***/ function(module, exports) {
 
 	/**
@@ -45681,7 +46771,7 @@
 	module.exports = moveSelectionBackward;
 
 /***/ },
-/* 382 */
+/* 394 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45698,7 +46788,7 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(284);
+	var DraftModifier = __webpack_require__(296);
 	
 	/**
 	 * For a collapsed selection state, remove text based on the specified strategy.
@@ -45728,7 +46818,7 @@
 	module.exports = removeTextWithStrategy;
 
 /***/ },
-/* 383 */
+/* 395 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45745,11 +46835,11 @@
 	
 	'use strict';
 	
-	var DraftRemovableWord = __webpack_require__(384);
-	var EditorState = __webpack_require__(304);
+	var DraftRemovableWord = __webpack_require__(396);
+	var EditorState = __webpack_require__(316);
 	
-	var moveSelectionBackward = __webpack_require__(381);
-	var removeTextWithStrategy = __webpack_require__(382);
+	var moveSelectionBackward = __webpack_require__(393);
+	var removeTextWithStrategy = __webpack_require__(394);
 	
 	/**
 	 * Delete the word that is left of the cursor, as well as any spaces or
@@ -45780,7 +46870,7 @@
 	module.exports = keyCommandBackspaceWord;
 
 /***/ },
-/* 384 */
+/* 396 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45798,7 +46888,7 @@
 	
 	'use strict';
 	
-	var TokenizeUtil = __webpack_require__(385);
+	var TokenizeUtil = __webpack_require__(397);
 	
 	var punctuation = TokenizeUtil.getPunctuation();
 	
@@ -45836,7 +46926,7 @@
 	module.exports = DraftRemovableWord;
 
 /***/ },
-/* 385 */
+/* 397 */
 /***/ function(module, exports) {
 
 	/**
@@ -45878,7 +46968,7 @@
 	};
 
 /***/ },
-/* 386 */
+/* 398 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45895,11 +46985,11 @@
 	
 	'use strict';
 	
-	var DraftRemovableWord = __webpack_require__(384);
-	var EditorState = __webpack_require__(304);
+	var DraftRemovableWord = __webpack_require__(396);
+	var EditorState = __webpack_require__(316);
 	
-	var moveSelectionForward = __webpack_require__(387);
-	var removeTextWithStrategy = __webpack_require__(382);
+	var moveSelectionForward = __webpack_require__(399);
+	var removeTextWithStrategy = __webpack_require__(394);
 	
 	/**
 	 * Delete the word that is right of the cursor, as well as any spaces or
@@ -45928,7 +47018,7 @@
 	module.exports = keyCommandDeleteWord;
 
 /***/ },
-/* 387 */
+/* 399 */
 /***/ function(module, exports) {
 
 	/**
@@ -45977,7 +47067,7 @@
 	module.exports = moveSelectionForward;
 
 /***/ },
-/* 388 */
+/* 400 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45994,8 +47084,8 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(284);
-	var EditorState = __webpack_require__(304);
+	var DraftModifier = __webpack_require__(296);
+	var EditorState = __webpack_require__(316);
 	
 	function keyCommandInsertNewline(editorState) {
 	  var contentState = DraftModifier.splitBlock(editorState.getCurrentContent(), editorState.getSelection());
@@ -46005,7 +47095,7 @@
 	module.exports = keyCommandInsertNewline;
 
 /***/ },
-/* 389 */
+/* 401 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46022,11 +47112,11 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(304);
-	var UnicodeUtils = __webpack_require__(378);
+	var EditorState = __webpack_require__(316);
+	var UnicodeUtils = __webpack_require__(390);
 	
-	var moveSelectionBackward = __webpack_require__(381);
-	var removeTextWithStrategy = __webpack_require__(382);
+	var moveSelectionBackward = __webpack_require__(393);
+	var removeTextWithStrategy = __webpack_require__(394);
 	
 	/**
 	 * Remove the selected range. If the cursor is collapsed, remove the preceding
@@ -46054,7 +47144,7 @@
 	module.exports = keyCommandPlainBackspace;
 
 /***/ },
-/* 390 */
+/* 402 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46071,11 +47161,11 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(304);
-	var UnicodeUtils = __webpack_require__(378);
+	var EditorState = __webpack_require__(316);
+	var UnicodeUtils = __webpack_require__(390);
 	
-	var moveSelectionForward = __webpack_require__(387);
-	var removeTextWithStrategy = __webpack_require__(382);
+	var moveSelectionForward = __webpack_require__(399);
+	var removeTextWithStrategy = __webpack_require__(394);
 	
 	/**
 	 * Remove the selected range. If the cursor is collapsed, remove the following
@@ -46104,7 +47194,7 @@
 	module.exports = keyCommandPlainDelete;
 
 /***/ },
-/* 391 */
+/* 403 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46121,7 +47211,7 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(304);
+	var EditorState = __webpack_require__(316);
 	
 	/**
 	 * See comment for `moveSelectionToStartOfBlock`.
@@ -46146,7 +47236,7 @@
 	module.exports = keyCommandMoveSelectionToEndOfBlock;
 
 /***/ },
-/* 392 */
+/* 404 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46163,7 +47253,7 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(304);
+	var EditorState = __webpack_require__(316);
 	
 	/**
 	 * Collapse selection at the start of the first selected block. This is used
@@ -46188,7 +47278,7 @@
 	module.exports = keyCommandMoveSelectionToStartOfBlock;
 
 /***/ },
-/* 393 */
+/* 405 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46205,10 +47295,10 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(284);
-	var EditorState = __webpack_require__(304);
+	var DraftModifier = __webpack_require__(296);
+	var EditorState = __webpack_require__(316);
 	
-	var getContentStateFragment = __webpack_require__(295);
+	var getContentStateFragment = __webpack_require__(307);
 	
 	/**
 	 * Transpose the characters on either side of a collapsed cursor, or
@@ -46271,7 +47361,7 @@
 	module.exports = keyCommandTransposeCharacters;
 
 /***/ },
-/* 394 */
+/* 406 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46288,7 +47378,7 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(304);
+	var EditorState = __webpack_require__(316);
 	
 	function keyCommandUndo(e, editorState, updateFn) {
 	  var undoneState = EditorState.undo(editorState);
@@ -46324,7 +47414,7 @@
 	module.exports = keyCommandUndo;
 
 /***/ },
-/* 395 */
+/* 407 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46341,18 +47431,18 @@
 	
 	'use strict';
 	
-	var BlockMapBuilder = __webpack_require__(280);
-	var CharacterMetadata = __webpack_require__(281);
-	var DataTransfer = __webpack_require__(354);
-	var DraftModifier = __webpack_require__(284);
-	var DraftPasteProcessor = __webpack_require__(396);
-	var EditorState = __webpack_require__(304);
+	var BlockMapBuilder = __webpack_require__(292);
+	var CharacterMetadata = __webpack_require__(293);
+	var DataTransfer = __webpack_require__(366);
+	var DraftModifier = __webpack_require__(296);
+	var DraftPasteProcessor = __webpack_require__(408);
+	var EditorState = __webpack_require__(316);
 	
-	var getEntityKeyForSelection = __webpack_require__(322);
-	var getTextContentFromFiles = __webpack_require__(359);
-	var splitTextIntoTextBlocks = __webpack_require__(400);
+	var getEntityKeyForSelection = __webpack_require__(334);
+	var getTextContentFromFiles = __webpack_require__(371);
+	var splitTextIntoTextBlocks = __webpack_require__(412);
 	
-	var isEventHandled = __webpack_require__(361);
+	var isEventHandled = __webpack_require__(373);
 	
 	/**
 	 * Paste content.
@@ -46485,7 +47575,7 @@
 	module.exports = editOnPaste;
 
 /***/ },
-/* 396 */
+/* 408 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46503,14 +47593,14 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(281);
-	var ContentBlock = __webpack_require__(282);
+	var CharacterMetadata = __webpack_require__(293);
+	var ContentBlock = __webpack_require__(294);
 	var Immutable = __webpack_require__(225);
 	
-	var convertFromHTMLtoContentBlocks = __webpack_require__(397);
-	var generateRandomKey = __webpack_require__(296);
-	var getSafeBodyFromHTML = __webpack_require__(399);
-	var sanitizeDraftText = __webpack_require__(309);
+	var convertFromHTMLtoContentBlocks = __webpack_require__(409);
+	var generateRandomKey = __webpack_require__(308);
+	var getSafeBodyFromHTML = __webpack_require__(411);
+	var sanitizeDraftText = __webpack_require__(321);
 	
 	var List = Immutable.List;
 	var Repeat = Immutable.Repeat;
@@ -46536,7 +47626,7 @@
 	module.exports = DraftPasteProcessor;
 
 /***/ },
-/* 397 */
+/* 409 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -46554,18 +47644,18 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(281);
-	var ContentBlock = __webpack_require__(282);
-	var DefaultDraftBlockRenderMap = __webpack_require__(316);
-	var DraftEntity = __webpack_require__(289);
+	var CharacterMetadata = __webpack_require__(293);
+	var ContentBlock = __webpack_require__(294);
+	var DefaultDraftBlockRenderMap = __webpack_require__(328);
+	var DraftEntity = __webpack_require__(301);
 	var Immutable = __webpack_require__(225);
-	var URI = __webpack_require__(398);
+	var URI = __webpack_require__(410);
 	
-	var generateRandomKey = __webpack_require__(296);
-	var getSafeBodyFromHTML = __webpack_require__(399);
-	var invariant = __webpack_require__(292);
-	var nullthrows = __webpack_require__(314);
-	var sanitizeDraftText = __webpack_require__(309);
+	var generateRandomKey = __webpack_require__(308);
+	var getSafeBodyFromHTML = __webpack_require__(411);
+	var invariant = __webpack_require__(304);
+	var nullthrows = __webpack_require__(326);
+	var sanitizeDraftText = __webpack_require__(321);
 	
 	var List = Immutable.List;
 	var OrderedSet = Immutable.OrderedSet;
@@ -46995,7 +48085,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 398 */
+/* 410 */
 /***/ function(module, exports) {
 
 	/**
@@ -47030,7 +48120,7 @@
 	module.exports = URI;
 
 /***/ },
-/* 399 */
+/* 411 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47047,7 +48137,7 @@
 	
 	'use strict';
 	
-	var UserAgent = __webpack_require__(328);
+	var UserAgent = __webpack_require__(340);
 	
 	var isOldIE = UserAgent.isBrowser('IE <= 9');
 	
@@ -47070,7 +48160,7 @@
 	module.exports = getSafeBodyFromHTML;
 
 /***/ },
-/* 400 */
+/* 412 */
 /***/ function(module, exports) {
 
 	/**
@@ -47096,7 +48186,7 @@
 	module.exports = splitTextIntoTextBlocks;
 
 /***/ },
-/* 401 */
+/* 413 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47113,10 +48203,10 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(304);
+	var EditorState = __webpack_require__(316);
 	var ReactDOM = __webpack_require__(158);
 	
-	var getDraftEditorSelection = __webpack_require__(402);
+	var getDraftEditorSelection = __webpack_require__(414);
 	
 	function editOnSelect() {
 	  if (this._blockSelectEvents) {
@@ -47140,7 +48230,7 @@
 	module.exports = editOnSelect;
 
 /***/ },
-/* 402 */
+/* 414 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -47158,7 +48248,7 @@
 	
 	'use strict';
 	
-	var getDraftEditorSelectionWithNodes = __webpack_require__(380);
+	var getDraftEditorSelectionWithNodes = __webpack_require__(392);
 	
 	/**
 	 * Convert the current selection range to an anchor/focus pair of offset keys
@@ -47182,7 +48272,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 403 */
+/* 415 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47208,7 +48298,7 @@
 	
 	var React = __webpack_require__(1);
 	
-	var cx = __webpack_require__(317);
+	var cx = __webpack_require__(329);
 	
 	/**
 	 * This component is responsible for rendering placeholder text for the
@@ -47256,7 +48346,7 @@
 	module.exports = DraftEditorPlaceholder;
 
 /***/ },
-/* 404 */
+/* 416 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47274,9 +48364,9 @@
 	
 	'use strict';
 	
-	var KeyBindingUtil = __webpack_require__(374);
-	var Keys = __webpack_require__(321);
-	var UserAgent = __webpack_require__(328);
+	var KeyBindingUtil = __webpack_require__(386);
+	var Keys = __webpack_require__(333);
+	var UserAgent = __webpack_require__(340);
 	
 	var isOSX = UserAgent.isPlatform('Mac OS X');
 	var isWindows = UserAgent.isPlatform('Windows');
@@ -47385,7 +48475,7 @@
 	module.exports = getDefaultKeyBinding;
 
 /***/ },
-/* 405 */
+/* 417 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47403,13 +48493,13 @@
 	
 	'use strict';
 	
-	var DraftEntity = __webpack_require__(289);
-	var DraftModifier = __webpack_require__(284);
-	var EditorState = __webpack_require__(304);
-	var SelectionState = __webpack_require__(308);
+	var DraftEntity = __webpack_require__(301);
+	var DraftModifier = __webpack_require__(296);
+	var EditorState = __webpack_require__(316);
+	var SelectionState = __webpack_require__(320);
 	
-	var adjustBlockDepthForContentState = __webpack_require__(406);
-	var nullthrows = __webpack_require__(314);
+	var adjustBlockDepthForContentState = __webpack_require__(418);
+	var nullthrows = __webpack_require__(326);
 	
 	var RichTextEditorUtil = {
 	  currentBlockContainsLink: function currentBlockContainsLink(editorState) {
@@ -47697,7 +48787,7 @@
 	module.exports = RichTextEditorUtil;
 
 /***/ },
-/* 406 */
+/* 418 */
 /***/ function(module, exports) {
 
 	/**
@@ -47741,7 +48831,7 @@
 	module.exports = adjustBlockDepthForContentState;
 
 /***/ },
-/* 407 */
+/* 419 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47758,11 +48848,11 @@
 	
 	'use strict';
 	
-	var DraftEntity = __webpack_require__(289);
-	var DraftStringKey = __webpack_require__(408);
+	var DraftEntity = __webpack_require__(301);
+	var DraftStringKey = __webpack_require__(420);
 	
-	var encodeEntityRanges = __webpack_require__(409);
-	var encodeInlineStyleRanges = __webpack_require__(410);
+	var encodeEntityRanges = __webpack_require__(421);
+	var encodeInlineStyleRanges = __webpack_require__(422);
 	
 	function convertFromDraftStateToRaw(contentState) {
 	  var entityStorageKey = 0;
@@ -47813,7 +48903,7 @@
 	module.exports = convertFromDraftStateToRaw;
 
 /***/ },
-/* 408 */
+/* 420 */
 /***/ function(module, exports) {
 
 	/**
@@ -47844,7 +48934,7 @@
 	module.exports = DraftStringKey;
 
 /***/ },
-/* 409 */
+/* 421 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47862,8 +48952,8 @@
 	
 	'use strict';
 	
-	var DraftStringKey = __webpack_require__(408);
-	var UnicodeUtils = __webpack_require__(378);
+	var DraftStringKey = __webpack_require__(420);
+	var UnicodeUtils = __webpack_require__(390);
 	
 	var strlen = UnicodeUtils.strlen;
 	
@@ -47891,7 +48981,7 @@
 	module.exports = encodeEntityRanges;
 
 /***/ },
-/* 410 */
+/* 422 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47908,9 +48998,9 @@
 	
 	'use strict';
 	
-	var UnicodeUtils = __webpack_require__(378);
+	var UnicodeUtils = __webpack_require__(390);
 	
-	var findRangesImmutable = __webpack_require__(283);
+	var findRangesImmutable = __webpack_require__(295);
 	
 	var areEqual = function areEqual(a, b) {
 	  return a === b;
@@ -47964,7 +49054,7 @@
 	module.exports = encodeInlineStyleRanges;
 
 /***/ },
-/* 411 */
+/* 423 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47981,19 +49071,19 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(290);
+	var _assign = __webpack_require__(302);
 	
 	var _extends = _assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
-	var ContentBlock = __webpack_require__(282);
-	var ContentState = __webpack_require__(307);
-	var DraftEntity = __webpack_require__(289);
+	var ContentBlock = __webpack_require__(294);
+	var ContentState = __webpack_require__(319);
+	var DraftEntity = __webpack_require__(301);
 	var Immutable = __webpack_require__(225);
 	
-	var createCharacterList = __webpack_require__(412);
-	var decodeEntityRanges = __webpack_require__(413);
-	var decodeInlineStyleRanges = __webpack_require__(414);
-	var generateRandomKey = __webpack_require__(296);
+	var createCharacterList = __webpack_require__(424);
+	var decodeEntityRanges = __webpack_require__(425);
+	var decodeInlineStyleRanges = __webpack_require__(426);
+	var generateRandomKey = __webpack_require__(308);
 	
 	var Map = Immutable.Map;
 	
@@ -48050,7 +49140,7 @@
 	module.exports = convertFromRawToDraftState;
 
 /***/ },
-/* 412 */
+/* 424 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -48068,7 +49158,7 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(281);
+	var CharacterMetadata = __webpack_require__(293);
 	var Immutable = __webpack_require__(225);
 	
 	var List = Immutable.List;
@@ -48085,7 +49175,7 @@
 	module.exports = createCharacterList;
 
 /***/ },
-/* 413 */
+/* 425 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -48103,7 +49193,7 @@
 	
 	'use strict';
 	
-	var UnicodeUtils = __webpack_require__(378);
+	var UnicodeUtils = __webpack_require__(390);
 	
 	var substr = UnicodeUtils.substr;
 	
@@ -48130,7 +49220,7 @@
 	module.exports = decodeEntityRanges;
 
 /***/ },
-/* 414 */
+/* 426 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -48148,7 +49238,7 @@
 	
 	'use strict';
 	
-	var UnicodeUtils = __webpack_require__(378);
+	var UnicodeUtils = __webpack_require__(390);
 	
 	var _require = __webpack_require__(225);
 	
@@ -48179,7 +49269,7 @@
 	module.exports = decodeInlineStyleRanges;
 
 /***/ },
-/* 415 */
+/* 427 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -48197,7 +49287,7 @@
 	
 	'use strict';
 	
-	var getRangeBoundingClientRect = __webpack_require__(416);
+	var getRangeBoundingClientRect = __webpack_require__(428);
 	
 	/**
 	 * Return the bounding ClientRect for the visible DOM selection, if any.
@@ -48231,7 +49321,7 @@
 	module.exports = getVisibleSelectionRect;
 
 /***/ },
-/* 416 */
+/* 428 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -48249,7 +49339,7 @@
 	
 	'use strict';
 	
-	var getRangeClientRects = __webpack_require__(379);
+	var getRangeClientRects = __webpack_require__(391);
 	
 	/**
 	 * Like range.getBoundingClientRect() but normalizes for browser bugs.
@@ -48294,877 +49384,6 @@
 	}
 	
 	module.exports = getRangeBoundingClientRect;
-
-/***/ },
-/* 417 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var Tab = __webpack_require__(418);
-	
-	var Tabs = React.createClass({
-	  displayName: 'Tabs',
-	
-	
-	  render: function render() {
-	    var tabList = this.props.tabOptions.map(function (tab) {
-	      return React.createElement(Tab, { clickFunc: this.props.clickFunction, tabName: tab, key: tab });
-	    }, this);
-	
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'ul',
-	        { className: 'tabsList' },
-	        tabList
-	      )
-	    );
-	  }
-	
-	});
-	
-	module.exports = Tabs;
-
-/***/ },
-/* 418 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(1);
-	var PropTypes = React.PropTypes;
-	
-	var Tab = React.createClass({
-	  displayName: "Tab",
-	
-	
-	  tabClick: function tabClick(event) {
-	    event.preventDefault();
-	    this.props.clickFunc(this.props.tabName);
-	  },
-	
-	  render: function render() {
-	    return React.createElement(
-	      "li",
-	      { className: "tab", id: this.props.tabName, onClick: this.tabClick },
-	      this.props.tabName
-	    );
-	  }
-	
-	});
-	
-	module.exports = Tab;
-
-/***/ },
-/* 419 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	
-	var Reviews = React.createClass({
-	  displayName: 'Reviews',
-	
-	
-	  render: function render() {
-	    return React.createElement('div', null);
-	  }
-	
-	});
-	
-	module.exports = Reviews;
-
-/***/ },
-/* 420 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookShelfStore = __webpack_require__(421);
-	var Shelf = __webpack_require__(422);
-	
-	var History = __webpack_require__(159).History;
-	
-	var BS = React.createClass({
-	  displayName: 'BS',
-	
-	  mixins: [History],
-	
-	  getInitialState: function getInitialState() {
-	    var reading = BookShelfStore.reading();
-	    var toRead = BookShelfStore.toRead();
-	    var allToRead = reading.concat(toRead);
-	    this.spinClass = 'fa fa-times';
-	
-	    return { readBooks: BookShelfStore.read(), toReadBooks: allToRead, shelfVisible: true };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.bookShelfIndex = BookShelfStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.bookShelfIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    var reading = BookShelfStore.reading();
-	    var toRead = BookShelfStore.toRead();
-	    var allToRead = reading.concat(toRead);
-	    this.setState({ readBooks: BookShelfStore.read(), toReadBooks: allToRead });
-	  },
-	  onAddClick: function onAddClick(event) {
-	    event.preventDefault();
-	    this.history.push({ pathname: "/Search" });
-	  },
-	  booksClick: function booksClick(event) {
-	    event.preventDefault();
-	    if (this.state.shelfVisible) {
-	      this.spinClass = 'fa fa-bars';
-	
-	      // this.menuClass='menu'
-	      this.setState({ shelfVisible: false });
-	    } else {
-	      this.spinClass = 'fa fa-times';
-	
-	      // this.menuClass='menu open'
-	      this.setState({ shelfVisible: true });
-	    }
-	
-	    $('.menu').toggleClass('open', 200, 'easeOutQuad');
-	  },
-	  render: function render() {
-	
-	    return React.createElement(
-	      'section',
-	      { className: 'bookshelf' },
-	      React.createElement(
-	        'div',
-	        { className: 'menu' },
-	        React.createElement(
-	          'div',
-	          { className: 'FullBookShelf' },
-	          React.createElement(
-	            'label',
-	            { className: 'ShelfLabel', id: 'ToRead' },
-	            'To Read'
-	          ),
-	          React.createElement(Shelf, { books: this.state.toReadBooks, identifier: 'BooksToRead' }),
-	          React.createElement(
-	            'label',
-	            { className: 'ShelfLabel', id: 'Read' },
-	            'Read'
-	          ),
-	          React.createElement(Shelf, { books: this.state.readBooks, identifier: 'BooksRead' })
-	        )
-	      )
-	    );
-	  }
-	});
-	module.exports = BS;
-
-/***/ },
-/* 421 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var Store = __webpack_require__(209).Store;
-	var _books = { read: [], toRead: [], reading: [] };
-	var BookShelfConstants = __webpack_require__(233);
-	var AppDispatcher = __webpack_require__(228);
-	var BookShelfStore = new Store(AppDispatcher);
-	
-	var resetBooks = function resetBooks(results) {
-	  _books = {};
-	  _books = results;
-	};
-	var addBook = function addBook(book) {
-	  if (book.read === "read") {
-	    _books.read.push(book);
-	  } else if (book.read === "toRead") {
-	    _books.toRead.push(book);
-	  } else {
-	    _books.reading.push(book);
-	  }
-	};
-	
-	BookShelfStore.all = function () {
-	
-	  return _books;
-	};
-	BookShelfStore.empty = function () {
-	  _books = { read: [], toRead: [], reading: [] };
-	};
-	BookShelfStore.read = function () {
-	
-	  return _books.read;
-	};
-	BookShelfStore.toRead = function () {
-	
-	  return _books.toRead;
-	};
-	BookShelfStore.reading = function () {
-	
-	  return _books.reading;
-	};
-	
-	BookShelfStore.__onDispatch = function (payload) {
-	
-	  switch (payload.actionType) {
-	    case BookShelfConstants.ReceiveUserBooks:
-	
-	      var result = resetBooks(payload.books);
-	      BookShelfStore.__emitChange();
-	      break;
-	    case BookShelfConstants.ReceiveAddedBook:
-	      var added = addBook(payload.book);
-	      BookShelfStore.__emitChange();
-	      break;
-	    case BookShelfConstants.EmptyShelves:
-	      BookShelfStore.empty();
-	      BookShelfStore.__emitChange();
-	      break;
-	  }
-	};
-	
-	window.BookShelfStore = BookShelfStore;
-	
-	module.exports = BookShelfStore;
-
-/***/ },
-/* 422 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var ShelfItem = __webpack_require__(423);
-	
-	var Shelf = React.createClass({
-	  displayName: 'Shelf',
-	
-	
-	  render: function render() {
-	    var theshelf = [];
-	    var theid;
-	    var theshelf = this.props.books.map(function (book, index) {
-	      if (index % 2 === 0) {
-	        theid = "book1";
-	      } else {
-	        theid = "book2";
-	      }
-	      return React.createElement(ShelfItem, { theid: theid, key: index, bookTitle: book.title, book: book });
-	    }, this);
-	    return React.createElement(
-	      'section',
-	      { className: 'Shelf', id: this.props.identifier },
-	      React.createElement(
-	        'ul',
-	        { id: 'ShelfBookList' },
-	        theshelf
-	      )
-	    );
-	  }
-	
-	});
-	
-	module.exports = Shelf;
-
-/***/ },
-/* 423 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(208);
-	var ApiActions = __webpack_require__(232);
-	var APIUtil = __webpack_require__(231);
-	
-	var ShelfItem = React.createClass({
-	  displayName: 'ShelfItem',
-	
-	  onClick: function onClick(event) {
-	    event.preventDefault();
-	
-	    APIUtil.updateUser({ current_book: this.props.book.id });
-	    ApiActions.updateCurrentBook(this.props.book);
-	    APIUtil.fetchNotes(this.props.book.id);
-	  },
-	  generateRandomHex: function generateRandomHex() {
-	    var possible = "0123456789abcdef".split("");
-	    var hex = "#";
-	    for (var i = 0; i < 6; i++) {
-	      hex += possible[Math.floor(Math.random() * 16)];
-	    }
-	    return hex;
-	  },
-	  render: function render() {
-	    var shelfStyle = { backgroundColor: this.generateRandomHex() };
-	
-	    return React.createElement(
-	      'li',
-	      { className: 'ShelfItem hvr-grow', style: shelfStyle, id: this.props.theid, onClick: this.onClick },
-	      this.props.bookTitle
-	    );
-	  }
-	});
-	
-	module.exports = ShelfItem;
-
-/***/ },
-/* 424 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var History = __webpack_require__(159).History;
-	var APIUtil = __webpack_require__(231);
-	var Modal = __webpack_require__(244);
-	var LinkedStateMixin = __webpack_require__(265);
-	var UserStore = __webpack_require__(273);
-	var ApiActions = __webpack_require__(232);
-	var BookSearchStore = __webpack_require__(208);
-	var customStyles = {
-	  overlay: {
-	    position: 'fixed',
-	    top: 0,
-	    left: 0,
-	    right: 0,
-	    bottom: 0,
-	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
-	    backgroundImage: 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
-	    zIndex: 20,
-	    backgroundSize: 'cover'
-	  },
-	  // opacity           : 0.6
-	  content: {
-	    top: '50%',
-	    left: '50%',
-	    right: 'auto',
-	    bottom: 'auto',
-	    marginRight: '-50%',
-	    transform: 'translate(-50%, -50%)',
-	
-	    backgroundImage: 'url(\'https://images.unsplash.com/photo-1457298483369-0a95d2b17fcd?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=f4fd0823787f85fcb27fd05027766a41\')',
-	    backgroundSize: 'cover',
-	    borderRadius: '10px',
-	    filter: 'blur(\'4px\')',
-	    width: '300px',
-	    backgroundBlendMode: 'darken'
-	
-	  }
-	};
-	
-	var quotes = ["\"We read to know we are not alone.\" -C.S.Lewis", "\"A reader lives a thousand lives before he dies\" -George R.R. Martin", "\"You can never get a cup of tea large enough, or a book long enough to suit me\" -C.S.Lewis", "\"It is what you read when you don't have to that determines what you will be when you can't help it.\" -Oscar Wilde"];
-	
-	var Navbar = React.createClass({
-	  displayName: 'Navbar',
-	
-	  mixins: [History, LinkedStateMixin],
-	  getInitialState: function getInitialState() {
-	    this.toWhere = "/Search";
-	    return { loggedIn: UserStore.loggedIn(), username: null, password: null, modalIsOpen: false, message: "" };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.userIndex = UserStore.addListener(this._onChange);
-	  },
-	  searchClick: function searchClick(event) {
-	
-	    this.history.push({ pathname: "/Search" });
-	  },
-	  deskClick: function deskClick(event) {
-	    if (this.state.loggedIn) {
-	      this.history.push({ pathname: "/Desk" });
-	    } else {
-	      this.setState({ modalIsOpen: true, message: "login to continue" });
-	      this.toWhere = "/Desk";
-	    }
-	  },
-	  analysesClick: function analysesClick(event) {
-	    event.preventDefault();
-	    this.history.push({ pathname: "/Analyses" });
-	  },
-	  openModal: function openModal() {
-	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
-	  },
-	
-	  closeModal: function closeModal() {
-	
-	    this.setState({ modalIsOpen: false, message: "" });
-	  },
-	  signOutClick: function signOutClick(event) {
-	
-	    APIUtil.logoutUser();
-	
-	    ApiActions.emptyShelves();
-	    ApiActions.deleteCurrentBook();
-	
-	    this.history.push({ pathname: "/Search" });
-	  },
-	  signClick: function signClick(event) {
-	    event.preventDefault();
-	    this.clicked = true;
-	
-	    if (this.state.password !== null && this.state.password.length >= 6) {
-	      APIUtil.signIn(this.state.username, this.state.password);
-	    } else {
-	      this.state.password = "";
-	      this.setState({ message: "invalid password, must be at least 6 digits please try again" });
-	    }
-	  },
-	  _onChange: function _onChange() {
-	
-	    if (UserStore.loggedIn()) {
-	      this.closeModal();
-	      this.setState({ loggedIn: UserStore.loggedIn() });
-	      this.history.push({ pathname: this.toWhere });
-	    } else {
-	      if (this.clicked) {
-	        this.setState({ message: "unsuccessful, please try again", loggedIn: UserStore.loggedIn() });
-	      } else {
-	        if (UserStore.needsToLogin()) {
-	          this.openModal();
-	          this.setState({ loggedIn: UserStore.loggedIn(), message: "login to continue" });
-	        }
-	      }
-	    }
-	  },
-	  signUpClick: function signUpClick(event) {
-	    event.preventDefault();
-	
-	    this.clicked = true;
-	    if (this.state.username !== "" && this.state.password !== "") {
-	      APIUtil.createUser(this.state.username, this.state.password);
-	    } else {
-	      this.setState({ message: "invalid password please try again" });
-	    }
-	    debugger;
-	  },
-	  logInAsGuest: function logInAsGuest(event) {
-	    event.preventDefault();
-	
-	    this.clicked = true;
-	    APIUtil.signIn("guest_user", "password");
-	  },
-	  render: function render() {
-	    var signB;
-	    var un;
-	    var cb;
-	
-	    if (this.state.loggedIn) {
-	      signB = React.createElement(
-	        'li',
-	        { className: 'nav-right', id: 'NavUser', onClick: this.signOutClick },
-	        'Sign Out'
-	      );
-	      un = UserStore.currentUser().username;
-	      if (BookSearchStore.currentBook() !== null) {
-	        // cb = <div className="userNameLabel" id="bookTitle"> is currently exploring {BookSearchStore.currentBook().title}</div>;
-	        cb = { backgroundImage: "url(" + BookSearchStore.currentBook().image + ")" };
-	      } else {
-	        cb = null;
-	      }
-	    } else {
-	      signB = React.createElement(
-	        'li',
-	        { className: 'nav-right', id: 'NavUser', onClick: this.openModal },
-	        'Sign in/up!'
-	      );
-	    }
-	    var quoteToUse = quotes[Math.floor(Math.random() * quotes.length)];
-	
-	    return React.createElement(
-	      'div',
-	      { className: 'Navbar' },
-	      React.createElement(
-	        'nav',
-	        { className: 'header-nav group' },
-	        React.createElement(
-	          'div',
-	          { className: 'header-logo', onClick: this.searchClick },
-	          React.createElement(
-	            'div',
-	            { className: 'logo-image' },
-	            'LL'
-	          )
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'quote' },
-	          ' ',
-	          quoteToUse
-	        ),
-	        React.createElement(
-	          'ul',
-	          { className: 'header-list group' },
-	          React.createElement(
-	            'li',
-	            { className: 'nav-right', id: 'NavSearch', onClick: this.searchClick },
-	            'Search'
-	          ),
-	          React.createElement(
-	            'li',
-	            { className: 'nav-right', id: 'NavDesk', onClick: this.deskClick },
-	            'Desk'
-	          ),
-	          signB
-	        )
-	      ),
-	      React.createElement(
-	        Modal,
-	        {
-	          isOpen: this.state.modalIsOpen,
-	          onRequestClose: this.closeModal,
-	          style: customStyles },
-	        React.createElement(
-	          'p',
-	          { className: 'loginMessage' },
-	          ' ',
-	          this.state.message
-	        ),
-	        React.createElement(
-	          'form',
-	          { className: 'NoteForm' },
-	          React.createElement(
-	            'div',
-	            { className: 'UserNameArea' },
-	            React.createElement('input', { type: 'text', className: 'UserNameInput', valueLink: this.linkState('username'), placeholder: 'enter a valid username' })
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'PasswordArea' },
-	            React.createElement('input', { type: 'password', className: 'PasswordInput', placeholder: 'enter a 6 digit password', valueLink: this.linkState('password') })
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'LoginButtonArea' },
-	            React.createElement(
-	              'button',
-	              { className: 'SignButton', onClick: this.signClick },
-	              'Sign In!'
-	            ),
-	            React.createElement(
-	              'button',
-	              { className: 'SignButton', onClick: this.signUpClick },
-	              'Sign Up!'
-	            ),
-	            React.createElement(
-	              'div',
-	              { className: 'DividingOr' },
-	              '----------OR----------'
-	            ),
-	            React.createElement(
-	              'button',
-	              { className: 'SignButton', onClick: this.logInAsGuest },
-	              'Login as Guest'
-	            )
-	          )
-	        ),
-	        React.createElement(
-	          'button',
-	          { onClick: this.closeModal },
-	          'close'
-	        )
-	      )
-	    );
-	  }
-	
-	});
-	
-	module.exports = Navbar;
-
-/***/ },
-/* 425 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var PropTypes = React.PropTypes;
-	var AnalysisStore = __webpack_require__(426);
-	var APIUtil = __webpack_require__(231);
-	var UserStore = __webpack_require__(273);
-	
-	var Analyses = React.createClass({
-	  displayName: 'Analyses',
-	
-	
-	  getInitialState: function getInitialState() {
-	    return { analyses: AnalysisStore.all(), loggedIn: UserStore.loggedIn() };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    APIUtil.fetchAnalyses({});
-	    this.analysesIndex = AnalysisStore.addListener(this._onChange);
-	    this.userIndex = UserStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.analysesIndex.remove();
-	    this.userIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    this.setState({ analyses: AnalysisStore.all(), loggedIn: UserStore.loggedIn() });
-	  },
-	  createClick: function createClick(event) {
-	    event.preventDefault();
-	    console.log("openModal?");
-	  },
-	  deskView: function deskView(event) {
-	    event.preventDefault();
-	    console.log("go to Desk page?");
-	  },
-	
-	  render: function render() {
-	    var createButton, userView;
-	    var analysisList = this.state.analyses.map(function (analysis) {
-	      return React.createElement(AnalysisListItem, { analysis: analysis, key: analysis.id });
-	    }, this);
-	    if (this.state.loggedIn) {
-	      createButton = React.createElement(
-	        'button',
-	        { className: 'analysis-header', id: 'create-button', onClick: this.createClick },
-	        'Create New'
-	      );
-	      userView = React.createElement(
-	        'button',
-	        { className: 'analysis-header', id: 'user-view', onClick: this.deskView },
-	        'View Your Reviews'
-	      );
-	    } else {
-	      createButton = React.createElement('div', null);
-	      userView = React.createElement('div', null);
-	    }
-	    return React.createElement(
-	      'div',
-	      { className: 'analysis-index', id: 'analysis-index-main' },
-	      React.createElement(
-	        'div',
-	        { className: 'analysis-index', id: 'analysis-header' },
-	        createButton,
-	        userView
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'analysis-index', id: 'analysis-body' },
-	        analysisList
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'analysis-index', id: 'analysis-footer' },
-	        React.createElement('button', { className: 'login', onClick: this.Click })
-	      )
-	    );
-	  }
-	
-	});
-	
-	module.exports = Analyses;
-
-/***/ },
-/* 426 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var Store = __webpack_require__(209).Store;
-	var _analyses = [];
-	var AnalysesConstants = __webpack_require__(236);
-	var AppDispatcher = __webpack_require__(228);
-	var AnalysesStore = new Store(AppDispatcher);
-	
-	var resetAnalyses = function resetAnalyses(results) {
-	  _analyses = results;
-	};
-	var addAnalysis = function addAnalysis(anal) {
-	  _analyses.push(anal);
-	};
-	
-	AnalysesStore.all = function () {
-	
-	  return _analyses;
-	};
-	AnalysesStore.empty = function () {
-	  _analyses = [];
-	};
-	
-	AnalysesStore.__onDispatch = function (payload) {
-	
-	  switch (payload.actionType) {
-	    case AnalysesConstants.ReceiveAnalyses:
-	
-	      var result = resetAnalyses(payload.results);
-	      AnalysesStore.__emitChange();
-	      break;
-	    case AnalysesConstants.ReceiveNewAnalysis:
-	      var added = addAnalysis(payload.results);
-	      AnalysesStore.__emitChange();
-	      break;
-	    case AnalysesConstants.ReceiveAnalysis:
-	      // AnalysesStore.empty();
-	      AnalysesStore.__emitChange();
-	      break;
-	  }
-	};
-	
-	module.exports = AnalysesStore;
-
-/***/ },
-/* 427 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var InitialBookIndex = __webpack_require__(207);
-	var SearchArea = __webpack_require__(238);
-	var BookSearchStore = __webpack_require__(208);
-	var BookConfirmation = __webpack_require__(240);
-	var Modal = __webpack_require__(244);
-	var BookSearch = __webpack_require__(264);
-	var APIUtil = __webpack_require__(231);
-	var SearchResultItem = __webpack_require__(428);
-	var History = __webpack_require__(159).History;
-	
-	var SearchResults = React.createClass({
-	  displayName: 'SearchResults',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	    return { chosen: BookSearchStore.currentBook(), currentBooks: BookSearchStore.all() };
-	  },
-	  bookChosen: function bookChosen() {
-	    // this.openModal();
-	    event.preventDefault();
-	    var bookToSend = BookSearchStore.currentBook();
-	    bookToSend.read = "toRead";
-	    // APIUtil.createBook(bookToSend);
-	    var url = "/Desk";
-	    this.history.push({ pathname: url });
-	  },
-	  openModal: function openModal() {
-	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
-	  },
-	
-	  closeModal: function closeModal() {
-	    BookSearchStore.resetCurrentBook(null);
-	    this.setState({ modalIsOpen: false });
-	  },
-	  render: function render() {
-	
-	    var searchResults = [];
-	    for (var i = 0; i < this.state.currentBooks.length; i++) {
-	      searchResults.push(React.createElement(SearchResultItem, { book: this.state.currentBooks[i] }));
-	    }
-	
-	    return React.createElement(
-	      'div',
-	      { className: 'homePage' },
-	      React.createElement(
-	        'ul',
-	        { className: 'search-results-list' },
-	        searchResults
-	      )
-	    );
-	  }
-	});
-	module.exports = SearchResults;
-
-/***/ },
-/* 428 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var InitialBookIndex = __webpack_require__(207);
-	var SearchArea = __webpack_require__(238);
-	var BookSearchStore = __webpack_require__(208);
-	var BookConfirmation = __webpack_require__(240);
-	var Modal = __webpack_require__(244);
-	var BookSearch = __webpack_require__(264);
-	var APIUtil = __webpack_require__(231);
-	var History = __webpack_require__(159).History;
-	
-	var customStyles = {};
-	
-	var SearchResultsItem = React.createClass({
-	  displayName: 'SearchResultsItem',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
-	  },
-	  bookChosen: function bookChosen() {
-	    // this.openModal();
-	    var chosen = APIUtil.makeBookObject(this.props.book);
-	    BookSearchStore.resetCurrentBook(chosen);
-	    event.preventDefault();
-	    var bookToSend = BookSearchStore.currentBook();
-	    bookToSend.read = "toRead";
-	    // APIUtil.createBook(bookToSend);
-	    var url = "/Desk";
-	    this.history.push({ pathname: url });
-	  },
-	  openModal: function openModal() {
-	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
-	  },
-	
-	  closeModal: function closeModal() {
-	    BookSearchStore.resetCurrentBook(null);
-	    this.setState({ modalIsOpen: false });
-	  },
-	  render: function render() {
-	    var imageLink, title, author, numPages, category;
-	    if (this.props.book.volumeInfo.imageLinks !== undefined) {
-	      imageLink = this.props.book.volumeInfo.imageLinks.thumbnail;
-	    } else {
-	      imageLink = "http://res.cloudinary.com/litlitves/image/upload/v1474661342/imageNotAvailable_fhql9f.jpg";
-	    }
-	    if (this.props.book.volumeInfo.categories !== undefined) {
-	      category = "category: " + this.props.book.volumeInfo.categories[0];
-	    } else {
-	      category = null;
-	    }
-	    if (this.props.book.volumeInfo.authors !== undefined) {
-	      author = "by, " + this.props.book.volumeInfo.authors[0];
-	    }
-	
-	    return React.createElement(
-	      'li',
-	      { className: 'search-result-item', onClick: this.bookChosen },
-	      React.createElement('img', { className: 'search-result-image', src: imageLink }),
-	      React.createElement(
-	        'div',
-	        { className: 'data-area' },
-	        React.createElement(
-	          'div',
-	          { className: 'result-title' },
-	          this.props.book.volumeInfo.title
-	        ),
-	        React.createElement(
-	          'div',
-	          null,
-	          this.props.book.volumeInfo.subtitle
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'result-author' },
-	          author
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'result-category' },
-	          category
-	        )
-	      )
-	    );
-	  }
-	});
-	module.exports = SearchResultsItem;
 
 /***/ }
 /******/ ]);

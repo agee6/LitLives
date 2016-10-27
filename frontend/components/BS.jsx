@@ -43,10 +43,7 @@ var BS = React.createClass({
 
         // this.menuClass='menu open'
         this.setState({shelfVisible: true});
-
       }
-
-
        $('.menu').toggleClass('open', 200, 'easeOutQuad');
 
   },

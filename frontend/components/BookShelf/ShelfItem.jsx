@@ -24,7 +24,7 @@ var ShelfItem = React.createClass({
     return hex;
   },
   render: function(){
-    var shelfStyle = { backgroundColor: this.generateRandomHex()};
+    var shelfStyle = { backgroundColor: this.props.bookColor};
 
     return(
       <li className="ShelfItem hvr-grow" style={shelfStyle} id={this.props.theid} onClick={this.onClick}>{this.props.bookTitle}</li>

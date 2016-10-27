@@ -43,9 +43,14 @@ var BookPage = React.createClass({
     if(book.id === undefined){
       inDatabase = false;
     }
+    if(book.read === "read"){
+      var finishedRead = true;
+    }else{
+      var finishedRead = false;
+    }
     return({modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
               ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
-              description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase} );
+              description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase, finished: finishedRead} );
   },
   componentDidMount: function(){
     this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
@@ -93,6 +98,16 @@ var BookPage = React.createClass({
     this.setState({selectedValue: "toRead"});
 
   },
+  checkRead: function(event){
+    event.preventDefault();
+    if(this.state.selectedValue === "read"){
+      APIUtil.updateBook(this.props.currentBook.id, {read:"toRead"});
+      this.setState({selectedValue:"toRead", finished: false});
+    }else{
+      APIUtil.updateBook(this.props.currentBook.id, {read: "read"});
+      this.setState({selectedValue: "read", finished: true});
+    }
+  },
   editClick: function(event){
     event.preventDefault();
 
@@ -119,9 +134,6 @@ var BookPage = React.createClass({
     }else{
       ApiActions.demandLogin();
     }
-
-
-
   },
   updateBook: function(event){
     event.preventDefault();
@@ -204,13 +216,15 @@ var BookPage = React.createClass({
       addDeleteButton = <button className="book-button-area" id="add-to-shelf" onClick={this.addToShelf} disabled={addButton}>+</button>;
     }
 
-    var markFunction, markText;
+    var markFunction, markText, markValue;
     if(this.state.selectedValue === "read"){
       markFunction = this.markAsUnread;
       markText = "Mark as Unread";
+      markValue = true;
     }else {
       markFunction=this.markAsRead;
       markText = "Mark as Read";
+      markValue = "false";
     }
 
     return(
@@ -231,9 +245,12 @@ var BookPage = React.createClass({
           <div className="BookFooter" id="pages">pages: {pages}</div>
           <div className="BookFooter" id="language">language: {language}</div>
           <div className="BookFooter" id="publisher">publisher: {publisher}</div>
+          <div className="BookFooter" id="read-check">
+            <input type="checkbox" checked={this.state.finished} onChange={this.checkRead}>Finished Reading?</input>
+          </div>
 
         </div>
-        <button className="book-button-area" id="mark-as-read" onClick={markFunction} disabled={deleteButton}>{markText}</button>
+
         {notes}
 
 

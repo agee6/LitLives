@@ -61,6 +61,12 @@ var Note = React.createClass({
 
 
   },
+  addNote: function(noteText){
+    debugger;
+    var noteHash = { body: noteText, page: pn, public: true,chapter: chap, book_id: this.props.currentBook.id};
+
+
+  },
   handleChange: function(value){
     this.setState({selectedValue: value});
   },
@@ -91,8 +97,8 @@ var Note = React.createClass({
     }
     var banana = this.props.currentBook.title;
     var NoteStyle = {
-      backgroundImage: 'url(\'' + this.props.currentBook.image + '\')',
-      backgroundSize: 'cover'
+      // backgroundImage: 'url(\'' + this.props.currentBook.image + '\')',
+      // backgroundSize: 'cover'
     }
 
     return (
@@ -106,6 +112,7 @@ var Note = React.createClass({
           <div className="note-area" >
             <div className="inner-note">
               {noteDisplay}
+
               <button className="AddNoteButton" onClick={this.openModal}>Add Note</button>
 
             </div>
@@ -123,7 +130,6 @@ var Note = React.createClass({
 
              <textarea className="NoteInput" rows="30" cols="100" name="comment"
                placeholder="Enter note here..." valueLink={this.linkState('noteText')}/>
-             <Editor />
              <br />
              <div className="note-location-input">
                <label className="note-input-label">associated page (optional):</label>
@@ -137,7 +143,7 @@ var Note = React.createClass({
                  <button className="NoteSubmitButton" onClick={this.saveNote}>Save</button>
                </form>
 
-           <button onClick={this.closeModal}>close</button>
+           <button className="close-button" onClick={this.closeModal}>x</button>
 
          </Modal>
       </div>

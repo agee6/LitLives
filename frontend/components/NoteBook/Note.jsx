@@ -61,9 +61,23 @@ var Note = React.createClass({
 
 
   },
+  submitNote: function(noteText){
+    var noteHash = { body: noteText, page: null, public: true,chapter: null, book_id: this.props.currentBook.id};
+
+    APIUtil.createNote(noteHash);
+    this.state.noteText = "";
+    this.state.title = "";
+    this.state.pageNumber = null;
+    this.state.chapter= null;
+
+  },
   addNote: function(noteText){
     debugger;
     var noteHash = { body: noteText, page: pn, public: true,chapter: chap, book_id: this.props.currentBook.id};
+    this.state.noteText = "";
+    this.state.title = "";
+    this.state.pageNumber = null;
+    this.state.chapter= null;
 
 
   },
@@ -86,6 +100,13 @@ var Note = React.createClass({
 
   closeModal: function() {
     this.setState({modalIsOpen: false});
+  },
+  addNoteSate: function(content){
+    debugger;
+  },
+  passUpState: function(contentState){
+    this.currentNoteContent = contentState;
+    debugger;
   },
 
   render: function() {
@@ -111,9 +132,11 @@ var Note = React.createClass({
           </div>
           <div className="note-area" >
             <div className="inner-note">
-              {noteDisplay}
+              <div className="notes">
+                {noteDisplay}
 
-              <button className="AddNoteButton" onClick={this.openModal}>Add Note</button>
+              </div>
+              <Editor submitNote={this.submitNote} passUpState={this.passUpState}/>
 
             </div>
 

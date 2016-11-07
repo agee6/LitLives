@@ -27,6 +27,10 @@ const {Editor, EditorState, RichUtils} = require('draft-js');
           }
           return false;
         }
+        _onChange(es){
+
+          this.setState({es});
+        }
 
         _onTab(e) {
           const maxDepth = 4;
@@ -53,9 +57,11 @@ const {Editor, EditorState, RichUtils} = require('draft-js');
 
         _addNote(event){
           event.preventDefault();
-          debugger; 
-          this.props.addNote(this.state.editorState);
-        };
+          var noteText = this.state.editorState.getCurrentContent().getPlainText();
+          this.props.submitNote(noteText);
+
+
+        }
 
         render() {
           const {editorState} = this.state;
@@ -93,7 +99,10 @@ const {Editor, EditorState, RichUtils} = require('draft-js');
                   spellCheck={true}
                 />
               </div>
-              <button onClick={this.addNote.bind(this)}>Add Note</button>
+
+              <button className="AddNoteButton" onClick={this.addNote}>Add Note</button>
+
+
             </div>
           );
         }

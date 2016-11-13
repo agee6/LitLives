@@ -143,32 +143,6 @@ var Note = React.createClass({
           </div>
         </div>
 
-
-        <Modal
-           isOpen={this.state.modalIsOpen}
-           onRequestClose={this.closeModal}
-           style={customStyles} >
-
-           <form className="NoteForm">
-
-             <textarea className="NoteInput" rows="30" cols="100" name="comment"
-               placeholder="Enter note here..." valueLink={this.linkState('noteText')}/>
-             <br />
-             <div className="note-location-input">
-               <label className="note-input-label">associated page (optional):</label>
-               <input className="note-input" valueLink={this.linkState('pageNumber')}/>
-
-               <label className="note-input-label">associated chapter (optional):</label>
-               <input className="note-input" valueLink={this.linkState('chapter')} />
-             </div>
-
-
-                 <button className="NoteSubmitButton" onClick={this.saveNote}>Save</button>
-               </form>
-
-           <button className="close-button" onClick={this.closeModal}>x</button>
-
-         </Modal>
       </div>
     );
   }

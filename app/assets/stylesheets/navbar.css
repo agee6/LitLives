@@ -29,6 +29,7 @@
   text-align: center;
   color: #E0C8AE;
   border-radius: 2px;
+  z-index: 2;
 
 }
 
@@ -204,21 +205,18 @@
   left: 100px;
   padding: 10px;
   font-size: 16px;
-  width: 58%;
+  width: 40%;
   text-align: left;
   color: #e4cdb4;
-  font-style: italic;;
+  font-style: italic;
+  z-index: 0;
 }
-@media(max-width: 500px){
+@media(max-width: 800px){
   .quote{
     display: none;
   }
 }
-@media(max-width: 800px){
-  .quote{
-    width: 40%;
-  }
-}
+
 
 
 .UserNameInput{

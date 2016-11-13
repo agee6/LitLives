@@ -147,6 +147,7 @@ var APIUtil = {
     });
   },
   fetchAnalyses: function(analysisParams){
+
     $.get('/api/analyses', {analysis: {}}, function(analyses){
       ApiActions.receiveAnalyses(analyses);
     });

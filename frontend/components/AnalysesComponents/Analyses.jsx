@@ -13,9 +13,7 @@ var Analyses = React.createClass({
   componentDidMount: function(){
     APIUtil.fetchAnalyses({});
     this.analysesIndex = AnalysisStore.addListener(this._onChange);
-    this.userIndex = UserStore.addListener(this._onChange)
-
-
+    this.userIndex = UserStore.addListener(this._onChange);
   },
   componentWillUnmount: function(){
     this.analysesIndex.remove();
@@ -48,16 +46,14 @@ var Analyses = React.createClass({
     }
     return (
       <div className="analysis-index" id="analysis-index-main">
+        <div className="analysis-index" id="analysis-body">
+          {analysisList}
+        </div>
         <div className="analysis-index" id="analysis-header">
           {createButton}
           {userView}
         </div>
-        <div className="analysis-index" id="analysis-body">
-          {analysisList}
-        </div>
-        <div className="analysis-index" id="analysis-footer">
-          <button className="login" onClick={this.Click}></button>
-        </div>
+
       </div>
     );
   }

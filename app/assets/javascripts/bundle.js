@@ -79,7 +79,7 @@
 	    }
 	    UserStore.addListener(this._onChange);
 	
-	    this.history.push({ pathname: "/Search" });
+	    // this.history.push({pathname: "/"});
 	  },
 	  _onChange: function _onChange() {
 	    if (UserStore.loggedIn()) {
@@ -31214,6 +31214,7 @@
 	    });
 	  },
 	  fetchAnalyses: function fetchAnalyses(analysisParams) {
+	
 	    $.get('/api/analyses', { analysis: {} }, function (analyses) {
 	      ApiActions.receiveAnalyses(analyses);
 	    });
@@ -35092,46 +35093,6 @@
 	            React.createElement(Editor, { submitNote: this.submitNote, passUpState: this.passUpState })
 	          )
 	        )
-	      ),
-	      React.createElement(
-	        Modal,
-	        {
-	          isOpen: this.state.modalIsOpen,
-	          onRequestClose: this.closeModal,
-	          style: customStyles },
-	        React.createElement(
-	          'form',
-	          { className: 'NoteForm' },
-	          React.createElement('textarea', { className: 'NoteInput', rows: '30', cols: '100', name: 'comment',
-	            placeholder: 'Enter note here...', valueLink: this.linkState('noteText') }),
-	          React.createElement('br', null),
-	          React.createElement(
-	            'div',
-	            { className: 'note-location-input' },
-	            React.createElement(
-	              'label',
-	              { className: 'note-input-label' },
-	              'associated page (optional):'
-	            ),
-	            React.createElement('input', { className: 'note-input', valueLink: this.linkState('pageNumber') }),
-	            React.createElement(
-	              'label',
-	              { className: 'note-input-label' },
-	              'associated chapter (optional):'
-	            ),
-	            React.createElement('input', { className: 'note-input', valueLink: this.linkState('chapter') })
-	          ),
-	          React.createElement(
-	            'button',
-	            { className: 'NoteSubmitButton', onClick: this.saveNote },
-	            'Save'
-	          )
-	        ),
-	        React.createElement(
-	          'button',
-	          { className: 'close-button', onClick: this.closeModal },
-	          'x'
-	        )
 	      )
 	    );
 	  }
@@ -35307,6 +35268,9 @@
 	    _this.addNote = function (e) {
 	      return _this._addNote(e);
 	    };
+	    _this.clearEditorState = function () {
+	      return _this._clearEditorState();
+	    };
 	    return _this;
 	  }
 	
@@ -35350,6 +35314,12 @@
 	      event.preventDefault();
 	      var noteText = this.state.editorState.getCurrentContent().getPlainText();
 	      this.props.submitNote(noteText);
+	      this.clearEditorState();
+	    }
+	  }, {
+	    key: '_clearEditorState',
+	    value: function _clearEditorState() {
+	      this.setState({ editorState: EditorState.createEmpty() });
 	    }
 	  }, {
 	    key: 'render',
@@ -48988,7 +48958,6 @@
 	    } else {
 	      this.setState({ message: "invalid password please try again" });
 	    }
-	    debugger;
 	  },
 	  logInAsGuest: function logInAsGuest(event) {
 	    event.preventDefault();
@@ -49047,6 +49016,11 @@
 	        React.createElement(
 	          'ul',
 	          { className: 'header-list group' },
+	          React.createElement(
+	            'li',
+	            { className: 'nav-right', id: 'NavAnal', onClick: this.analysesClick },
+	            'Analyses'
+	          ),
 	          React.createElement(
 	            'li',
 	            { className: 'nav-right', id: 'NavSearch', onClick: this.searchClick },
@@ -49188,19 +49162,14 @@
 	      { className: 'analysis-index', id: 'analysis-index-main' },
 	      React.createElement(
 	        'div',
-	        { className: 'analysis-index', id: 'analysis-header' },
-	        createButton,
-	        userView
-	      ),
-	      React.createElement(
-	        'div',
 	        { className: 'analysis-index', id: 'analysis-body' },
 	        analysisList
 	      ),
 	      React.createElement(
 	        'div',
-	        { className: 'analysis-index', id: 'analysis-footer' },
-	        React.createElement('button', { className: 'login', onClick: this.Click })
+	        { className: 'analysis-index', id: 'analysis-header' },
+	        createButton,
+	        userView
 	      )
 	    );
 	  }

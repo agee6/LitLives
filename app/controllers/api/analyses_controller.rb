@@ -17,12 +17,14 @@
 class Api::AnalysesController < ApplicationController
 
   def index
-    if analysis_params == {}
+
+    if analyses_params == {}
       @analyses = Analysis.all()
+      p "h2"
     else
       @analyses = Analysis.where(analysis_params)
     end
-
+    p "hello"
     render json: @analyses
 
   end
@@ -69,8 +71,10 @@ class Api::AnalysesController < ApplicationController
 
   end
   private
+  def analyses_params
+    params.permit(:title, :subtitle, :body, :book_id, :alt_book, :book, :image_url, :second_alt_book, :public)
+  end
   def analysis_params
-    p params
-    params.require(:analysis).permit(:title, :subtitle, :body, :book_id, :alt_book, :book, :image_url, :second_alt_book, :public)
+    params.require(:analyis).permit(:title, :subtitle, :body, :book_id, :alt_book, :book, :image_url, :second_alt_book, :book_isbn, :public)
   end
 end

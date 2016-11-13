@@ -19,7 +19,7 @@ class Api::NotesController < ApplicationController
 
       render json: @note
     else
-      
+
       render json: nil
     end
 

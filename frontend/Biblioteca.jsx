@@ -30,7 +30,7 @@ var App = React.createClass({
     UserStore.addListener(this._onChange);
 
 
-    this.history.push({pathname: "/Search"});
+    // this.history.push({pathname: "/"});
 
   },
   _onChange: function(){

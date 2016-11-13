@@ -16,6 +16,7 @@ const {Editor, EditorState, RichUtils} = require('draft-js');
           this.toggleBlockType = (type) => this._toggleBlockType(type);
           this.toggleInlineStyle = (style) => this._toggleInlineStyle(style);
           this.addNote = (e) => this._addNote(e);
+          this.clearEditorState = () => this._clearEditorState();
         }
 
         _handleKeyCommand(command) {
@@ -59,8 +60,11 @@ const {Editor, EditorState, RichUtils} = require('draft-js');
           event.preventDefault();
           var noteText = this.state.editorState.getCurrentContent().getPlainText();
           this.props.submitNote(noteText);
+          this.clearEditorState();
+        }
 
-
+        _clearEditorState(){
+          this.setState({editorState: EditorState.createEmpty()});
         }
 
         render() {

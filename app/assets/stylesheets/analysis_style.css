@@ -1,0 +1,11 @@
+.analysis-display-area{
+  margin-left: 10%;
+  margin-right: 10%;
+}
+.analysis-title-input{
+  width: 100%;
+  font-size: 24px;
+  box-sizing: border-box;
+  border-radius: 3px; 
+
+}

@@ -173,7 +173,7 @@ var Navbar = React.createClass({
            <div className='quote'> {quoteToUse}</div>
 
            <ul className="header-list group">
-             <li className="nav-right" id="NavAnal" onClick={this.analysesClick}>Analyses</li>
+             <li className="nav-right" id="NavAnal" onClick={this.analysesClick}>Essays</li>
              <li className="nav-right" id="NavSearch" onClick={this.searchClick}>Search</li>
              <li className="nav-right" id="NavDesk" onClick={this.deskClick}>Desk</li>
              {signB}

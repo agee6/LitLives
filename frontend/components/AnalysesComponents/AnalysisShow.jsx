@@ -1,16 +1,15 @@
 var React = require('react');
-var PropTypes = React.PropTypes;
+
 var AnalysisStore = require('../../stores/AnalysesStore.js');
 var APIUtil = require('../../util/APIUtil.js');
 var UserStore = require('../../stores/UserStore.js');
-var AnalysisEditor = require('./AnalysisEditor.jsx');
 var BookSearchStore = require('../../stores/BookSearchStore.js');
 
 
-var Analyses = React.createClass({
+var AnalysesShow = React.createClass({
 
   getInitialState: function(){
-    return({analyses: AnalysisStore.all(), loggedIn: UserStore.loggedIn(), creating: false, title: "", body: "", currentBook: BookSearchStore.currentBook()});
+    return({analyses: AnalysisStore.current(), loggedIn: UserStore.loggedIn()});
   },
   componentDidMount: function(){
     APIUtil.fetchAnalyses({});
@@ -89,4 +88,4 @@ var Analyses = React.createClass({
 
 });
 
-module.exports = Analyses;
+module.exports = AnalysesShow;

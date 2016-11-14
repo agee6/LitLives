@@ -75,6 +75,6 @@ class Api::AnalysesController < ApplicationController
     params.permit(:title, :subtitle, :body, :book_id, :alt_book, :book, :image_url, :second_alt_book, :public)
   end
   def analysis_params
-    params.require(:analyis).permit(:title, :subtitle, :body, :book_id, :alt_book, :book, :image_url, :second_alt_book, :book_isbn, :public)
+    params.require(:analysis).permit(:title, :subtitle, :body, :book_id, :alt_book, :book, :image_url, :second_alt_book, :book_isbn, :public)
   end
 end

@@ -62,7 +62,8 @@
 	var UserStore = __webpack_require__(273);
 	var ApiActions = __webpack_require__(232);
 	var Analyses = __webpack_require__(425);
-	var SearchResults = __webpack_require__(427);
+	var AnalysisShow = __webpack_require__(600);
+	var SearchResults = __webpack_require__(598);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -78,7 +79,6 @@
 	      APIUtil.getCurrentBook();
 	    }
 	    UserStore.addListener(this._onChange);
-	
 	    // this.history.push({pathname: "/"});
 	  },
 	  _onChange: function _onChange() {
@@ -107,7 +107,12 @@
 	  { path: '/', component: App },
 	  React.createElement(Route, { path: '/Search', component: Search }),
 	  React.createElement(Route, { path: '/Desk', component: Desk }),
-	  React.createElement(Route, { path: '/Analyses', component: Analyses }),
+	  React.createElement(
+	    Route,
+	    { path: '/Analyses' },
+	    React.createElement(IndexRoute, { component: Analyses }),
+	    React.createElement(Route, { path: '/:id', component: AnalysisShow })
+	  ),
 	  React.createElement(Route, { path: '/SearchResults', component: SearchResults })
 	);
 	
@@ -49019,7 +49024,7 @@
 	          React.createElement(
 	            'li',
 	            { className: 'nav-right', id: 'NavAnal', onClick: this.analysesClick },
-	            'Analyses'
+	            'Essays'
 	          ),
 	          React.createElement(
 	            'li',
@@ -49108,13 +49113,15 @@
 	var AnalysisStore = __webpack_require__(426);
 	var APIUtil = __webpack_require__(231);
 	var UserStore = __webpack_require__(273);
+	var AnalysisEditor = __webpack_require__(427);
+	var BookSearchStore = __webpack_require__(208);
 	
 	var Analyses = React.createClass({
 	  displayName: 'Analyses',
 	
 	
 	  getInitialState: function getInitialState() {
-	    return { analyses: AnalysisStore.all(), loggedIn: UserStore.loggedIn() };
+	    return { analyses: AnalysisStore.all(), loggedIn: UserStore.loggedIn(), creating: false, title: "", body: "", currentBook: BookSearchStore.currentBook() };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    APIUtil.fetchAnalyses({});
@@ -49131,46 +49138,71 @@
 	  createClick: function createClick(event) {
 	    event.preventDefault();
 	    console.log("openModal?");
+	    this.setState({ creating: true });
 	  },
 	  deskView: function deskView(event) {
 	    event.preventDefault();
 	    console.log("go to Desk page?");
 	  },
-	
+	  submitAnalysis: function submitAnalysis(analysisEditor) {},
+	  onEditorChange: function onEditorChange(data) {
+	    this.setState({ body: data });
+	  },
+	  titleChange: function titleChange(data) {
+	    this.setState({ title: data });
+	  },
+	  submitEssay: function submitEssay(data) {
+	    console.log(data);
+	    var analysisObj = { body: data, title: this.state.title, book_id: this.state.currentBook.id };
+	    APIUtil.createAnalysis(analysisObj);
+	  },
 	  render: function render() {
-	    var createButton, userView;
-	    var analysisList = this.state.analyses.map(function (analysis) {
-	      return React.createElement(AnalysisListItem, { analysis: analysis, key: analysis.id });
-	    }, this);
-	    if (this.state.loggedIn) {
-	      createButton = React.createElement(
-	        'button',
-	        { className: 'analysis-header', id: 'create-button', onClick: this.createClick },
-	        'Create New'
-	      );
-	      userView = React.createElement(
-	        'button',
-	        { className: 'analysis-header', id: 'user-view', onClick: this.deskView },
-	        'View Your Reviews'
+	
+	    var display;
+	
+	    if (this.state.creating) {
+	      display = React.createElement(
+	        'div',
+	        { className: 'new-analysis' },
+	        React.createElement('input', { type: 'text', className: 'analysis-title-input', onChange: this.titleChange, placeholder: 'Insert Title here...' }),
+	        React.createElement(AnalysisEditor, { onEditorChange: this.onEditorChange, submitEssay: this.submitEssay })
 	      );
 	    } else {
-	      createButton = React.createElement('div', null);
-	      userView = React.createElement('div', null);
+	      var createButton, userView;
+	      var analysisList = this.state.analyses.map(function (analysis) {
+	        return React.createElement(AnalysisListItem, { analysis: analysis, key: analysis.id });
+	      }, this);
+	      if (this.state.loggedIn) {
+	        createButton = React.createElement(
+	          'button',
+	          { className: 'analysis-header', id: 'create-button', onClick: this.createClick },
+	          'Create New'
+	        );
+	        // userView = <button className="analysis-header" id="user-view" onClick={this.deskView}>View Your Reviews</button>
+	      } else {
+	          createButton = React.createElement('div', null);
+	          userView = React.createElement('div', null);
+	        }
+	      display = React.createElement(
+	        'div',
+	        { className: 'analysis-index', id: 'analysis-index-main' },
+	        React.createElement(
+	          'div',
+	          { className: 'analysis-index', id: 'analysis-body' },
+	          analysisList
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'analysis-index', id: 'analysis-header' },
+	          createButton
+	        )
+	      );
 	    }
+	
 	    return React.createElement(
 	      'div',
-	      { className: 'analysis-index', id: 'analysis-index-main' },
-	      React.createElement(
-	        'div',
-	        { className: 'analysis-index', id: 'analysis-body' },
-	        analysisList
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'analysis-index', id: 'analysis-header' },
-	        createButton,
-	        userView
-	      )
+	      { className: 'analysis-display-area' },
+	      display
 	    );
 	  }
 	
@@ -49232,6 +49264,436 @@
 
 	'use strict';
 	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var React = __webpack_require__(1);
+	
+	var _require = __webpack_require__(278);
+	
+	var Editor = _require.Editor;
+	var EditorState = _require.EditorState;
+	var RichUtils = _require.RichUtils;
+	
+	var RichTextEditor = function (_React$Component) {
+	  _inherits(RichTextEditor, _React$Component);
+	
+	  function RichTextEditor(props) {
+	    _classCallCheck(this, RichTextEditor);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RichTextEditor).call(this, props));
+	
+	    _this.state = { editorState: EditorState.createEmpty() };
+	
+	    _this.focus = function () {
+	      return _this.refs.editor.focus();
+	    };
+	    _this.onChange = function (editorState) {
+	      return _this.setState({ editorState: editorState });
+	    };
+	
+	    _this.handleKeyCommand = function (command) {
+	      return _this._handleKeyCommand(command);
+	    };
+	    _this.onTab = function (e) {
+	      return _this._onTab(e);
+	    };
+	    _this.toggleBlockType = function (type) {
+	      return _this._toggleBlockType(type);
+	    };
+	    _this.toggleInlineStyle = function (style) {
+	      return _this._toggleInlineStyle(style);
+	    };
+	    _this.addEssay = function (e) {
+	      return _this._addEssay(e);
+	    };
+	    _this.clearEditorState = function () {
+	      return _this._clearEditorState();
+	    };
+	    return _this;
+	  }
+	
+	  _createClass(RichTextEditor, [{
+	    key: '_handleKeyCommand',
+	    value: function _handleKeyCommand(command) {
+	      var editorState = this.state.editorState;
+	
+	      var newState = RichUtils.handleKeyCommand(editorState, command);
+	      if (newState) {
+	        this.onChange(newState);
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: '_onChange',
+	    value: function _onChange(es) {
+	      this.setState({ es: es });
+	    }
+	  }, {
+	    key: '_onTab',
+	    value: function _onTab(e) {
+	      var maxDepth = 4;
+	      this.onChange(RichUtils.onTab(e, this.state.editorState, maxDepth));
+	    }
+	  }, {
+	    key: '_toggleBlockType',
+	    value: function _toggleBlockType(blockType) {
+	      this.onChange(RichUtils.toggleBlockType(this.state.editorState, blockType));
+	    }
+	  }, {
+	    key: '_toggleInlineStyle',
+	    value: function _toggleInlineStyle(inlineStyle) {
+	      this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, inlineStyle));
+	    }
+	  }, {
+	    key: '_addEssay',
+	    value: function _addEssay(event) {
+	      event.preventDefault();
+	
+	      var rawData = this.state.editorState.getCurrentContent().getPlainText();
+	      this.props.submitEssay(rawData);
+	      //this.clearEditorState();
+	    }
+	  }, {
+	    key: '_clearEditorState',
+	    value: function _clearEditorState() {
+	      this.setState({ editorState: EditorState.createEmpty() });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var editorState = this.state.editorState;
+	
+	      // If the user changes block type before entering any text, we can
+	      // either style the placeholder or hide it. Let's just hide it now.
+	
+	      var className = 'RichEditor-editor';
+	      var contentState = editorState.getCurrentContent();
+	      if (!contentState.hasText()) {
+	        if (contentState.getBlockMap().first().getType() !== 'unstyled') {
+	          className += ' RichEditor-hidePlaceholder';
+	        }
+	      }
+	
+	      return React.createElement(
+	        'div',
+	        { className: 'RichEditor-root' },
+	        React.createElement(BlockStyleControls, {
+	          editorState: editorState,
+	          onToggle: this.toggleBlockType
+	        }),
+	        React.createElement(InlineStyleControls, {
+	          editorState: editorState,
+	          onToggle: this.toggleInlineStyle
+	        }),
+	        React.createElement(
+	          'div',
+	          { className: className, onClick: this.focus },
+	          React.createElement(Editor, {
+	            blockStyleFn: getBlockStyle,
+	            customStyleMap: styleMap,
+	            editorState: editorState,
+	            handleKeyCommand: this.handleKeyCommand,
+	            onChange: this.onChange,
+	            onTab: this.onTab,
+	            placeholder: 'sell your idea...',
+	            ref: 'editor',
+	            spellCheck: true
+	          })
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'AddNoteButton', onClick: this.addEssay },
+	          'Submit Essay'
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return RichTextEditor;
+	}(React.Component);
+	
+	// Custom overrides for "code" style.
+	
+	
+	var styleMap = {
+	  CODE: {
+	    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+	    fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
+	    fontSize: 16,
+	    padding: 2
+	  }
+	};
+	
+	function getBlockStyle(block) {
+	  switch (block.getType()) {
+	    case 'blockquote':
+	      return 'RichEditor-blockquote';
+	    default:
+	      return null;
+	  }
+	}
+	
+	var StyleButton = function (_React$Component2) {
+	  _inherits(StyleButton, _React$Component2);
+	
+	  function StyleButton() {
+	    _classCallCheck(this, StyleButton);
+	
+	    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(StyleButton).call(this));
+	
+	    _this2.onToggle = function (e) {
+	      e.preventDefault();
+	      _this2.props.onToggle(_this2.props.style);
+	    };
+	    return _this2;
+	  }
+	
+	  _createClass(StyleButton, [{
+	    key: 'render',
+	    value: function render() {
+	      var className = 'RichEditor-styleButton';
+	      if (this.props.active) {
+	        className += ' RichEditor-activeButton';
+	      }
+	
+	      return React.createElement(
+	        'span',
+	        { className: className, onMouseDown: this.onToggle },
+	        this.props.label
+	      );
+	    }
+	  }]);
+	
+	  return StyleButton;
+	}(React.Component);
+	
+	var BLOCK_TYPES = [{ label: 'H1', style: 'header-one' }, { label: 'H2', style: 'header-two' }, { label: 'H3', style: 'header-three' }, { label: 'H4', style: 'header-four' }, { label: 'H5', style: 'header-five' }, { label: 'H6', style: 'header-six' }, { label: 'Blockquote', style: 'blockquote' }, { label: 'UL', style: 'unordered-list-item' }, { label: 'OL', style: 'ordered-list-item' }, { label: 'Code Block', style: 'code-block' }];
+	
+	var BlockStyleControls = function BlockStyleControls(props) {
+	  var editorState = props.editorState;
+	
+	  var selection = editorState.getSelection();
+	  var blockType = editorState.getCurrentContent().getBlockForKey(selection.getStartKey()).getType();
+	
+	  return React.createElement(
+	    'div',
+	    { className: 'RichEditor-controls' },
+	    BLOCK_TYPES.map(function (type) {
+	      return React.createElement(StyleButton, {
+	        key: type.label,
+	        active: type.style === blockType,
+	        label: type.label,
+	        onToggle: props.onToggle,
+	        style: type.style
+	      });
+	    })
+	  );
+	};
+	
+	var INLINE_STYLES = [{ label: 'Bold', style: 'BOLD' }, { label: 'Italic', style: 'ITALIC' }, { label: 'Underline', style: 'UNDERLINE' }, { label: 'Monospace', style: 'CODE' }];
+	
+	var InlineStyleControls = function InlineStyleControls(props) {
+	  var currentStyle = props.editorState.getCurrentInlineStyle();
+	  return React.createElement(
+	    'div',
+	    { className: 'RichEditor-controls' },
+	    INLINE_STYLES.map(function (type) {
+	      return React.createElement(StyleButton, {
+	        key: type.label,
+	        active: currentStyle.has(type.style),
+	        label: type.label,
+	        onToggle: props.onToggle,
+	        style: type.style
+	      });
+	    })
+	  );
+	};
+	
+	module.exports = RichTextEditor;
+
+/***/ },
+/* 428 */,
+/* 429 */,
+/* 430 */,
+/* 431 */,
+/* 432 */,
+/* 433 */,
+/* 434 */,
+/* 435 */,
+/* 436 */,
+/* 437 */,
+/* 438 */,
+/* 439 */,
+/* 440 */,
+/* 441 */,
+/* 442 */,
+/* 443 */,
+/* 444 */,
+/* 445 */,
+/* 446 */,
+/* 447 */,
+/* 448 */,
+/* 449 */,
+/* 450 */,
+/* 451 */,
+/* 452 */,
+/* 453 */,
+/* 454 */,
+/* 455 */,
+/* 456 */,
+/* 457 */,
+/* 458 */,
+/* 459 */,
+/* 460 */,
+/* 461 */,
+/* 462 */,
+/* 463 */,
+/* 464 */,
+/* 465 */,
+/* 466 */,
+/* 467 */,
+/* 468 */,
+/* 469 */,
+/* 470 */,
+/* 471 */,
+/* 472 */,
+/* 473 */,
+/* 474 */,
+/* 475 */,
+/* 476 */,
+/* 477 */,
+/* 478 */,
+/* 479 */,
+/* 480 */,
+/* 481 */,
+/* 482 */,
+/* 483 */,
+/* 484 */,
+/* 485 */,
+/* 486 */,
+/* 487 */,
+/* 488 */,
+/* 489 */,
+/* 490 */,
+/* 491 */,
+/* 492 */,
+/* 493 */,
+/* 494 */,
+/* 495 */,
+/* 496 */,
+/* 497 */,
+/* 498 */,
+/* 499 */,
+/* 500 */,
+/* 501 */,
+/* 502 */,
+/* 503 */,
+/* 504 */,
+/* 505 */,
+/* 506 */,
+/* 507 */,
+/* 508 */,
+/* 509 */,
+/* 510 */,
+/* 511 */,
+/* 512 */,
+/* 513 */,
+/* 514 */,
+/* 515 */,
+/* 516 */,
+/* 517 */,
+/* 518 */,
+/* 519 */,
+/* 520 */,
+/* 521 */,
+/* 522 */,
+/* 523 */,
+/* 524 */,
+/* 525 */,
+/* 526 */,
+/* 527 */,
+/* 528 */,
+/* 529 */,
+/* 530 */,
+/* 531 */,
+/* 532 */,
+/* 533 */,
+/* 534 */,
+/* 535 */,
+/* 536 */,
+/* 537 */,
+/* 538 */,
+/* 539 */,
+/* 540 */,
+/* 541 */,
+/* 542 */,
+/* 543 */,
+/* 544 */,
+/* 545 */,
+/* 546 */,
+/* 547 */,
+/* 548 */,
+/* 549 */,
+/* 550 */,
+/* 551 */,
+/* 552 */,
+/* 553 */,
+/* 554 */,
+/* 555 */,
+/* 556 */,
+/* 557 */,
+/* 558 */,
+/* 559 */,
+/* 560 */,
+/* 561 */,
+/* 562 */,
+/* 563 */,
+/* 564 */,
+/* 565 */,
+/* 566 */,
+/* 567 */,
+/* 568 */,
+/* 569 */,
+/* 570 */,
+/* 571 */,
+/* 572 */,
+/* 573 */,
+/* 574 */,
+/* 575 */,
+/* 576 */,
+/* 577 */,
+/* 578 */,
+/* 579 */,
+/* 580 */,
+/* 581 */,
+/* 582 */,
+/* 583 */,
+/* 584 */,
+/* 585 */,
+/* 586 */,
+/* 587 */,
+/* 588 */,
+/* 589 */,
+/* 590 */,
+/* 591 */,
+/* 592 */,
+/* 593 */,
+/* 594 */,
+/* 595 */,
+/* 596 */,
+/* 597 */,
+/* 598 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
 	var React = __webpack_require__(1);
 	var InitialBookIndex = __webpack_require__(207);
 	var SearchArea = __webpack_require__(238);
@@ -49240,7 +49702,7 @@
 	var Modal = __webpack_require__(244);
 	var BookSearch = __webpack_require__(264);
 	var APIUtil = __webpack_require__(231);
-	var SearchResultItem = __webpack_require__(428);
+	var SearchResultItem = __webpack_require__(599);
 	var History = __webpack_require__(159).History;
 	
 	var SearchResults = React.createClass({
@@ -49288,7 +49750,7 @@
 	module.exports = SearchResults;
 
 /***/ },
-/* 428 */
+/* 599 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49379,6 +49841,113 @@
 	  }
 	});
 	module.exports = SearchResultsItem;
+
+/***/ },
+/* 600 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	
+	var AnalysisStore = __webpack_require__(426);
+	var APIUtil = __webpack_require__(231);
+	var UserStore = __webpack_require__(273);
+	var BookSearchStore = __webpack_require__(208);
+	
+	var AnalysesShow = React.createClass({
+	  displayName: 'AnalysesShow',
+	
+	
+	  getInitialState: function getInitialState() {
+	    return { analyses: AnalysisStore.current(), loggedIn: UserStore.loggedIn() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    APIUtil.fetchAnalyses({});
+	    this.analysesIndex = AnalysisStore.addListener(this._onChange);
+	    this.userIndex = UserStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.analysesIndex.remove();
+	    this.userIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    this.setState({ analyses: AnalysisStore.all(), loggedIn: UserStore.loggedIn() });
+	  },
+	  createClick: function createClick(event) {
+	    event.preventDefault();
+	    console.log("openModal?");
+	    this.setState({ creating: true });
+	  },
+	  deskView: function deskView(event) {
+	    event.preventDefault();
+	    console.log("go to Desk page?");
+	  },
+	  submitAnalysis: function submitAnalysis(analysisEditor) {},
+	  onEditorChange: function onEditorChange(data) {
+	    this.setState({ body: data });
+	  },
+	  titleChange: function titleChange(data) {
+	    this.setState({ title: data });
+	  },
+	  submitEssay: function submitEssay(data) {
+	    console.log(data);
+	    var analysisObj = { body: data, title: this.state.title, book_id: this.state.currentBook.id };
+	    APIUtil.createAnalysis(analysisObj);
+	  },
+	  render: function render() {
+	
+	    var display;
+	
+	    if (this.state.creating) {
+	      display = React.createElement(
+	        'div',
+	        { className: 'new-analysis' },
+	        React.createElement('input', { type: 'text', className: 'analysis-title-input', onChange: this.titleChange, placeholder: 'Insert Title here...' }),
+	        React.createElement(AnalysisEditor, { onEditorChange: this.onEditorChange, submitEssay: this.submitEssay })
+	      );
+	    } else {
+	      var createButton, userView;
+	      var analysisList = this.state.analyses.map(function (analysis) {
+	        return React.createElement(AnalysisListItem, { analysis: analysis, key: analysis.id });
+	      }, this);
+	      if (this.state.loggedIn) {
+	        createButton = React.createElement(
+	          'button',
+	          { className: 'analysis-header', id: 'create-button', onClick: this.createClick },
+	          'Create New'
+	        );
+	        // userView = <button className="analysis-header" id="user-view" onClick={this.deskView}>View Your Reviews</button>
+	      } else {
+	          createButton = React.createElement('div', null);
+	          userView = React.createElement('div', null);
+	        }
+	      display = React.createElement(
+	        'div',
+	        { className: 'analysis-index', id: 'analysis-index-main' },
+	        React.createElement(
+	          'div',
+	          { className: 'analysis-index', id: 'analysis-body' },
+	          analysisList
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'analysis-index', id: 'analysis-header' },
+	          createButton
+	        )
+	      );
+	    }
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'analysis-display-area' },
+	      display
+	    );
+	  }
+	
+	});
+	
+	module.exports = AnalysesShow;
 
 /***/ }
 /******/ ]);

@@ -1,4 +1,3 @@
-
 # encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
@@ -12,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160318202507) do
+ActiveRecord::Schema.define(version: 20161114144303) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -75,6 +74,22 @@ ActiveRecord::Schema.define(version: 20160318202507) do
   end
 
   add_index "bookshelves", ["user_id"], name: "index_bookshelves_on_user_id", using: :btree
+
+  create_table "essays", force: :cascade do |t|
+    t.text     "body",            null: false
+    t.string   "title",           null: false
+    t.string   "subtitle"
+    t.string   "image_url"
+    t.integer  "user_id",         null: false
+    t.integer  "alt_book"
+    t.integer  "second_alt_book"
+    t.boolean  "public"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "essays", ["title"], name: "index_essays_on_title", using: :btree
+  add_index "essays", ["user_id"], name: "index_essays_on_user_id", using: :btree
 
   create_table "genres", force: :cascade do |t|
     t.string   "name",        null: false

@@ -7,12 +7,13 @@ Rails.application.routes.draw do
   resource :session, only: [:create, :destroy, :new]
   resources :users, only: [:create, :new]
   namespace :api, defaults: {format: :json} do
-    resources :books, only: [:create, :destroy, :show, :index, :update, :new]
-    resources :reviews, only: [:create, :destroy, :show, :index, :update, :new]
-    resources :notes, only: [:create, :destroy, :show, :index, :update, :new]
+    resources :books, only: [:create, :destroy, :show, :index, :update] do
+      resources :reviews, only:[:create, :destroy, :show, :index, :update]
+    end
+    resources :notes, only: [:create, :destroy, :show, :index, :update]
     resource :user, only: [ :destroy, :show, :update, :create]
     resource :session, only: [:show, :create, :destroy]
-    resources :analyses, only: [:show, :index, :create, :update, :destroy, :new]
+    resources :analyses, only: [:show, :index, :create, :update, :destroy]
 
 
   end

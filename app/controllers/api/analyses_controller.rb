@@ -70,6 +70,7 @@ class Api::AnalysesController < ApplicationController
 
 
   end
+
   private
   def analyses_params
     params.permit(:title, :subtitle, :body, :book_id, :alt_book, :book, :image_url, :second_alt_book, :public)

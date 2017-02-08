@@ -13,8 +13,9 @@ var History = require('react-router').History;
 var Navbar = require('./components/Navbar.jsx');
 var UserStore = require('./stores/UserStore.js');
 var ApiActions = require('./actions/api_actions');
-var Analyses = require('./components/AnalysesComponents/Analyses.jsx');
-var AnalysisShow = require('./components/AnalysesComponents/AnalysisShow.jsx');
+var Show = require('./components/Book.jsx');
+// var Analyses = require('./components/AnalysesComponents/Analyses.jsx');
+// var AnalysisShow = require('./components/AnalysesComponents/AnalysisShow.jsx');
 var SearchResults = require('./components/SearchResults.jsx');
 
 var App = React.createClass({
@@ -29,7 +30,7 @@ var App = React.createClass({
       APIUtil.getCurrentBook();
     }
     UserStore.addListener(this._onChange);
-    // this.history.push({pathname: "/"});
+    this.history.push({pathname: "/Search"});
 
   },
   _onChange: function(){
@@ -56,16 +57,24 @@ var App = React.createClass({
 });
 var routes = (
   <Route path="/" component={App}>
-    <Route path="/Search" component={Search}/>
-    <Route path="/Desk" component={Desk} />
-    <Route path="/Analyses" >
-      <IndexRoute component={Analyses} />
-      <Route path="/:id" component={AnalysisShow} />
+    <Route path="Search" component={Search}/>
+    <Route path="User" component={Desk} >
     </Route>
-    <Route path="/SearchResults" component={SearchResults} />
+
+    <Route path="Books" component={Search}>
+    </Route>
+
+    <Route path="SearchResults" component={SearchResults} />
   </Route>
 );
 
 document.addEventListener("DOMContentLoaded", function(){
-  ReactDOM.render(<Router>{routes}</Router>, root);
+  ReactDOM.render(<Router>{routes}</Router>, root)
 });
+
+
+//to add:
+// <Route path="/Analyses" >
+//   <IndexRoute component={Analyses} />
+//   <Route path="/:id" component={AnalysisShow} />
+// </Route>

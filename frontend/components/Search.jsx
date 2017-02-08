@@ -57,17 +57,6 @@ var Search = React.createClass({
       <div className="homePage">
         <SearchArea whenChosen={this.bookChosen}/>
         <InitialBookIndex whenChosen={this.bookChosen}/>
-          <div className="modal">
-          <Modal
-             isOpen={this.state.modalIsOpen}
-             onRequestClose={this.closeModal}
-             style={customStyles} >
-
-            <BookConfirmation book={this.state.chosen} close={this.closeModal}/>
-             <button onClick={this.closeModal}>close</button>
-
-           </Modal>
-         </div>
       </div>
     );
 

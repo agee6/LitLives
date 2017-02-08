@@ -60,7 +60,7 @@ var Navbar = React.createClass({
   },
   deskClick:function(event){
     if(this.state.loggedIn){
-      this.history.push({pathname: "/Desk"});
+      this.history.push({pathname: "/Books/12345"});
 
     }else{
       this.setState({modalIsOpen: true, message: "login to continue"});
@@ -85,8 +85,6 @@ var Navbar = React.createClass({
 
       ApiActions.emptyShelves();
       ApiActions.deleteCurrentBook();
-
-
     this.history.push({pathname: "/Search"});
   },
   signClick: function(event){
@@ -173,7 +171,7 @@ var Navbar = React.createClass({
            <div className='quote'> {quoteToUse}</div>
 
            <ul className="header-list group">
-             <li className="nav-right" id="NavAnal" onClick={this.analysesClick}>Essays</li>
+
              <li className="nav-right" id="NavSearch" onClick={this.searchClick}>Search</li>
              <li className="nav-right" id="NavDesk" onClick={this.deskClick}>Desk</li>
              {signB}
@@ -220,5 +218,8 @@ var Navbar = React.createClass({
   }
 
 });
+
+// to add
+//<li className="nav-right" id="NavAnal" onClick={this.analysesClick}>Essays</li>
 
 module.exports = Navbar;

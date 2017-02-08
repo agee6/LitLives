@@ -7,7 +7,7 @@ class User < ActiveRecord::Base
     foreign_key: :user_id,
     primary_key: :id,
     class_name: "Book"
-  has_one :bookshelves,
+  has_many :bookshelves,
     foreign_key: :user_id,
     primary_key: :id,
     class_name: "BookShelf"
@@ -17,7 +17,6 @@ class User < ActiveRecord::Base
 
   def self.find_by_credentials(username, password)
     user = User.find_by(username:username)
-
     if user.nil?
       return nil
     end

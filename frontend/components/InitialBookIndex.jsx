@@ -2,8 +2,6 @@ var React = require('react');
 var BookSearchStore = require('../stores/BookSearchStore.js');
 var APIUtil = require('../util/APIUtil.js');
 var IndexItem = require('./IndexItem.jsx');
-
-
 var InitialBookIndex = React.createClass({
 
   getInitialState: function(){

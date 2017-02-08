@@ -20,16 +20,13 @@ class Api::BooksController < ApplicationController
     else
       render json: nil
     end
-
-
   end
+
   def destroy
     @book=Book.find_by_id(params[:id]);
     @book.destroy
     self.index
-
   end
-
 
   def show
     @book = Book.find_by_id(params[:id])

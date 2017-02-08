@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161114144303) do
+ActiveRecord::Schema.define(version: 20170207212614) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,8 @@ ActiveRecord::Schema.define(version: 20161114144303) do
     t.boolean  "public"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.string   "ISBN13"
+    t.string   "ISBN10"
   end
 
   add_index "analyses", ["book_id"], name: "index_analyses_on_book_id", using: :btree
@@ -44,6 +46,7 @@ ActiveRecord::Schema.define(version: 20161114144303) do
     t.string   "language"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text     "bio"
   end
 
   add_index "authors", ["pen_name"], name: "index_authors_on_pen_name", using: :btree
@@ -53,7 +56,6 @@ ActiveRecord::Schema.define(version: 20161114144303) do
     t.string   "publishing"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
-    t.integer  "user_id",     null: false
     t.string   "genre"
     t.integer  "year"
     t.string   "read"
@@ -65,15 +67,37 @@ ActiveRecord::Schema.define(version: 20161114144303) do
     t.string   "language"
     t.integer  "chapters"
     t.text     "description"
+    t.string   "amazon_url"
+    t.string   "other_url"
+    t.integer  "user_id",     null: false
   end
+
+  add_index "books", ["ISBN10"], name: "index_books_on_ISBN10", using: :btree
+  add_index "books", ["ISBN13"], name: "index_books_on_ISBN13", using: :btree
+  add_index "books", ["author"], name: "index_books_on_author", using: :btree
+  add_index "books", ["title"], name: "index_books_on_title", using: :btree
+  add_index "books", ["year"], name: "index_books_on_year", using: :btree
 
   create_table "bookshelves", force: :cascade do |t|
     t.integer  "user_id",    null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string   "name",       null: false
   end
 
   add_index "bookshelves", ["user_id"], name: "index_bookshelves_on_user_id", using: :btree
+
+  create_table "copies", force: :cascade do |t|
+    t.integer  "user_id",     null: false
+    t.integer  "book_id",     null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.date     "start_date"
+    t.date     "finish_date"
+  end
+
+  add_index "copies", ["book_id"], name: "index_copies_on_book_id", using: :btree
+  add_index "copies", ["user_id"], name: "index_copies_on_user_id", using: :btree
 
   create_table "essays", force: :cascade do |t|
     t.text     "body",            null: false
@@ -86,6 +110,8 @@ ActiveRecord::Schema.define(version: 20161114144303) do
     t.boolean  "public"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.string   "ISBN13"
+    t.string   "ISBN10"
   end
 
   add_index "essays", ["title"], name: "index_essays_on_title", using: :btree
@@ -106,15 +132,28 @@ ActiveRecord::Schema.define(version: 20161114144303) do
     t.integer  "page"
     t.integer  "chapter"
     t.integer  "user_id",    null: false
-    t.integer  "book_id",    null: false
     t.boolean  "public",     null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "book_id",    null: false
   end
 
-  add_index "notes", ["book_id"], name: "index_notes_on_book_id", using: :btree
   add_index "notes", ["public"], name: "index_notes_on_public", using: :btree
   add_index "notes", ["user_id"], name: "index_notes_on_user_id", using: :btree
+
+  create_table "reviews", force: :cascade do |t|
+    t.string   "title"
+    t.text     "body"
+    t.string   "rich"
+    t.integer  "rating",     null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string   "ISBN13",     null: false
+    t.string   "ISBN10"
+    t.integer  "user_id",    null: false
+  end
+
+  add_index "reviews", ["rating"], name: "index_reviews_on_rating", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "username",        null: false

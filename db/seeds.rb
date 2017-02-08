@@ -7,43 +7,97 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 #
-# Author.create({pen_name: "J.R.R. Tolkien", legal_name: "John Ronald Reuel Tolkien",
-#             last_name:"Tolkien", country: "England", language: "English"})
-# Author.create({pen_name: "C.S. Lewis", legal_name: "Clive Staples Lewis",last_name:"Lewis", country: "England", language: "English"})
-# Author.create({pen_name: "Homer", last_name: "Homer", country: "Greece", language: "Ancient Greek"})
+Author.create({pen_name: "J.R.R. Tolkien", legal_name: "John Ronald Reuel Tolkien",
+             last_name:"Tolkien", country: "England", language: "English",
+             bio: "Born in South Africa, Tolkien was orphaned at a young age, and raised in England. He was raised largely by a Catholic Priest which would inform his religious beliefs throughout his life.
+             When he was a teenage he fell in love with a girl, but the priest who raised him forbid he form a relationship. He lost contact and was soon at war. His experience during the war
+             would inform many of his future books. Upon returning, no longer under the watch of his guardian he sought out the women he had fallen in love with in his teens. He found her engaged
+             within the week he had convinced her to call of her engagement and to marry him. He lived happily has a profesor of English, had two children and wrote two of the most successful books of all times
+             The epic masterpiece The Lord of the Rings and the children's novel The Hobbit. He was good friends with fellow Brit, C.S. Lewis"})
+Author.create({pen_name: "C.S. Lewis", legal_name: "Clive Staples Lewis",last_name:"Lewis", country: "England", language: "English",
+  bio: "This englishman was heavily influenced by his time in boarding school, as many of his fellow Brits.
+  Lewis, like his friend Tolkien, was off to war during WWI which influenced his later writing. Lewis was an atheist while in university
+  and later became a Christian. Christianity would later become the main focus of his writing. He was a scholer of late midevial literature and was successful in his own right as a scholer, but also wrote
+  popular Christian apologetics such as The Great Divorce, The Screwtape Letters and Mere Christianity. Next to his Christian writings he is likely most famous for his children's fantasy series The Chronicles of Narnia and his three science fiction novels."})
+Author.create({pen_name: "Homer", last_name: "Homer", country: "Greece", language: "Ancient Greek", bio:"ancient greek writer who we are not entirely sure if he/she was a man a women or a single person. He/she is attributed with writing/orating The Iliad and The Odyssy"})
 #
-# Book.create({title:"The Odyssey", author: "Homer", year: 600, length: 26, user_id: 1, ISBN13: "9780140268867"})
+Book.create({title:"The Odyssey", author: "Homer", year: 600, user_id: 3, ISBN13: "9780140268867", description: "Join odyssyus on the the great journey to find his homeland.", read: "read"})
 #
-# Book.create({title: "The Return of the King", author: "J.R.R. Tolkien", year: 1955, publishing: "George Allen & Unwin", user_id: 1, ISBN13: "9780547928197"})
+#Book.create({title: "The Return of the King", author: "J.R.R. Tolkien", year: 1955, publishing: "George Allen & Unwin", user_id: 1, ISBN13: "9780547928197"})
 # Book.create({title: "The Hobbit", author: "J.R.R. Tolkien", year: 1937, publishing: "George Allen & Unwin", user_id: 1, ISBN13: "9780547928227"})
 #
 # Book.create({title: "The Screwtape Letters", author: "C.S. Lewis", year: 1942, publishing: "Geoffrey Bles", user_id: 1, ISBN13:"9780060652937"})
 #
 # Genre.create({name: "Fantasy", description: "Usually associated with fantastic events and midevial times"})
 # Genre.create({name: "Science Fiction", description: "Fetishizes the future as Fantasy does the past. Equally unrealistic"})
-# create_table "books", force: :cascade do |t|
-#   t.string   "title",       null: false
-#   t.string   "publishing"
-#   t.datetime "created_at",  null: false
-#   t.datetime "updated_at",  null: false
-#   t.integer  "user_id",     null: false
-#   t.string   "genre"
-#   t.integer  "year"
-#   t.string   "read"
-#   t.string   "ISBN13"
-#   t.string   "ISBN10"
-#   t.string   "author"
-#   t.string   "image"
-#   t.integer  "pages"
-#   t.string   "language"
-#   t.integer  "chapters"
-#   t.text     "description"
-# end
+
+User.create(username: 'aaron', password: 'password');
+User.create([{username: "bob", password: 'password', username: "austen", password: 'password'}])
+Bookshelf.create(user_id: 1, name: "read")
+Bookshelf.create(user_id: 1, name: "currently reading")
+Bookshelf.create(user_id: 1, name: "to read")
+
+# Bookshelf.create(user_id: 2, title: "read");
+
 
 User.create({username: "guest_user", password: "password"});
 
-Book.create({title:"Slaughterhouse-Five", description: "Billy's book about the battle of Dresden, and his account of being on an Alien Vessel.",
-  user_id: 1, read: "read", image: "http://7summitsproject.com/wp-content/uploads/2015/06/Slaughterhouse-Five.jpg", language: "english", ISBN10: "9782040280772"})
+
+
+
+# Copy.create([{bookshelf_id: 1, book_id:2}{bookshelf_id: 2, book_id: 1}, {bookshelf_id: 1, book_id: 4}])
+
+# notes = [
+#   "I liked this book. It was interesting.",
+#   "I hated this book. It was awful.",
+#   "I have no feelings one way or another",
+#   "Meh",
+#   "First!!11",
+#   "Hi mom!"
+# ]
+# Copy.all.each do |book|
+#   5.times do
+#     Note.create.create(user_id: rand(1..3), book_id: book.id, body: notes[rand(0..5)])
+#   end
+# end
+
+isbns = ["9781612130293", "9780399155345", "9780156012195", "9780618260300", "9780743273565", "9780679783268", "9780452284241" ]
+titles = ["worth a read", "a disaster", "hated it", "Best book ever!!!", "I want to cry", "This", "Yes", "No", "Just no"]
+Review.create([
+  {title: "worth a read", rating: 10, ISBN13:"9780618260300", body: "A beautiful masterpiece and look into the world of the hobbits", user_id: 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1},
+  {title: titles.sample, rating: rand(11), ISBN13: isbns.sample, body: "trust me.", user_id: rand(3) + 1}
+  ])
+
+
+
+
+
+# Book.create({title:"Slaughterhouse-Five", description: "Billy's book about the battle of Dresden, and his account of being on an Alien Vessel.",
+#   user_id: 1, read: "read", image: "http://7summitsproject.com/wp-content/uploads/2015/06/Slaughterhouse-Five.jpg", language: "english", ISBN10: "9782040280772"})
 
 Analysis.create({title: "Our Children's Crusade", body: "The alternate title for the book is A Children’s Crusade: A Duty-Dance with Death. At The beginning of the book the author claims to be writing a book about the battle of Dresden, a lesser known allied air-strike where more people died than at Hiroshima. A wife of one of the author’s friends is angry he is writing a war book because war books always glorify war. She says they were just children fighting in the war. He agrees to call it A Children’s Crusade. In many ways, modern wars are no different from the children’s crusades of the middle ages.
 

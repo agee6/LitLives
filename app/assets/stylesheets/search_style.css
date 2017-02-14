@@ -191,20 +191,7 @@
 .book-list{
   text-align: center;
 }
-.InitialBooks {
-  height: 200px;
-  z-index: 9;
-  margin: 4px;
-  display: inline-block;
-  vertical-align: middle;
-  transition-duration: 0.3s;
-  transition-property: transform;
-}
-.InitialBooks:hover,
-.InitialBooks:focus,
-.InitialBooks:active {
-    transform: scale(1.1);
-}
+
 @media(max-width: 766px){
   #landing-search-bar{
     width:80%;

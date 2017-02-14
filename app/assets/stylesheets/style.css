@@ -2,38 +2,37 @@ html, input {
   font-family: "Baskerville";
 }
 
-
 button {
   height: auto;
   width: auto;
 }
 
-
 body {
   background-color: #261a0d;
   /*margin: -10px; */
 }
+
 span{
   color: inherit;
   font-weight: inherit;
-
 }
+
 .logo{
   background-image: url("Drawing.png");
   background-size: cover;
   width: 45px;
   height: 40px;
-
 }
+
 .logo-corner{
   width: 50px;
   height: 50px;
 }
+
 .book-list{
   padding:0px;
   margin: 0px;
 }
-
 
 .logo:hover{
   cursor: pointer;
@@ -58,6 +57,21 @@ button:hover{
 
 ul {
   list-style-type: none;
+}
+
+.InitialBooks {
+  /*z-index: 9;*/
+  margin: 4px;
+  display: inline-block;
+  /*vertical-align: middle;*/
+  transition-duration: 0.3s;
+  transition-property: transform;
+
+}
+.InitialBooks:hover,
+.InitialBooks:focus,
+.InitialBooks:active {
+    transform: scale(1.1);
 }
 
 
@@ -106,7 +120,7 @@ ul {
    font-family: 'Georgia', serif;
    font-size: 14px;
    padding: 15px;
-   border-radius: 5px; 
+   border-radius: 5px;
  }
 
  .RichEditor-editor {

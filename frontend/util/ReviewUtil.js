@@ -1,76 +1,39 @@
 var ApiActions = require('../actions/api_actions');
 
-
-var APIUtil = {
-  fetchBookResults: function(query){
-    var uri = "https://www.googleapis.com/books/v1/volumes?q="+query ;
-    $.get(uri, {}, function(bookList){
-
-      ApiActions.ReceiveActions(bookList);
-    });
-
+var ReviewUtil = {
+  createReview: function(reviewObj){
+    $post('/api/reviews', reviewObj, function(payload){
+      ApiActions.RecieveAddedReview(payload)
+    })
   },
-  getInitialBookIndex: function(){
-
-    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+selling+novels+all+time";
-    $.get(uri, {maxResults: 40}, function(bookList){
-
-      var newBookList = bookList.items.map(function(book, index){
-        return(APIUtil.makeBookObject(book));
-      });
-      ApiActions.ReceiveInitial(newBookList);
-    });
+  fetchReviews: function(bookToFetch){
+    $get('api/reviews', bookToFetch, function(payload){
+      ApiActions.ReceiveBookReviews(payload)
+    })
   },
-  logoutUser: function(){
-
-    $.ajax({
-      url: '/api/session',
-      type: 'DELETE',
-      success: function(payload){
-        console.log("deleted");
-        ApiActions.receiveUser(payload);
-      }
-    });
-
+  updateReviews: function(reviewID){
+    $patch('api/reviews/', reviewID, function(payload){
+      ApiActions.ReciveAddedReview(payload)
+    })
   },
-  addToInitial: function(){
-    var uri = "https://www.googleapis.com/books/v1/volumes?q=best+classic+novels";
-    $.get(uri, {maxResults: 40}, function(bookList){
-      var newBookList = bookList.items.map(function(book, index){
-        return(APIUtil.makeBookObject(book));
-      });
-      ApiActions.AddToInitial(newBookList);
-    });
-  },
-  createBook: function(bookItem){
-
-    $.post('/api/books', bookItem, function(payload){
-
-      ApiActions.ReceiveAddedBook(payload);
-    });
-
-  },
-  createReview: function(data) {
-    $.post('/api/reviews', { review: data }, function (bench) {
-      ApiActions.receiveAll([bench]);
+  fetchUserReviewa: function(Review){
+    $.get('/api/user/revews', {}, function(reviews){
+      ApiActions.RecieveUserReviews(reviews);
     });
   },
   getCurrentBook: function() {
-
-    $.get('/api/user', {}, function(book){
+    $.get('/api/user/revews', {}, function(book){
 
       ApiActions.updateCurrentBook(book);
     });
   },
   updateUser: function(params){
-
     $.ajax({
       url: '/api/user',
       type: 'PATCH',
       data: params,
       success: function(book) {
           // Do something with the result
-
     }});
   },
   makeBookObject: function(bookData){
@@ -104,18 +67,17 @@ var APIUtil = {
     });
   },
   createNote: function(noteHash){
-
     $.post('/api/notes', {note: noteHash}, function(payload){
-
       ApiActions.addNote(payload);
-
     });
   },
+
   fetchNotes: function(bookId){
     $.get('api/notes', {book_id: bookId}, function(notes){
       ApiActions.receiveNotes(notes);
     });
   },
+  
   deleteNote: function(noteId){
       var uri = '/api/notes/'+noteId;
     $.ajax({
@@ -196,5 +158,3 @@ var APIUtil = {
     }});
   }
 };
-
-module.exports = APIUtil;

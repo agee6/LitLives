@@ -4,19 +4,22 @@ Rails.application.routes.draw do
   # get '/home', to: "static_pages#home"
 
 
+
   resource :session, only: [:create, :destroy, :new]
   resources :users, only: [:create, :new]
   namespace :api, defaults: {format: :json} do
-    resources :books, only: [:create, :destroy, :show, :index, :update] do
-      resources :reviews, only:[:create, :destroy, :show, :index, :update]
-    end
+    resources :books, only: [:create, :destroy, :show, :index, :update]
+    resources :reviews, only: [:create, :destroy, :show, :index, :update]
     resources :notes, only: [:create, :destroy, :show, :index, :update]
-    resource :user, only: [ :destroy, :show, :update, :create]
+    resource :user, only: [ :destroy, :show, :update, :create] do
+      resources :reviews, only: [:index]
+    end
     resource :session, only: [:show, :create, :destroy]
     resources :analyses, only: [:show, :index, :create, :update, :destroy]
 
 
   end
+  get '*path', to: "static_pages#home"
 
 
   # The priority is based upon order of creation: first created -> highest priority.

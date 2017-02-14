@@ -1,10 +1,12 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var ReactRouter = require('react-router');
+var Link = ReactRouter.Link;
+var browserHistory = ReactRouter.browserHistory;
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
-var Search = require('./components/Search.jsx');
+// var Search = require('./components/Search.jsx');
 var Desk = require('./components/Desk.jsx');
 var APIUtil = require('./util/APIUtil.js');
 var root = document.getElementById('reactContent');
@@ -13,7 +15,11 @@ var History = require('react-router').History;
 var Navbar = require('./components/Navbar.jsx');
 var UserStore = require('./stores/UserStore.js');
 var ApiActions = require('./actions/api_actions');
-var Show = require('./components/Book.jsx');
+var Books = require('./components/Books.jsx');
+var Book = require('./components/Book.jsx');
+
+var MainPage = require('./ComponentsNew/MainPage.jsx');
+
 // var Analyses = require('./components/AnalysesComponents/Analyses.jsx');
 // var AnalysisShow = require('./components/AnalysesComponents/AnalysisShow.jsx');
 var SearchResults = require('./components/SearchResults.jsx');
@@ -30,7 +36,7 @@ var App = React.createClass({
       APIUtil.getCurrentBook();
     }
     UserStore.addListener(this._onChange);
-    this.history.push({pathname: "/Search"});
+    // this.history.push({pathname: "/Search"});
 
   },
   _onChange: function(){
@@ -40,16 +46,13 @@ var App = React.createClass({
     }else{
       // ApiActions.emptyShelves();
       // ApiActions.deleteCurrentBook();
-
     }
-
     this.setState({loggedIn: UserStore.loggedIn()});
   },
   render: function(){
     return (
       <div>
         <Navbar />
-
         {this.props.children}
       </div>
     );
@@ -57,19 +60,16 @@ var App = React.createClass({
 });
 var routes = (
   <Route path="/" component={App}>
-    <Route path="Search" component={Search}/>
-    <Route path="User" component={Desk} >
+    <IndexRoute component={MainPage} />
+    <Route path="Books" component={Books}>
+      <Route path="/book/:book_id" component={Book}/>
     </Route>
-
-    <Route path="Books" component={Search}>
-    </Route>
-
     <Route path="SearchResults" component={SearchResults} />
   </Route>
 );
 
 document.addEventListener("DOMContentLoaded", function(){
-  ReactDOM.render(<Router>{routes}</Router>, root)
+  ReactDOM.render(<Router history={browserHistory}>{routes}</Router>, root)
 });
 
 

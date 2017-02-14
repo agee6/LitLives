@@ -1,13 +1,10 @@
 var React = require('react');
-var InitialBookIndex = require('./InitialBookIndex.jsx');
-var SearchArea = require('./SearchArea.jsx');
+var SplashIndex = require('./MainPage/SplashIndex.jsx');
+var SearchArea = require('./MainPage/SearchArea.jsx');
 var BookSearchStore = require('../stores/BookSearchStore.js');
-var BookConfirmation = require('./BookConfirmation.jsx');
-var Modal = require('react-modal');
-var BookSearch = require('./BookSearch/BookSearch.jsx');
 var APIUtil = require('../util/APIUtil.js');
 var History = require('react-router').History;
-
+var browserHistory = require('react-router').browserHistory;
 
 var customStyles = {
   overlay : {
@@ -24,42 +21,29 @@ var customStyles = {
     left                  : '50%',
     right                 : 'auto',
     bottom                : 'auto',
-    // marginRight           : '-80%',
     transform             : 'translate(-50%, -50%)'
   }
 };
 
-var Search = React.createClass({
-  mixins: [History],
+var MainPage = React.createClass({
   getInitialState: function(){
     return({chosen: BookSearchStore.currentBook(), modalIsOpen: false});
   },
   bookChosen: function(){
-    // this.openModal();
     event.preventDefault();
     var bookToSend = BookSearchStore.currentBook();
     bookToSend.read = "toRead";
-    // APIUtil.createBook(bookToSend);
-    var url = "/Desk"
-    this.history.push({pathname: url});
-  },
-  openModal: function() {
-    this.setState({modalIsOpen: true, chosen: BookSearchStore.currentBook()});
-  },
-
-  closeModal: function() {
-    BookSearchStore.resetCurrentBook(null);
-    this.setState({modalIsOpen: false});
+    var url = "/Desk";
+    browserHistory.push("/Books/" + bookToSend.ISBN13);
   },
   render: function(){
-
     return(
       <div className="homePage">
         <SearchArea whenChosen={this.bookChosen}/>
-        <InitialBookIndex whenChosen={this.bookChosen}/>
+        <SplashIndex whenChosen={this.bookChosen}/>
       </div>
     );
-
   }
 });
-module.exports = Search;
+
+module.exports = MainPage;

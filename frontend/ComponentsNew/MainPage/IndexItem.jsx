@@ -1,9 +1,9 @@
 var React = require('react');
-var BookSearchStore = require('../stores/BookSearchStore.js');
-var ApiActions = require('../actions/api_actions.js');
+var BookSearchStore = require('../../stores/BookSearchStore.js');
+var ApiActions = require('../../actions/api_actions.js');
 var History = require('react-router').History;
 var browserHistory = require('react-router').browserHistory;
-var APIUtil = require('../util/APIUtil.js');
+var APIUtil = require('../../util/APIUtil.js');
 
 var IndexItem = React.createClass({
   onClick: function(event){

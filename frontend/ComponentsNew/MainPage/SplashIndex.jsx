@@ -1,9 +1,9 @@
 var React = require('react');
-var BookSearchStore = require('../stores/BookSearchStore.js');
-var APIUtil = require('../util/APIUtil.js');
+var BookSearchStore = require('../../stores/BookSearchStore.js');
+var APIUtil = require('../../util/APIUtil.js');
 var IndexItem = require('./IndexItem.jsx');
-var InitialBookIndex = React.createClass({
 
+var SplashIndex = React.createClass({
   getInitialState: function(){
     return({bookIndex: BookSearchStore.initialData()});
   },
@@ -20,21 +20,17 @@ var InitialBookIndex = React.createClass({
   shuffle: function (array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
     while (0 !== currentIndex) {
-
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex -= 1;
-
       temporaryValue = array[currentIndex];
       array[currentIndex] = array[randomIndex];
       array[randomIndex] = temporaryValue;
     }
-
     return array;
   },
   render: function(){
     var bookOptions;
     var that = this;
-
     bookOptions = this.state.bookIndex.map(function(book, index){
         return(<IndexItem key={index} book={book} whenChosen={this.props.whenChosen}/>);
     }, this);
@@ -43,11 +39,9 @@ var InitialBookIndex = React.createClass({
         <div className="book-list">
           {bookOptions}
         </div>
-
       </div>
-
     );
   }
 })
 
-module.exports = InitialBookIndex;
+module.exports = SplashIndex;

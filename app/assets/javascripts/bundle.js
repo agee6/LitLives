@@ -65,7 +65,6 @@
 	var ApiActions = __webpack_require__(236);
 	var Books = __webpack_require__(416);
 	var Book = __webpack_require__(425);
-	
 	var MainPage = __webpack_require__(429);
 	
 	// var Analyses = require('./components/AnalysesComponents/Analyses.jsx');
@@ -111,11 +110,7 @@
 	  Route,
 	  { path: '/', component: App },
 	  React.createElement(IndexRoute, { component: MainPage }),
-	  React.createElement(
-	    Route,
-	    { path: 'Books', component: Books },
-	    React.createElement(Route, { path: '/book/:book_id', component: Book })
-	  ),
+	  React.createElement(Route, { path: 'Book/:book_id', component: Book }),
 	  React.createElement(Route, { path: 'SearchResults', component: SearchResults })
 	);
 	
@@ -49094,6 +49089,11 @@
 	      "div",
 	      { className: "book-main" },
 	      React.createElement(
+	        "h1",
+	        null,
+	        "It freaking worked!"
+	      ),
+	      React.createElement(
 	        "div",
 	        { className: "book-area" },
 	        React.createElement(
@@ -49105,11 +49105,6 @@
 	          "div",
 	          { className: "book-column" },
 	          React.createElement(BookImage, null)
-	        ),
-	        React.createElement(
-	          "div",
-	          null,
-	          React.createElement(NoteArea, null)
 	        )
 	      ),
 	      React.createElement(
@@ -49487,12 +49482,10 @@
 	      this.leave = false;
 	      var url = '/SearchResults';
 	      this.history.push({ pathname: url });
-	      // browserHistory.push(url);
-	      // this.transitionTo(url);
 	    } else {
-	        this.loadBar.style.display = 'none';
-	        this.setState({ searchResults: [] });
-	      }
+	      this.loadBar.style.display = 'none';
+	      this.setState({ searchResults: [] });
+	    }
 	  },
 	  clickOption: function clickOption(book) {
 	    var theChosen = book;
@@ -49602,7 +49595,7 @@
 	    var bookToSend = BookSearchStore.currentBook();
 	    bookToSend.read = "toRead";
 	    // APIUtil.createBook(bookToSend);
-	    var url = "/Desk";
+	    var url = "/Book/" + bookToSend.ISBN13;
 	    this.history.push({ pathname: url });
 	  },
 	  openModal: function openModal() {
@@ -49666,7 +49659,7 @@
 	    var bookToSend = BookSearchStore.currentBook();
 	    bookToSend.read = "toRead";
 	    // APIUtil.createBook(bookToSend);
-	    var url = "/Desk";
+	    var url = "/Book/" + bookToSend.ISBN13;
 	    this.history.push({ pathname: url });
 	  },
 	  openModal: function openModal() {

@@ -56,8 +56,6 @@ var SearchBar = React.createClass({
       this.leave = false;
       var url = '/SearchResults';
       this.history.push({pathname: url});
-      // browserHistory.push(url);
-      // this.transitionTo(url);
     }else{
       this.loadBar.style.display = 'none';
       this.setState({searchResults: []});

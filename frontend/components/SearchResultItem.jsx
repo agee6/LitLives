@@ -26,7 +26,7 @@ var SearchResultsItem = React.createClass({
     var bookToSend = BookSearchStore.currentBook();
     bookToSend.read = "toRead";
     // APIUtil.createBook(bookToSend);
-    var url = "/Desk"
+    var url = "/Book/" + bookToSend.ISBN13;
     this.history.push({pathname: url});
   },
   openModal: function() {

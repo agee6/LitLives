@@ -12,15 +12,13 @@ var Book = React.createClass({
 
     return(
       <div className="book-main">
+        <h1>It freaking worked!</h1>
         <div className="book-area">
           <div className="book-column">
             <BookDescription />
           </div>
           <div className="book-column">
             <BookImage />
-          </div>
-          <div>
-            <NoteArea />
           </div>
 
         </div>

@@ -60,12 +60,13 @@
 	var root = document.getElementById('reactContent');
 	// var cb = root.getAttribute("data-has-book");
 	var History = __webpack_require__(159).History;
-	var Navbar = __webpack_require__(415);
+	var Navbar = __webpack_require__(437);
 	var UserStore = __webpack_require__(264);
 	var ApiActions = __webpack_require__(236);
 	var Books = __webpack_require__(416);
 	var Book = __webpack_require__(425);
 	var MainPage = __webpack_require__(429);
+	var User = __webpack_require__(439);
 	
 	// var Analyses = require('./components/AnalysesComponents/Analyses.jsx');
 	// var AnalysisShow = require('./components/AnalysesComponents/AnalysisShow.jsx');
@@ -111,6 +112,7 @@
 	  { path: '/', component: App },
 	  React.createElement(IndexRoute, { component: MainPage }),
 	  React.createElement(Route, { path: 'Book/:book_id', component: Book }),
+	  React.createElement(Route, { path: 'User/:user_id', component: User }),
 	  React.createElement(Route, { path: 'SearchResults', component: SearchResults })
 	);
 	
@@ -27566,12 +27568,10 @@
 	  _currentBook = book;
 	};
 	var loadInitial = function loadInitial(results) {
-	
 	  _initialResults = results.slice();
 	  APIUtil.addToInitial();
 	};
 	var addToInitial = function addToInitial(results) {
-	
 	  _initialResults = _initialResults.concat(results.slice());
 	};
 	BookSearchStore.cleanInitial = function () {
@@ -27599,7 +27599,6 @@
 	BookSearchStore.currentBook = function () {
 	  return _currentBook;
 	};
-	
 	BookSearchStore.__onDispatch = function (payload) {
 	
 	  switch (payload.actionType) {
@@ -34111,7 +34110,10 @@
 	UserStore.needsToLogin = function () {
 	  return needsToLogin;
 	};
-	
+	UserStore.bookshelves = function () {
+	  console.log("work on this!");
+	  return "banana";
+	};
 	UserStore.currentUser = function () {
 	  return _users[0];
 	};
@@ -48043,271 +48045,7 @@
 	module.exports = ShelfItem;
 
 /***/ },
-/* 415 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var History = __webpack_require__(159).History;
-	var APIUtil = __webpack_require__(235);
-	var Modal = __webpack_require__(209);
-	var LinkedStateMixin = __webpack_require__(229);
-	var UserStore = __webpack_require__(264);
-	var ApiActions = __webpack_require__(236);
-	var BookSearchStore = __webpack_require__(246);
-	var browserHistory = __webpack_require__(159).browserHistory;
-	var customStyles = {
-	  overlay: {
-	    position: 'fixed',
-	    top: 0,
-	    left: 0,
-	    right: 0,
-	    bottom: 0,
-	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
-	    backgroundImage: 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
-	    zIndex: 20,
-	    backgroundSize: 'cover'
-	  },
-	  // opacity           : 0.6
-	  content: {
-	    top: '50%',
-	    left: '50%',
-	    right: 'auto',
-	    bottom: 'auto',
-	    marginRight: '-50%',
-	    transform: 'translate(-50%, -50%)',
-	
-	    backgroundImage: 'url(\'https://images.unsplash.com/photo-1457298483369-0a95d2b17fcd?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=f4fd0823787f85fcb27fd05027766a41\')',
-	    backgroundSize: 'cover',
-	    borderRadius: '10px',
-	    filter: 'blur(\'4px\')',
-	    width: '300px',
-	    backgroundBlendMode: 'darken'
-	
-	  }
-	};
-	
-	var quotes = ["\"We read to know we are not alone.\" -C.S.Lewis", "\"A reader lives a thousand lives before he dies\" -George R.R. Martin", "\"You can never get a cup of tea large enough, or a book long enough to suit me\" -C.S.Lewis", "\"It is what you read when you don't have to that determines what you will be when you can't help it.\" -Oscar Wilde"];
-	
-	var Navbar = React.createClass({
-	  displayName: 'Navbar',
-	
-	  mixins: [History, LinkedStateMixin],
-	  getInitialState: function getInitialState() {
-	    this.toWhere = "/Search";
-	    return { loggedIn: UserStore.loggedIn(), username: null, password: null, modalIsOpen: false, message: "" };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.userIndex = UserStore.addListener(this._onChange);
-	  },
-	  searchClick: function searchClick(event) {
-	    browserHistory.push({ pathname: "/Books" });
-	    // this.history.push({pathname: "/Search"});
-	  },
-	  deskClick: function deskClick(event) {
-	    if (this.state.loggedIn) {
-	      this.history.push({ pathname: "/Books/12345" });
-	    } else {
-	      this.setState({ modalIsOpen: true, message: "login to continue" });
-	      this.toWhere = "/Desk";
-	    }
-	  },
-	  analysesClick: function analysesClick(event) {
-	    event.preventDefault();
-	    this.history.push({ pathname: "/Analyses" });
-	  },
-	  openModal: function openModal() {
-	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
-	  },
-	
-	  closeModal: function closeModal() {
-	
-	    this.setState({ modalIsOpen: false, message: "" });
-	  },
-	  signOutClick: function signOutClick(event) {
-	
-	    APIUtil.logoutUser();
-	
-	    ApiActions.emptyShelves();
-	    ApiActions.deleteCurrentBook();
-	    this.history.push({ pathname: "/Books" });
-	  },
-	  signClick: function signClick(event) {
-	    event.preventDefault();
-	    this.clicked = true;
-	
-	    if (this.state.password !== null && this.state.password.length >= 6) {
-	      APIUtil.signIn(this.state.username, this.state.password);
-	    } else {
-	      this.state.password = "";
-	      this.setState({ message: "invalid password, must be at least 6 digits please try again" });
-	    }
-	  },
-	  _onChange: function _onChange() {
-	
-	    if (UserStore.loggedIn()) {
-	      this.closeModal();
-	      this.setState({ loggedIn: UserStore.loggedIn() });
-	      this.history.push({ pathname: this.toWhere });
-	    } else {
-	      if (this.clicked) {
-	        this.setState({ message: "unsuccessful, please try again", loggedIn: UserStore.loggedIn() });
-	      } else {
-	        if (UserStore.needsToLogin()) {
-	          this.openModal();
-	          this.setState({ loggedIn: UserStore.loggedIn(), message: "login to continue" });
-	        }
-	      }
-	    }
-	  },
-	  signUpClick: function signUpClick(event) {
-	    event.preventDefault();
-	
-	    this.clicked = true;
-	    if (this.state.username !== "" && this.state.password !== "") {
-	      APIUtil.createUser(this.state.username, this.state.password);
-	    } else {
-	      this.setState({ message: "invalid password please try again" });
-	    }
-	  },
-	  logInAsGuest: function logInAsGuest(event) {
-	    event.preventDefault();
-	
-	    this.clicked = true;
-	    APIUtil.signIn("guest_user", "password");
-	  },
-	  render: function render() {
-	    var signB;
-	    var un;
-	    var cb;
-	
-	    if (this.state.loggedIn) {
-	      signB = React.createElement(
-	        'li',
-	        { className: 'nav-right', id: 'NavUser', onClick: this.signOutClick },
-	        'Sign Out'
-	      );
-	      un = UserStore.currentUser().username;
-	      if (BookSearchStore.currentBook() !== null) {
-	        // cb = <div className="userNameLabel" id="bookTitle"> is currently exploring {BookSearchStore.currentBook().title}</div>;
-	        cb = { backgroundImage: "url(" + BookSearchStore.currentBook().image + ")" };
-	      } else {
-	        cb = null;
-	      }
-	    } else {
-	      signB = React.createElement(
-	        'li',
-	        { className: 'nav-right', id: 'NavUser', onClick: this.openModal },
-	        'Sign in/up!'
-	      );
-	    }
-	    var quoteToUse = quotes[Math.floor(Math.random() * quotes.length)];
-	
-	    return React.createElement(
-	      'div',
-	      { className: 'Navbar' },
-	      React.createElement(
-	        'nav',
-	        { className: 'header-nav group' },
-	        React.createElement(
-	          'div',
-	          { className: 'header-logo', onClick: this.searchClick },
-	          React.createElement(
-	            'div',
-	            { className: 'logo-image' },
-	            'LL'
-	          )
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'quote' },
-	          ' ',
-	          quoteToUse
-	        ),
-	        React.createElement(
-	          'ul',
-	          { className: 'header-list group' },
-	          React.createElement(
-	            'li',
-	            { className: 'nav-right', id: 'NavSearch', onClick: this.searchClick },
-	            'Search'
-	          ),
-	          React.createElement(
-	            'li',
-	            { className: 'nav-right', id: 'NavDesk', onClick: this.deskClick },
-	            'Desk'
-	          ),
-	          signB
-	        )
-	      ),
-	      React.createElement(
-	        Modal,
-	        {
-	          isOpen: this.state.modalIsOpen,
-	          onRequestClose: this.closeModal,
-	          style: customStyles },
-	        React.createElement(
-	          'p',
-	          { className: 'loginMessage' },
-	          ' ',
-	          this.state.message
-	        ),
-	        React.createElement(
-	          'form',
-	          { className: 'NoteForm' },
-	          React.createElement(
-	            'div',
-	            { className: 'UserNameArea' },
-	            React.createElement('input', { type: 'text', className: 'UserNameInput', valueLink: this.linkState('username'), placeholder: 'enter a valid username' })
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'PasswordArea' },
-	            React.createElement('input', { type: 'password', className: 'PasswordInput', placeholder: 'enter a 6 digit password', valueLink: this.linkState('password') })
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'LoginButtonArea' },
-	            React.createElement(
-	              'button',
-	              { className: 'SignButton', onClick: this.signClick },
-	              'Sign In!'
-	            ),
-	            React.createElement(
-	              'button',
-	              { className: 'SignButton', onClick: this.signUpClick },
-	              'Sign Up!'
-	            ),
-	            React.createElement(
-	              'div',
-	              { className: 'DividingOr' },
-	              '----------OR----------'
-	            ),
-	            React.createElement(
-	              'button',
-	              { className: 'SignButton', onClick: this.logInAsGuest },
-	              'Login as Guest'
-	            )
-	          )
-	        ),
-	        React.createElement(
-	          'button',
-	          { onClick: this.closeModal },
-	          'close'
-	        )
-	      )
-	    );
-	  }
-	
-	});
-	
-	// to add
-	//<li className="nav-right" id="NavAnal" onClick={this.analysesClick}>Essays</li>
-	
-	module.exports = Navbar;
-
-/***/ },
+/* 415 */,
 /* 416 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -49076,12 +48814,13 @@
 	// components
 	var BookDescription = __webpack_require__(426);
 	var BookImage = __webpack_require__(427);
-	var NoteArea = __webpack_require__(265);
-	var UserShelfArea = __webpack_require__(428);
+	var Note = __webpack_require__(450);
+	var UserArea = __webpack_require__(428);
+	
+	//stores
 	
 	var Book = React.createClass({
 	  displayName: "Book",
-	
 	
 	  render: function render() {
 	
@@ -49089,28 +48828,37 @@
 	      "div",
 	      { className: "book-main" },
 	      React.createElement(
-	        "h1",
-	        null,
-	        "It freaking worked!"
-	      ),
-	      React.createElement(
 	        "div",
 	        { className: "book-area" },
 	        React.createElement(
 	          "div",
-	          { className: "book-column" },
-	          React.createElement(BookDescription, null)
+	          { className: "book-block" },
+	          React.createElement(
+	            "div",
+	            { className: "book-column" },
+	            React.createElement(BookDescription, null)
+	          ),
+	          React.createElement(
+	            "div",
+	            { className: "book-column" },
+	            React.createElement(BookImage, null)
+	          )
 	        ),
 	        React.createElement(
 	          "div",
-	          { className: "book-column" },
-	          React.createElement(BookImage, null)
+	          { className: "note-area" },
+	          React.createElement(
+	            "h1",
+	            null,
+	            "This is the note area"
+	          ),
+	          React.createElement(Note, null)
 	        )
 	      ),
 	      React.createElement(
 	        "div",
-	        { className: "user-shelf-area" },
-	        React.createElement(UserShelfArea, null)
+	        { className: "user-area" },
+	        React.createElement(UserArea, null)
 	      )
 	    );
 	  }
@@ -49121,25 +48869,47 @@
 /* 426 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	var React = __webpack_require__(1);
-	
 	// components
+	//stores
+	var BookSearchStore = __webpack_require__(246);
 	
 	var BookDescription = React.createClass({
-	  displayName: "BookDescription",
+	  displayName: 'BookDescription',
 	
-	
+	  getInitialState: function getInitialState() {
+	    return { currentBook: BookSearchStore.currentBook(), modalIsOpen: false };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.BookIndex = BookSearchStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.BookIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    this.setState({ currentBook: BookSearchStore.currentBook() });
+	  },
 	  render: function render() {
-	
+	    console.log(this.state.currentBook);
 	    return React.createElement(
-	      "div",
-	      { className: "book-main" },
+	      'div',
+	      { className: 'book-description' },
 	      React.createElement(
-	        "h1",
+	        'h1',
 	        null,
-	        "User Shelf Area"
+	        this.state.currentBook.title
+	      ),
+	      React.createElement(
+	        'h2',
+	        null,
+	        this.state.currentBook.author
+	      ),
+	      React.createElement(
+	        'p',
+	        null,
+	        this.state.currentBook.description
 	      )
 	    );
 	  }
@@ -49190,7 +48960,6 @@
 	  },
 	  render: function render() {
 	    var book = this.state.currentBook;
-	
 	    return React.createElement(
 	      'section',
 	      { className: 'book-image', id: 'book-image-container' },
@@ -49209,9 +48978,10 @@
 	var React = __webpack_require__(1);
 	
 	// components
+	var BookShelf = __webpack_require__(438);
 	
-	var UserShelfArea = React.createClass({
-	  displayName: "UserShelfArea",
+	var UserArea = React.createClass({
+	  displayName: "UserArea",
 	
 	
 	  render: function render() {
@@ -49223,11 +48993,12 @@
 	        "h1",
 	        null,
 	        "User Shelf Area"
-	      )
+	      ),
+	      React.createElement(BookShelf, null)
 	    );
 	  }
 	});
-	module.exports = UserShelfArea;
+	module.exports = UserArea;
 
 /***/ },
 /* 429 */
@@ -49363,13 +49134,14 @@
 	var IndexItem = React.createClass({
 	  displayName: 'IndexItem',
 	
+	  mixins: [History],
 	  onClick: function onClick(event) {
 	    event.preventDefault();
 	    ApiActions.updateCurrentBook(this.props.book);
 	    var bookToSend = this.props.book;
 	    bookToSend.read = "toRead";
 	    var url = "/Desk";
-	    this.props.history.push("/Books/book/" + bookToSend.ISBN13);
+	    this.history.push("/Book/" + bookToSend.ISBN13);
 	  },
 	  render: function render() {
 	    var customStyle;
@@ -49718,6 +49490,2441 @@
 	  }
 	});
 	module.exports = SearchResultsItem;
+
+/***/ },
+/* 437 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var History = __webpack_require__(159).History;
+	var APIUtil = __webpack_require__(235);
+	var Modal = __webpack_require__(209);
+	var LinkedStateMixin = __webpack_require__(229);
+	var UserStore = __webpack_require__(264);
+	var ApiActions = __webpack_require__(236);
+	var BookSearchStore = __webpack_require__(246);
+	var browserHistory = __webpack_require__(159).browserHistory;
+	var customStyles = {
+	  overlay: {
+	    position: 'fixed',
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+	    backgroundImage: 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
+	    zIndex: 20,
+	    backgroundSize: 'cover'
+	  },
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    marginRight: '-50%',
+	    transform: 'translate(-50%, -50%)',
+	    backgroundImage: 'url(\'https://images.unsplash.com/photo-1457298483369-0a95d2b17fcd?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=f4fd0823787f85fcb27fd05027766a41\')',
+	    backgroundSize: 'cover',
+	    borderRadius: '10px',
+	    filter: 'blur(\'4px\')',
+	    width: '300px',
+	    backgroundBlendMode: 'darken'
+	  }
+	};
+	
+	var quotes = ["\"We read to know we are not alone.\" -C.S.Lewis", "\"A reader lives a thousand lives before he dies\" -George R.R. Martin", "\"You can never get a cup of tea large enough, or a book long enough to suit me\" -C.S.Lewis", "\"It is what you read when you don't have to that determines what you will be when you can't help it.\" -Oscar Wilde"];
+	
+	var Navbar = React.createClass({
+	  displayName: 'Navbar',
+	
+	  mixins: [History, LinkedStateMixin],
+	  getInitialState: function getInitialState() {
+	    this.toWhere = "/";
+	    return { loggedIn: UserStore.loggedIn(), username: null, password: null, modalIsOpen: false, message: "" };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.userIndex = UserStore.addListener(this._onChange);
+	  },
+	  searchClick: function searchClick(event) {
+	    this.history.push({ pathname: "/Search" });
+	  },
+	  homeClick: function homeClick(event) {
+	    this.history.push({ pathname: "/" });
+	  },
+	  userClick: function userClick(event) {
+	    if (this.state.loggedIn) {
+	      var pathname = "/User/" + UserStore.currentUser().id;
+	      this.history.push({ pathname: pathname });
+	    } else {
+	      this.openModal();
+	      this.setState({ modalIsOpen: true, message: "login to continue" });
+	      this.toWhere = "/User";
+	    }
+	  },
+	  analysesClick: function analysesClick(event) {
+	    event.preventDefault();
+	    this.history.push({ pathname: "/Analyses" });
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true });
+	  },
+	  closeModal: function closeModal() {
+	    this.setState({ modalIsOpen: false, message: "" });
+	  },
+	  signOutClick: function signOutClick(event) {
+	    APIUtil.logoutUser();
+	    ApiActions.emptyShelves();
+	  },
+	  signClick: function signClick(event) {
+	    event.preventDefault();
+	    this.clicked = true;
+	    if (this.state.password !== null && this.state.password.length >= 6) {
+	      APIUtil.signIn(this.state.username, this.state.password);
+	    } else {
+	      this.state.password = "";
+	      this.setState({ message: "invalid password, must be at least 6 digits please try again" });
+	    }
+	  },
+	  _onChange: function _onChange() {
+	    if (this.state.modalIsOpen) {
+	      if (UserStore.loggedIn()) {
+	        this.setState({ loggedIn: UserStore.loggedIn(), modalIsOpen: false });
+	      } else {
+	        this.setState({ message: "unsuccessful, please try again", loggedIn: UserStore.loggedIn() });
+	      }
+	    } else {
+	      this.setState({ loggedIn: UserStore.loggedIn() });
+	    }
+	  },
+	  signUpClick: function signUpClick(event) {
+	    event.preventDefault();
+	    this.clicked = true;
+	    if (this.state.username !== "" && this.state.password !== "") {
+	      APIUtil.createUser(this.state.username, this.state.password);
+	    } else {
+	      this.setState({ message: "invalid password please try again" });
+	    }
+	  },
+	  logInAsGuest: function logInAsGuest(event) {
+	    event.preventDefault();
+	    this.clicked = true;
+	    APIUtil.signIn("guest_user", "password");
+	  },
+	  render: function render() {
+	    var signB;
+	    var un;
+	    var cb;
+	
+	    if (this.state.loggedIn) {
+	      signB = React.createElement(
+	        'li',
+	        { className: 'nav-right', id: 'NavUser', onClick: this.signOutClick },
+	        'Sign Out'
+	      );
+	      un = UserStore.currentUser().username;
+	      if (BookSearchStore.currentBook() !== null) {
+	        // cb = <div className="userNameLabel" id="bookTitle"> is currently exploring {BookSearchStore.currentBook().title}</div>;
+	        cb = { backgroundImage: "url(" + BookSearchStore.currentBook().image + ")" };
+	      } else {
+	        cb = null;
+	      }
+	    } else {
+	      signB = React.createElement(
+	        'li',
+	        { className: 'nav-right', id: 'NavUser', onClick: this.openModal },
+	        'Sign in/up!'
+	      );
+	    }
+	    var quoteToUse = quotes[Math.floor(Math.random() * quotes.length)];
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'Navbar' },
+	      React.createElement(
+	        'nav',
+	        { className: 'header-nav group' },
+	        React.createElement(
+	          'div',
+	          { className: 'header-logo', onClick: this.homeClick },
+	          React.createElement(
+	            'div',
+	            { className: 'logo-image' },
+	            'LL'
+	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'quote' },
+	          quoteToUse
+	        ),
+	        React.createElement(
+	          'ul',
+	          { className: 'header-list group' },
+	          React.createElement(
+	            'li',
+	            { className: 'nav-right', id: 'NavSearch', onClick: this.homeClick },
+	            'Search'
+	          ),
+	          React.createElement(
+	            'li',
+	            { className: 'nav-right', id: 'NavDesk', onClick: this.userClick },
+	            'User'
+	          ),
+	          signB
+	        )
+	      ),
+	      React.createElement(
+	        Modal,
+	        {
+	          isOpen: this.state.modalIsOpen,
+	          onRequestClose: this.closeModal,
+	          style: customStyles },
+	        React.createElement(
+	          'p',
+	          { className: 'loginMessage' },
+	          ' ',
+	          this.state.message
+	        ),
+	        React.createElement(
+	          'form',
+	          { className: 'NoteForm' },
+	          React.createElement(
+	            'div',
+	            { className: 'UserNameArea' },
+	            React.createElement('input', { type: 'text', className: 'UserNameInput', valueLink: this.linkState('username'), placeholder: 'enter a valid username' })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'PasswordArea' },
+	            React.createElement('input', { type: 'password', className: 'PasswordInput', placeholder: 'enter a 6 digit password', valueLink: this.linkState('password') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'LoginButtonArea' },
+	            React.createElement(
+	              'button',
+	              { className: 'SignButton', onClick: this.signClick },
+	              'Sign In!'
+	            ),
+	            React.createElement(
+	              'button',
+	              { className: 'SignButton', onClick: this.signUpClick },
+	              'Sign Up!'
+	            ),
+	            React.createElement(
+	              'div',
+	              { className: 'DividingOr' },
+	              '----------OR----------'
+	            ),
+	            React.createElement(
+	              'button',
+	              { className: 'SignButton', onClick: this.logInAsGuest },
+	              'Login as Guest'
+	            )
+	          )
+	        ),
+	        React.createElement(
+	          'button',
+	          { onClick: this.closeModal },
+	          'close'
+	        )
+	      )
+	    );
+	  }
+	});
+	// to add
+	//<li className="nav-right" id="NavAnal" onClick={this.analysesClick}>Essays</li>
+	
+	module.exports = Navbar;
+
+/***/ },
+/* 438 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var APIUtil = __webpack_require__(235);
+	var Dropdown = __webpack_require__(443);
+	var Select = __webpack_require__(445);
+	var ApiActions = __webpack_require__(236);
+	var History = __webpack_require__(159).History;
+	
+	// components
+	//stores
+	var UserStore = __webpack_require__(264);
+	var BookShelfStore = __webpack_require__(412);
+	
+	var BookShelf = React.createClass({
+	  displayName: 'BookShelf',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { loggedIn: UserStore.loggedIn(), bookshelves: UserStore.bookshelves(), currentShelf: "read", books: BookShelfStore.all() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.bookshelfIndex = BookShelfStore.addListener(this._onChange);
+	    this.userIndex = UserStore.addListener(this._onUserChange);
+	    APIUtil.getUserBooks();
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.bookshelfIndex.remove();
+	    this.userIndex.remove();
+	  },
+	  bookClick: function bookClick(event) {
+	    console.log(event.target.data);
+	    ApiActions.updateCurrentBook(event.target.data);
+	    this.history.push({ pathname: "Book/" + event.target.data.ISBN13 });
+	  },
+	  _onChange: function _onChange() {
+	    this.setState({ books: BookShelfStore.all() });
+	  },
+	  _onUserChange: function _onUserChange() {
+	    this.setState({ loggedIn: UserStore.loggedIn(), bookshelves: UserStore.bookshelves() });
+	  },
+	  _onSelect: function _onSelect(option) {
+	    this.setState({ currentShelf: option });
+	  },
+	  render: function render() {
+	    var page;
+	    var options = [{ value: "read", label: "read" }, { value: "toRead", label: "to read" }, { value: "reading", label: "reading" }];
+	    var bookList = this.state.books[this.state.currentShelf].map(function (b) {
+	      console.log(b.title);
+	      return React.createElement(
+	        'li',
+	        { onClick: this.bookClick, data: b },
+	        b.title
+	      );
+	    }, this);
+	    if (this.state.loggedIn) {
+	      page = React.createElement(
+	        'div',
+	        { className: 'bookshelf' },
+	        React.createElement(Select, {
+	          name: 'form-field-name',
+	          value: this.state.currentShelf,
+	          options: options,
+	          onChange: this._onSelect
+	        }),
+	        React.createElement(
+	          'ul',
+	          null,
+	          bookList
+	        )
+	      );
+	    } else {
+	      page = React.createElement(
+	        'h2',
+	        null,
+	        'Login to see your bookshelf'
+	      );
+	    }
+	    return React.createElement(
+	      'div',
+	      { className: 'container' },
+	      page
+	    );
+	  }
+	});
+	module.exports = BookShelf;
+
+/***/ },
+/* 439 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	
+	// components
+	var BookShelf = __webpack_require__(438);
+	
+	//stores
+	var UserStore = __webpack_require__(264);
+	
+	var User = React.createClass({
+	  displayName: "User",
+	
+	  render: function render() {
+	
+	    return React.createElement(
+	      "div",
+	      { className: "container" },
+	      React.createElement(
+	        "div",
+	        { className: "comment-area" },
+	        React.createElement(
+	          "h1",
+	          null,
+	          "This is for comments"
+	        )
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: "user-shelf-area" },
+	        React.createElement(
+	          "div",
+	          { className: "user-name" },
+	          React.createElement(
+	            "h1",
+	            null,
+	            UserStore.currentUser().username
+	          )
+	        ),
+	        React.createElement(
+	          "div",
+	          { className: "bookshelf-area" },
+	          React.createElement(BookShelf, null)
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = User;
+
+/***/ },
+/* 440 */,
+/* 441 */,
+/* 442 */,
+/* 443 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(158);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+	
+	var _classnames = __webpack_require__(444);
+	
+	var _classnames2 = _interopRequireDefault(_classnames);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var Dropdown = function (_Component) {
+	  _inherits(Dropdown, _Component);
+	
+	  function Dropdown(props) {
+	    _classCallCheck(this, Dropdown);
+	
+	    var _this = _possibleConstructorReturn(this, (Dropdown.__proto__ || Object.getPrototypeOf(Dropdown)).call(this, props));
+	
+	    _this.state = {
+	      selected: props.value || {
+	        label: props.placeholder || 'Select...',
+	        value: ''
+	      },
+	      isOpen: false
+	    };
+	    _this.mounted = true;
+	    _this.handleDocumentClick = _this.handleDocumentClick.bind(_this);
+	    _this.fireChangeEvent = _this.fireChangeEvent.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(Dropdown, [{
+	    key: 'componentWillReceiveProps',
+	    value: function componentWillReceiveProps(newProps) {
+	      if (newProps.value && newProps.value !== this.state.selected) {
+	        this.setState({ selected: newProps.value });
+	      } else if (!newProps.value && newProps.placeholder) {
+	        this.setState({ selected: { label: newProps.placeholder, value: '' } });
+	      }
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      document.addEventListener('click', this.handleDocumentClick, false);
+	      document.addEventListener('touchend', this.handleDocumentClick, false);
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      this.mounted = false;
+	      document.removeEventListener('click', this.handleDocumentClick, false);
+	      document.removeEventListener('touchend', this.handleDocumentClick, false);
+	    }
+	  }, {
+	    key: 'handleMouseDown',
+	    value: function handleMouseDown(event) {
+	      if (event.type === 'mousedown' && event.button !== 0) return;
+	      event.stopPropagation();
+	      event.preventDefault();
+	
+	      if (!this.props.disabled) {
+	        this.setState({
+	          isOpen: !this.state.isOpen
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'setValue',
+	    value: function setValue(value, label) {
+	      var newState = {
+	        selected: {
+	          value: value,
+	          label: label
+	        },
+	        isOpen: false
+	      };
+	      this.fireChangeEvent(newState);
+	      this.setState(newState);
+	    }
+	  }, {
+	    key: 'fireChangeEvent',
+	    value: function fireChangeEvent(newState) {
+	      if (newState.selected !== this.state.selected && this.props.onChange) {
+	        this.props.onChange(newState.selected);
+	      }
+	    }
+	  }, {
+	    key: 'renderOption',
+	    value: function renderOption(option) {
+	      var _classNames;
+	
+	      var optionClass = (0, _classnames2.default)((_classNames = {}, _defineProperty(_classNames, this.props.baseClassName + '-option', true), _defineProperty(_classNames, 'is-selected', option === this.state.selected), _classNames));
+	
+	      var value = option.value || option.label || option;
+	      var label = option.label || option.value || option;
+	
+	      return _react2.default.createElement(
+	        'div',
+	        {
+	          key: value,
+	          className: optionClass,
+	          onMouseDown: this.setValue.bind(this, value, label),
+	          onClick: this.setValue.bind(this, value, label) },
+	        label
+	      );
+	    }
+	  }, {
+	    key: 'buildMenu',
+	    value: function buildMenu() {
+	      var _this2 = this;
+	
+	      var _props = this.props,
+	          options = _props.options,
+	          baseClassName = _props.baseClassName;
+	
+	      var ops = options.map(function (option) {
+	        if (option.type === 'group') {
+	          var groupTitle = _react2.default.createElement(
+	            'div',
+	            { className: baseClassName + '-title' },
+	            option.name
+	          );
+	          var _options = option.items.map(function (item) {
+	            return _this2.renderOption(item);
+	          });
+	
+	          return _react2.default.createElement(
+	            'div',
+	            { className: baseClassName + '-group', key: option.name },
+	            groupTitle,
+	            _options
+	          );
+	        } else {
+	          return _this2.renderOption(option);
+	        }
+	      });
+	
+	      return ops.length ? ops : _react2.default.createElement(
+	        'div',
+	        { className: baseClassName + '-noresults' },
+	        'No options found'
+	      );
+	    }
+	  }, {
+	    key: 'handleDocumentClick',
+	    value: function handleDocumentClick(event) {
+	      if (this.mounted) {
+	        if (!_reactDom2.default.findDOMNode(this).contains(event.target)) {
+	          this.setState({ isOpen: false });
+	        }
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _classNames2;
+	
+	      var baseClassName = this.props.baseClassName;
+	
+	      var disabledClass = this.props.disabled ? 'Dropdown-disabled' : '';
+	      var placeHolderValue = typeof this.state.selected === 'string' ? this.state.selected : this.state.selected.label;
+	      var value = _react2.default.createElement(
+	        'div',
+	        { className: baseClassName + '-placeholder' },
+	        placeHolderValue
+	      );
+	      var menu = this.state.isOpen ? _react2.default.createElement(
+	        'div',
+	        { className: baseClassName + '-menu' },
+	        this.buildMenu()
+	      ) : null;
+	
+	      var dropdownClass = (0, _classnames2.default)((_classNames2 = {}, _defineProperty(_classNames2, baseClassName + '-root', true), _defineProperty(_classNames2, 'is-open', this.state.isOpen), _classNames2));
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: dropdownClass },
+	        _react2.default.createElement(
+	          'div',
+	          { className: baseClassName + '-control ' + disabledClass, onMouseDown: this.handleMouseDown.bind(this), onTouchEnd: this.handleMouseDown.bind(this) },
+	          value,
+	          _react2.default.createElement('span', { className: baseClassName + '-arrow' })
+	        ),
+	        menu
+	      );
+	    }
+	  }]);
+	
+	  return Dropdown;
+	}(_react.Component);
+	
+	Dropdown.defaultProps = { baseClassName: 'Dropdown' };
+	exports.default = Dropdown;
+
+
+/***/ },
+/* 444 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2016 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+	
+	(function () {
+		'use strict';
+	
+		var hasOwn = {}.hasOwnProperty;
+	
+		function classNames () {
+			var classes = [];
+	
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+	
+				var argType = typeof arg;
+	
+				if (argType === 'string' || argType === 'number') {
+					classes.push(arg);
+				} else if (Array.isArray(arg)) {
+					classes.push(classNames.apply(null, arg));
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes.push(key);
+						}
+					}
+				}
+			}
+	
+			return classes.join(' ');
+		}
+	
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
+/* 445 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* disable some rules until we refactor more completely; fixing them now would
+	   cause conflicts with some open PRs unnecessarily. */
+	/* eslint react/jsx-sort-prop-types: 0, react/sort-comp: 0, react/prop-types: 0 */
+	
+	'use strict';
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+	var Input = __webpack_require__(446);
+	var classes = __webpack_require__(444);
+	var Value = __webpack_require__(447);
+	var SingleValue = __webpack_require__(448);
+	var Option = __webpack_require__(449);
+	
+	var requestId = 0;
+	
+	var Select = React.createClass({
+	
+		displayName: 'Select',
+	
+		propTypes: {
+			addLabelText: React.PropTypes.string, // placeholder displayed when you want to add a label on a multi-value input
+			allowCreate: React.PropTypes.bool, // whether to allow creation of new entries
+			asyncOptions: React.PropTypes.func, // function to call to get options
+			autoload: React.PropTypes.bool, // whether to auto-load the default async options set
+			backspaceRemoves: React.PropTypes.bool, // whether backspace removes an item if there is no text input
+			cacheAsyncResults: React.PropTypes.bool, // whether to allow cache
+			className: React.PropTypes.string, // className for the outer element
+			clearAllText: React.PropTypes.string, // title for the "clear" control when multi: true
+			clearValueText: React.PropTypes.string, // title for the "clear" control
+			clearable: React.PropTypes.bool, // should it be possible to reset value
+			delimiter: React.PropTypes.string, // delimiter to use to join multiple values
+			disabled: React.PropTypes.bool, // whether the Select is disabled or not
+			filterOption: React.PropTypes.func, // method to filter a single option  (option, filterString)
+			filterOptions: React.PropTypes.func, // method to filter the options array: function ([options], filterString, [values])
+			ignoreCase: React.PropTypes.bool, // whether to perform case-insensitive filtering
+			inputProps: React.PropTypes.object, // custom attributes for the Input (in the Select-control) e.g: {'data-foo': 'bar'}
+			isLoading: React.PropTypes.bool, // whether the Select is loading externally or not (such as options being loaded)
+			labelKey: React.PropTypes.string, // path of the label value in option objects
+			matchPos: React.PropTypes.string, // (any|start) match the start or entire string when filtering
+			matchProp: React.PropTypes.string, // (any|label|value) which option property to filter on
+			multi: React.PropTypes.bool, // multi-value input
+			name: React.PropTypes.string, // field name, for hidden <input /> tag
+			newOptionCreator: React.PropTypes.func, // factory to create new options when allowCreate set
+			noResultsText: React.PropTypes.string, // placeholder displayed when there are no matching search results
+			onBlur: React.PropTypes.func, // onBlur handler: function (event) {}
+			onChange: React.PropTypes.func, // onChange handler: function (newValue) {}
+			onFocus: React.PropTypes.func, // onFocus handler: function (event) {}
+			onInputChange: React.PropTypes.func, // onInputChange handler: function (inputValue) {}
+			onOptionLabelClick: React.PropTypes.func, // onCLick handler for value labels: function (value, event) {}
+			optionComponent: React.PropTypes.func, // option component to render in dropdown
+			optionRenderer: React.PropTypes.func, // optionRenderer: function (option) {}
+			options: React.PropTypes.array, // array of options
+			placeholder: React.PropTypes.string, // field placeholder, displayed when there's no value
+			searchable: React.PropTypes.bool, // whether to enable searching feature or not
+			searchingText: React.PropTypes.string, // message to display whilst options are loading via asyncOptions
+			searchPromptText: React.PropTypes.string, // label to prompt for search input
+			singleValueComponent: React.PropTypes.func, // single value component when multiple is set to false
+			value: React.PropTypes.any, // initial field value
+			valueComponent: React.PropTypes.func, // value component to render in multiple mode
+			valueKey: React.PropTypes.string, // path of the label value in option objects
+			valueRenderer: React.PropTypes.func // valueRenderer: function (option) {}
+		},
+	
+		getDefaultProps: function getDefaultProps() {
+			return {
+				addLabelText: 'Add "{label}"?',
+				allowCreate: false,
+				asyncOptions: undefined,
+				autoload: true,
+				backspaceRemoves: true,
+				cacheAsyncResults: true,
+				className: undefined,
+				clearAllText: 'Clear all',
+				clearValueText: 'Clear value',
+				clearable: true,
+				delimiter: ',',
+				disabled: false,
+				ignoreCase: true,
+				inputProps: {},
+				isLoading: false,
+				labelKey: 'label',
+				matchPos: 'any',
+				matchProp: 'any',
+				name: undefined,
+				newOptionCreator: undefined,
+				noResultsText: 'No results found',
+				onChange: undefined,
+				onInputChange: undefined,
+				onOptionLabelClick: undefined,
+				optionComponent: Option,
+				options: undefined,
+				placeholder: 'Select...',
+				searchable: true,
+				searchingText: 'Searching...',
+				searchPromptText: 'Type to search',
+				singleValueComponent: SingleValue,
+				value: undefined,
+				valueComponent: Value,
+				valueKey: 'value'
+			};
+		},
+	
+		getInitialState: function getInitialState() {
+			return {
+				/*
+	    * set by getStateFromValue on componentWillMount:
+	    * - value
+	    * - values
+	    * - filteredOptions
+	    * - inputValue
+	    * - placeholder
+	    * - focusedOption
+	   */
+				isFocused: false,
+				isLoading: false,
+				isOpen: false,
+				options: this.props.options
+			};
+		},
+	
+		componentWillMount: function componentWillMount() {
+			var _this = this;
+	
+			this._optionsCache = {};
+			this._optionsFilterString = '';
+			this._closeMenuIfClickedOutside = function (event) {
+				if (!_this.state.isOpen) {
+					return;
+				}
+				var menuElem = ReactDOM.findDOMNode(_this.refs.selectMenuContainer);
+				var controlElem = ReactDOM.findDOMNode(_this.refs.control);
+	
+				var eventOccuredOutsideMenu = _this.clickedOutsideElement(menuElem, event);
+				var eventOccuredOutsideControl = _this.clickedOutsideElement(controlElem, event);
+	
+				// Hide dropdown menu if click occurred outside of menu
+				if (eventOccuredOutsideMenu && eventOccuredOutsideControl) {
+					_this.setState({
+						isOpen: false
+					}, _this._unbindCloseMenuIfClickedOutside);
+				}
+			};
+			this._bindCloseMenuIfClickedOutside = function () {
+				if (!document.addEventListener && document.attachEvent) {
+					document.attachEvent('onclick', _this._closeMenuIfClickedOutside);
+				} else {
+					document.addEventListener('click', _this._closeMenuIfClickedOutside);
+				}
+			};
+			this._unbindCloseMenuIfClickedOutside = function () {
+				if (!document.removeEventListener && document.detachEvent) {
+					document.detachEvent('onclick', _this._closeMenuIfClickedOutside);
+				} else {
+					document.removeEventListener('click', _this._closeMenuIfClickedOutside);
+				}
+			};
+			this.setState(this.getStateFromValue(this.props.value));
+		},
+	
+		componentDidMount: function componentDidMount() {
+			if (this.props.asyncOptions && this.props.autoload) {
+				this.autoloadAsyncOptions();
+			}
+		},
+	
+		componentWillUnmount: function componentWillUnmount() {
+			clearTimeout(this._blurTimeout);
+			clearTimeout(this._focusTimeout);
+			if (this.state.isOpen) {
+				this._unbindCloseMenuIfClickedOutside();
+			}
+		},
+	
+		componentWillReceiveProps: function componentWillReceiveProps(newProps) {
+			var _this2 = this;
+	
+			var optionsChanged = false;
+			if (JSON.stringify(newProps.options) !== JSON.stringify(this.props.options)) {
+				optionsChanged = true;
+				this.setState({
+					options: newProps.options,
+					filteredOptions: this.filterOptions(newProps.options)
+				});
+			}
+			if (newProps.value !== this.state.value || newProps.placeholder !== this.props.placeholder || optionsChanged) {
+				var setState = function setState(newState) {
+					_this2.setState(_this2.getStateFromValue(newProps.value, newState && newState.options || newProps.options, newProps.placeholder));
+				};
+				if (this.props.asyncOptions) {
+					this.loadAsyncOptions(newProps.value, {}, setState);
+				} else {
+					setState();
+				}
+			}
+		},
+	
+		componentDidUpdate: function componentDidUpdate() {
+			var _this3 = this;
+	
+			if (!this.props.disabled && this._focusAfterUpdate) {
+				clearTimeout(this._blurTimeout);
+				clearTimeout(this._focusTimeout);
+				this._focusTimeout = setTimeout(function () {
+					if (!_this3.isMounted()) return;
+					_this3.getInputNode().focus();
+					_this3._focusAfterUpdate = false;
+				}, 50);
+			}
+			if (this._focusedOptionReveal) {
+				if (this.refs.focused && this.refs.menu) {
+					var focusedDOM = ReactDOM.findDOMNode(this.refs.focused);
+					var menuDOM = ReactDOM.findDOMNode(this.refs.menu);
+					var focusedRect = focusedDOM.getBoundingClientRect();
+					var menuRect = menuDOM.getBoundingClientRect();
+	
+					if (focusedRect.bottom > menuRect.bottom || focusedRect.top < menuRect.top) {
+						menuDOM.scrollTop = focusedDOM.offsetTop + focusedDOM.clientHeight - menuDOM.offsetHeight;
+					}
+				}
+				this._focusedOptionReveal = false;
+			}
+		},
+	
+		focus: function focus() {
+			this.getInputNode().focus();
+		},
+	
+		clickedOutsideElement: function clickedOutsideElement(element, event) {
+			var eventTarget = event.target ? event.target : event.srcElement;
+			while (eventTarget != null) {
+				if (eventTarget === element) return false;
+				eventTarget = eventTarget.offsetParent;
+			}
+			return true;
+		},
+	
+		getStateFromValue: function getStateFromValue(value, options, placeholder) {
+			var _this4 = this;
+	
+			if (!options) {
+				options = this.state.options;
+			}
+			if (!placeholder) {
+				placeholder = this.props.placeholder;
+			}
+	
+			// reset internal filter string
+			this._optionsFilterString = '';
+	
+			var values = this.initValuesArray(value, options);
+			var filteredOptions = this.filterOptions(options, values);
+	
+			var focusedOption;
+			var valueForState = null;
+			if (!this.props.multi && values.length) {
+				focusedOption = values[0];
+				valueForState = values[0][this.props.valueKey];
+			} else {
+				focusedOption = this.getFirstFocusableOption(filteredOptions);
+				valueForState = values.map(function (v) {
+					return v[_this4.props.valueKey];
+				}).join(this.props.delimiter);
+			}
+	
+			return {
+				value: valueForState,
+				values: values,
+				inputValue: '',
+				filteredOptions: filteredOptions,
+				placeholder: !this.props.multi && values.length ? values[0][this.props.labelKey] : placeholder,
+				focusedOption: focusedOption
+			};
+		},
+	
+		getFirstFocusableOption: function getFirstFocusableOption(options) {
+			for (var optionIndex = 0; optionIndex < options.length; ++optionIndex) {
+				if (!options[optionIndex].disabled) {
+					return options[optionIndex];
+				}
+			}
+		},
+	
+		initValuesArray: function initValuesArray(values, options) {
+			var _this5 = this;
+	
+			if (!Array.isArray(values)) {
+				if (typeof values === 'string') {
+					values = values === '' ? [] : this.props.multi ? values.split(this.props.delimiter) : [values];
+				} else {
+					values = values !== undefined && values !== null ? [values] : [];
+				}
+			}
+			return values.map(function (val) {
+				if (typeof val === 'string' || typeof val === 'number') {
+					var _ref;
+	
+					for (var key in options) {
+						if (options.hasOwnProperty(key) && options[key] && (options[key][_this5.props.valueKey] === val || typeof options[key][_this5.props.valueKey] === 'number' && options[key][_this5.props.valueKey].toString() === val)) {
+							return options[key];
+						}
+					}
+					return _ref = {}, _defineProperty(_ref, _this5.props.valueKey, val), _defineProperty(_ref, _this5.props.labelKey, val), _ref;
+				} else {
+					return val;
+				}
+			});
+		},
+	
+		setValue: function setValue(value, focusAfterUpdate) {
+			if (focusAfterUpdate || focusAfterUpdate === undefined) {
+				this._focusAfterUpdate = true;
+			}
+			var newState = this.getStateFromValue(value);
+			newState.isOpen = false;
+			this.fireChangeEvent(newState);
+			this.setState(newState);
+		},
+	
+		selectValue: function selectValue(value) {
+			if (!this.props.multi) {
+				this.setValue(value);
+			} else if (value) {
+				this.addValue(value);
+			}
+			this._unbindCloseMenuIfClickedOutside();
+		},
+	
+		addValue: function addValue(value) {
+			this.setValue(this.state.values.concat(value));
+		},
+	
+		popValue: function popValue() {
+			this.setValue(this.state.values.slice(0, this.state.values.length - 1));
+		},
+	
+		removeValue: function removeValue(valueToRemove) {
+			this.setValue(this.state.values.filter(function (value) {
+				return value !== valueToRemove;
+			}));
+		},
+	
+		clearValue: function clearValue(event) {
+			// if the event was triggered by a mousedown and not the primary
+			// button, ignore it.
+			if (event && event.type === 'mousedown' && event.button !== 0) {
+				return;
+			}
+			event.stopPropagation();
+			event.preventDefault();
+			this.setValue(null);
+		},
+	
+		resetValue: function resetValue() {
+			this.setValue(this.state.value === '' ? null : this.state.value);
+		},
+	
+		getInputNode: function getInputNode() {
+			var input = this.refs.input;
+			return this.props.searchable ? input : ReactDOM.findDOMNode(input);
+		},
+	
+		fireChangeEvent: function fireChangeEvent(newState) {
+			if (newState.value !== this.state.value && this.props.onChange) {
+				this.props.onChange(newState.value, newState.values);
+			}
+		},
+	
+		handleMouseDown: function handleMouseDown(event) {
+			// if the event was triggered by a mousedown and not the primary
+			// button, or if the component is disabled, ignore it.
+			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0) {
+				return;
+			}
+			event.stopPropagation();
+			event.preventDefault();
+	
+			// for the non-searchable select, close the dropdown when button is clicked
+			if (this.state.isOpen && !this.props.searchable) {
+				this.setState({
+					isOpen: false
+				}, this._unbindCloseMenuIfClickedOutside);
+				return;
+			}
+	
+			if (this.state.isFocused) {
+				this.setState({
+					isOpen: true
+				}, this._bindCloseMenuIfClickedOutside);
+			} else {
+				this._openAfterFocus = true;
+				this.getInputNode().focus();
+			}
+		},
+	
+		handleMouseDownOnMenu: function handleMouseDownOnMenu(event) {
+			// if the event was triggered by a mousedown and not the primary
+			// button, or if the component is disabled, ignore it.
+			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0) {
+				return;
+			}
+			event.stopPropagation();
+			event.preventDefault();
+		},
+	
+		handleMouseDownOnArrow: function handleMouseDownOnArrow(event) {
+			// if the event was triggered by a mousedown and not the primary
+			// button, or if the component is disabled, ignore it.
+			if (this.props.disabled || event.type === 'mousedown' && event.button !== 0) {
+				return;
+			}
+			// If not focused, handleMouseDown will handle it
+			if (!this.state.isOpen) {
+				return;
+			}
+			event.stopPropagation();
+			event.preventDefault();
+			this.setState({
+				isOpen: false
+			}, this._unbindCloseMenuIfClickedOutside);
+		},
+	
+		handleInputFocus: function handleInputFocus(event) {
+			var _this6 = this;
+	
+			var newIsOpen = this.state.isOpen || this._openAfterFocus;
+			this.setState({
+				isFocused: true,
+				isOpen: newIsOpen
+			}, function () {
+				if (newIsOpen) {
+					_this6._bindCloseMenuIfClickedOutside();
+				} else {
+					_this6._unbindCloseMenuIfClickedOutside();
+				}
+			});
+			this._openAfterFocus = false;
+			if (this.props.onFocus) {
+				this.props.onFocus(event);
+			}
+		},
+	
+		handleInputBlur: function handleInputBlur(event) {
+			var _this7 = this;
+	
+			var menuDOM = ReactDOM.findDOMNode(this.refs.menu);
+			if (document.activeElement.isEqualNode(menuDOM)) {
+				return;
+			}
+			this._blurTimeout = setTimeout(function () {
+				if (_this7._focusAfterUpdate || !_this7.isMounted()) return;
+				_this7.setState({
+					inputValue: '',
+					isFocused: false,
+					isOpen: false
+				});
+			}, 50);
+			if (this.props.onBlur) {
+				this.props.onBlur(event);
+			}
+		},
+	
+		handleKeyDown: function handleKeyDown(event) {
+			if (this.props.disabled) return;
+			switch (event.keyCode) {
+				case 8:
+					// backspace
+					if (!this.state.inputValue && this.props.backspaceRemoves) {
+						event.preventDefault();
+						this.popValue();
+					}
+					return;
+				case 9:
+					// tab
+					if (event.shiftKey || !this.state.isOpen || !this.state.focusedOption) {
+						return;
+					}
+					this.selectFocusedOption();
+					break;
+				case 13:
+					// enter
+					if (!this.state.isOpen) return;
+					this.selectFocusedOption();
+					break;
+				case 27:
+					// escape
+					if (this.state.isOpen) {
+						this.resetValue();
+					} else if (this.props.clearable) {
+						this.clearValue(event);
+					}
+					break;
+				case 38:
+					// up
+					this.focusPreviousOption();
+					break;
+				case 40:
+					// down
+					this.focusNextOption();
+					break;
+				case 188:
+					// ,
+					if (this.props.allowCreate && this.props.multi) {
+						event.preventDefault();
+						event.stopPropagation();
+						this.selectFocusedOption();
+					} else {
+						return;
+					}
+					break;
+				default:
+					return;
+			}
+			event.preventDefault();
+		},
+	
+		// Ensures that the currently focused option is available in filteredOptions.
+		// If not, returns the first available option.
+		_getNewFocusedOption: function _getNewFocusedOption(filteredOptions) {
+			for (var key in filteredOptions) {
+				if (filteredOptions.hasOwnProperty(key) && filteredOptions[key] === this.state.focusedOption) {
+					return filteredOptions[key];
+				}
+			}
+			return this.getFirstFocusableOption(filteredOptions);
+		},
+	
+		handleInputChange: function handleInputChange(event) {
+			// assign an internal variable because we need to use
+			// the latest value before setState() has completed.
+			this._optionsFilterString = event.target.value;
+			if (this.props.onInputChange) {
+				this.props.onInputChange(event.target.value);
+			}
+			if (this.props.asyncOptions) {
+				this.setState({
+					isLoading: true,
+					inputValue: event.target.value
+				});
+				this.loadAsyncOptions(event.target.value, {
+					isLoading: false,
+					isOpen: true
+				}, this._bindCloseMenuIfClickedOutside);
+			} else {
+				var filteredOptions = this.filterOptions(this.state.options);
+				this.setState({
+					isOpen: true,
+					inputValue: event.target.value,
+					filteredOptions: filteredOptions,
+					focusedOption: this._getNewFocusedOption(filteredOptions)
+				}, this._bindCloseMenuIfClickedOutside);
+			}
+		},
+	
+		autoloadAsyncOptions: function autoloadAsyncOptions() {
+			var _this8 = this;
+	
+			this.setState({
+				isLoading: true
+			});
+			this.loadAsyncOptions('', { isLoading: false }, function () {
+				// update with new options but don't focus
+				_this8.setValue(_this8.props.value, false);
+			});
+		},
+	
+		loadAsyncOptions: function loadAsyncOptions(input, state, callback) {
+			if (input === undefined) input = '';
+	
+			var _this9 = this;
+	
+			var thisRequestId = this._currentRequestId = requestId++;
+			if (this.props.cacheAsyncResults) {
+				for (var i = 0; i <= input.length; i++) {
+					var cacheKey = input.slice(0, i);
+					if (this._optionsCache[cacheKey] && (input === cacheKey || this._optionsCache[cacheKey].complete)) {
+						var options = this._optionsCache[cacheKey].options;
+						var filteredOptions = this.filterOptions(options);
+						var newState = {
+							options: options,
+							filteredOptions: filteredOptions,
+							focusedOption: this._getNewFocusedOption(filteredOptions)
+						};
+						for (var key in state) {
+							if (state.hasOwnProperty(key)) {
+								newState[key] = state[key];
+							}
+						}
+						this.setState(newState);
+						if (callback) callback.call(this, newState);
+						return;
+					}
+				}
+			}
+	
+			var optionsResponseHandler = function optionsResponseHandler(err, data) {
+				if (err) throw err;
+				if (_this9.props.cacheAsyncResults) {
+					_this9._optionsCache[input] = data;
+				}
+				if (thisRequestId !== _this9._currentRequestId) {
+					return;
+				}
+				var filteredOptions = _this9.filterOptions(data.options);
+				var newState = {
+					options: data.options,
+					filteredOptions: filteredOptions,
+					focusedOption: _this9._getNewFocusedOption(filteredOptions)
+				};
+				for (var key in state) {
+					if (state.hasOwnProperty(key)) {
+						newState[key] = state[key];
+					}
+				}
+				_this9.setState(newState);
+				if (callback) callback.call(_this9, newState);
+			};
+	
+			var asyncOpts = this.props.asyncOptions(input, optionsResponseHandler);
+	
+			if (asyncOpts && typeof asyncOpts.then === 'function') {
+				asyncOpts.then(function (data) {
+					optionsResponseHandler(null, data);
+				}, function (err) {
+					optionsResponseHandler(err);
+				});
+			}
+		},
+	
+		filterOptions: function filterOptions(options, values) {
+			var _this10 = this;
+	
+			var filterValue = this._optionsFilterString;
+			var exclude = (values || this.state.values).map(function (i) {
+				return i[_this10.props.valueKey];
+			});
+			if (this.props.filterOptions) {
+				return this.props.filterOptions.call(this, options, filterValue, exclude);
+			} else {
+				var filterOption = function filterOption(op) {
+					if (this.props.multi && exclude.indexOf(op[this.props.valueKey]) > -1) return false;
+					if (this.props.filterOption) return this.props.filterOption.call(this, op, filterValue);
+					var valueTest = String(op[this.props.valueKey]);
+					var labelTest = String(op[this.props.labelKey]);
+					if (this.props.ignoreCase) {
+						valueTest = valueTest.toLowerCase();
+						labelTest = labelTest.toLowerCase();
+						filterValue = filterValue.toLowerCase();
+					}
+					return !filterValue || this.props.matchPos === 'start' ? this.props.matchProp !== 'label' && valueTest.substr(0, filterValue.length) === filterValue || this.props.matchProp !== 'value' && labelTest.substr(0, filterValue.length) === filterValue : this.props.matchProp !== 'label' && valueTest.indexOf(filterValue) >= 0 || this.props.matchProp !== 'value' && labelTest.indexOf(filterValue) >= 0;
+				};
+				return (options || []).filter(filterOption, this);
+			}
+		},
+	
+		selectFocusedOption: function selectFocusedOption() {
+			if (this.props.allowCreate && !this.state.focusedOption) {
+				return this.selectValue(this.state.inputValue);
+			}
+	
+			if (this.state.focusedOption) {
+				return this.selectValue(this.state.focusedOption);
+			}
+		},
+	
+		focusOption: function focusOption(op) {
+			this.setState({
+				focusedOption: op
+			});
+		},
+	
+		focusNextOption: function focusNextOption() {
+			this.focusAdjacentOption('next');
+		},
+	
+		focusPreviousOption: function focusPreviousOption() {
+			this.focusAdjacentOption('previous');
+		},
+	
+		focusAdjacentOption: function focusAdjacentOption(dir) {
+			this._focusedOptionReveal = true;
+			var ops = this.state.filteredOptions.filter(function (op) {
+				return !op.disabled;
+			});
+			if (!this.state.isOpen) {
+				this.setState({
+					isOpen: true,
+					inputValue: '',
+					focusedOption: this.state.focusedOption || ops[dir === 'next' ? 0 : ops.length - 1]
+				}, this._bindCloseMenuIfClickedOutside);
+				return;
+			}
+			if (!ops.length) {
+				return;
+			}
+			var focusedIndex = -1;
+			for (var i = 0; i < ops.length; i++) {
+				if (this.state.focusedOption === ops[i]) {
+					focusedIndex = i;
+					break;
+				}
+			}
+			var focusedOption = ops[0];
+			if (dir === 'next' && focusedIndex > -1 && focusedIndex < ops.length - 1) {
+				focusedOption = ops[focusedIndex + 1];
+			} else if (dir === 'previous') {
+				if (focusedIndex > 0) {
+					focusedOption = ops[focusedIndex - 1];
+				} else {
+					focusedOption = ops[ops.length - 1];
+				}
+			}
+			this.setState({
+				focusedOption: focusedOption
+			});
+		},
+	
+		unfocusOption: function unfocusOption(op) {
+			if (this.state.focusedOption === op) {
+				this.setState({
+					focusedOption: null
+				});
+			}
+		},
+	
+		renderOptionLabel: function renderOptionLabel(op) {
+			return op[this.props.labelKey];
+		},
+	
+		buildMenu: function buildMenu() {
+			var focusedValue = this.state.focusedOption ? this.state.focusedOption[this.props.valueKey] : null;
+			var renderLabel = this.props.optionRenderer || this.renderOptionLabel;
+			if (this.state.filteredOptions.length > 0) {
+				focusedValue = focusedValue == null ? this.state.filteredOptions[0] : focusedValue;
+			}
+			// Add the current value to the filtered options in last resort
+			var options = this.state.filteredOptions;
+			if (this.props.allowCreate && this.state.inputValue.trim()) {
+				var inputValue = this.state.inputValue;
+				options = options.slice();
+				var newOption = this.props.newOptionCreator ? this.props.newOptionCreator(inputValue) : {
+					value: inputValue,
+					label: inputValue,
+					create: true
+				};
+				options.unshift(newOption);
+			}
+			var ops = Object.keys(options).map(function (key) {
+				var op = options[key];
+				var isSelected = this.state.value === op[this.props.valueKey];
+				var isFocused = focusedValue === op[this.props.valueKey];
+				var optionClass = classes({
+					'Select-option': true,
+					'is-selected': isSelected,
+					'is-focused': isFocused,
+					'is-disabled': op.disabled
+				});
+				var ref = isFocused ? 'focused' : null;
+				var optionResult = React.createElement(this.props.optionComponent, {
+					key: 'option-' + op[this.props.valueKey],
+					className: optionClass,
+					renderFunc: renderLabel,
+					mouseDown: this.selectValue,
+					mouseEnter: this.focusOption,
+					mouseLeave: this.unfocusOption,
+					addLabelText: this.props.addLabelText,
+					option: op,
+					ref: ref
+				});
+				return optionResult;
+			}, this);
+	
+			if (ops.length) {
+				return ops;
+			} else {
+				var noResultsText, promptClass;
+				if (this.isLoading()) {
+					promptClass = 'Select-searching';
+					noResultsText = this.props.searchingText;
+				} else if (this.state.inputValue || !this.props.asyncOptions) {
+					promptClass = 'Select-noresults';
+					noResultsText = this.props.noResultsText;
+				} else {
+					promptClass = 'Select-search-prompt';
+					noResultsText = this.props.searchPromptText;
+				}
+	
+				return React.createElement(
+					'div',
+					{ className: promptClass },
+					noResultsText
+				);
+			}
+		},
+	
+		handleOptionLabelClick: function handleOptionLabelClick(value, event) {
+			if (this.props.onOptionLabelClick) {
+				this.props.onOptionLabelClick(value, event);
+			}
+		},
+	
+		isLoading: function isLoading() {
+			return this.props.isLoading || this.state.isLoading;
+		},
+	
+		render: function render() {
+			var selectClass = classes('Select', this.props.className, {
+				'Select--multi': this.props.multi,
+				'is-searchable': this.props.searchable,
+				'is-open': this.state.isOpen,
+				'is-focused': this.state.isFocused,
+				'is-loading': this.isLoading(),
+				'is-disabled': this.props.disabled,
+				'has-value': this.state.value
+			});
+			var value = [];
+			if (this.props.multi) {
+				this.state.values.forEach(function (val) {
+					var renderLabel = this.props.valueRenderer || this.renderOptionLabel;
+					var onOptionLabelClick = this.handleOptionLabelClick.bind(this, val);
+					var onRemove = this.removeValue.bind(this, val);
+					var valueComponent = React.createElement(this.props.valueComponent, {
+						key: val[this.props.valueKey],
+						option: val,
+						renderer: renderLabel,
+						optionLabelClick: !!this.props.onOptionLabelClick,
+						onOptionLabelClick: onOptionLabelClick,
+						onRemove: onRemove,
+						disabled: this.props.disabled
+					});
+					value.push(valueComponent);
+				}, this);
+			}
+	
+			if (!this.state.inputValue && (!this.props.multi || !value.length)) {
+				var val = this.state.values[0] || null;
+				if (this.props.valueRenderer && !!this.state.values.length) {
+					value.push(React.createElement(Value, {
+						key: 0,
+						option: val,
+						renderer: this.props.valueRenderer,
+						disabled: this.props.disabled }));
+				} else {
+					var singleValueComponent = React.createElement(this.props.singleValueComponent, {
+						key: 'placeholder',
+						value: val,
+						placeholder: this.state.placeholder
+					});
+					value.push(singleValueComponent);
+				}
+			}
+	
+			// loading spinner
+			var loading = this.isLoading() ? React.createElement(
+				'span',
+				{ className: 'Select-loading-zone', 'aria-hidden': 'true' },
+				React.createElement('span', { className: 'Select-loading' })
+			) : null;
+	
+			// clear "x" button
+			var clear = this.props.clearable && this.state.value && !this.props.disabled && !this.isLoading() ? React.createElement(
+				'span',
+				{ className: 'Select-clear-zone', title: this.props.multi ? this.props.clearAllText : this.props.clearValueText, 'aria-label': this.props.multi ? this.props.clearAllText : this.props.clearValueText, onMouseDown: this.clearValue, onTouchEnd: this.clearValue, onClick: this.clearValue },
+				React.createElement('span', { className: 'Select-clear', dangerouslySetInnerHTML: { __html: '&times;' } })
+			) : null;
+	
+			// indicator arrow
+			var arrow = React.createElement(
+				'span',
+				{ className: 'Select-arrow-zone', onMouseDown: this.handleMouseDownOnArrow },
+				React.createElement('span', { className: 'Select-arrow', onMouseDown: this.handleMouseDownOnArrow })
+			);
+	
+			var menu;
+			var menuProps;
+			if (this.state.isOpen) {
+				menuProps = {
+					ref: 'menu',
+					className: 'Select-menu',
+					onMouseDown: this.handleMouseDownOnMenu
+				};
+				menu = React.createElement(
+					'div',
+					{ ref: 'selectMenuContainer', className: 'Select-menu-outer' },
+					React.createElement(
+						'div',
+						menuProps,
+						this.buildMenu()
+					)
+				);
+			}
+	
+			var input;
+			var inputProps = {
+				ref: 'input',
+				className: 'Select-input ' + (this.props.inputProps.className || ''),
+				tabIndex: this.props.tabIndex || 0,
+				onFocus: this.handleInputFocus,
+				onBlur: this.handleInputBlur
+			};
+			for (var key in this.props.inputProps) {
+				if (this.props.inputProps.hasOwnProperty(key) && key !== 'className') {
+					inputProps[key] = this.props.inputProps[key];
+				}
+			}
+	
+			if (!this.props.disabled) {
+				if (this.props.searchable) {
+					input = React.createElement(Input, _extends({ value: this.state.inputValue, onChange: this.handleInputChange, minWidth: '5' }, inputProps));
+				} else {
+					input = React.createElement(
+						'div',
+						inputProps,
+						' '
+					);
+				}
+			} else if (!this.props.multi || !this.state.values.length) {
+				input = React.createElement(
+					'div',
+					{ className: 'Select-input' },
+					' '
+				);
+			}
+	
+			return React.createElement(
+				'div',
+				{ ref: 'wrapper', className: selectClass },
+				React.createElement('input', { type: 'hidden', ref: 'value', name: this.props.name, value: this.state.value, disabled: this.props.disabled }),
+				React.createElement(
+					'div',
+					{ className: 'Select-control', ref: 'control', onKeyDown: this.handleKeyDown, onMouseDown: this.handleMouseDown, onTouchEnd: this.handleMouseDown },
+					value,
+					input,
+					loading,
+					clear,
+					arrow
+				),
+				menu
+			);
+		}
+	});
+	
+	module.exports = Select;
+
+/***/ },
+/* 446 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var React = __webpack_require__(1);
+	
+	var sizerStyle = { position: 'absolute', visibility: 'hidden', height: 0, width: 0, overflow: 'scroll', whiteSpace: 'pre' };
+	
+	var nextFrame = typeof window !== 'undefined' ? (function () {
+		return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
+			window.setTimeout(callback, 1000 / 60);
+		};
+	})().bind(window) : undefined; // If window is undefined, then we can't define a nextFrame function
+	
+	var AutosizeInput = React.createClass({
+		displayName: 'AutosizeInput',
+	
+		propTypes: {
+			value: React.PropTypes.any, // field value
+			defaultValue: React.PropTypes.any, // default field value
+			onChange: React.PropTypes.func, // onChange handler: function(newValue) {}
+			style: React.PropTypes.object, // css styles for the outer element
+			className: React.PropTypes.string, // className for the outer element
+			minWidth: React.PropTypes.oneOfType([// minimum width for input element
+			React.PropTypes.number, React.PropTypes.string]),
+			inputStyle: React.PropTypes.object, // css styles for the input element
+			inputClassName: React.PropTypes.string // className for the input element
+		},
+		getDefaultProps: function getDefaultProps() {
+			return {
+				minWidth: 1
+			};
+		},
+		getInitialState: function getInitialState() {
+			return {
+				inputWidth: this.props.minWidth
+			};
+		},
+		componentDidMount: function componentDidMount() {
+			this.copyInputStyles();
+			this.updateInputWidth();
+		},
+		componentDidUpdate: function componentDidUpdate() {
+			this.updateInputWidth();
+		},
+		copyInputStyles: function copyInputStyles() {
+			if (!this.isMounted() || !window.getComputedStyle) {
+				return;
+			}
+			var inputStyle = window.getComputedStyle(this.refs.input);
+			if (!inputStyle) {
+				return;
+			}
+			var widthNode = this.refs.sizer;
+			widthNode.style.fontSize = inputStyle.fontSize;
+			widthNode.style.fontFamily = inputStyle.fontFamily;
+			widthNode.style.fontWeight = inputStyle.fontWeight;
+			widthNode.style.fontStyle = inputStyle.fontStyle;
+			widthNode.style.letterSpacing = inputStyle.letterSpacing;
+			if (this.props.placeholder) {
+				var placeholderNode = this.refs.placeholderSizer;
+				placeholderNode.style.fontSize = inputStyle.fontSize;
+				placeholderNode.style.fontFamily = inputStyle.fontFamily;
+				placeholderNode.style.fontWeight = inputStyle.fontWeight;
+				placeholderNode.style.fontStyle = inputStyle.fontStyle;
+				placeholderNode.style.letterSpacing = inputStyle.letterSpacing;
+			}
+		},
+		updateInputWidth: function updateInputWidth() {
+			if (!this.isMounted() || typeof this.refs.sizer.scrollWidth === 'undefined') {
+				return;
+			}
+			var newInputWidth = undefined;
+			if (this.props.placeholder) {
+				newInputWidth = Math.max(this.refs.sizer.scrollWidth, this.refs.placeholderSizer.scrollWidth) + 2;
+			} else {
+				newInputWidth = this.refs.sizer.scrollWidth + 2;
+			}
+			if (newInputWidth < this.props.minWidth) {
+				newInputWidth = this.props.minWidth;
+			}
+			if (newInputWidth !== this.state.inputWidth) {
+				this.setState({
+					inputWidth: newInputWidth
+				});
+			}
+		},
+		getInput: function getInput() {
+			return this.refs.input;
+		},
+		focus: function focus() {
+			this.refs.input.focus();
+		},
+		blur: function blur() {
+			this.refs.input.blur();
+		},
+		select: function select() {
+			this.refs.input.select();
+		},
+		render: function render() {
+			var sizerValue = this.props.defaultValue || this.props.value || '';
+			var wrapperStyle = this.props.style || {};
+			if (!wrapperStyle.display) wrapperStyle.display = 'inline-block';
+			var inputStyle = _extends({}, this.props.inputStyle);
+			inputStyle.width = this.state.inputWidth + 'px';
+			inputStyle.boxSizing = 'content-box';
+			var placeholder = this.props.placeholder ? React.createElement(
+				'div',
+				{ ref: 'placeholderSizer', style: sizerStyle },
+				this.props.placeholder
+			) : null;
+			return React.createElement(
+				'div',
+				{ className: this.props.className, style: wrapperStyle },
+				React.createElement('input', _extends({}, this.props, { ref: 'input', className: this.props.inputClassName, style: inputStyle })),
+				React.createElement(
+					'div',
+					{ ref: 'sizer', style: sizerStyle },
+					sizerValue
+				),
+				placeholder
+			);
+		}
+	});
+	
+	module.exports = AutosizeInput;
+
+/***/ },
+/* 447 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var classes = __webpack_require__(444);
+	
+	var Value = React.createClass({
+	
+		displayName: 'Value',
+	
+		propTypes: {
+			disabled: React.PropTypes.bool, // disabled prop passed to ReactSelect
+			onOptionLabelClick: React.PropTypes.func, // method to handle click on value label
+			onRemove: React.PropTypes.func, // method to handle remove of that value
+			option: React.PropTypes.object.isRequired, // option passed to component
+			optionLabelClick: React.PropTypes.bool, // indicates if onOptionLabelClick should be handled
+			renderer: React.PropTypes.func // method to render option label passed to ReactSelect
+		},
+	
+		blockEvent: function blockEvent(event) {
+			event.stopPropagation();
+		},
+	
+		handleOnRemove: function handleOnRemove(event) {
+			if (!this.props.disabled) {
+				this.props.onRemove(event);
+			}
+		},
+	
+		render: function render() {
+			var label = this.props.option.label;
+			if (this.props.renderer) {
+				label = this.props.renderer(this.props.option);
+			}
+	
+			if (!this.props.onRemove && !this.props.optionLabelClick) {
+				return React.createElement(
+					'div',
+					{
+						className: classes('Select-value', this.props.option.className),
+						style: this.props.option.style,
+						title: this.props.option.title
+					},
+					label
+				);
+			}
+	
+			if (this.props.optionLabelClick) {
+				label = React.createElement(
+					'a',
+					{ className: classes('Select-item-label__a', this.props.option.className),
+						onMouseDown: this.blockEvent,
+						onTouchEnd: this.props.onOptionLabelClick,
+						onClick: this.props.onOptionLabelClick,
+						style: this.props.option.style,
+						title: this.props.option.title },
+					label
+				);
+			}
+	
+			return React.createElement(
+				'div',
+				{ className: classes('Select-item', this.props.option.className),
+					style: this.props.option.style,
+					title: this.props.option.title },
+				React.createElement(
+					'span',
+					{ className: 'Select-item-icon',
+						onMouseDown: this.blockEvent,
+						onClick: this.handleOnRemove,
+						onTouchEnd: this.handleOnRemove },
+					'×'
+				),
+				React.createElement(
+					'span',
+					{ className: 'Select-item-label' },
+					label
+				)
+			);
+		}
+	
+	});
+	
+	module.exports = Value;
+
+/***/ },
+/* 448 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var classes = __webpack_require__(444);
+	
+	var SingleValue = React.createClass({
+		displayName: 'SingleValue',
+	
+		propTypes: {
+			placeholder: React.PropTypes.string, // this is default value provided by React-Select based component
+			value: React.PropTypes.object // selected option
+		},
+		render: function render() {
+			var classNames = classes('Select-placeholder', this.props.value && this.props.value.className);
+			return React.createElement(
+				'div',
+				{
+					className: classNames,
+					style: this.props.value && this.props.value.style,
+					title: this.props.value && this.props.value.title
+				},
+				this.props.placeholder
+			);
+		}
+	});
+	
+	module.exports = SingleValue;
+
+/***/ },
+/* 449 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var classes = __webpack_require__(444);
+	
+	var Option = React.createClass({
+		displayName: 'Option',
+	
+		propTypes: {
+			addLabelText: React.PropTypes.string, // string rendered in case of allowCreate option passed to ReactSelect
+			className: React.PropTypes.string, // className (based on mouse position)
+			mouseDown: React.PropTypes.func, // method to handle click on option element
+			mouseEnter: React.PropTypes.func, // method to handle mouseEnter on option element
+			mouseLeave: React.PropTypes.func, // method to handle mouseLeave on option element
+			option: React.PropTypes.object.isRequired, // object that is base for that option
+			renderFunc: React.PropTypes.func // method passed to ReactSelect component to render label text
+		},
+		blockEvent: function blockEvent(event) {
+			event.preventDefault();
+			if (event.target.tagName !== 'A' || !('href' in event.target)) {
+				return;
+			}
+	
+			if (event.target.target) {
+				window.open(event.target.href);
+			} else {
+				window.location.href = event.target.href;
+			}
+		},
+		handleMouseDown: function handleMouseDown(e) {
+			this.props.mouseDown(this.props.option, e);
+		},
+		handleMouseEnter: function handleMouseEnter(e) {
+			this.props.mouseEnter(this.props.option, e);
+		},
+		handleMouseLeave: function handleMouseLeave(e) {
+			this.props.mouseLeave(this.props.option, e);
+		},
+		render: function render() {
+			var option = this.props.option;
+			var label = option.create ? this.props.addLabelText.replace('{label}', option.label) : this.props.renderFunc(option);
+			var optionClasses = classes(this.props.className, option.className);
+	
+			return option.disabled ? React.createElement(
+				'div',
+				{ className: optionClasses,
+					onMouseDown: this.blockEvent,
+					onClick: this.blockEvent },
+				label
+			) : React.createElement(
+				'div',
+				{ className: optionClasses,
+					style: option.style,
+					onMouseDown: this.handleMouseDown,
+					onMouseEnter: this.handleMouseEnter,
+					onMouseLeave: this.handleMouseLeave,
+					onClick: this.handleMouseDown,
+					title: option.title },
+				label
+			);
+		}
+	});
+	
+	module.exports = Option;
+
+/***/ },
+/* 450 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	
+	var LinkedStateMixin = __webpack_require__(229);
+	var RadioGroup = __webpack_require__(233);
+	
+	var Modal = __webpack_require__(209);
+	var NoteItem = __webpack_require__(451);
+	var Editor = __webpack_require__(452);
+	
+	var APIUtil = __webpack_require__(235);
+	var NoteStore = __webpack_require__(266);
+	var BookSearchStore = __webpack_require__(246);
+	var UserStore = __webpack_require__(264);
+	
+	var Note = React.createClass({
+	  displayName: 'Note',
+	
+	  mixins: [LinkedStateMixin],
+	  getInitialState: function getInitialState() {
+	    return { noteText: "", title: "", pageNumber: null, selectedValue: true, allNotes: NoteStore.all(), chapter: null, modalIsOpen: false, loggedIn: UserStore.loggedIn(), currentBook: BookSearchStore.currentBook() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.userIndex = UserStore.addListener(this._onUserChange);
+	    this.noteIndex = NoteStore.addListener(this._onNotesChange);
+	    this.bookIndex = BookSearchStore.addListener(this._onBookChange);
+	    if (this.state.loggedIn && this.state.currentBook.id !== null && this.state.currentBook.id !== undefined) {
+	      APIUtil.fetchNotes(this.state.currentBook.id);
+	    }
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.noteIndex.remove();
+	    this.userIndex.remove();
+	    this.bookIndex.remove();
+	  },
+	  saveNote: function saveNote(event) {
+	    event.preventDefault();
+	    var pn = parseInt(this.state.pageNumber);
+	    var chap = parseInt(this.state.chapter);
+	    if (isNaN(pn)) {
+	      pn = null;
+	    }
+	    if (isNaN(chap)) {
+	      chap = null;
+	    }
+	    var noteHash = { body: this.state.noteText, page: pn, public: true, chapter: chap, book_id: this.props.currentBook.id };
+	    APIUtil.createNote(noteHash);
+	    this.state.noteText = "";
+	    this.state.title = "";
+	    this.state.pageNumber = null;
+	    this.state.chapter = null;
+	    this.closeModal();
+	  },
+	  submitNote: function submitNote(noteText) {
+	    var noteHash = { body: noteText, page: null, public: true, chapter: null, book_id: this.props.currentBook.id };
+	    APIUtil.createNote(noteHash);
+	    this.state.noteText = "";
+	    this.state.title = "";
+	    this.state.pageNumber = null;
+	    this.state.chapter = null;
+	  },
+	  addNote: function addNote(noteText) {
+	    debugger;
+	    var noteHash = { body: noteText, page: pn, public: true, chapter: chap, book_id: this.props.currentBook.id };
+	    this.state.noteText = "";
+	    this.state.title = "";
+	    this.state.pageNumber = null;
+	    this.state.chapter = null;
+	  },
+	  handleChange: function handleChange(value) {
+	    this.setState({ selectedValue: value });
+	  },
+	  _onNoteChange: function _onNoteChange() {
+	    this.setState({ allNotes: NoteStore.all() });
+	  },
+	  _onUserChange: function _onUserChange() {
+	    if (UserStore.loggedIn()) {
+	      APIUtil.fetchNotes(this.state.currentBook.id);
+	    }
+	    this.setState({ loggedIn: UserStore.loggedIn() });
+	  },
+	  _onBookChange: function _onBookChange() {
+	    this.setState({ currentBook: BookSearchStore.currentBook() });
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true });
+	  },
+	  closeModal: function closeModal() {
+	    this.setState({ modalIsOpen: false });
+	  },
+	  addNoteState: function addNoteState(content) {
+	    debugger;
+	  },
+	  passUpState: function passUpState(contentState) {
+	    this.currentNoteContent = contentState;
+	    debugger;
+	  },
+	  render: function render() {
+	
+	    if (this.state.loggedIn && this.state.currentBook.id !== null && this.state.currentBook.id !== undefined) {
+	      var noteDisplay = this.state.allNotes.map(function (note) {
+	        return React.createElement(NoteItem, { note: note, key: note.body });
+	      });
+	      if (this.state.allNotes.length === 0) {
+	        noteDisplay = React.createElement(
+	          'div',
+	          { className: 'individual-note-area' },
+	          'No Notes to display'
+	        );
+	      }
+	      var NoteStyle = {};
+	
+	      return React.createElement(
+	        'div',
+	        { className: 'NoteArea' },
+	        React.createElement(
+	          'div',
+	          { className: 'dispay-notes', style: NoteStyle },
+	          React.createElement(
+	            'div',
+	            { className: 'note-header' },
+	            React.createElement(
+	              'div',
+	              { className: 'NoteBookTitle', id: 'statement' },
+	              'Notes '
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'note-area' },
+	            React.createElement(
+	              'div',
+	              { className: 'inner-note' },
+	              React.createElement(
+	                'div',
+	                { className: 'notes' },
+	                noteDisplay
+	              ),
+	              React.createElement(Editor, { submitNote: this.submitNote, passUpState: this.passUpState })
+	            )
+	          )
+	        )
+	      );
+	    } else if (!this.state.loggedIn) {
+	      return React.createElement(
+	        'div',
+	        { className: 'NoteArea' },
+	        React.createElement(
+	          'h2',
+	          null,
+	          'Sign Up/Login to be able to add books to your shelf and write notes about them. '
+	        )
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        { className: 'NoteArea' },
+	        React.createElement(
+	          'h2',
+	          null,
+	          'You can only add/edit notes that are on your shelf.'
+	        )
+	      );
+	    }
+	  }
+	
+	});
+	
+	module.exports = Note;
+
+/***/ },
+/* 451 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	var APIUtil = __webpack_require__(235);
+	
+	var NoteItem = React.createClass({
+	  displayName: 'NoteItem',
+	
+	
+	  deleteClick: function deleteClick() {
+	    APIUtil.deleteNote(this.props.note.id);
+	  },
+	  render: function render() {
+	    var chapterText, pageText;
+	    if (this.props.note.chapter === undefined || this.props.note.chapter === null) {
+	      chapterText = "";
+	    } else {
+	      chapterText = "Chapter: " + this.props.note.chapter;
+	    }
+	    if (this.props.note.page === undefined || this.props.note.page === null) {
+	      pageText = "";
+	    } else {
+	      pageText = "Page: " + this.props.note.page;
+	    }
+	    return React.createElement(
+	      'div',
+	      { className: 'IndividualNote' },
+	      React.createElement(
+	        'h4',
+	        { className: 'NoteTitle' },
+	        this.props.note.title
+	      ),
+	      React.createElement(
+	        'p',
+	        { className: 'NoteBody' },
+	        this.props.note.body
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'NoteFooter' },
+	        chapterText + " " + pageText
+	      ),
+	      React.createElement(
+	        'button',
+	        { className: 'NoteDelete', onClick: this.deleteClick },
+	        'Delete Note'
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = NoteItem;
+
+/***/ },
+/* 452 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var React = __webpack_require__(1);
+	
+	var _require = __webpack_require__(269);
+	
+	var Editor = _require.Editor;
+	var EditorState = _require.EditorState;
+	var RichUtils = _require.RichUtils;
+	
+	var RichTextEditor = function (_React$Component) {
+	  _inherits(RichTextEditor, _React$Component);
+	
+	  function RichTextEditor(props) {
+	    _classCallCheck(this, RichTextEditor);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RichTextEditor).call(this, props));
+	
+	    _this.state = { editorState: EditorState.createEmpty() };
+	
+	    _this.focus = function () {
+	      return _this.refs.editor.focus();
+	    };
+	    _this.onChange = function (editorState) {
+	      return _this.setState({ editorState: editorState });
+	    };
+	
+	    _this.handleKeyCommand = function (command) {
+	      return _this._handleKeyCommand(command);
+	    };
+	    _this.onTab = function (e) {
+	      return _this._onTab(e);
+	    };
+	    _this.toggleBlockType = function (type) {
+	      return _this._toggleBlockType(type);
+	    };
+	    _this.toggleInlineStyle = function (style) {
+	      return _this._toggleInlineStyle(style);
+	    };
+	    _this.addNote = function (e) {
+	      return _this._addNote(e);
+	    };
+	    _this.clearEditorState = function () {
+	      return _this._clearEditorState();
+	    };
+	    return _this;
+	  }
+	
+	  _createClass(RichTextEditor, [{
+	    key: '_handleKeyCommand',
+	    value: function _handleKeyCommand(command) {
+	      var editorState = this.state.editorState;
+	
+	      var newState = RichUtils.handleKeyCommand(editorState, command);
+	      if (newState) {
+	        this.onChange(newState);
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: '_onChange',
+	    value: function _onChange(es) {
+	
+	      this.setState({ es: es });
+	    }
+	  }, {
+	    key: '_onTab',
+	    value: function _onTab(e) {
+	      var maxDepth = 4;
+	      this.onChange(RichUtils.onTab(e, this.state.editorState, maxDepth));
+	    }
+	  }, {
+	    key: '_toggleBlockType',
+	    value: function _toggleBlockType(blockType) {
+	      this.onChange(RichUtils.toggleBlockType(this.state.editorState, blockType));
+	    }
+	  }, {
+	    key: '_toggleInlineStyle',
+	    value: function _toggleInlineStyle(inlineStyle) {
+	      this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, inlineStyle));
+	    }
+	  }, {
+	    key: '_addNote',
+	    value: function _addNote(event) {
+	      event.preventDefault();
+	      var noteText = this.state.editorState.getCurrentContent().getPlainText();
+	      this.props.submitNote(noteText);
+	      this.clearEditorState();
+	    }
+	  }, {
+	    key: '_clearEditorState',
+	    value: function _clearEditorState() {
+	      this.setState({ editorState: EditorState.createEmpty() });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var editorState = this.state.editorState;
+	
+	      // If the user changes block type before entering any text, we can
+	      // either style the placeholder or hide it. Let's just hide it now.
+	
+	      var className = 'RichEditor-editor';
+	      var contentState = editorState.getCurrentContent();
+	      if (!contentState.hasText()) {
+	        if (contentState.getBlockMap().first().getType() !== 'unstyled') {
+	          className += ' RichEditor-hidePlaceholder';
+	        }
+	      }
+	
+	      return React.createElement(
+	        'div',
+	        { className: 'RichEditor-root' },
+	        React.createElement(BlockStyleControls, {
+	          editorState: editorState,
+	          onToggle: this.toggleBlockType
+	        }),
+	        React.createElement(InlineStyleControls, {
+	          editorState: editorState,
+	          onToggle: this.toggleInlineStyle
+	        }),
+	        React.createElement(
+	          'div',
+	          { className: className, onClick: this.focus },
+	          React.createElement(Editor, {
+	            blockStyleFn: getBlockStyle,
+	            customStyleMap: styleMap,
+	            editorState: editorState,
+	            handleKeyCommand: this.handleKeyCommand,
+	            onChange: this.onChange,
+	            onTab: this.onTab,
+	            placeholder: 'write a note...',
+	            ref: 'editor',
+	            spellCheck: true
+	          })
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'AddNoteButton', onClick: this.addNote },
+	          'Add Note'
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return RichTextEditor;
+	}(React.Component);
+	
+	// Custom overrides for "code" style.
+	
+	
+	var styleMap = {
+	  CODE: {
+	    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+	    fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
+	    fontSize: 16,
+	    padding: 2
+	  }
+	};
+	
+	function getBlockStyle(block) {
+	  switch (block.getType()) {
+	    case 'blockquote':
+	      return 'RichEditor-blockquote';
+	    default:
+	      return null;
+	  }
+	}
+	
+	var StyleButton = function (_React$Component2) {
+	  _inherits(StyleButton, _React$Component2);
+	
+	  function StyleButton() {
+	    _classCallCheck(this, StyleButton);
+	
+	    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(StyleButton).call(this));
+	
+	    _this2.onToggle = function (e) {
+	      e.preventDefault();
+	      _this2.props.onToggle(_this2.props.style);
+	    };
+	    return _this2;
+	  }
+	
+	  _createClass(StyleButton, [{
+	    key: 'render',
+	    value: function render() {
+	      var className = 'RichEditor-styleButton';
+	      if (this.props.active) {
+	        className += ' RichEditor-activeButton';
+	      }
+	
+	      return React.createElement(
+	        'span',
+	        { className: className, onMouseDown: this.onToggle },
+	        this.props.label
+	      );
+	    }
+	  }]);
+	
+	  return StyleButton;
+	}(React.Component);
+	
+	var BLOCK_TYPES = [{ label: 'H1', style: 'header-one' }, { label: 'H2', style: 'header-two' }, { label: 'H3', style: 'header-three' }, { label: 'H4', style: 'header-four' }, { label: 'H5', style: 'header-five' }, { label: 'H6', style: 'header-six' }, { label: 'Blockquote', style: 'blockquote' }, { label: 'UL', style: 'unordered-list-item' }, { label: 'OL', style: 'ordered-list-item' }, { label: 'Code Block', style: 'code-block' }];
+	
+	var BlockStyleControls = function BlockStyleControls(props) {
+	  var editorState = props.editorState;
+	
+	  var selection = editorState.getSelection();
+	  var blockType = editorState.getCurrentContent().getBlockForKey(selection.getStartKey()).getType();
+	
+	  return React.createElement(
+	    'div',
+	    { className: 'RichEditor-controls' },
+	    BLOCK_TYPES.map(function (type) {
+	      return React.createElement(StyleButton, {
+	        key: type.label,
+	        active: type.style === blockType,
+	        label: type.label,
+	        onToggle: props.onToggle,
+	        style: type.style
+	      });
+	    })
+	  );
+	};
+	
+	var INLINE_STYLES = [{ label: 'Bold', style: 'BOLD' }, { label: 'Italic', style: 'ITALIC' }, { label: 'Underline', style: 'UNDERLINE' }, { label: 'Monospace', style: 'CODE' }];
+	
+	var InlineStyleControls = function InlineStyleControls(props) {
+	  var currentStyle = props.editorState.getCurrentInlineStyle();
+	  return React.createElement(
+	    'div',
+	    { className: 'RichEditor-controls' },
+	    INLINE_STYLES.map(function (type) {
+	      return React.createElement(StyleButton, {
+	        key: type.label,
+	        active: currentStyle.has(type.style),
+	        label: type.label,
+	        onToggle: props.onToggle,
+	        style: type.style
+	      });
+	    })
+	  );
+	};
+	
+	module.exports = RichTextEditor;
 
 /***/ }
 /******/ ]);

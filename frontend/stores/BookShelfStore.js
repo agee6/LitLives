@@ -16,7 +16,6 @@ var addBook = function(book){
   }else {
     _books.reading.push(book);
   }
-
 };
 
 BookShelfStore.all = function () {

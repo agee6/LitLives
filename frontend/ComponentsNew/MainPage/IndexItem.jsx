@@ -6,13 +6,14 @@ var browserHistory = require('react-router').browserHistory;
 var APIUtil = require('../../util/APIUtil.js');
 
 var IndexItem = React.createClass({
+  mixins:[History],
   onClick: function(event){
     event.preventDefault();
     ApiActions.updateCurrentBook(this.props.book);
     var bookToSend = this.props.book;
     bookToSend.read = "toRead";
     var url = "/Desk"
-    this.props.history.push("/Books/book/" + bookToSend.ISBN13)
+    this.history.push("/Book/" + bookToSend.ISBN13)
   },
   render: function(){
     var customStyle;

@@ -14,18 +14,13 @@ var resetSearchResults = function(results){
 };
 var resetCurrentBook = function(book){
   _currentBook = book;
-
 };
 var loadInitial = function(results){
-
   _initialResults = results.slice();
   APIUtil.addToInitial();
-
 };
 var addToInitial = function(results){
-
   _initialResults = _initialResults.concat(results.slice());
-
 };
 BookSearchStore.cleanInitial = function(){
   var initDup = [];
@@ -48,12 +43,10 @@ BookSearchStore.initialData = function(){
 };
 BookSearchStore.resetCurrentBook = function(book){
   _currentBook = book;
-
 };
 BookSearchStore.currentBook = function(){
   return _currentBook;
 };
-
 BookSearchStore.__onDispatch = function (payload) {
 
   switch(payload.actionType) {

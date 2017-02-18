@@ -1,11 +1,11 @@
 var React = require('react');
 var History = require('react-router').History;
-var APIUtil = require('../util/APIUtil.js');
+var APIUtil = require('../../util/APIUtil.js');
 var Modal = require('react-modal');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
-var UserStore = require('../stores/UserStore.js');
-var ApiActions = require('../actions/api_actions.js');
-var BookSearchStore = require('../stores/BookSearchStore.js');
+var UserStore = require('../../stores/UserStore.js');
+var ApiActions = require('../../actions/api_actions.js');
+var BookSearchStore = require('../../stores/BookSearchStore.js');
 var browserHistory = require('react-router').browserHistory;
 var customStyles = {
   overlay : {
@@ -45,19 +45,22 @@ var quotes = [
 var Navbar = React.createClass({
   mixins: [History, LinkedStateMixin],
   getInitialState: function(){
-    this.toWhere = "/Search";
+    this.toWhere = "/";
     return({loggedIn: UserStore.loggedIn(), username: null, password: null, modalIsOpen: false, message: ""})
   },
   componentDidMount: function(){
     this.userIndex = UserStore.addListener(this._onChange);
   },
   searchClick:function(event){
-    browserHistory.push({pathname:"/Books"});
-    // this.history.push({pathname: "/Search"});
+    this.history.push({pathname: "/Search"});
+  },
+  homeClick:function(event){
+    this.history.push({pathname: "/"});
   },
   userClick:function(event){
     if(this.state.loggedIn){
-      //Go to user page
+      var pathname = "/User/" + UserStore.currentUser().id;
+      this.history.push({pathname: pathname});
     }else{
       this.openModal();
       this.setState({modalIsOpen: true, message: "login to continue"});
@@ -69,7 +72,7 @@ var Navbar = React.createClass({
     this.history.push({pathname: "/Analyses"});
   },
   openModal: function() {
-    this.setState({modalIsOpen: true, chosen: BookSearchStore.currentBook()});
+    this.setState({modalIsOpen: true});
   },
   closeModal: function() {
     this.setState({modalIsOpen: false, message: ""});
@@ -77,8 +80,6 @@ var Navbar = React.createClass({
   signOutClick: function(event){
     APIUtil.logoutUser();
     ApiActions.emptyShelves();
-    ApiActions.deleteCurrentBook();
-    this.history.push({pathname: "/Books"});
   },
   signClick: function(event){
     event.preventDefault();
@@ -92,19 +93,14 @@ var Navbar = React.createClass({
     }
   },
   _onChange: function(){
-    if(UserStore.loggedIn()){
-      this.closeModal();
-      this.setState({loggedIn: UserStore.loggedIn()});
-      this.history.push({pathname: this.toWhere});
-    }else{
-      if(this.clicked){
+    if(this.state.modalIsOpen){
+      if(UserStore.loggedIn()){
+        this.setState({loggedIn:UserStore.loggedIn(), modalIsOpen:false});
+      }else{
         this.setState({message:"unsuccessful, please try again", loggedIn: UserStore.loggedIn()});
-      }else {
-        if(UserStore.needsToLogin()){
-          this.openModal();
-          this.setState({loggedIn: UserStore.loggedIn(), message: "login to continue"});
-        }
       }
+    }else{
+      this.setState({loggedIn:UserStore.loggedIn()});
     }
   },
   signUpClick: function(event){
@@ -146,16 +142,16 @@ var Navbar = React.createClass({
       <div className="Navbar">
         <nav className="header-nav group" >
 
-           <div className="header-logo" onClick={this.searchClick}>
+           <div className="header-logo" onClick={this.homeClick}>
              <div className="logo-image">LL</div>
 
            </div>
-           <div className='quote'> {quoteToUse}</div>
+           <div className='quote'>{quoteToUse}</div>
 
            <ul className="header-list group">
 
-             <li className="nav-right" id="NavSearch" onClick={this.searchClick}>Search</li>
-             <li className="nav-right" id="NavDesk" onClick={this.deskClick}>Desk</li>
+             <li className="nav-right" id="NavSearch" onClick={this.homeClick}>Search</li>
+             <li className="nav-right" id="NavDesk" onClick={this.userClick}>User</li>
              {signB}
            </ul>
          </nav>

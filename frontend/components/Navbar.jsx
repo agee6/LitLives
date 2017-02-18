@@ -56,7 +56,7 @@ var Navbar = React.createClass({
     this.userIndex = UserStore.addListener(this._onChange);
   },
   searchClick:function(event){
-    browserHistory.push({pathname:"/Books"}); 
+    browserHistory.push({pathname:"/Books"});
     // this.history.push({pathname: "/Search"});
   },
   deskClick:function(event){
@@ -75,9 +75,7 @@ var Navbar = React.createClass({
   openModal: function() {
     this.setState({modalIsOpen: true, chosen: BookSearchStore.currentBook()});
   },
-
   closeModal: function() {
-
     this.setState({modalIsOpen: false, message: ""});
   },
   signOutClick: function(event){

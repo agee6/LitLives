@@ -12,12 +12,13 @@ var APIUtil = require('./util/APIUtil.js');
 var root = document.getElementById('reactContent');
 // var cb = root.getAttribute("data-has-book");
 var History = require('react-router').History;
-var Navbar = require('./components/Navbar.jsx');
+var Navbar = require('./ComponentsNew/Navbar/Navbar.jsx');
 var UserStore = require('./stores/UserStore.js');
 var ApiActions = require('./actions/api_actions');
 var Books = require('./components/Books.jsx');
-var Book = require('./components/Book.jsx');
+var Book = require('./ComponentsNew/BookPage/Book.jsx');
 var MainPage = require('./ComponentsNew/MainPage.jsx');
+var User = require('./ComponentsNew/UserPage/User.jsx'); 
 
 // var Analyses = require('./components/AnalysesComponents/Analyses.jsx');
 // var AnalysisShow = require('./components/AnalysesComponents/AnalysisShow.jsx');
@@ -61,6 +62,8 @@ var routes = (
   <Route path="/" component={App}>
     <IndexRoute component={MainPage} />
     <Route path="Book/:book_id" component={Book}>
+    </Route>
+    <Route path="User/:user_id" component={User}>
     </Route>
     <Route path="SearchResults" component={SearchResults} />
   </Route>

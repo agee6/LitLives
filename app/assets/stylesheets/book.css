@@ -1,0 +1,19 @@
+
+.book-main{
+  display: flex;
+  flex-direction: row;
+}
+.book-area{
+  width: 66%;
+  flex-direction: column;
+}
+.book-block{
+  flex-direction: row;
+}
+.book-column{
+  width: 50%;
+  display: inline-block;
+}
+.user-area{
+  width: 33%;
+}

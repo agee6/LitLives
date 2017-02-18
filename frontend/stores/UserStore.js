@@ -23,7 +23,10 @@ UserStore.loggedIn = function(){
 UserStore.needsToLogin = function(){
   return needsToLogin;
 };
-
+UserStore.bookshelves = function(){
+  console.log("work on this!");
+  return "banana"; 
+}
 UserStore.currentUser = function () {
   return _users[0];
 };

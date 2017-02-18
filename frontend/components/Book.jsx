@@ -6,13 +6,14 @@ var BookImage = require("./Book/BookImage.jsx");
 var NoteArea = require("./NoteBook/Note.jsx");
 var UserShelfArea = require("./User/UserShelfArea.jsx");
 
+//stores
+
 var Book = React.createClass({
 
   render: function(){
 
     return(
       <div className="book-main">
-        <h1>It freaking worked!</h1>
         <div className="book-area">
           <div className="book-column">
             <BookDescription />

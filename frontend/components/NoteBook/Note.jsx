@@ -79,7 +79,6 @@ var Note = React.createClass({
     this.state.pageNumber = null;
     this.state.chapter= null;
 
-
   },
   handleChange: function(value){
     this.setState({selectedValue: value});

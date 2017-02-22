@@ -4,6 +4,7 @@ var ReviewConstants = require('../constants/ReviewConstants');
 var AppDispatcher = require('../dispatcher/dispatcher');
 var ReviewStore = new Store(AppDispatcher);
 var APIUtil = require('../util/APIUtil.js');
+var _rating = 0;
 
 var resetNotes = function(reviews){
   _reviews = [];
@@ -13,14 +14,32 @@ var resetNotes = function(reviews){
     _reviews = reviews.slice(0);
   }
 };
+var resetRating = function(reviews){
+  if(reviews.length === 0){
+    _rating = 0;
+    return 0;
+  }
+  var rating = 0;
+  for (var i = 0; i < reviews.length; i++) {
+    rating += reviews[i].rating;
+  }
+  _rating = (rating/reviews.length) / 2;
+}
 
 var addReview = function(review){
-  _reviews.push(note);
+  var rating = _rating * 2 * _reviews.length;
+  _reviews.push(review);
+  rating += review.rating;
+  _rating = (rating / _reviews.length) / 2;
 };
 
 ReviewStore.all = function () {
   return _reviews.slice(0);
 };
+
+ReviewStore.rating = function(){
+  return _rating;
+}
 
 ReviewStore.empty = function(){
   _reviews = [];
@@ -28,11 +47,12 @@ ReviewStore.empty = function(){
 
 ReviewStore.__onDispatch = function (payload) {
   switch(payload.actionType) {
-    case ReviewConstants.ReceiveReviews:
+    case ReviewConstants.ReceiveBookReviews:
       var result = resetNotes(payload.results);
+      var result2 = resetRating(payload.results);
       ReviewStore.__emitChange();
       break;
-    case ReviewConstants.AddReview:
+    case ReviewConstants.AddBookReview:
       var r2 = addReview(payload.result);
       ReviewStore.__emitChange();
       break;

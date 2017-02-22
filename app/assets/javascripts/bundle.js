@@ -60,17 +60,17 @@
 	var root = document.getElementById('reactContent');
 	// var cb = root.getAttribute("data-has-book");
 	var History = __webpack_require__(159).History;
-	var Navbar = __webpack_require__(437);
-	var UserStore = __webpack_require__(264);
+	var Navbar = __webpack_require__(416);
+	var UserStore = __webpack_require__(265);
 	var ApiActions = __webpack_require__(236);
-	var Books = __webpack_require__(416);
-	var Book = __webpack_require__(425);
-	var MainPage = __webpack_require__(429);
-	var User = __webpack_require__(439);
+	var Books = __webpack_require__(417);
+	var Book = __webpack_require__(426);
+	var MainPage = __webpack_require__(444);
+	var User = __webpack_require__(450);
 	
 	// var Analyses = require('./components/AnalysesComponents/Analyses.jsx');
 	// var AnalysisShow = require('./components/AnalysesComponents/AnalysisShow.jsx');
-	var SearchResults = __webpack_require__(435);
+	var SearchResults = __webpack_require__(451);
 	
 	var App = React.createClass({
 	  displayName: 'App',
@@ -24072,7 +24072,7 @@
 	
 	var React = __webpack_require__(1);
 	var Notebook = __webpack_require__(207);
-	var BS = __webpack_require__(411);
+	var BS = __webpack_require__(412);
 	
 	var Desk = React.createClass({
 	  displayName: 'Desk',
@@ -24098,10 +24098,10 @@
 	
 	var React = __webpack_require__(1);
 	var BookPage = __webpack_require__(208);
-	var BookSearchStore = __webpack_require__(246);
-	var Tabs = __webpack_require__(408);
-	var Note = __webpack_require__(265);
-	var Reviews = __webpack_require__(410);
+	var BookSearchStore = __webpack_require__(247);
+	var Tabs = __webpack_require__(409);
+	var Note = __webpack_require__(266);
+	var Reviews = __webpack_require__(411);
 	
 	var Notebook = React.createClass({
 	  displayName: 'Notebook',
@@ -24179,9 +24179,9 @@
 	var RadioGroup = __webpack_require__(233);
 	var APIUtil = __webpack_require__(235);
 	var ApiActions = __webpack_require__(236);
-	var BookSearchStore = __webpack_require__(246);
-	var UserStore = __webpack_require__(264);
-	var Note = __webpack_require__(265);
+	var BookSearchStore = __webpack_require__(247);
+	var UserStore = __webpack_require__(265);
+	var Note = __webpack_require__(266);
 	
 	var customStyles = {
 	  overlay: {
@@ -27054,25 +27054,23 @@
 	var NoteConstants = __webpack_require__(243);
 	var UserConstants = __webpack_require__(244);
 	var AnalysisConstants = __webpack_require__(245);
+	var ReviewConstants = __webpack_require__(246);
 	
 	var ApiActions = {
 	
 	  ReceiveActions: function ReceiveActions(bookList) {
-	
 	    AppDispatcher.dispatch({
 	      actionType: BookSearchConstants.SearchResultsReceived,
 	      results: bookList.items
 	    });
 	  },
 	  ReceiveInitial: function ReceiveInitial(bookList) {
-	
 	    AppDispatcher.dispatch({
 	      actionType: BookSearchConstants.InitialResultsReceived,
 	      results: bookList
 	    });
 	  },
 	  receiveUserBooks: function receiveUserBooks(books) {
-	
 	    AppDispatcher.dispatch({
 	      actionType: BookShelfConstants.ReceiveUserBooks,
 	      books: books
@@ -27085,14 +27083,12 @@
 	    });
 	  },
 	  updateCurrentBook: function updateCurrentBook(book) {
-	
 	    AppDispatcher.dispatch({
 	      actionType: BookSearchConstants.ReceiveCurrentBook,
 	      book: book
 	    });
 	  },
 	  emptyShelves: function emptyShelves() {
-	
 	    AppDispatcher.dispatch({
 	      actionType: BookShelfConstants.EmptyShelves
 	    });
@@ -27148,6 +27144,24 @@
 	    AppDispatcher.dispatch({
 	      actionType: UserConstants.UpdateNeeds,
 	      need: need
+	    });
+	  },
+	  receiveBookReviews: function receiveBookReviews(reviews) {
+	    AppDispatcher.dispatch({
+	      actionType: ReviewConstants.RecieveBookReviews,
+	      reviews: reviews
+	    });
+	  },
+	  recieveUserReviews: function recieveUserReviews(reviews) {
+	    AppDispatcher.dispatch({
+	      actionType: ReviewConstants.RecieveUserReviews,
+	      reviews: reviews
+	    });
+	  },
+	  addBookReview: function addBookReview(review) {
+	    AppDispatcher.dispatch({
+	      actionType: ReviewConstants.AddBookReview,
+	      review: review
 	    });
 	  }
 	};
@@ -27547,11 +27561,29 @@
 
 /***/ },
 /* 246 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
+	var ReviewConstants = _defineProperty({
+	  RecieveBookReviews: "RECEIVE_BOOK_REVIEWS",
+	  RecieveUserReviews: "RECIEVE_USER_REVIEWS",
+	  AddBookReview: "ADD_BOOK_REVIEW",
+	  ReceiveNewComment: "RECEIVE_NEW_REVIEW",
+	  ReceiveReview: "RECEIVE_REVIEWS"
+	}, "ReceiveReview", "RECEIVE_REVIEW");
+	
+	module.exports = ReviewConstants;
+
+/***/ },
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Store = __webpack_require__(247).Store;
+	var Store = __webpack_require__(248).Store;
 	var _searchResults = [];
 	var _initialResults = [];
 	var _currentBook = null;
@@ -27635,7 +27667,7 @@
 	module.exports = BookSearchStore;
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27647,15 +27679,15 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Container = __webpack_require__(248);
-	module.exports.MapStore = __webpack_require__(251);
-	module.exports.Mixin = __webpack_require__(263);
-	module.exports.ReduceStore = __webpack_require__(252);
-	module.exports.Store = __webpack_require__(253);
+	module.exports.Container = __webpack_require__(249);
+	module.exports.MapStore = __webpack_require__(252);
+	module.exports.Mixin = __webpack_require__(264);
+	module.exports.ReduceStore = __webpack_require__(253);
+	module.exports.Store = __webpack_require__(254);
 
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27677,10 +27709,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStoreGroup = __webpack_require__(249);
+	var FluxStoreGroup = __webpack_require__(250);
 	
 	var invariant = __webpack_require__(240);
-	var shallowEqual = __webpack_require__(250);
+	var shallowEqual = __webpack_require__(251);
 	
 	var DEFAULT_OPTIONS = {
 	  pure: true,
@@ -27838,7 +27870,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27919,7 +27951,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports) {
 
 	/**
@@ -27974,7 +28006,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -27995,8 +28027,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxReduceStore = __webpack_require__(252);
-	var Immutable = __webpack_require__(262);
+	var FluxReduceStore = __webpack_require__(253);
+	var Immutable = __webpack_require__(263);
 	
 	var invariant = __webpack_require__(240);
 	
@@ -28124,7 +28156,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -28145,9 +28177,9 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStore = __webpack_require__(253);
+	var FluxStore = __webpack_require__(254);
 	
-	var abstractMethod = __webpack_require__(261);
+	var abstractMethod = __webpack_require__(262);
 	var invariant = __webpack_require__(240);
 	
 	var FluxReduceStore = (function (_FluxStore) {
@@ -28231,7 +28263,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 253 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -28250,7 +28282,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _require = __webpack_require__(254);
+	var _require = __webpack_require__(255);
 	
 	var EventEmitter = _require.EventEmitter;
 	
@@ -28414,7 +28446,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 254 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28427,14 +28459,14 @@
 	 */
 	
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(255)
+	  EventEmitter: __webpack_require__(256)
 	};
 	
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 255 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -28453,11 +28485,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var EmitterSubscription = __webpack_require__(256);
-	var EventSubscriptionVendor = __webpack_require__(258);
+	var EmitterSubscription = __webpack_require__(257);
+	var EventSubscriptionVendor = __webpack_require__(259);
 	
-	var emptyFunction = __webpack_require__(260);
-	var invariant = __webpack_require__(259);
+	var emptyFunction = __webpack_require__(261);
+	var invariant = __webpack_require__(260);
 	
 	/**
 	 * @class BaseEventEmitter
@@ -28631,7 +28663,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 256 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -28652,7 +28684,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var EventSubscription = __webpack_require__(257);
+	var EventSubscription = __webpack_require__(258);
 	
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -28684,7 +28716,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 257 */
+/* 258 */
 /***/ function(module, exports) {
 
 	/**
@@ -28738,7 +28770,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 258 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -28757,7 +28789,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(259);
+	var invariant = __webpack_require__(260);
 	
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -28847,7 +28879,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 259 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -28902,7 +28934,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 260 */
+/* 261 */
 /***/ function(module, exports) {
 
 	/**
@@ -28944,7 +28976,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 261 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -28971,7 +29003,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 262 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33958,7 +33990,7 @@
 	}));
 
 /***/ },
-/* 263 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -33975,7 +34007,7 @@
 	
 	'use strict';
 	
-	var FluxStoreGroup = __webpack_require__(249);
+	var FluxStoreGroup = __webpack_require__(250);
 	
 	var invariant = __webpack_require__(240);
 	
@@ -34081,12 +34113,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 264 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Store = __webpack_require__(247).Store;
+	var Store = __webpack_require__(248).Store;
 	var _users = [];
 	var needsToLogin = false;
 	var UserConstants = __webpack_require__(244);
@@ -34142,7 +34174,7 @@
 	module.exports = UserStore;
 
 /***/ },
-/* 265 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34151,10 +34183,10 @@
 	var LinkedStateMixin = __webpack_require__(229);
 	var RadioGroup = __webpack_require__(233);
 	var APIUtil = __webpack_require__(235);
-	var NoteStore = __webpack_require__(266);
-	var NoteItem = __webpack_require__(267);
+	var NoteStore = __webpack_require__(267);
+	var NoteItem = __webpack_require__(268);
 	var Modal = __webpack_require__(209);
-	var Editor = __webpack_require__(268);
+	var Editor = __webpack_require__(269);
 	
 	var customStyles = {
 	  overlay: {
@@ -34316,12 +34348,12 @@
 	module.exports = Note;
 
 /***/ },
-/* 266 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Store = __webpack_require__(247).Store;
+	var Store = __webpack_require__(248).Store;
 	var _notes = [];
 	var NoteConstants = __webpack_require__(243);
 	var AppDispatcher = __webpack_require__(237);
@@ -34368,7 +34400,7 @@
 	module.exports = NoteStore;
 
 /***/ },
-/* 267 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34429,7 +34461,7 @@
 	module.exports = NoteItem;
 
 /***/ },
-/* 268 */
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34444,7 +34476,7 @@
 	
 	var React = __webpack_require__(1);
 	
-	var _require = __webpack_require__(269);
+	var _require = __webpack_require__(270);
 	
 	var Editor = _require.Editor;
 	var EditorState = _require.EditorState;
@@ -34689,7 +34721,7 @@
 	module.exports = RichTextEditor;
 
 /***/ },
-/* 269 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34705,30 +34737,30 @@
 	
 	'use strict';
 	
-	var AtomicBlockUtils = __webpack_require__(270);
-	var BlockMapBuilder = __webpack_require__(271);
-	var CharacterMetadata = __webpack_require__(272);
-	var CompositeDraftDecorator = __webpack_require__(306);
-	var ContentBlock = __webpack_require__(273);
-	var ContentState = __webpack_require__(298);
-	var DefaultDraftBlockRenderMap = __webpack_require__(307);
-	var DefaultDraftInlineStyle = __webpack_require__(309);
-	var DraftEditor = __webpack_require__(310);
-	var DraftEditorBlock = __webpack_require__(316);
-	var DraftModifier = __webpack_require__(275);
-	var DraftEntity = __webpack_require__(280);
-	var DraftEntityInstance = __webpack_require__(282);
-	var EditorState = __webpack_require__(295);
-	var KeyBindingUtil = __webpack_require__(365);
-	var RichTextEditorUtil = __webpack_require__(396);
-	var SelectionState = __webpack_require__(299);
+	var AtomicBlockUtils = __webpack_require__(271);
+	var BlockMapBuilder = __webpack_require__(272);
+	var CharacterMetadata = __webpack_require__(273);
+	var CompositeDraftDecorator = __webpack_require__(307);
+	var ContentBlock = __webpack_require__(274);
+	var ContentState = __webpack_require__(299);
+	var DefaultDraftBlockRenderMap = __webpack_require__(308);
+	var DefaultDraftInlineStyle = __webpack_require__(310);
+	var DraftEditor = __webpack_require__(311);
+	var DraftEditorBlock = __webpack_require__(317);
+	var DraftModifier = __webpack_require__(276);
+	var DraftEntity = __webpack_require__(281);
+	var DraftEntityInstance = __webpack_require__(283);
+	var EditorState = __webpack_require__(296);
+	var KeyBindingUtil = __webpack_require__(366);
+	var RichTextEditorUtil = __webpack_require__(397);
+	var SelectionState = __webpack_require__(300);
 	
-	var convertFromDraftStateToRaw = __webpack_require__(398);
-	var convertFromHTMLToContentBlocks = __webpack_require__(388);
-	var convertFromRawToDraftState = __webpack_require__(402);
-	var generateRandomKey = __webpack_require__(287);
-	var getDefaultKeyBinding = __webpack_require__(395);
-	var getVisibleSelectionRect = __webpack_require__(406);
+	var convertFromDraftStateToRaw = __webpack_require__(399);
+	var convertFromHTMLToContentBlocks = __webpack_require__(389);
+	var convertFromRawToDraftState = __webpack_require__(403);
+	var generateRandomKey = __webpack_require__(288);
+	var getDefaultKeyBinding = __webpack_require__(396);
+	var getVisibleSelectionRect = __webpack_require__(407);
 	
 	var DraftPublic = {
 	  Editor: DraftEditor,
@@ -34764,7 +34796,7 @@
 	module.exports = DraftPublic;
 
 /***/ },
-/* 270 */
+/* 271 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34782,14 +34814,14 @@
 	
 	'use strict';
 	
-	var BlockMapBuilder = __webpack_require__(271);
-	var CharacterMetadata = __webpack_require__(272);
-	var ContentBlock = __webpack_require__(273);
-	var DraftModifier = __webpack_require__(275);
-	var EditorState = __webpack_require__(295);
-	var Immutable = __webpack_require__(262);
+	var BlockMapBuilder = __webpack_require__(272);
+	var CharacterMetadata = __webpack_require__(273);
+	var ContentBlock = __webpack_require__(274);
+	var DraftModifier = __webpack_require__(276);
+	var EditorState = __webpack_require__(296);
+	var Immutable = __webpack_require__(263);
 	
-	var generateRandomKey = __webpack_require__(287);
+	var generateRandomKey = __webpack_require__(288);
 	
 	var List = Immutable.List;
 	var Repeat = Immutable.Repeat;
@@ -34838,7 +34870,7 @@
 	module.exports = AtomicBlockUtils;
 
 /***/ },
-/* 271 */
+/* 272 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34855,7 +34887,7 @@
 	
 	'use strict';
 	
-	var Immutable = __webpack_require__(262);
+	var Immutable = __webpack_require__(263);
 	
 	var OrderedMap = Immutable.OrderedMap;
 	
@@ -34871,7 +34903,7 @@
 	module.exports = BlockMapBuilder;
 
 /***/ },
-/* 272 */
+/* 273 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -34895,7 +34927,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _require = __webpack_require__(262);
+	var _require = __webpack_require__(263);
 	
 	var Map = _require.Map;
 	var OrderedSet = _require.OrderedSet;
@@ -34984,7 +35016,7 @@
 	module.exports = CharacterMetadata;
 
 /***/ },
-/* 273 */
+/* 274 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35007,9 +35039,9 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var Immutable = __webpack_require__(262);
+	var Immutable = __webpack_require__(263);
 	
-	var findRangesImmutable = __webpack_require__(274);
+	var findRangesImmutable = __webpack_require__(275);
 	
 	var List = Immutable.List;
 	var Map = Immutable.Map;
@@ -35109,7 +35141,7 @@
 	module.exports = ContentBlock;
 
 /***/ },
-/* 274 */
+/* 275 */
 /***/ function(module, exports) {
 
 	/**
@@ -35158,7 +35190,7 @@
 	module.exports = findRangesImmutable;
 
 /***/ },
-/* 275 */
+/* 276 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -35176,20 +35208,20 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(272);
-	var ContentStateInlineStyle = __webpack_require__(276);
-	var Immutable = __webpack_require__(262);
+	var CharacterMetadata = __webpack_require__(273);
+	var ContentStateInlineStyle = __webpack_require__(277);
+	var Immutable = __webpack_require__(263);
 	
-	var applyEntityToContentState = __webpack_require__(277);
-	var getCharacterRemovalRange = __webpack_require__(279);
-	var getContentStateFragment = __webpack_require__(286);
-	var insertFragmentIntoContentState = __webpack_require__(289);
-	var insertTextIntoContentState = __webpack_require__(291);
-	var invariant = __webpack_require__(283);
-	var modifyBlockForContentState = __webpack_require__(292);
-	var removeEntitiesAtEdges = __webpack_require__(288);
-	var removeRangeFromContentState = __webpack_require__(293);
-	var splitBlockInContentState = __webpack_require__(294);
+	var applyEntityToContentState = __webpack_require__(278);
+	var getCharacterRemovalRange = __webpack_require__(280);
+	var getContentStateFragment = __webpack_require__(287);
+	var insertFragmentIntoContentState = __webpack_require__(290);
+	var insertTextIntoContentState = __webpack_require__(292);
+	var invariant = __webpack_require__(284);
+	var modifyBlockForContentState = __webpack_require__(293);
+	var removeEntitiesAtEdges = __webpack_require__(289);
+	var removeRangeFromContentState = __webpack_require__(294);
+	var splitBlockInContentState = __webpack_require__(295);
 	
 	var OrderedSet = Immutable.OrderedSet;
 	
@@ -35301,7 +35333,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 276 */
+/* 277 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35319,9 +35351,9 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(272);
+	var CharacterMetadata = __webpack_require__(273);
 	
-	var _require = __webpack_require__(262);
+	var _require = __webpack_require__(263);
 	
 	var Map = _require.Map;
 	
@@ -35380,7 +35412,7 @@
 	module.exports = ContentStateInlineStyle;
 
 /***/ },
-/* 277 */
+/* 278 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35398,9 +35430,9 @@
 	
 	'use strict';
 	
-	var Immutable = __webpack_require__(262);
+	var Immutable = __webpack_require__(263);
 	
-	var applyEntityToContentBlock = __webpack_require__(278);
+	var applyEntityToContentBlock = __webpack_require__(279);
 	
 	function applyEntityToContentState(contentState, selectionState, entityKey) {
 	  var blockMap = contentState.getBlockMap();
@@ -35429,7 +35461,7 @@
 	module.exports = applyEntityToContentState;
 
 /***/ },
-/* 278 */
+/* 279 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35447,7 +35479,7 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(272);
+	var CharacterMetadata = __webpack_require__(273);
 	
 	function applyEntityToContentBlock(contentBlock, start, end, entityKey) {
 	  var characterList = contentBlock.getCharacterList();
@@ -35461,7 +35493,7 @@
 	module.exports = applyEntityToContentBlock;
 
 /***/ },
-/* 279 */
+/* 280 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -35479,11 +35511,11 @@
 	
 	'use strict';
 	
-	var DraftEntity = __webpack_require__(280);
-	var DraftEntitySegments = __webpack_require__(284);
+	var DraftEntity = __webpack_require__(281);
+	var DraftEntitySegments = __webpack_require__(285);
 	
-	var getRangesForDraftEntity = __webpack_require__(285);
-	var invariant = __webpack_require__(283);
+	var getRangesForDraftEntity = __webpack_require__(286);
+	var invariant = __webpack_require__(284);
 	
 	/**
 	 * Given a SelectionState and a removal direction, determine the entire range
@@ -35544,12 +35576,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 280 */
+/* 281 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
-	var _assign = __webpack_require__(281);
+	var _assign = __webpack_require__(282);
 	
 	var _extends = _assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
@@ -35566,10 +35598,10 @@
 	 * 
 	 */
 	
-	var DraftEntityInstance = __webpack_require__(282);
-	var Immutable = __webpack_require__(262);
+	var DraftEntityInstance = __webpack_require__(283);
+	var Immutable = __webpack_require__(263);
 	
-	var invariant = __webpack_require__(283);
+	var invariant = __webpack_require__(284);
 	
 	var Map = Immutable.Map;
 	
@@ -35649,7 +35681,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 281 */
+/* 282 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -35738,7 +35770,7 @@
 
 
 /***/ },
-/* 282 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -35761,7 +35793,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var Immutable = __webpack_require__(262);
+	var Immutable = __webpack_require__(263);
 	
 	var Record = Immutable.Record;
 	
@@ -35811,7 +35843,7 @@
 	module.exports = DraftEntityInstance;
 
 /***/ },
-/* 283 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -35866,7 +35898,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 284 */
+/* 285 */
 /***/ function(module, exports) {
 
 	/**
@@ -35970,7 +36002,7 @@
 	module.exports = DraftEntitySegments;
 
 /***/ },
-/* 285 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -35988,7 +36020,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(283);
+	var invariant = __webpack_require__(284);
 	
 	/**
 	 * Obtain the start and end positions of the range that has the
@@ -36015,7 +36047,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 286 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -36033,8 +36065,8 @@
 	
 	'use strict';
 	
-	var generateRandomKey = __webpack_require__(287);
-	var removeEntitiesAtEdges = __webpack_require__(288);
+	var generateRandomKey = __webpack_require__(288);
+	var removeEntitiesAtEdges = __webpack_require__(289);
 	
 	function getContentStateFragment(contentState, selectionState) {
 	  var startKey = selectionState.getStartKey();
@@ -36091,7 +36123,7 @@
 	module.exports = getContentStateFragment;
 
 /***/ },
-/* 287 */
+/* 288 */
 /***/ function(module, exports) {
 
 	/**
@@ -36124,7 +36156,7 @@
 	module.exports = generateRandomKey;
 
 /***/ },
-/* 288 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -36141,11 +36173,11 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(272);
-	var DraftEntity = __webpack_require__(280);
+	var CharacterMetadata = __webpack_require__(273);
+	var DraftEntity = __webpack_require__(281);
 	
-	var findRangesImmutable = __webpack_require__(274);
-	var invariant = __webpack_require__(283);
+	var findRangesImmutable = __webpack_require__(275);
+	var invariant = __webpack_require__(284);
 	
 	function removeEntitiesAtEdges(contentState, selectionState) {
 	  var blockMap = contentState.getBlockMap();
@@ -36231,7 +36263,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 289 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -36249,11 +36281,11 @@
 	
 	'use strict';
 	
-	var BlockMapBuilder = __webpack_require__(271);
+	var BlockMapBuilder = __webpack_require__(272);
 	
-	var generateRandomKey = __webpack_require__(287);
-	var insertIntoList = __webpack_require__(290);
-	var invariant = __webpack_require__(283);
+	var generateRandomKey = __webpack_require__(288);
+	var insertIntoList = __webpack_require__(291);
+	var invariant = __webpack_require__(284);
 	
 	function insertFragmentIntoContentState(contentState, selectionState, fragment) {
 	  !selectionState.isCollapsed() ? process.env.NODE_ENV !== 'production' ? invariant(false, '`insertFragment` should only be called with a collapsed selection state.') : invariant(false) : void 0;
@@ -36363,7 +36395,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 290 */
+/* 291 */
 /***/ function(module, exports) {
 
 	/**
@@ -36403,7 +36435,7 @@
 	module.exports = insertIntoList;
 
 /***/ },
-/* 291 */
+/* 292 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -36421,10 +36453,10 @@
 	
 	'use strict';
 	
-	var Immutable = __webpack_require__(262);
+	var Immutable = __webpack_require__(263);
 	
-	var insertIntoList = __webpack_require__(290);
-	var invariant = __webpack_require__(283);
+	var insertIntoList = __webpack_require__(291);
+	var invariant = __webpack_require__(284);
 	
 	var Repeat = Immutable.Repeat;
 	
@@ -36463,7 +36495,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 292 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -36481,7 +36513,7 @@
 	
 	'use strict';
 	
-	var Immutable = __webpack_require__(262);
+	var Immutable = __webpack_require__(263);
 	
 	var Map = Immutable.Map;
 	
@@ -36506,7 +36538,7 @@
 	module.exports = modifyBlockForContentState;
 
 /***/ },
-/* 293 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -36523,7 +36555,7 @@
 	
 	'use strict';
 	
-	var Immutable = __webpack_require__(262);
+	var Immutable = __webpack_require__(263);
 	
 	function removeRangeFromContentState(contentState, selectionState) {
 	  if (selectionState.isCollapsed()) {
@@ -36602,7 +36634,7 @@
 	module.exports = removeRangeFromContentState;
 
 /***/ },
-/* 294 */
+/* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -36620,10 +36652,10 @@
 	
 	'use strict';
 	
-	var Immutable = __webpack_require__(262);
+	var Immutable = __webpack_require__(263);
 	
-	var generateRandomKey = __webpack_require__(287);
-	var invariant = __webpack_require__(283);
+	var generateRandomKey = __webpack_require__(288);
+	var invariant = __webpack_require__(284);
 	
 	var Map = Immutable.Map;
 	
@@ -36677,7 +36709,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 295 */
+/* 296 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -36694,17 +36726,17 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(281);
+	var _assign = __webpack_require__(282);
 	
 	var _extends = _assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var BlockTree = __webpack_require__(296);
-	var ContentState = __webpack_require__(298);
-	var EditorBidiService = __webpack_require__(301);
-	var Immutable = __webpack_require__(262);
-	var SelectionState = __webpack_require__(299);
+	var BlockTree = __webpack_require__(297);
+	var ContentState = __webpack_require__(299);
+	var EditorBidiService = __webpack_require__(302);
+	var Immutable = __webpack_require__(263);
+	var SelectionState = __webpack_require__(300);
 	
 	var OrderedSet = Immutable.OrderedSet;
 	var Record = Immutable.Record;
@@ -37243,7 +37275,7 @@
 	module.exports = EditorState;
 
 /***/ },
-/* 296 */
+/* 297 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37260,10 +37292,10 @@
 	
 	'use strict';
 	
-	var Immutable = __webpack_require__(262);
+	var Immutable = __webpack_require__(263);
 	
-	var emptyFunction = __webpack_require__(297);
-	var findRangesImmutable = __webpack_require__(274);
+	var emptyFunction = __webpack_require__(298);
+	var findRangesImmutable = __webpack_require__(275);
 	
 	var List = Immutable.List;
 	var Repeat = Immutable.Repeat;
@@ -37360,7 +37392,7 @@
 	module.exports = BlockTree;
 
 /***/ },
-/* 297 */
+/* 298 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -37403,7 +37435,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 298 */
+/* 299 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37427,14 +37459,14 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var BlockMapBuilder = __webpack_require__(271);
-	var CharacterMetadata = __webpack_require__(272);
-	var ContentBlock = __webpack_require__(273);
-	var Immutable = __webpack_require__(262);
-	var SelectionState = __webpack_require__(299);
+	var BlockMapBuilder = __webpack_require__(272);
+	var CharacterMetadata = __webpack_require__(273);
+	var ContentBlock = __webpack_require__(274);
+	var Immutable = __webpack_require__(263);
+	var SelectionState = __webpack_require__(300);
 	
-	var generateRandomKey = __webpack_require__(287);
-	var sanitizeDraftText = __webpack_require__(300);
+	var generateRandomKey = __webpack_require__(288);
+	var sanitizeDraftText = __webpack_require__(301);
 	
 	var List = Immutable.List;
 	var Record = Immutable.Record;
@@ -37554,7 +37586,7 @@
 	module.exports = ContentState;
 
 /***/ },
-/* 299 */
+/* 300 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37578,7 +37610,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var Immutable = __webpack_require__(262);
+	var Immutable = __webpack_require__(263);
 	
 	var Record = Immutable.Record;
 	
@@ -37693,7 +37725,7 @@
 	module.exports = SelectionState;
 
 /***/ },
-/* 300 */
+/* 301 */
 /***/ function(module, exports) {
 
 	/**
@@ -37719,7 +37751,7 @@
 	module.exports = sanitizeDraftText;
 
 /***/ },
-/* 301 */
+/* 302 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -37737,10 +37769,10 @@
 	
 	'use strict';
 	
-	var Immutable = __webpack_require__(262);
-	var UnicodeBidiService = __webpack_require__(302);
+	var Immutable = __webpack_require__(263);
+	var UnicodeBidiService = __webpack_require__(303);
 	
-	var nullthrows = __webpack_require__(305);
+	var nullthrows = __webpack_require__(306);
 	
 	var OrderedMap = Immutable.OrderedMap;
 	
@@ -37772,7 +37804,7 @@
 	module.exports = EditorBidiService;
 
 /***/ },
-/* 302 */
+/* 303 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -37821,10 +37853,10 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var UnicodeBidi = __webpack_require__(303);
-	var UnicodeBidiDirection = __webpack_require__(304);
+	var UnicodeBidi = __webpack_require__(304);
+	var UnicodeBidiDirection = __webpack_require__(305);
 	
-	var invariant = __webpack_require__(283);
+	var invariant = __webpack_require__(284);
 	
 	var UnicodeBidiService = function () {
 	
@@ -37878,7 +37910,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 303 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -37903,9 +37935,9 @@
 	
 	'use strict';
 	
-	var UnicodeBidiDirection = __webpack_require__(304);
+	var UnicodeBidiDirection = __webpack_require__(305);
 	
-	var invariant = __webpack_require__(283);
+	var invariant = __webpack_require__(284);
 	
 	/**
 	 * RegExp ranges of characters with a *Strong* Bidi_Class value.
@@ -38040,7 +38072,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 304 */
+/* 305 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -38071,7 +38103,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(283);
+	var invariant = __webpack_require__(284);
 	
 	var NEUTRAL = 'NEUTRAL'; // No strong direction
 	var LTR = 'LTR'; // Left-to-Right direction
@@ -38154,7 +38186,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 305 */
+/* 306 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -38180,7 +38212,7 @@
 	module.exports = nullthrows;
 
 /***/ },
-/* 306 */
+/* 307 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -38200,7 +38232,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var Immutable = __webpack_require__(262);
+	var Immutable = __webpack_require__(263);
 	
 	var List = Immutable.List;
 	
@@ -38298,7 +38330,7 @@
 	module.exports = CompositeDraftDecorator;
 
 /***/ },
-/* 307 */
+/* 308 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -38315,13 +38347,13 @@
 	
 	'use strict';
 	
-	var _require = __webpack_require__(262);
+	var _require = __webpack_require__(263);
 	
 	var Map = _require.Map;
 	
 	var React = __webpack_require__(1);
 	
-	var cx = __webpack_require__(308);
+	var cx = __webpack_require__(309);
 	
 	var UL_WRAP = React.createElement('ul', { className: cx('public/DraftStyleDefault/ul') });
 	var OL_WRAP = React.createElement('ol', { className: cx('public/DraftStyleDefault/ol') });
@@ -38370,7 +38402,7 @@
 	});
 
 /***/ },
-/* 308 */
+/* 309 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38416,7 +38448,7 @@
 	module.exports = cx;
 
 /***/ },
-/* 309 */
+/* 310 */
 /***/ function(module, exports) {
 
 	/**
@@ -38457,7 +38489,7 @@
 	};
 
 /***/ },
-/* 310 */
+/* 311 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -38475,7 +38507,7 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(281);
+	var _assign = __webpack_require__(282);
 	
 	var _extends = _assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
@@ -38485,26 +38517,26 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var DefaultDraftBlockRenderMap = __webpack_require__(307);
-	var DefaultDraftInlineStyle = __webpack_require__(309);
-	var DraftEditorCompositionHandler = __webpack_require__(311);
-	var DraftEditorContents = __webpack_require__(315);
-	var DraftEditorDragHandler = __webpack_require__(344);
-	var DraftEditorEditHandler = __webpack_require__(353);
-	var DraftEditorPlaceholder = __webpack_require__(394);
-	var EditorState = __webpack_require__(295);
+	var DefaultDraftBlockRenderMap = __webpack_require__(308);
+	var DefaultDraftInlineStyle = __webpack_require__(310);
+	var DraftEditorCompositionHandler = __webpack_require__(312);
+	var DraftEditorContents = __webpack_require__(316);
+	var DraftEditorDragHandler = __webpack_require__(345);
+	var DraftEditorEditHandler = __webpack_require__(354);
+	var DraftEditorPlaceholder = __webpack_require__(395);
+	var EditorState = __webpack_require__(296);
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var Scroll = __webpack_require__(332);
-	var Style = __webpack_require__(333);
-	var UserAgent = __webpack_require__(319);
+	var Scroll = __webpack_require__(333);
+	var Style = __webpack_require__(334);
+	var UserAgent = __webpack_require__(320);
 	
-	var cx = __webpack_require__(308);
-	var emptyFunction = __webpack_require__(297);
-	var generateRandomKey = __webpack_require__(287);
-	var getDefaultKeyBinding = __webpack_require__(395);
-	var nullthrows = __webpack_require__(305);
-	var getScrollPosition = __webpack_require__(339);
+	var cx = __webpack_require__(309);
+	var emptyFunction = __webpack_require__(298);
+	var generateRandomKey = __webpack_require__(288);
+	var getDefaultKeyBinding = __webpack_require__(396);
+	var nullthrows = __webpack_require__(306);
+	var getScrollPosition = __webpack_require__(340);
 	
 	var isIE = UserAgent.isBrowser('IE');
 	
@@ -38912,7 +38944,7 @@
 	module.exports = DraftEditor;
 
 /***/ },
-/* 311 */
+/* 312 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -38929,12 +38961,12 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(275);
-	var EditorState = __webpack_require__(295);
-	var Keys = __webpack_require__(312);
+	var DraftModifier = __webpack_require__(276);
+	var EditorState = __webpack_require__(296);
+	var Keys = __webpack_require__(313);
 	
-	var getEntityKeyForSelection = __webpack_require__(313);
-	var isSelectionAtLeafStart = __webpack_require__(314);
+	var getEntityKeyForSelection = __webpack_require__(314);
+	var isSelectionAtLeafStart = __webpack_require__(315);
 	
 	/**
 	 * Millisecond delay to allow `compositionstart` to fire again upon
@@ -39080,7 +39112,7 @@
 	module.exports = DraftEditorCompositionHandler;
 
 /***/ },
-/* 312 */
+/* 313 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -39121,7 +39153,7 @@
 	};
 
 /***/ },
-/* 313 */
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -39139,7 +39171,7 @@
 	
 	'use strict';
 	
-	var DraftEntity = __webpack_require__(280);
+	var DraftEntity = __webpack_require__(281);
 	
 	/**
 	 * Return the entity key that should be used when inserting text for the
@@ -39183,7 +39215,7 @@
 	module.exports = getEntityKeyForSelection;
 
 /***/ },
-/* 314 */
+/* 315 */
 /***/ function(module, exports) {
 
 	/**
@@ -39236,7 +39268,7 @@
 	module.exports = isSelectionAtLeafStart;
 
 /***/ },
-/* 315 */
+/* 316 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -39254,7 +39286,7 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(281);
+	var _assign = __webpack_require__(282);
 	
 	var _extends = _assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
@@ -39264,14 +39296,14 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var DraftEditorBlock = __webpack_require__(316);
-	var DraftOffsetKey = __webpack_require__(331);
-	var EditorState = __webpack_require__(295);
+	var DraftEditorBlock = __webpack_require__(317);
+	var DraftOffsetKey = __webpack_require__(332);
+	var EditorState = __webpack_require__(296);
 	var React = __webpack_require__(1);
 	
-	var cx = __webpack_require__(308);
-	var joinClasses = __webpack_require__(343);
-	var nullthrows = __webpack_require__(305);
+	var cx = __webpack_require__(309);
+	var joinClasses = __webpack_require__(344);
+	var nullthrows = __webpack_require__(306);
 	
 	/**
 	 * `DraftEditorContents` is the container component for all block components
@@ -39483,7 +39515,7 @@
 	module.exports = DraftEditorContents;
 
 /***/ },
-/* 316 */
+/* 317 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -39501,7 +39533,7 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(281);
+	var _assign = __webpack_require__(282);
 	
 	var _extends = _assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
@@ -39511,22 +39543,22 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var ContentBlock = __webpack_require__(273);
-	var DraftEditorLeaf = __webpack_require__(317);
-	var DraftOffsetKey = __webpack_require__(331);
+	var ContentBlock = __webpack_require__(274);
+	var DraftEditorLeaf = __webpack_require__(318);
+	var DraftOffsetKey = __webpack_require__(332);
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var Scroll = __webpack_require__(332);
-	var SelectionState = __webpack_require__(299);
-	var Style = __webpack_require__(333);
-	var UnicodeBidi = __webpack_require__(303);
-	var UnicodeBidiDirection = __webpack_require__(304);
+	var Scroll = __webpack_require__(333);
+	var SelectionState = __webpack_require__(300);
+	var Style = __webpack_require__(334);
+	var UnicodeBidi = __webpack_require__(304);
+	var UnicodeBidiDirection = __webpack_require__(305);
 	
-	var cx = __webpack_require__(308);
-	var getElementPosition = __webpack_require__(337);
-	var getScrollPosition = __webpack_require__(339);
-	var getViewportDimensions = __webpack_require__(342);
-	var nullthrows = __webpack_require__(305);
+	var cx = __webpack_require__(309);
+	var getElementPosition = __webpack_require__(338);
+	var getScrollPosition = __webpack_require__(340);
+	var getViewportDimensions = __webpack_require__(343);
+	var nullthrows = __webpack_require__(306);
 	
 	var SCROLL_BUFFER = 10;
 	
@@ -39694,7 +39726,7 @@
 	module.exports = DraftEditorBlock;
 
 /***/ },
-/* 317 */
+/* 318 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -39712,7 +39744,7 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(281);
+	var _assign = __webpack_require__(282);
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -39720,12 +39752,12 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var DraftEditorTextNode = __webpack_require__(318);
+	var DraftEditorTextNode = __webpack_require__(319);
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var SelectionState = __webpack_require__(299);
+	var SelectionState = __webpack_require__(300);
 	
-	var setDraftEditorSelection = __webpack_require__(326);
+	var setDraftEditorSelection = __webpack_require__(327);
 	
 	/**
 	 * All leaf nodes in the editor are spans with single text nodes. Leaf
@@ -39858,7 +39890,7 @@
 	module.exports = DraftEditorLeaf;
 
 /***/ },
-/* 318 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -39884,7 +39916,7 @@
 	
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var UserAgent = __webpack_require__(319);
+	var UserAgent = __webpack_require__(320);
 	
 	// In IE, spans with <br> tags render as two newlines. By rendering a span
 	// with only a newline character, we can be sure to render a single line.
@@ -39971,7 +40003,7 @@
 	module.exports = DraftEditorTextNode;
 
 /***/ },
-/* 319 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -39986,11 +40018,11 @@
 	
 	'use strict';
 	
-	var UserAgentData = __webpack_require__(320);
-	var VersionRange = __webpack_require__(323);
+	var UserAgentData = __webpack_require__(321);
+	var VersionRange = __webpack_require__(324);
 	
-	var mapObject = __webpack_require__(324);
-	var memoizeStringOnly = __webpack_require__(325);
+	var mapObject = __webpack_require__(325);
+	var memoizeStringOnly = __webpack_require__(326);
 	
 	/**
 	 * Checks to see whether `name` and `version` satisfy `query`.
@@ -40217,7 +40249,7 @@
 	module.exports = mapObject(UserAgent, memoizeStringOnly);
 
 /***/ },
-/* 320 */
+/* 321 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -40243,7 +40275,7 @@
 	
 	'use strict';
 	
-	var UAParser = __webpack_require__(321);
+	var UAParser = __webpack_require__(322);
 	
 	var UNKNOWN = 'Unknown';
 	
@@ -40304,7 +40336,7 @@
 	module.exports = uaData;
 
 /***/ },
-/* 321 */
+/* 322 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -41156,7 +41188,7 @@
 	        exports.UAParser = UAParser;
 	    } else {
 	        // requirejs env (optional)
-	        if ("function" === FUNC_TYPE && __webpack_require__(322)) {
+	        if ("function" === FUNC_TYPE && __webpack_require__(323)) {
 	            !(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
 	                return UAParser;
 	            }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -41191,7 +41223,7 @@
 
 
 /***/ },
-/* 322 */
+/* 323 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -41199,7 +41231,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 323 */
+/* 324 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -41214,7 +41246,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(283);
+	var invariant = __webpack_require__(284);
 	
 	var componentRegex = /\./;
 	var orRegex = /\|\|/;
@@ -41590,7 +41622,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 324 */
+/* 325 */
 /***/ function(module, exports) {
 
 	/**
@@ -41645,7 +41677,7 @@
 	module.exports = mapObject;
 
 /***/ },
-/* 325 */
+/* 326 */
 /***/ function(module, exports) {
 
 	/**
@@ -41679,7 +41711,7 @@
 	module.exports = memoizeStringOnly;
 
 /***/ },
-/* 326 */
+/* 327 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -41697,8 +41729,8 @@
 	
 	'use strict';
 	
-	var containsNode = __webpack_require__(327);
-	var getActiveElement = __webpack_require__(330);
+	var containsNode = __webpack_require__(328);
+	var getActiveElement = __webpack_require__(331);
 	
 	/**
 	 * In modern non-IE browsers, we can support both forward and backward
@@ -41818,7 +41850,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 327 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41834,7 +41866,7 @@
 	 * 
 	 */
 	
-	var isTextNode = __webpack_require__(328);
+	var isTextNode = __webpack_require__(329);
 	
 	/*eslint-disable no-bitwise */
 	
@@ -41862,7 +41894,7 @@
 	module.exports = containsNode;
 
 /***/ },
-/* 328 */
+/* 329 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41878,7 +41910,7 @@
 	 * @typechecks
 	 */
 	
-	var isNode = __webpack_require__(329);
+	var isNode = __webpack_require__(330);
 	
 	/**
 	 * @param {*} object The object to check.
@@ -41891,7 +41923,7 @@
 	module.exports = isTextNode;
 
 /***/ },
-/* 329 */
+/* 330 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -41918,7 +41950,7 @@
 	module.exports = isNode;
 
 /***/ },
-/* 330 */
+/* 331 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -41957,7 +41989,7 @@
 	module.exports = getActiveElement;
 
 /***/ },
-/* 331 */
+/* 332 */
 /***/ function(module, exports) {
 
 	/**
@@ -41999,7 +42031,7 @@
 	module.exports = DraftOffsetKey;
 
 /***/ },
-/* 332 */
+/* 333 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -42089,7 +42121,7 @@
 	module.exports = Scroll;
 
 /***/ },
-/* 333 */
+/* 334 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42105,7 +42137,7 @@
 	 * @typechecks
 	 */
 	
-	var getStyleProperty = __webpack_require__(334);
+	var getStyleProperty = __webpack_require__(335);
 	
 	/**
 	 * @param {DOMNode} element [description]
@@ -42157,7 +42189,7 @@
 	module.exports = Style;
 
 /***/ },
-/* 334 */
+/* 335 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42173,8 +42205,8 @@
 	 * @typechecks
 	 */
 	
-	var camelize = __webpack_require__(335);
-	var hyphenate = __webpack_require__(336);
+	var camelize = __webpack_require__(336);
+	var hyphenate = __webpack_require__(337);
 	
 	function asString(value) /*?string*/{
 	  return value == null ? value : String(value);
@@ -42215,7 +42247,7 @@
 	module.exports = getStyleProperty;
 
 /***/ },
-/* 335 */
+/* 336 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -42251,7 +42283,7 @@
 	module.exports = camelize;
 
 /***/ },
-/* 336 */
+/* 337 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -42288,7 +42320,7 @@
 	module.exports = hyphenate;
 
 /***/ },
-/* 337 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42304,7 +42336,7 @@
 	 * @typechecks
 	 */
 	
-	var getElementRect = __webpack_require__(338);
+	var getElementRect = __webpack_require__(339);
 	
 	/**
 	 * Gets an element's position in pixels relative to the viewport. The returned
@@ -42326,7 +42358,7 @@
 	module.exports = getElementPosition;
 
 /***/ },
-/* 338 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42342,7 +42374,7 @@
 	 * @typechecks
 	 */
 	
-	var containsNode = __webpack_require__(327);
+	var containsNode = __webpack_require__(328);
 	
 	/**
 	 * Gets an element's bounding rect in pixels relative to the viewport.
@@ -42381,7 +42413,7 @@
 	module.exports = getElementRect;
 
 /***/ },
-/* 339 */
+/* 340 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -42397,8 +42429,8 @@
 	
 	'use strict';
 	
-	var getDocumentScrollElement = __webpack_require__(340);
-	var getUnboundedScrollPosition = __webpack_require__(341);
+	var getDocumentScrollElement = __webpack_require__(341);
+	var getUnboundedScrollPosition = __webpack_require__(342);
 	
 	/**
 	 * Gets the scroll position of the supplied element or window.
@@ -42433,7 +42465,7 @@
 	module.exports = getScrollPosition;
 
 /***/ },
-/* 340 */
+/* 341 */
 /***/ function(module, exports) {
 
 	/**
@@ -42468,7 +42500,7 @@
 	module.exports = getDocumentScrollElement;
 
 /***/ },
-/* 341 */
+/* 342 */
 /***/ function(module, exports) {
 
 	/**
@@ -42511,7 +42543,7 @@
 	module.exports = getUnboundedScrollPosition;
 
 /***/ },
-/* 342 */
+/* 343 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -42575,7 +42607,7 @@
 	module.exports = getViewportDimensions;
 
 /***/ },
-/* 343 */
+/* 344 */
 /***/ function(module, exports) {
 
 	/**
@@ -42619,7 +42651,7 @@
 	module.exports = joinClasses;
 
 /***/ },
-/* 344 */
+/* 345 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -42637,16 +42669,16 @@
 	
 	'use strict';
 	
-	var DataTransfer = __webpack_require__(345);
-	var DraftModifier = __webpack_require__(275);
-	var EditorState = __webpack_require__(295);
+	var DataTransfer = __webpack_require__(346);
+	var DraftModifier = __webpack_require__(276);
+	var EditorState = __webpack_require__(296);
 	
-	var findAncestorOffsetKey = __webpack_require__(348);
-	var getTextContentFromFiles = __webpack_require__(350);
-	var getUpdatedSelectionState = __webpack_require__(351);
-	var nullthrows = __webpack_require__(305);
+	var findAncestorOffsetKey = __webpack_require__(349);
+	var getTextContentFromFiles = __webpack_require__(351);
+	var getUpdatedSelectionState = __webpack_require__(352);
+	var nullthrows = __webpack_require__(306);
 	
-	var isEventHandled = __webpack_require__(352);
+	var isEventHandled = __webpack_require__(353);
 	
 	/**
 	 * Get a SelectionState for the supplied mouse event.
@@ -42743,7 +42775,7 @@
 	module.exports = DraftEditorDragHandler;
 
 /***/ },
-/* 345 */
+/* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42761,10 +42793,10 @@
 	 * @typechecks
 	 */
 	
-	var PhotosMimeType = __webpack_require__(346);
+	var PhotosMimeType = __webpack_require__(347);
 	
-	var createArrayFromMixed = __webpack_require__(347);
-	var emptyFunction = __webpack_require__(297);
+	var createArrayFromMixed = __webpack_require__(348);
+	var emptyFunction = __webpack_require__(298);
 	
 	var CR_LF_REGEX = new RegExp('\r\n', 'g');
 	var LF_ONLY = '\n';
@@ -42969,7 +43001,7 @@
 	module.exports = DataTransfer;
 
 /***/ },
-/* 346 */
+/* 347 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -43002,7 +43034,7 @@
 	module.exports = PhotosMimeType;
 
 /***/ },
-/* 347 */
+/* 348 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -43018,7 +43050,7 @@
 	 * @typechecks
 	 */
 	
-	var invariant = __webpack_require__(283);
+	var invariant = __webpack_require__(284);
 	
 	/**
 	 * Convert array-like objects to arrays.
@@ -43134,7 +43166,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 348 */
+/* 349 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -43152,7 +43184,7 @@
 	
 	'use strict';
 	
-	var getSelectionOffsetKeyForNode = __webpack_require__(349);
+	var getSelectionOffsetKeyForNode = __webpack_require__(350);
 	
 	/**
 	 * Get the key from the node's nearest offset-aware ancestor.
@@ -43172,7 +43204,7 @@
 	module.exports = findAncestorOffsetKey;
 
 /***/ },
-/* 349 */
+/* 350 */
 /***/ function(module, exports) {
 
 	/**
@@ -43214,7 +43246,7 @@
 	module.exports = getSelectionOffsetKeyForNode;
 
 /***/ },
-/* 350 */
+/* 351 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -43295,7 +43327,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 351 */
+/* 352 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -43312,9 +43344,9 @@
 	
 	'use strict';
 	
-	var DraftOffsetKey = __webpack_require__(331);
+	var DraftOffsetKey = __webpack_require__(332);
 	
-	var nullthrows = __webpack_require__(305);
+	var nullthrows = __webpack_require__(306);
 	
 	function getUpdatedSelectionState(editorState, anchorKey, anchorOffset, focusKey, focusOffset) {
 	  var selection = nullthrows(editorState.getSelection());
@@ -43376,7 +43408,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 352 */
+/* 353 */
 /***/ function(module, exports) {
 
 	/**
@@ -43405,7 +43437,7 @@
 	module.exports = isEventHandled;
 
 /***/ },
-/* 353 */
+/* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -43422,18 +43454,18 @@
 	
 	'use strict';
 	
-	var onBeforeInput = __webpack_require__(354);
-	var onBlur = __webpack_require__(355);
-	var onCompositionStart = __webpack_require__(356);
-	var onCopy = __webpack_require__(357);
-	var onCut = __webpack_require__(359);
-	var onDragOver = __webpack_require__(360);
-	var onDragStart = __webpack_require__(361);
-	var onFocus = __webpack_require__(362);
-	var onInput = __webpack_require__(363);
-	var onKeyDown = __webpack_require__(364);
-	var onPaste = __webpack_require__(386);
-	var onSelect = __webpack_require__(392);
+	var onBeforeInput = __webpack_require__(355);
+	var onBlur = __webpack_require__(356);
+	var onCompositionStart = __webpack_require__(357);
+	var onCopy = __webpack_require__(358);
+	var onCut = __webpack_require__(360);
+	var onDragOver = __webpack_require__(361);
+	var onDragStart = __webpack_require__(362);
+	var onFocus = __webpack_require__(363);
+	var onInput = __webpack_require__(364);
+	var onKeyDown = __webpack_require__(365);
+	var onPaste = __webpack_require__(387);
+	var onSelect = __webpack_require__(393);
 	
 	var DraftEditorEditHandler = {
 	  onBeforeInput: onBeforeInput,
@@ -43453,7 +43485,7 @@
 	module.exports = DraftEditorEditHandler;
 
 /***/ },
-/* 354 */
+/* 355 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -43470,16 +43502,16 @@
 	
 	'use strict';
 	
-	var BlockTree = __webpack_require__(296);
-	var DraftModifier = __webpack_require__(275);
-	var EditorState = __webpack_require__(295);
-	var UserAgent = __webpack_require__(319);
+	var BlockTree = __webpack_require__(297);
+	var DraftModifier = __webpack_require__(276);
+	var EditorState = __webpack_require__(296);
+	var UserAgent = __webpack_require__(320);
 	
-	var getEntityKeyForSelection = __webpack_require__(313);
-	var isSelectionAtLeafStart = __webpack_require__(314);
-	var nullthrows = __webpack_require__(305);
+	var getEntityKeyForSelection = __webpack_require__(314);
+	var isSelectionAtLeafStart = __webpack_require__(315);
+	var nullthrows = __webpack_require__(306);
 	
-	var isEventHandled = __webpack_require__(352);
+	var isEventHandled = __webpack_require__(353);
 	
 	// When nothing is focused, Firefox regards two characters, `'` and `/`, as
 	// commands that should open and focus the "quickfind" search bar. This should
@@ -43578,7 +43610,7 @@
 	module.exports = editOnBeforeInput;
 
 /***/ },
-/* 355 */
+/* 356 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -43595,10 +43627,10 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(295);
-	var UserAgent = __webpack_require__(319);
+	var EditorState = __webpack_require__(296);
+	var UserAgent = __webpack_require__(320);
 	
-	var getActiveElement = __webpack_require__(330);
+	var getActiveElement = __webpack_require__(331);
 	
 	var isWebKit = UserAgent.isEngine('WebKit');
 	
@@ -43628,7 +43660,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 356 */
+/* 357 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -43645,7 +43677,7 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(295);
+	var EditorState = __webpack_require__(296);
 	
 	/**
 	 * The user has begun using an IME input system. Switching to `composite` mode
@@ -43660,7 +43692,7 @@
 	module.exports = editOnCompositionStart;
 
 /***/ },
-/* 357 */
+/* 358 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -43677,7 +43709,7 @@
 	
 	'use strict';
 	
-	var getFragmentFromSelection = __webpack_require__(358);
+	var getFragmentFromSelection = __webpack_require__(359);
 	
 	/**
 	 * If we have a selection, create a ContentState fragment and store
@@ -43700,7 +43732,7 @@
 	module.exports = editOnCopy;
 
 /***/ },
-/* 358 */
+/* 359 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -43717,7 +43749,7 @@
 	
 	'use strict';
 	
-	var getContentStateFragment = __webpack_require__(286);
+	var getContentStateFragment = __webpack_require__(287);
 	
 	function getFragmentFromSelection(editorState) {
 	  var selectionState = editorState.getSelection();
@@ -43732,7 +43764,7 @@
 	module.exports = getFragmentFromSelection;
 
 /***/ },
-/* 359 */
+/* 360 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -43749,12 +43781,12 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(275);
-	var EditorState = __webpack_require__(295);
-	var Style = __webpack_require__(333);
+	var DraftModifier = __webpack_require__(276);
+	var EditorState = __webpack_require__(296);
+	var Style = __webpack_require__(334);
 	
-	var getFragmentFromSelection = __webpack_require__(358);
-	var getScrollPosition = __webpack_require__(339);
+	var getFragmentFromSelection = __webpack_require__(359);
+	var getScrollPosition = __webpack_require__(340);
 	
 	/**
 	 * On `cut` events, native behavior is allowed to occur so that the system
@@ -43811,7 +43843,7 @@
 	module.exports = editOnCut;
 
 /***/ },
-/* 360 */
+/* 361 */
 /***/ function(module, exports) {
 
 	/**
@@ -43841,7 +43873,7 @@
 	module.exports = editOnDragOver;
 
 /***/ },
-/* 361 */
+/* 362 */
 /***/ function(module, exports) {
 
 	/**
@@ -43870,7 +43902,7 @@
 	module.exports = editOnDragStart;
 
 /***/ },
-/* 362 */
+/* 363 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -43887,7 +43919,7 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(295);
+	var EditorState = __webpack_require__(296);
 	
 	function editOnFocus(e) {
 	  var editorState = this.props.editorState;
@@ -43911,7 +43943,7 @@
 	module.exports = editOnFocus;
 
 /***/ },
-/* 363 */
+/* 364 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -43928,14 +43960,14 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(275);
-	var DraftOffsetKey = __webpack_require__(331);
-	var EditorState = __webpack_require__(295);
-	var Entity = __webpack_require__(280);
-	var UserAgent = __webpack_require__(319);
+	var DraftModifier = __webpack_require__(276);
+	var DraftOffsetKey = __webpack_require__(332);
+	var EditorState = __webpack_require__(296);
+	var Entity = __webpack_require__(281);
+	var UserAgent = __webpack_require__(320);
 	
-	var findAncestorOffsetKey = __webpack_require__(348);
-	var nullthrows = __webpack_require__(305);
+	var findAncestorOffsetKey = __webpack_require__(349);
+	var nullthrows = __webpack_require__(306);
 	
 	var isGecko = UserAgent.isEngine('Gecko');
 	
@@ -44059,7 +44091,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 364 */
+/* 365 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44076,25 +44108,25 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(275);
-	var EditorState = __webpack_require__(295);
-	var KeyBindingUtil = __webpack_require__(365);
-	var Keys = __webpack_require__(312);
-	var SecondaryClipboard = __webpack_require__(366);
-	var UserAgent = __webpack_require__(319);
+	var DraftModifier = __webpack_require__(276);
+	var EditorState = __webpack_require__(296);
+	var KeyBindingUtil = __webpack_require__(366);
+	var Keys = __webpack_require__(313);
+	var SecondaryClipboard = __webpack_require__(367);
+	var UserAgent = __webpack_require__(320);
 	
-	var keyCommandBackspaceToStartOfLine = __webpack_require__(367);
-	var keyCommandBackspaceWord = __webpack_require__(374);
-	var keyCommandDeleteWord = __webpack_require__(377);
-	var keyCommandInsertNewline = __webpack_require__(379);
-	var keyCommandPlainBackspace = __webpack_require__(380);
-	var keyCommandPlainDelete = __webpack_require__(381);
-	var keyCommandMoveSelectionToEndOfBlock = __webpack_require__(382);
-	var keyCommandMoveSelectionToStartOfBlock = __webpack_require__(383);
-	var keyCommandTransposeCharacters = __webpack_require__(384);
-	var keyCommandUndo = __webpack_require__(385);
+	var keyCommandBackspaceToStartOfLine = __webpack_require__(368);
+	var keyCommandBackspaceWord = __webpack_require__(375);
+	var keyCommandDeleteWord = __webpack_require__(378);
+	var keyCommandInsertNewline = __webpack_require__(380);
+	var keyCommandPlainBackspace = __webpack_require__(381);
+	var keyCommandPlainDelete = __webpack_require__(382);
+	var keyCommandMoveSelectionToEndOfBlock = __webpack_require__(383);
+	var keyCommandMoveSelectionToStartOfBlock = __webpack_require__(384);
+	var keyCommandTransposeCharacters = __webpack_require__(385);
+	var keyCommandUndo = __webpack_require__(386);
 	
-	var isEventHandled = __webpack_require__(352);
+	var isEventHandled = __webpack_require__(353);
 	
 	var isOptionKeyCommand = KeyBindingUtil.isOptionKeyCommand;
 	
@@ -44212,7 +44244,7 @@
 	module.exports = editOnKeyDown;
 
 /***/ },
-/* 365 */
+/* 366 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44230,7 +44262,7 @@
 	
 	'use strict';
 	
-	var UserAgent = __webpack_require__(319);
+	var UserAgent = __webpack_require__(320);
 	
 	var isOSX = UserAgent.isPlatform('Mac OS X');
 	
@@ -44256,7 +44288,7 @@
 	module.exports = KeyBindingUtil;
 
 /***/ },
-/* 366 */
+/* 367 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -44273,11 +44305,11 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(275);
-	var EditorState = __webpack_require__(295);
+	var DraftModifier = __webpack_require__(276);
+	var EditorState = __webpack_require__(296);
 	
-	var getContentStateFragment = __webpack_require__(286);
-	var nullthrows = __webpack_require__(305);
+	var getContentStateFragment = __webpack_require__(287);
+	var nullthrows = __webpack_require__(306);
 	
 	var clipboard = null;
 	
@@ -44330,7 +44362,7 @@
 	module.exports = SecondaryClipboard;
 
 /***/ },
-/* 367 */
+/* 368 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -44347,12 +44379,12 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(295);
+	var EditorState = __webpack_require__(296);
 	
-	var expandRangeToStartOfLine = __webpack_require__(368);
-	var getDraftEditorSelectionWithNodes = __webpack_require__(371);
-	var moveSelectionBackward = __webpack_require__(372);
-	var removeTextWithStrategy = __webpack_require__(373);
+	var expandRangeToStartOfLine = __webpack_require__(369);
+	var getDraftEditorSelectionWithNodes = __webpack_require__(372);
+	var moveSelectionBackward = __webpack_require__(373);
+	var removeTextWithStrategy = __webpack_require__(374);
 	
 	function keyCommandBackspaceToStartOfLine(editorState) {
 	  var afterRemoval = removeTextWithStrategy(editorState, function (strategyState) {
@@ -44379,7 +44411,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 368 */
+/* 369 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -44397,10 +44429,10 @@
 	 * 
 	 */
 	
-	var UnicodeUtils = __webpack_require__(369);
+	var UnicodeUtils = __webpack_require__(370);
 	
-	var getRangeClientRects = __webpack_require__(370);
-	var invariant = __webpack_require__(283);
+	var getRangeClientRects = __webpack_require__(371);
+	var invariant = __webpack_require__(284);
 	
 	/**
 	 * Return the computed line height, in pixels, for the provided element.
@@ -44574,7 +44606,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 369 */
+/* 370 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -44601,7 +44633,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(283);
+	var invariant = __webpack_require__(284);
 	
 	// These two ranges are consecutive so anything in [HIGH_START, LOW_END] is a
 	// surrogate code unit.
@@ -44794,7 +44826,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 370 */
+/* 371 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -44812,9 +44844,9 @@
 	
 	'use strict';
 	
-	var UserAgent = __webpack_require__(319);
+	var UserAgent = __webpack_require__(320);
 	
-	var invariant = __webpack_require__(283);
+	var invariant = __webpack_require__(284);
 	
 	var isChrome = UserAgent.isBrowser('Chrome');
 	
@@ -44863,7 +44895,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 371 */
+/* 372 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -44881,11 +44913,11 @@
 	
 	'use strict';
 	
-	var findAncestorOffsetKey = __webpack_require__(348);
-	var getSelectionOffsetKeyForNode = __webpack_require__(349);
-	var getUpdatedSelectionState = __webpack_require__(351);
-	var invariant = __webpack_require__(283);
-	var nullthrows = __webpack_require__(305);
+	var findAncestorOffsetKey = __webpack_require__(349);
+	var getSelectionOffsetKeyForNode = __webpack_require__(350);
+	var getUpdatedSelectionState = __webpack_require__(352);
+	var invariant = __webpack_require__(284);
+	var nullthrows = __webpack_require__(306);
 	
 	/**
 	 * Convert the current selection range to an anchor/focus pair of offset keys
@@ -45048,7 +45080,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 372 */
+/* 373 */
 /***/ function(module, exports) {
 
 	/**
@@ -45105,7 +45137,7 @@
 	module.exports = moveSelectionBackward;
 
 /***/ },
-/* 373 */
+/* 374 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45122,7 +45154,7 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(275);
+	var DraftModifier = __webpack_require__(276);
 	
 	/**
 	 * For a collapsed selection state, remove text based on the specified strategy.
@@ -45152,7 +45184,7 @@
 	module.exports = removeTextWithStrategy;
 
 /***/ },
-/* 374 */
+/* 375 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45169,11 +45201,11 @@
 	
 	'use strict';
 	
-	var DraftRemovableWord = __webpack_require__(375);
-	var EditorState = __webpack_require__(295);
+	var DraftRemovableWord = __webpack_require__(376);
+	var EditorState = __webpack_require__(296);
 	
-	var moveSelectionBackward = __webpack_require__(372);
-	var removeTextWithStrategy = __webpack_require__(373);
+	var moveSelectionBackward = __webpack_require__(373);
+	var removeTextWithStrategy = __webpack_require__(374);
 	
 	/**
 	 * Delete the word that is left of the cursor, as well as any spaces or
@@ -45204,7 +45236,7 @@
 	module.exports = keyCommandBackspaceWord;
 
 /***/ },
-/* 375 */
+/* 376 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45222,7 +45254,7 @@
 	
 	'use strict';
 	
-	var TokenizeUtil = __webpack_require__(376);
+	var TokenizeUtil = __webpack_require__(377);
 	
 	var punctuation = TokenizeUtil.getPunctuation();
 	
@@ -45260,7 +45292,7 @@
 	module.exports = DraftRemovableWord;
 
 /***/ },
-/* 376 */
+/* 377 */
 /***/ function(module, exports) {
 
 	/**
@@ -45302,7 +45334,7 @@
 	};
 
 /***/ },
-/* 377 */
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45319,11 +45351,11 @@
 	
 	'use strict';
 	
-	var DraftRemovableWord = __webpack_require__(375);
-	var EditorState = __webpack_require__(295);
+	var DraftRemovableWord = __webpack_require__(376);
+	var EditorState = __webpack_require__(296);
 	
-	var moveSelectionForward = __webpack_require__(378);
-	var removeTextWithStrategy = __webpack_require__(373);
+	var moveSelectionForward = __webpack_require__(379);
+	var removeTextWithStrategy = __webpack_require__(374);
 	
 	/**
 	 * Delete the word that is right of the cursor, as well as any spaces or
@@ -45352,7 +45384,7 @@
 	module.exports = keyCommandDeleteWord;
 
 /***/ },
-/* 378 */
+/* 379 */
 /***/ function(module, exports) {
 
 	/**
@@ -45401,7 +45433,7 @@
 	module.exports = moveSelectionForward;
 
 /***/ },
-/* 379 */
+/* 380 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45418,8 +45450,8 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(275);
-	var EditorState = __webpack_require__(295);
+	var DraftModifier = __webpack_require__(276);
+	var EditorState = __webpack_require__(296);
 	
 	function keyCommandInsertNewline(editorState) {
 	  var contentState = DraftModifier.splitBlock(editorState.getCurrentContent(), editorState.getSelection());
@@ -45429,7 +45461,7 @@
 	module.exports = keyCommandInsertNewline;
 
 /***/ },
-/* 380 */
+/* 381 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45446,11 +45478,11 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(295);
-	var UnicodeUtils = __webpack_require__(369);
+	var EditorState = __webpack_require__(296);
+	var UnicodeUtils = __webpack_require__(370);
 	
-	var moveSelectionBackward = __webpack_require__(372);
-	var removeTextWithStrategy = __webpack_require__(373);
+	var moveSelectionBackward = __webpack_require__(373);
+	var removeTextWithStrategy = __webpack_require__(374);
 	
 	/**
 	 * Remove the selected range. If the cursor is collapsed, remove the preceding
@@ -45478,7 +45510,7 @@
 	module.exports = keyCommandPlainBackspace;
 
 /***/ },
-/* 381 */
+/* 382 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45495,11 +45527,11 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(295);
-	var UnicodeUtils = __webpack_require__(369);
+	var EditorState = __webpack_require__(296);
+	var UnicodeUtils = __webpack_require__(370);
 	
-	var moveSelectionForward = __webpack_require__(378);
-	var removeTextWithStrategy = __webpack_require__(373);
+	var moveSelectionForward = __webpack_require__(379);
+	var removeTextWithStrategy = __webpack_require__(374);
 	
 	/**
 	 * Remove the selected range. If the cursor is collapsed, remove the following
@@ -45528,7 +45560,7 @@
 	module.exports = keyCommandPlainDelete;
 
 /***/ },
-/* 382 */
+/* 383 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45545,7 +45577,7 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(295);
+	var EditorState = __webpack_require__(296);
 	
 	/**
 	 * See comment for `moveSelectionToStartOfBlock`.
@@ -45570,7 +45602,7 @@
 	module.exports = keyCommandMoveSelectionToEndOfBlock;
 
 /***/ },
-/* 383 */
+/* 384 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45587,7 +45619,7 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(295);
+	var EditorState = __webpack_require__(296);
 	
 	/**
 	 * Collapse selection at the start of the first selected block. This is used
@@ -45612,7 +45644,7 @@
 	module.exports = keyCommandMoveSelectionToStartOfBlock;
 
 /***/ },
-/* 384 */
+/* 385 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45629,10 +45661,10 @@
 	
 	'use strict';
 	
-	var DraftModifier = __webpack_require__(275);
-	var EditorState = __webpack_require__(295);
+	var DraftModifier = __webpack_require__(276);
+	var EditorState = __webpack_require__(296);
 	
-	var getContentStateFragment = __webpack_require__(286);
+	var getContentStateFragment = __webpack_require__(287);
 	
 	/**
 	 * Transpose the characters on either side of a collapsed cursor, or
@@ -45695,7 +45727,7 @@
 	module.exports = keyCommandTransposeCharacters;
 
 /***/ },
-/* 385 */
+/* 386 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45712,7 +45744,7 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(295);
+	var EditorState = __webpack_require__(296);
 	
 	function keyCommandUndo(e, editorState, updateFn) {
 	  var undoneState = EditorState.undo(editorState);
@@ -45748,7 +45780,7 @@
 	module.exports = keyCommandUndo;
 
 /***/ },
-/* 386 */
+/* 387 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45765,18 +45797,18 @@
 	
 	'use strict';
 	
-	var BlockMapBuilder = __webpack_require__(271);
-	var CharacterMetadata = __webpack_require__(272);
-	var DataTransfer = __webpack_require__(345);
-	var DraftModifier = __webpack_require__(275);
-	var DraftPasteProcessor = __webpack_require__(387);
-	var EditorState = __webpack_require__(295);
+	var BlockMapBuilder = __webpack_require__(272);
+	var CharacterMetadata = __webpack_require__(273);
+	var DataTransfer = __webpack_require__(346);
+	var DraftModifier = __webpack_require__(276);
+	var DraftPasteProcessor = __webpack_require__(388);
+	var EditorState = __webpack_require__(296);
 	
-	var getEntityKeyForSelection = __webpack_require__(313);
-	var getTextContentFromFiles = __webpack_require__(350);
-	var splitTextIntoTextBlocks = __webpack_require__(391);
+	var getEntityKeyForSelection = __webpack_require__(314);
+	var getTextContentFromFiles = __webpack_require__(351);
+	var splitTextIntoTextBlocks = __webpack_require__(392);
 	
-	var isEventHandled = __webpack_require__(352);
+	var isEventHandled = __webpack_require__(353);
 	
 	/**
 	 * Paste content.
@@ -45909,7 +45941,7 @@
 	module.exports = editOnPaste;
 
 /***/ },
-/* 387 */
+/* 388 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -45927,14 +45959,14 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(272);
-	var ContentBlock = __webpack_require__(273);
-	var Immutable = __webpack_require__(262);
+	var CharacterMetadata = __webpack_require__(273);
+	var ContentBlock = __webpack_require__(274);
+	var Immutable = __webpack_require__(263);
 	
-	var convertFromHTMLtoContentBlocks = __webpack_require__(388);
-	var generateRandomKey = __webpack_require__(287);
-	var getSafeBodyFromHTML = __webpack_require__(390);
-	var sanitizeDraftText = __webpack_require__(300);
+	var convertFromHTMLtoContentBlocks = __webpack_require__(389);
+	var generateRandomKey = __webpack_require__(288);
+	var getSafeBodyFromHTML = __webpack_require__(391);
+	var sanitizeDraftText = __webpack_require__(301);
 	
 	var List = Immutable.List;
 	var Repeat = Immutable.Repeat;
@@ -45960,7 +45992,7 @@
 	module.exports = DraftPasteProcessor;
 
 /***/ },
-/* 388 */
+/* 389 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -45978,18 +46010,18 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(272);
-	var ContentBlock = __webpack_require__(273);
-	var DefaultDraftBlockRenderMap = __webpack_require__(307);
-	var DraftEntity = __webpack_require__(280);
-	var Immutable = __webpack_require__(262);
-	var URI = __webpack_require__(389);
+	var CharacterMetadata = __webpack_require__(273);
+	var ContentBlock = __webpack_require__(274);
+	var DefaultDraftBlockRenderMap = __webpack_require__(308);
+	var DraftEntity = __webpack_require__(281);
+	var Immutable = __webpack_require__(263);
+	var URI = __webpack_require__(390);
 	
-	var generateRandomKey = __webpack_require__(287);
-	var getSafeBodyFromHTML = __webpack_require__(390);
-	var invariant = __webpack_require__(283);
-	var nullthrows = __webpack_require__(305);
-	var sanitizeDraftText = __webpack_require__(300);
+	var generateRandomKey = __webpack_require__(288);
+	var getSafeBodyFromHTML = __webpack_require__(391);
+	var invariant = __webpack_require__(284);
+	var nullthrows = __webpack_require__(306);
+	var sanitizeDraftText = __webpack_require__(301);
 	
 	var List = Immutable.List;
 	var OrderedSet = Immutable.OrderedSet;
@@ -46419,7 +46451,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 389 */
+/* 390 */
 /***/ function(module, exports) {
 
 	/**
@@ -46454,7 +46486,7 @@
 	module.exports = URI;
 
 /***/ },
-/* 390 */
+/* 391 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46471,7 +46503,7 @@
 	
 	'use strict';
 	
-	var UserAgent = __webpack_require__(319);
+	var UserAgent = __webpack_require__(320);
 	
 	var isOldIE = UserAgent.isBrowser('IE <= 9');
 	
@@ -46494,7 +46526,7 @@
 	module.exports = getSafeBodyFromHTML;
 
 /***/ },
-/* 391 */
+/* 392 */
 /***/ function(module, exports) {
 
 	/**
@@ -46520,7 +46552,7 @@
 	module.exports = splitTextIntoTextBlocks;
 
 /***/ },
-/* 392 */
+/* 393 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46537,10 +46569,10 @@
 	
 	'use strict';
 	
-	var EditorState = __webpack_require__(295);
+	var EditorState = __webpack_require__(296);
 	var ReactDOM = __webpack_require__(158);
 	
-	var getDraftEditorSelection = __webpack_require__(393);
+	var getDraftEditorSelection = __webpack_require__(394);
 	
 	function editOnSelect() {
 	  if (this._blockSelectEvents) {
@@ -46564,7 +46596,7 @@
 	module.exports = editOnSelect;
 
 /***/ },
-/* 393 */
+/* 394 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -46582,7 +46614,7 @@
 	
 	'use strict';
 	
-	var getDraftEditorSelectionWithNodes = __webpack_require__(371);
+	var getDraftEditorSelectionWithNodes = __webpack_require__(372);
 	
 	/**
 	 * Convert the current selection range to an anchor/focus pair of offset keys
@@ -46606,7 +46638,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 394 */
+/* 395 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46632,7 +46664,7 @@
 	
 	var React = __webpack_require__(1);
 	
-	var cx = __webpack_require__(308);
+	var cx = __webpack_require__(309);
 	
 	/**
 	 * This component is responsible for rendering placeholder text for the
@@ -46680,7 +46712,7 @@
 	module.exports = DraftEditorPlaceholder;
 
 /***/ },
-/* 395 */
+/* 396 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46698,9 +46730,9 @@
 	
 	'use strict';
 	
-	var KeyBindingUtil = __webpack_require__(365);
-	var Keys = __webpack_require__(312);
-	var UserAgent = __webpack_require__(319);
+	var KeyBindingUtil = __webpack_require__(366);
+	var Keys = __webpack_require__(313);
+	var UserAgent = __webpack_require__(320);
 	
 	var isOSX = UserAgent.isPlatform('Mac OS X');
 	var isWindows = UserAgent.isPlatform('Windows');
@@ -46809,7 +46841,7 @@
 	module.exports = getDefaultKeyBinding;
 
 /***/ },
-/* 396 */
+/* 397 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -46827,13 +46859,13 @@
 	
 	'use strict';
 	
-	var DraftEntity = __webpack_require__(280);
-	var DraftModifier = __webpack_require__(275);
-	var EditorState = __webpack_require__(295);
-	var SelectionState = __webpack_require__(299);
+	var DraftEntity = __webpack_require__(281);
+	var DraftModifier = __webpack_require__(276);
+	var EditorState = __webpack_require__(296);
+	var SelectionState = __webpack_require__(300);
 	
-	var adjustBlockDepthForContentState = __webpack_require__(397);
-	var nullthrows = __webpack_require__(305);
+	var adjustBlockDepthForContentState = __webpack_require__(398);
+	var nullthrows = __webpack_require__(306);
 	
 	var RichTextEditorUtil = {
 	  currentBlockContainsLink: function currentBlockContainsLink(editorState) {
@@ -47121,7 +47153,7 @@
 	module.exports = RichTextEditorUtil;
 
 /***/ },
-/* 397 */
+/* 398 */
 /***/ function(module, exports) {
 
 	/**
@@ -47165,7 +47197,7 @@
 	module.exports = adjustBlockDepthForContentState;
 
 /***/ },
-/* 398 */
+/* 399 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47182,11 +47214,11 @@
 	
 	'use strict';
 	
-	var DraftEntity = __webpack_require__(280);
-	var DraftStringKey = __webpack_require__(399);
+	var DraftEntity = __webpack_require__(281);
+	var DraftStringKey = __webpack_require__(400);
 	
-	var encodeEntityRanges = __webpack_require__(400);
-	var encodeInlineStyleRanges = __webpack_require__(401);
+	var encodeEntityRanges = __webpack_require__(401);
+	var encodeInlineStyleRanges = __webpack_require__(402);
 	
 	function convertFromDraftStateToRaw(contentState) {
 	  var entityStorageKey = 0;
@@ -47237,7 +47269,7 @@
 	module.exports = convertFromDraftStateToRaw;
 
 /***/ },
-/* 399 */
+/* 400 */
 /***/ function(module, exports) {
 
 	/**
@@ -47268,7 +47300,7 @@
 	module.exports = DraftStringKey;
 
 /***/ },
-/* 400 */
+/* 401 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47286,8 +47318,8 @@
 	
 	'use strict';
 	
-	var DraftStringKey = __webpack_require__(399);
-	var UnicodeUtils = __webpack_require__(369);
+	var DraftStringKey = __webpack_require__(400);
+	var UnicodeUtils = __webpack_require__(370);
 	
 	var strlen = UnicodeUtils.strlen;
 	
@@ -47315,7 +47347,7 @@
 	module.exports = encodeEntityRanges;
 
 /***/ },
-/* 401 */
+/* 402 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47332,9 +47364,9 @@
 	
 	'use strict';
 	
-	var UnicodeUtils = __webpack_require__(369);
+	var UnicodeUtils = __webpack_require__(370);
 	
-	var findRangesImmutable = __webpack_require__(274);
+	var findRangesImmutable = __webpack_require__(275);
 	
 	var areEqual = function areEqual(a, b) {
 	  return a === b;
@@ -47388,7 +47420,7 @@
 	module.exports = encodeInlineStyleRanges;
 
 /***/ },
-/* 402 */
+/* 403 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47405,19 +47437,19 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(281);
+	var _assign = __webpack_require__(282);
 	
 	var _extends = _assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
-	var ContentBlock = __webpack_require__(273);
-	var ContentState = __webpack_require__(298);
-	var DraftEntity = __webpack_require__(280);
-	var Immutable = __webpack_require__(262);
+	var ContentBlock = __webpack_require__(274);
+	var ContentState = __webpack_require__(299);
+	var DraftEntity = __webpack_require__(281);
+	var Immutable = __webpack_require__(263);
 	
-	var createCharacterList = __webpack_require__(403);
-	var decodeEntityRanges = __webpack_require__(404);
-	var decodeInlineStyleRanges = __webpack_require__(405);
-	var generateRandomKey = __webpack_require__(287);
+	var createCharacterList = __webpack_require__(404);
+	var decodeEntityRanges = __webpack_require__(405);
+	var decodeInlineStyleRanges = __webpack_require__(406);
+	var generateRandomKey = __webpack_require__(288);
 	
 	var Map = Immutable.Map;
 	
@@ -47474,7 +47506,7 @@
 	module.exports = convertFromRawToDraftState;
 
 /***/ },
-/* 403 */
+/* 404 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47492,8 +47524,8 @@
 	
 	'use strict';
 	
-	var CharacterMetadata = __webpack_require__(272);
-	var Immutable = __webpack_require__(262);
+	var CharacterMetadata = __webpack_require__(273);
+	var Immutable = __webpack_require__(263);
 	
 	var List = Immutable.List;
 	
@@ -47509,7 +47541,7 @@
 	module.exports = createCharacterList;
 
 /***/ },
-/* 404 */
+/* 405 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47527,7 +47559,7 @@
 	
 	'use strict';
 	
-	var UnicodeUtils = __webpack_require__(369);
+	var UnicodeUtils = __webpack_require__(370);
 	
 	var substr = UnicodeUtils.substr;
 	
@@ -47554,7 +47586,7 @@
 	module.exports = decodeEntityRanges;
 
 /***/ },
-/* 405 */
+/* 406 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47572,9 +47604,9 @@
 	
 	'use strict';
 	
-	var UnicodeUtils = __webpack_require__(369);
+	var UnicodeUtils = __webpack_require__(370);
 	
-	var _require = __webpack_require__(262);
+	var _require = __webpack_require__(263);
 	
 	var OrderedSet = _require.OrderedSet;
 	var substr = UnicodeUtils.substr;
@@ -47603,7 +47635,7 @@
 	module.exports = decodeInlineStyleRanges;
 
 /***/ },
-/* 406 */
+/* 407 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47621,7 +47653,7 @@
 	
 	'use strict';
 	
-	var getRangeBoundingClientRect = __webpack_require__(407);
+	var getRangeBoundingClientRect = __webpack_require__(408);
 	
 	/**
 	 * Return the bounding ClientRect for the visible DOM selection, if any.
@@ -47655,7 +47687,7 @@
 	module.exports = getVisibleSelectionRect;
 
 /***/ },
-/* 407 */
+/* 408 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -47673,7 +47705,7 @@
 	
 	'use strict';
 	
-	var getRangeClientRects = __webpack_require__(370);
+	var getRangeClientRects = __webpack_require__(371);
 	
 	/**
 	 * Like range.getBoundingClientRect() but normalizes for browser bugs.
@@ -47720,13 +47752,13 @@
 	module.exports = getRangeBoundingClientRect;
 
 /***/ },
-/* 408 */
+/* 409 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var Tab = __webpack_require__(409);
+	var Tab = __webpack_require__(410);
 	
 	var Tabs = React.createClass({
 	  displayName: 'Tabs',
@@ -47753,7 +47785,7 @@
 	module.exports = Tabs;
 
 /***/ },
-/* 409 */
+/* 410 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -47783,7 +47815,7 @@
 	module.exports = Tab;
 
 /***/ },
-/* 410 */
+/* 411 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47803,14 +47835,14 @@
 	module.exports = Reviews;
 
 /***/ },
-/* 411 */
+/* 412 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var BookShelfStore = __webpack_require__(412);
-	var Shelf = __webpack_require__(413);
+	var BookShelfStore = __webpack_require__(413);
+	var Shelf = __webpack_require__(414);
 	
 	var History = __webpack_require__(159).History;
 	
@@ -47889,12 +47921,12 @@
 	module.exports = BS;
 
 /***/ },
-/* 412 */
+/* 413 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Store = __webpack_require__(247).Store;
+	var Store = __webpack_require__(248).Store;
 	var _books = { read: [], toRead: [], reading: [] };
 	var BookShelfConstants = __webpack_require__(242);
 	var AppDispatcher = __webpack_require__(237);
@@ -47958,13 +47990,13 @@
 	module.exports = BookShelfStore;
 
 /***/ },
-/* 413 */
+/* 414 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var ShelfItem = __webpack_require__(414);
+	var ShelfItem = __webpack_require__(415);
 	
 	var Shelf = React.createClass({
 	  displayName: 'Shelf',
@@ -48003,13 +48035,13 @@
 	module.exports = Shelf;
 
 /***/ },
-/* 414 */
+/* 415 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(246);
+	var BookSearchStore = __webpack_require__(247);
 	var ApiActions = __webpack_require__(236);
 	var APIUtil = __webpack_require__(235);
 	
@@ -48045,1466 +48077,19 @@
 	module.exports = ShelfItem;
 
 /***/ },
-/* 415 */,
 /* 416 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var InitialBookIndex = __webpack_require__(417);
-	var SearchArea = __webpack_require__(419);
-	var BookSearchStore = __webpack_require__(246);
-	var BookConfirmation = __webpack_require__(421);
-	var Modal = __webpack_require__(209);
-	var BookSearch = __webpack_require__(423);
-	var APIUtil = __webpack_require__(235);
-	// var History = require('react-router').History;
-	var browserHistory = __webpack_require__(159).browserHistory;
-	
-	var customStyles = {
-	  overlay: {
-	    position: 'fixed',
-	    top: 0,
-	    left: 0,
-	    right: 0,
-	    bottom: 0,
-	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
-	    zIndex: 20
-	  },
-	  content: {
-	    top: '50%',
-	    left: '50%',
-	    right: 'auto',
-	    bottom: 'auto',
-	    transform: 'translate(-50%, -50%)'
-	  }
-	};
-	
-	var Search = React.createClass({
-	  displayName: 'Search',
-	
-	  getInitialState: function getInitialState() {
-	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
-	  },
-	  bookChosen: function bookChosen() {
-	    // this.openModal();
-	    event.preventDefault();
-	    var bookToSend = BookSearchStore.currentBook();
-	    bookToSend.read = "toRead";
-	    // APIUtil.createBook(bookToSend);
-	    var url = "/Desk";
-	    // this.history.push({pathname: url});
-	    browserHistory.push("/Books/" + bookToSend.ISBN13);
-	  },
-	  openModal: function openModal() {
-	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
-	  },
-	
-	  closeModal: function closeModal() {
-	    BookSearchStore.resetCurrentBook(null);
-	    this.setState({ modalIsOpen: false });
-	  },
-	  render: function render() {
-	
-	    return React.createElement(
-	      'div',
-	      { className: 'homePage' },
-	      React.createElement(SearchArea, { whenChosen: this.bookChosen }),
-	      React.createElement(InitialBookIndex, { whenChosen: this.bookChosen })
-	    );
-	  }
-	});
-	module.exports = Search;
-
-/***/ },
-/* 417 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(246);
-	var APIUtil = __webpack_require__(235);
-	var IndexItem = __webpack_require__(418);
-	var InitialBookIndex = React.createClass({
-	  displayName: 'InitialBookIndex',
-	
-	
-	  getInitialState: function getInitialState() {
-	    return { bookIndex: BookSearchStore.initialData() };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    APIUtil.getInitialBookIndex();
-	    this.iIndex = BookSearchStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.iIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    this.setState({ bookIndex: BookSearchStore.initialData() });
-	  },
-	  shuffle: function shuffle(array) {
-	    var currentIndex = array.length,
-	        temporaryValue,
-	        randomIndex;
-	    while (0 !== currentIndex) {
-	
-	      randomIndex = Math.floor(Math.random() * currentIndex);
-	      currentIndex -= 1;
-	
-	      temporaryValue = array[currentIndex];
-	      array[currentIndex] = array[randomIndex];
-	      array[randomIndex] = temporaryValue;
-	    }
-	
-	    return array;
-	  },
-	  render: function render() {
-	    var bookOptions;
-	    var that = this;
-	
-	    bookOptions = this.state.bookIndex.map(function (book, index) {
-	      return React.createElement(IndexItem, { key: index, book: book, whenChosen: this.props.whenChosen });
-	    }, this);
-	    return React.createElement(
-	      'div',
-	      { id: 'BookArea' },
-	      React.createElement(
-	        'div',
-	        { className: 'book-list' },
-	        bookOptions
-	      )
-	    );
-	  }
-	});
-	
-	module.exports = InitialBookIndex;
-
-/***/ },
-/* 418 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(246);
-	var ApiActions = __webpack_require__(236);
-	var History = __webpack_require__(159).History;
-	var browserHistory = __webpack_require__(159).browserHistory;
-	var APIUtil = __webpack_require__(235);
-	
-	var IndexItem = React.createClass({
-	  displayName: 'IndexItem',
-	
-	  onClick: function onClick(event) {
-	    event.preventDefault();
-	    ApiActions.updateCurrentBook(this.props.book);
-	    var bookToSend = this.props.book;
-	    bookToSend.read = "toRead";
-	    var url = "/Desk";
-	    this.props.history.push("/Books/book/" + bookToSend.ISBN13);
-	  },
-	  render: function render() {
-	    var customStyle;
-	    var placements = ["middle", "top", "bottom"];
-	    var placementStyle = { verticalAlign: placements[Math.floor(Math.random() * 3)], margin: Math.floor(Math.random() * 40) - 20 };
-	    var heights = ["200px", "250px", "300px", "350px"];
-	    var posH = this.props.book.title.length * 9;
-	    if (posH > 450) {
-	      customStyle = { height: "350px" };
-	    } else if (posH < 100) {
-	      customStyle = { height: heights[Math.floor(Math.random() * heights.length)] };
-	    } else {
-	      customStyle = { height: this.props.book.title.length * 9 };
-	    }
-	    return React.createElement(
-	      'div',
-	      { className: 'InitialBooks', style: placementStyle, onClick: this.onClick },
-	      React.createElement('img', { style: customStyle, src: this.props.book.image })
-	    );
-	  }
-	});
-	module.exports = IndexItem;
-
-/***/ },
-/* 419 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookSearchBar = __webpack_require__(420);
-	
-	var SearchArea = React.createClass({
-	  displayName: 'SearchArea',
-	
-	
-	  render: function render() {
-	    return React.createElement(
-	      'section',
-	      { id: 'popupbody' },
-	      React.createElement(BookSearchBar, { whenChosen: this.props.whenChosen })
-	    );
-	  }
-	});
-	
-	module.exports = SearchArea;
-
-/***/ },
-/* 420 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var APIUtil = __webpack_require__(235);
-	var BookSearchStore = __webpack_require__(246);
-	var BookConfirmation = __webpack_require__(421);
-	var SearchListItem = __webpack_require__(422);
-	var History = __webpack_require__(159).History;
-	var browserHistory = __webpack_require__(159).browserHistory;
-	
-	var BookSearchBar = React.createClass({
-	  displayName: 'BookSearchBar',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	    this.leave = false;
-	    this.needToLoad = false;
-	    return { value: "", searchResults: [], showGuesses: false };
-	  },
-	  handleChange: function handleChange(event) {
-	    if (event.target.value.length > 0) {
-	      this.setState({ value: event.target.value, showGuesses: true });
-	    } else {
-	      this.setState({ value: event.target.value, showGuesses: false });
-	    }
-	
-	    if (this.state.value.length > 2 && !this.pending) {
-	      this.pending = true;
-	      this.loadBar.style.display = 'block';
-	      this.needToLoad = false;
-	      APIUtil.fetchBookResults(this.state.value);
-	      window.setTimeout(function () {
-	        this.pending = false;
-	        if (this.needToLoad) {
-	          this.pending = true;
-	          this.loadBar.style.display = 'block';
-	          this.needToLoad = false;
-	          APIUtil.fetchBookResults(this.state.value);
-	        }
-	      }.bind(this), 1800);
-	    } else if (this.state.value.length > 2) {
-	      this.needToLoad = true;
-	    } else {
-	      this.needToLoad = false;
-	      this.loadBar.style.display = 'none';
-	    }
-	  },
-	
-	  componentDidMount: function componentDidMount() {
-	    this.storeIndex = BookSearchStore.addListener(this._onChange);
-	    this.pending = false;
-	    this.loadBar = document.getElementById('loader');
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.storeIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    if (this.state.value.length > 0 && !this.leave) {
-	      this.loadBar.style.display = 'none';
-	      this.setState({ searchResults: BookSearchStore.all() });
-	    } else if (this.leave) {
-	      this.leave = false;
-	      var url = '/SearchResults';
-	      this.history.push({ pathname: url });
-	    } else {
-	      this.loadBar.style.display = 'none';
-	      this.setState({ searchResults: [] });
-	    }
-	  },
-	  clickOption: function clickOption(book) {
-	
-	    var theChosen = book;
-	    var chosen = APIUtil.makeBookObject(book);
-	    BookSearchStore.resetCurrentBook(chosen);
-	    this.props.whenChosen();
-	  },
-	  blur: function blur(event) {
-	    this.setState({ showGuesses: false });
-	  },
-	  click: function click(event) {
-	    event.preventDefault();
-	    this.leave = true;
-	    APIUtil.fetchBookResults(this.state.value);
-	  },
-	  removeSearchGuesses: function removeSearchGuesses() {
-	    this.setState({ showGuesses: false });
-	  },
-	  render: function render() {
-	    var that = this;
-	    if (this.state.showGuesses) {
-	      var guesses = this.state.searchResults.map(function (result, index) {
-	        return React.createElement(SearchListItem, { key: result.id, book: result, clickOption: this.clickOption });
-	      }, this);
-	    } else {
-	      guesses = null;
-	    }
-	    return React.createElement(
-	      'div',
-	      { id: 'landing-search-bar' },
-	      React.createElement('input', { id: 'BookSearchInput',
-	        type: 'text',
-	        value: this.state.value,
-	        onChange: this.handleChange,
-	        placeholder: 'find your next adventure',
-	        list: 'search-options',
-	        autoComplete: 'off',
-	        onBlur: this.blur
-	      }),
-	      React.createElement('button', { id: 'BookSearchButton', className: 'hvr-grow-shadow fa fa-search', onClick: this.click }),
-	      React.createElement('div', { id: 'loader', className: 'loader' }),
-	      React.createElement(
-	        'ul',
-	        { className: 'searchGuesses', id: 'search-options' },
-	        guesses
-	      )
-	    );
-	  }
-	
-	});
-	module.exports = BookSearchBar;
-
-/***/ },
-/* 421 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var History = __webpack_require__(159).History;
-	var APIUtil = __webpack_require__(235);
-	var RadioGroup = __webpack_require__(233);
-	
-	var BookConfirmation = React.createClass({
-	  displayName: 'BookConfirmation',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	    return { selectedValue: 'reading' };
-	  },
-	  handleChange: function handleChange(value) {
-	    this.setState({ selectedValue: value });
-	  },
-	  yesClick: function yesClick(event) {
-	    event.preventDefault();
-	    var bookToSend = this.props.book;
-	    bookToSend.read = this.state.selectedValue;
-	    APIUtil.createBook(bookToSend);
-	    var url = "/Desk";
-	    this.history.push({ pathname: url });
-	    //reroute to User Show with Book Display
-	  },
-	  noClick: function noClick(event) {
-	    event.preventDefault();
-	    this.props.close();
-	    //closeWindow and reset state of parent
-	  },
-	  render: function render() {
-	    var chosen = this.props.book;
-	    return React.createElement(
-	      'section',
-	      { className: 'BookConfirmation' },
-	      React.createElement(
-	        'div',
-	        null,
-	        React.createElement(
-	          'h3',
-	          { className: 'confirmationQuestion' },
-	          'Is the following the correct book?'
-	        ),
-	        React.createElement(
-	          'h2',
-	          { className: 'confirmationTitle' },
-	          chosen.title
-	        ),
-	        React.createElement(
-	          'h3',
-	          { className: 'byLine' },
-	          ' by, ',
-	          chosen.author
-	        ),
-	        React.createElement('img', { className: 'confirmationImage', src: chosen.image }),
-	        React.createElement(
-	          RadioGroup,
-	          {
-	            name: 'fruit',
-	            selectedValue: this.state.selectedValue,
-	            onChange: this.handleChange },
-	          function (Radio) {
-	            return React.createElement(
-	              'div',
-	              null,
-	              React.createElement(
-	                'label',
-	                null,
-	                React.createElement(Radio, { value: 'read' }),
-	                'have read'
-	              ),
-	              React.createElement(
-	                'label',
-	                null,
-	                React.createElement(Radio, { value: 'toRead' }),
-	                'to read'
-	              ),
-	              React.createElement(
-	                'label',
-	                null,
-	                React.createElement(Radio, { value: 'reading' }),
-	                'reading'
-	              )
-	            );
-	          }
-	        )
-	      ),
-	      React.createElement(
-	        'button',
-	        { className: 'Confirmation', id: 'Yes', onClick: this.yesClick },
-	        'Yes'
-	      ),
-	      React.createElement(
-	        'button',
-	        { className: 'Confirmation', id: 'No', onClick: this.noClick },
-	        'Search Again'
-	      )
-	    );
-	  }
-	
-	});
-	module.exports = BookConfirmation;
-
-/***/ },
-/* 422 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(1);
-	var PropTypes = React.PropTypes;
-	
-	var SearchListItem = React.createClass({
-	  displayName: "SearchListItem",
-	
-	  click: function click(event) {
-	    event.preventDefault();
-	    this.props.clickOption(this.props.book);
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      "li",
-	      { onClick: this.click, className: "searchGuess", value: this.props.book.volumeInfo.title },
-	      this.props.book.volumeInfo.title
-	    );
-	  }
-	
-	});
-	
-	module.exports = SearchListItem;
-
-/***/ },
-/* 423 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var LinkedStateMixin = __webpack_require__(229);
-	// var ReactRouter = require('react-router');
-	// var History = require('react-router').History;
-	var DropDown = __webpack_require__(424);
-	
-	var BookSearch = React.createClass({
-	  displayName: 'BookSearch',
-	
-	  // mixins: [LinkedStateMixin],
-	
-	  getInitialState: function getInitialState() {
-	    this.styleSheetShow = document.createElement('style');
-	    this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
-	    // this.styleSheetHide = document.createElement('style');
-	    // this.styleSheetHide.innerHTML = ".pac-container {display: none;}";
-	
-	    return {
-	      book: "",
-	      placeholder: "What book would you like to Explore?",
-	      showAutocomplete: false,
-	      showSpinner: false
-	    };
-	  },
-	
-	  searchBarMoveUp: function searchBarMoveUp() {
-	    // debugger;
-	    // this.refs.searchbar.style{{bottom: "10%"}}
-	    $("#landing-search-bar").css("bottom", "20%");
-	    setTimeout(function () {
-	      this.setState({
-	        showAutocomplete: true
-	      });
-	      // debugger;
-	    }.bind(this), 1800);
-	    // this.hideAutocomplete();
-	    // this.tempToken = setTimeout(this.showAutocomplete, 2000);
-	  },
-	
-	  // showAutocomplete: function() {
-	  //   // document.body.appendChild(this.styleSheetShow);
-	  //   document.body.appendChild(this.styleSheetShow);
-	  // },
-	  //
-	  // hideAutocomplete: function() {
-	  //   // clearTimeout(this.tempToken);
-	  //   // document.body.appendChild(this.styleSheetHide);
-	  // },
-	
-	  searchBarMoveBack: function searchBarMoveBack() {
-	    $("#landing-search-bar").css("bottom", "0%");
-	    // this.hideAutocomplete();
-	
-	    // setTimeout(function(){
-	    this.setState({
-	      showAutocomplete: false
-	    });
-	    //     // debugger;
-	    // }.bind(this), 500);
-	  },
-	
-	  handleSearch: function handleSearch(e) {
-	    if (arguments.length > 0) {
-	      e.preventDefault();
-	    }
-	
-	    // may use History mixins;
-	    // this.history.pushState(null, 'search/' + this.state.loc)
-	    // debugger;
-	
-	    if (this.state.loc === "") {
-	      this.setState({
-	        placeholder: "Please choose a book"
-	      });
-	    } else {
-	      setTimeout(this.redirectToSearch, 2000);
-	      this.setState({
-	        showSpinner: true
-	      });
-	    }
-	  },
-	
-	  redirectToSearch: function redirectToSearch() {
-	    // var loc = this.state.loc.replace(/\W+/g, "-");
-	    // console.log("pushStatefromsearch");
-	    // this.props.history.pushState(null, 'search/' + loc);
-	  },
-	
-	  handleLocChange: function handleLocChange(e) {
-	    // console.log(this.refs.locinput.value);
-	    this.setState({
-	      book: this.refs.locinput.value
-	    });
-	    if (this.refs.locinput.value > 0) {
-	      APIUtil.fetchBookResults(this.refs.locinput.value);
-	    }
-	    // autocomplete: needs to add a delay using setTimeout and clearTimeout to cancel if the user changes before timeout expires
-	  },
-	
-	  render: function render() {
-	    var org1 = React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'form',
-	        { className: 'form-horizontal', role: 'form', onSubmit: this.handleSearch },
-	        React.createElement(
-	          'div',
-	          { className: 'input-group input-group-lg' },
-	          React.createElement('input', {
-	            type: 'text',
-	            className: 'form-control',
-	
-	            placeholder: this.state.placeholder }),
-	          React.createElement(
-	            'span',
-	            { className: 'input-group-addon' },
-	            '@'
-	          )
-	        ),
-	        React.createElement(
-	          'button',
-	          null,
-	          'Search'
-	        )
-	      )
-	    );
-	
-	    var design1 = React.createElement(
-	      'div',
-	      { className: 'col-xs-12', id: 'landing-search-bar' },
-	      React.createElement(
-	        'div',
-	        { className: 'row' },
-	        React.createElement(
-	          'div',
-	          { className: 'col-xs-8 col-xs-offset-2' },
-	          React.createElement(
-	            'form',
-	            { role: 'form', onSubmit: this.handleSearch },
-	            React.createElement(
-	              'div',
-	              { className: 'input-group' },
-	              React.createElement('input', {
-	                type: 'text',
-	                className: 'form-control',
-	
-	                placeholder: this.state.placeholder }),
-	              React.createElement(
-	                'span',
-	                { className: 'input-group-button' },
-	                React.createElement(
-	                  'button',
-	                  { className: 'btn btn-default', type: 'button' },
-	                  'Search'
-	                )
-	              )
-	            )
-	          )
-	        )
-	      )
-	    );
-	    var buttonSubmit = React.createElement(
-	      'span',
-	      { className: 'input-group-btn' },
-	      React.createElement(
-	        'button',
-	        { className: 'btn btn-default', type: 'button', onClick: this.handleSearch },
-	        'Search'
-	      )
-	    );
-	
-	    var buttonProgress = React.createElement(
-	      'span',
-	      { className: 'input-group-btn' },
-	      React.createElement(
-	        'button',
-	        { className: 'btn btn-default', disabled: true },
-	        React.createElement(
-	          'div',
-	          { className: 'three-quarters-loader' },
-	          'Loading…'
-	        )
-	      )
-	    );
-	    var design2 = React.createElement(
-	      'div',
-	      { className: 'col-xs-12' },
-	      React.createElement(
-	        'div',
-	        { className: 'row' },
-	        React.createElement(
-	          'div',
-	          { className: 'col-xs-offset-2 col-xs-8' },
-	          React.createElement(
-	            'div',
-	            { className: 'col-xs-offset-2 col-xs-8' },
-	            React.createElement(
-	              'form',
-	              { className: 'input-group', role: 'form', onSubmit: this.handleSearch },
-	              React.createElement('input', {
-	                type: 'text',
-	                className: 'form-control center',
-	                id: 'landing-search-input',
-	                onChange: this.handleLocChange,
-	                placeholder: this.state.placeholder,
-	                ref: 'locinput',
-	                onFocus: this.searchBarMoveUp,
-	                onBlur: this.searchBarMoveBack }),
-	              this.state.showSpinner ? buttonProgress : buttonSubmit
-	            )
-	          )
-	        )
-	      )
-	    );
-	
-	    var showAutocomplete = this.state.loc !== "" && this.state.showAutocomplete;
-	    // console.log("toggle autocomplete: " + showAutocomplete)
-	    // var showAutocomplete = (this.state.loc !== "");
-	    return React.createElement(
-	      'div',
-	      { className: 'col-xs-12', id: 'landing-search-bar', ref: 'searchbar' },
-	      design2,
-	      showAutocomplete ? React.createElement(DropDown, {
-	        locinput: this.refs.locinput,
-	        handleSearch: this.handleSearch,
-	        handleLocChange: this.handleLocChange }) : ""
-	    );
-	  }
-	});
-	
-	module.exports = BookSearch;
-
-/***/ },
-/* 424 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(158);
-	
-	var DropDown = React.createClass({
-	  displayName: 'DropDown',
-	
-	
-	  _fillInAddress: function _fillInAddress() {
-	    // debugger;
-	    this.props.handleLocChange();
-	    this.props.handleSearch();
-	  },
-	
-	  componentWillUnmount: function componentWillUnmount() {
-	    document.getElementById('html-body').removeChild(document.getElementsByClassName("pac-container")[0]);
-	    // ReactDOM.unmountComponentAtNode(document.getElementsByClassName("pac-container")[0]);
-	  },
-	
-	  componentDidMount: function componentDidMount() {
-	    // using Google Maps Places Autocomplete client version
-	    this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
-	    this.autofillOptions = {
-	      types: ['geocode']
-	    };
-	    // this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
-	    // // debugger;
-	    // this.autofill.addListener('place_changed', this._fillInAddress);
-	  },
-	
-	  // componentWillReceiveProps: function() {
-	  //   console.log("new autofill")
-	  //   this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
-	  //   this.autofillOptions = {
-	  //     types: ['geocode']
-	  //   };
-	  //   this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
-	  //   this.autofill.addListener('place_changed', this._fillInAddress);
-	  // },
-	
-	  render: function render() {
-	    return React.createElement('div', null);
-	  }
-	});
-	
-	module.exports = DropDown;
-
-/***/ },
-/* 425 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(1);
-	
-	// components
-	var BookDescription = __webpack_require__(426);
-	var BookImage = __webpack_require__(427);
-	var Note = __webpack_require__(450);
-	var UserArea = __webpack_require__(428);
-	
-	//stores
-	
-	var Book = React.createClass({
-	  displayName: "Book",
-	
-	  render: function render() {
-	
-	    return React.createElement(
-	      "div",
-	      { className: "book-main" },
-	      React.createElement(
-	        "div",
-	        { className: "book-area" },
-	        React.createElement(
-	          "div",
-	          { className: "book-block" },
-	          React.createElement(
-	            "div",
-	            { className: "book-column" },
-	            React.createElement(BookDescription, null)
-	          ),
-	          React.createElement(
-	            "div",
-	            { className: "book-column" },
-	            React.createElement(BookImage, null)
-	          )
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "note-area" },
-	          React.createElement(
-	            "h1",
-	            null,
-	            "This is the note area"
-	          ),
-	          React.createElement(Note, null)
-	        )
-	      ),
-	      React.createElement(
-	        "div",
-	        { className: "user-area" },
-	        React.createElement(UserArea, null)
-	      )
-	    );
-	  }
-	});
-	module.exports = Book;
-
-/***/ },
-/* 426 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	// components
-	//stores
-	var BookSearchStore = __webpack_require__(246);
-	
-	var BookDescription = React.createClass({
-	  displayName: 'BookDescription',
-	
-	  getInitialState: function getInitialState() {
-	    return { currentBook: BookSearchStore.currentBook(), modalIsOpen: false };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.BookIndex = BookSearchStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.BookIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    this.setState({ currentBook: BookSearchStore.currentBook() });
-	  },
-	  render: function render() {
-	    console.log(this.state.currentBook);
-	    return React.createElement(
-	      'div',
-	      { className: 'book-description' },
-	      React.createElement(
-	        'h1',
-	        null,
-	        this.state.currentBook.title
-	      ),
-	      React.createElement(
-	        'h2',
-	        null,
-	        this.state.currentBook.author
-	      ),
-	      React.createElement(
-	        'p',
-	        null,
-	        this.state.currentBook.description
-	      )
-	    );
-	  }
-	});
-	module.exports = BookDescription;
-
-/***/ },
-/* 427 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var RadioGroup = __webpack_require__(233);
-	var APIUtil = __webpack_require__(235);
-	var ApiActions = __webpack_require__(236);
-	var BookSearchStore = __webpack_require__(246);
-	var UserStore = __webpack_require__(264);
-	
-	var BookImage = React.createClass({
-	  displayName: 'BookImage',
-	
-	  getInitialState: function getInitialState() {
-	    var book = BookSearchStore.currentBook();
-	    var inDatabase = true;
-	    if (book.id === undefined) {
-	      inDatabase = false;
-	    }
-	    if (book.read === "read") {
-	      var finishedRead = true;
-	    } else {
-	      var finishedRead = false;
-	    }
-	    return { image: book.image, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.bookStoreIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    var book = BookSearchStore.currentBook();
-	    this.setState({ image: book.image, currentBook: BookSearchStore.currentBook() });
-	  },
-	  handleChange: function handleChange(value) {
-	    this.setState({ selectedValue: value });
-	  },
-	  render: function render() {
-	    var book = this.state.currentBook;
-	    return React.createElement(
-	      'section',
-	      { className: 'book-image', id: 'book-image-container' },
-	      React.createElement('img', { src: book.image, id: 'CoverPhoto' })
-	    );
-	  }
-	});
-	module.exports = BookImage;
-
-/***/ },
-/* 428 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(1);
-	
-	// components
-	var BookShelf = __webpack_require__(438);
-	
-	var UserArea = React.createClass({
-	  displayName: "UserArea",
-	
-	
-	  render: function render() {
-	
-	    return React.createElement(
-	      "div",
-	      { className: "user-shelf-area" },
-	      React.createElement(
-	        "h1",
-	        null,
-	        "User Shelf Area"
-	      ),
-	      React.createElement(BookShelf, null)
-	    );
-	  }
-	});
-	module.exports = UserArea;
-
-/***/ },
-/* 429 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var SplashIndex = __webpack_require__(430);
-	var SearchArea = __webpack_require__(432);
-	var BookSearchStore = __webpack_require__(246);
-	var APIUtil = __webpack_require__(235);
-	var History = __webpack_require__(159).History;
-	var browserHistory = __webpack_require__(159).browserHistory;
-	
-	var customStyles = {
-	  overlay: {
-	    position: 'fixed',
-	    top: 0,
-	    left: 0,
-	    right: 0,
-	    bottom: 0,
-	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
-	    zIndex: 20
-	  },
-	  content: {
-	    top: '50%',
-	    left: '50%',
-	    right: 'auto',
-	    bottom: 'auto',
-	    transform: 'translate(-50%, -50%)'
-	  }
-	};
-	
-	var MainPage = React.createClass({
-	  displayName: 'MainPage',
-	
-	  getInitialState: function getInitialState() {
-	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
-	  },
-	  bookChosen: function bookChosen() {
-	    event.preventDefault();
-	    var bookToSend = BookSearchStore.currentBook();
-	    bookToSend.read = "toRead";
-	    var url = "/Desk";
-	    browserHistory.push("/Books/" + bookToSend.ISBN13);
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      { className: 'homePage' },
-	      React.createElement(SearchArea, { whenChosen: this.bookChosen }),
-	      React.createElement(SplashIndex, { whenChosen: this.bookChosen })
-	    );
-	  }
-	});
-	
-	module.exports = MainPage;
-
-/***/ },
-/* 430 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(246);
-	var APIUtil = __webpack_require__(235);
-	var IndexItem = __webpack_require__(431);
-	
-	var SplashIndex = React.createClass({
-	  displayName: 'SplashIndex',
-	
-	  getInitialState: function getInitialState() {
-	    return { bookIndex: BookSearchStore.initialData() };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    APIUtil.getInitialBookIndex();
-	    this.iIndex = BookSearchStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.iIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    this.setState({ bookIndex: BookSearchStore.initialData() });
-	  },
-	  shuffle: function shuffle(array) {
-	    var currentIndex = array.length,
-	        temporaryValue,
-	        randomIndex;
-	    while (0 !== currentIndex) {
-	      randomIndex = Math.floor(Math.random() * currentIndex);
-	      currentIndex -= 1;
-	      temporaryValue = array[currentIndex];
-	      array[currentIndex] = array[randomIndex];
-	      array[randomIndex] = temporaryValue;
-	    }
-	    return array;
-	  },
-	  render: function render() {
-	    var bookOptions;
-	    var that = this;
-	    bookOptions = this.state.bookIndex.map(function (book, index) {
-	      return React.createElement(IndexItem, { key: index, book: book, whenChosen: this.props.whenChosen });
-	    }, this);
-	    return React.createElement(
-	      'div',
-	      { id: 'BookArea' },
-	      React.createElement(
-	        'div',
-	        { className: 'book-list' },
-	        bookOptions
-	      )
-	    );
-	  }
-	});
-	
-	module.exports = SplashIndex;
-
-/***/ },
-/* 431 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(246);
-	var ApiActions = __webpack_require__(236);
-	var History = __webpack_require__(159).History;
-	var browserHistory = __webpack_require__(159).browserHistory;
-	var APIUtil = __webpack_require__(235);
-	
-	var IndexItem = React.createClass({
-	  displayName: 'IndexItem',
-	
-	  mixins: [History],
-	  onClick: function onClick(event) {
-	    event.preventDefault();
-	    ApiActions.updateCurrentBook(this.props.book);
-	    var bookToSend = this.props.book;
-	    bookToSend.read = "toRead";
-	    var url = "/Desk";
-	    this.history.push("/Book/" + bookToSend.ISBN13);
-	  },
-	  render: function render() {
-	    var customStyle;
-	    var placements = ["middle", "top", "bottom"];
-	    var placementStyle = { verticalAlign: placements[Math.floor(Math.random() * 3)], margin: Math.floor(Math.random() * 40) - 20 };
-	    var heights = ["200px", "250px", "300px", "350px"];
-	    var posH = this.props.book.title.length * 9;
-	    if (posH > 450) {
-	      customStyle = { height: "350px" };
-	    } else if (posH < 100) {
-	      customStyle = { height: heights[Math.floor(Math.random() * heights.length)] };
-	    } else {
-	      customStyle = { height: this.props.book.title.length * 9 };
-	    }
-	    return React.createElement(
-	      'div',
-	      { className: 'InitialBooks', style: placementStyle, onClick: this.onClick },
-	      React.createElement('img', { style: customStyle, src: this.props.book.image })
-	    );
-	  }
-	});
-	module.exports = IndexItem;
-
-/***/ },
-/* 432 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var SearchBar = __webpack_require__(433);
-	
-	var SearchArea = React.createClass({
-	  displayName: 'SearchArea',
-	
-	  render: function render() {
-	    return React.createElement(
-	      'section',
-	      { id: 'popupbody' },
-	      React.createElement(SearchBar, { whenChosen: this.props.whenChosen })
-	    );
-	  }
-	});
-	
-	module.exports = SearchArea;
-
-/***/ },
-/* 433 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var APIUtil = __webpack_require__(235);
-	var BookSearchStore = __webpack_require__(246);
-	var SearchListItem = __webpack_require__(434);
-	var History = __webpack_require__(159).History;
-	var browserHistory = __webpack_require__(159).browserHistory;
-	var Navigation = __webpack_require__(159).Navigation;
-	
-	var SearchBar = React.createClass({
-	  displayName: 'SearchBar',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	    this.leave = false;
-	    this.needToLoad = false;
-	    return { value: "", searchResults: [], showGuesses: false };
-	  },
-	  handleChange: function handleChange(event) {
-	    if (event.target.value.length > 0) {
-	      this.setState({ value: event.target.value, showGuesses: true });
-	    } else {
-	      this.setState({ value: event.target.value, showGuesses: false });
-	    }
-	    if (this.state.value.length > 2 && !this.pending) {
-	      this.pending = true;
-	      this.loadBar.style.display = 'block';
-	      this.needToLoad = false;
-	      APIUtil.fetchBookResults(this.state.value);
-	      window.setTimeout(function () {
-	        this.pending = false;
-	        if (this.needToLoad) {
-	          this.pending = true;
-	          this.loadBar.style.display = 'block';
-	          this.needToLoad = false;
-	          APIUtil.fetchBookResults(this.state.value);
-	        }
-	      }.bind(this), 1800);
-	    } else if (this.state.value.length > 2) {
-	      this.needToLoad = true;
-	    } else {
-	      this.needToLoad = false;
-	      this.loadBar.style.display = 'none';
-	    }
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.storeIndex = BookSearchStore.addListener(this._onChange);
-	    this.pending = false;
-	    this.loadBar = document.getElementById('loader');
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.storeIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    if (this.state.value.length > 0 && !this.leave) {
-	      this.loadBar.style.display = 'none';
-	      this.setState({ searchResults: BookSearchStore.all() });
-	    } else if (this.leave) {
-	      this.leave = false;
-	      var url = '/SearchResults';
-	      this.history.push({ pathname: url });
-	    } else {
-	      this.loadBar.style.display = 'none';
-	      this.setState({ searchResults: [] });
-	    }
-	  },
-	  clickOption: function clickOption(book) {
-	    var theChosen = book;
-	    var chosen = APIUtil.makeBookObject(book);
-	    BookSearchStore.resetCurrentBook(chosen);
-	    this.props.whenChosen();
-	  },
-	  blur: function blur(event) {
-	    this.setState({ showGuesses: false });
-	  },
-	  click: function click(event) {
-	    event.preventDefault();
-	    this.leave = true;
-	    APIUtil.fetchBookResults(this.state.value);
-	  },
-	  removeSearchGuesses: function removeSearchGuesses() {
-	    this.setState({ showGuesses: false });
-	  },
-	  render: function render() {
-	    var that = this;
-	    if (this.state.showGuesses) {
-	      var guesses = this.state.searchResults.map(function (result, index) {
-	        return React.createElement(SearchListItem, { key: result.id, book: result, clickOption: this.clickOption });
-	      }, this);
-	    } else {
-	      guesses = null;
-	    }
-	    return React.createElement(
-	      'div',
-	      { id: 'landing-search-bar' },
-	      React.createElement('input', { id: 'BookSearchInput',
-	        type: 'text',
-	        value: this.state.value,
-	        onChange: this.handleChange,
-	        placeholder: 'find your next adventure',
-	        list: 'search-options',
-	        autoComplete: 'off',
-	        onBlur: this.blur
-	      }),
-	      React.createElement('button', { id: 'BookSearchButton', className: 'hvr-grow-shadow fa fa-search', onClick: this.click }),
-	      React.createElement('div', { id: 'loader', className: 'loader' }),
-	      React.createElement(
-	        'ul',
-	        { className: 'searchGuesses', id: 'search-options' },
-	        guesses
-	      )
-	    );
-	  }
-	
-	});
-	module.exports = SearchBar;
-
-/***/ },
-/* 434 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(1);
-	var PropTypes = React.PropTypes;
-	
-	var SearchListItem = React.createClass({
-	  displayName: "SearchListItem",
-	
-	  click: function click(event) {
-	    event.preventDefault();
-	    this.props.clickOption(this.props.book);
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      "li",
-	      { onClick: this.click, className: "searchGuess", value: this.props.book.volumeInfo.title },
-	      this.props.book.volumeInfo.title
-	    );
-	  }
-	});
-	
-	module.exports = SearchListItem;
-
-/***/ },
-/* 435 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var InitialBookIndex = __webpack_require__(417);
-	var SearchArea = __webpack_require__(419);
-	var BookSearchStore = __webpack_require__(246);
-	var BookConfirmation = __webpack_require__(421);
-	var Modal = __webpack_require__(209);
-	var BookSearch = __webpack_require__(423);
-	var APIUtil = __webpack_require__(235);
-	var SearchResultItem = __webpack_require__(436);
-	var History = __webpack_require__(159).History;
-	
-	var SearchResults = React.createClass({
-	  displayName: 'SearchResults',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	    return { chosen: BookSearchStore.currentBook(), currentBooks: BookSearchStore.all() };
-	  },
-	  bookChosen: function bookChosen() {
-	    // this.openModal();
-	    event.preventDefault();
-	    var bookToSend = BookSearchStore.currentBook();
-	    bookToSend.read = "toRead";
-	    // APIUtil.createBook(bookToSend);
-	    var url = "/Book/" + bookToSend.ISBN13;
-	    this.history.push({ pathname: url });
-	  },
-	  openModal: function openModal() {
-	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
-	  },
-	
-	  closeModal: function closeModal() {
-	    BookSearchStore.resetCurrentBook(null);
-	    this.setState({ modalIsOpen: false });
-	  },
-	  render: function render() {
-	
-	    var searchResults = [];
-	    for (var i = 0; i < this.state.currentBooks.length; i++) {
-	      searchResults.push(React.createElement(SearchResultItem, { book: this.state.currentBooks[i] }));
-	    }
-	
-	    return React.createElement(
-	      'div',
-	      { className: 'homePage' },
-	      React.createElement(
-	        'ul',
-	        { className: 'search-results-list' },
-	        searchResults
-	      )
-	    );
-	  }
-	});
-	module.exports = SearchResults;
-
-/***/ },
-/* 436 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var InitialBookIndex = __webpack_require__(417);
-	var SearchArea = __webpack_require__(419);
-	var BookSearchStore = __webpack_require__(246);
-	var BookConfirmation = __webpack_require__(421);
-	var Modal = __webpack_require__(209);
-	var BookSearch = __webpack_require__(423);
-	var APIUtil = __webpack_require__(235);
-	var History = __webpack_require__(159).History;
-	
-	var customStyles = {};
-	
-	var SearchResultsItem = React.createClass({
-	  displayName: 'SearchResultsItem',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
-	  },
-	  bookChosen: function bookChosen() {
-	    // this.openModal();
-	    var chosen = APIUtil.makeBookObject(this.props.book);
-	    BookSearchStore.resetCurrentBook(chosen);
-	    event.preventDefault();
-	    var bookToSend = BookSearchStore.currentBook();
-	    bookToSend.read = "toRead";
-	    // APIUtil.createBook(bookToSend);
-	    var url = "/Book/" + bookToSend.ISBN13;
-	    this.history.push({ pathname: url });
-	  },
-	  openModal: function openModal() {
-	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
-	  },
-	
-	  closeModal: function closeModal() {
-	    BookSearchStore.resetCurrentBook(null);
-	    this.setState({ modalIsOpen: false });
-	  },
-	  render: function render() {
-	    var imageLink, title, author, numPages, category;
-	    if (this.props.book.volumeInfo.imageLinks !== undefined) {
-	      imageLink = this.props.book.volumeInfo.imageLinks.thumbnail;
-	    } else {
-	      imageLink = "http://res.cloudinary.com/litlitves/image/upload/v1474661342/imageNotAvailable_fhql9f.jpg";
-	    }
-	    if (this.props.book.volumeInfo.categories !== undefined) {
-	      category = "category: " + this.props.book.volumeInfo.categories[0];
-	    } else {
-	      category = null;
-	    }
-	    if (this.props.book.volumeInfo.authors !== undefined) {
-	      author = "by, " + this.props.book.volumeInfo.authors[0];
-	    }
-	
-	    return React.createElement(
-	      'li',
-	      { className: 'search-result-item', onClick: this.bookChosen },
-	      React.createElement('img', { className: 'search-result-image', src: imageLink }),
-	      React.createElement(
-	        'div',
-	        { className: 'data-area' },
-	        React.createElement(
-	          'div',
-	          { className: 'result-title' },
-	          this.props.book.volumeInfo.title
-	        ),
-	        React.createElement(
-	          'div',
-	          null,
-	          this.props.book.volumeInfo.subtitle
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'result-author' },
-	          author
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'result-category' },
-	          category
-	        )
-	      )
-	    );
-	  }
-	});
-	module.exports = SearchResultsItem;
-
-/***/ },
-/* 437 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
 	var History = __webpack_require__(159).History;
 	var APIUtil = __webpack_require__(235);
 	var Modal = __webpack_require__(209);
 	var LinkedStateMixin = __webpack_require__(229);
-	var UserStore = __webpack_require__(264);
+	var UserStore = __webpack_require__(265);
 	var ApiActions = __webpack_require__(236);
-	var BookSearchStore = __webpack_require__(246);
+	var BookSearchStore = __webpack_require__(247);
 	var browserHistory = __webpack_require__(159).browserHistory;
 	var customStyles = {
 	  overlay: {
@@ -49740,22 +48325,1472 @@
 	module.exports = Navbar;
 
 /***/ },
-/* 438 */
+/* 417 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var InitialBookIndex = __webpack_require__(418);
+	var SearchArea = __webpack_require__(420);
+	var BookSearchStore = __webpack_require__(247);
+	var BookConfirmation = __webpack_require__(422);
+	var Modal = __webpack_require__(209);
+	var BookSearch = __webpack_require__(424);
+	var APIUtil = __webpack_require__(235);
+	// var History = require('react-router').History;
+	var browserHistory = __webpack_require__(159).browserHistory;
+	
+	var customStyles = {
+	  overlay: {
+	    position: 'fixed',
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+	    zIndex: 20
+	  },
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    transform: 'translate(-50%, -50%)'
+	  }
+	};
+	
+	var Search = React.createClass({
+	  displayName: 'Search',
+	
+	  getInitialState: function getInitialState() {
+	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
+	  },
+	  bookChosen: function bookChosen() {
+	    // this.openModal();
+	    event.preventDefault();
+	    var bookToSend = BookSearchStore.currentBook();
+	    bookToSend.read = "toRead";
+	    // APIUtil.createBook(bookToSend);
+	    var url = "/Desk";
+	    // this.history.push({pathname: url});
+	    browserHistory.push("/Books/" + bookToSend.ISBN13);
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
+	
+	  closeModal: function closeModal() {
+	    BookSearchStore.resetCurrentBook(null);
+	    this.setState({ modalIsOpen: false });
+	  },
+	  render: function render() {
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'homePage' },
+	      React.createElement(SearchArea, { whenChosen: this.bookChosen }),
+	      React.createElement(InitialBookIndex, { whenChosen: this.bookChosen })
+	    );
+	  }
+	});
+	module.exports = Search;
+
+/***/ },
+/* 418 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(247);
+	var APIUtil = __webpack_require__(235);
+	var IndexItem = __webpack_require__(419);
+	var InitialBookIndex = React.createClass({
+	  displayName: 'InitialBookIndex',
+	
+	
+	  getInitialState: function getInitialState() {
+	    return { bookIndex: BookSearchStore.initialData() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    APIUtil.getInitialBookIndex();
+	    this.iIndex = BookSearchStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.iIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    this.setState({ bookIndex: BookSearchStore.initialData() });
+	  },
+	  shuffle: function shuffle(array) {
+	    var currentIndex = array.length,
+	        temporaryValue,
+	        randomIndex;
+	    while (0 !== currentIndex) {
+	
+	      randomIndex = Math.floor(Math.random() * currentIndex);
+	      currentIndex -= 1;
+	
+	      temporaryValue = array[currentIndex];
+	      array[currentIndex] = array[randomIndex];
+	      array[randomIndex] = temporaryValue;
+	    }
+	
+	    return array;
+	  },
+	  render: function render() {
+	    var bookOptions;
+	    var that = this;
+	
+	    bookOptions = this.state.bookIndex.map(function (book, index) {
+	      return React.createElement(IndexItem, { key: index, book: book, whenChosen: this.props.whenChosen });
+	    }, this);
+	    return React.createElement(
+	      'div',
+	      { id: 'BookArea' },
+	      React.createElement(
+	        'div',
+	        { className: 'book-list' },
+	        bookOptions
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = InitialBookIndex;
+
+/***/ },
+/* 419 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(247);
+	var ApiActions = __webpack_require__(236);
+	var History = __webpack_require__(159).History;
+	var browserHistory = __webpack_require__(159).browserHistory;
+	var APIUtil = __webpack_require__(235);
+	
+	var IndexItem = React.createClass({
+	  displayName: 'IndexItem',
+	
+	  onClick: function onClick(event) {
+	    event.preventDefault();
+	    ApiActions.updateCurrentBook(this.props.book);
+	    var bookToSend = this.props.book;
+	    bookToSend.read = "toRead";
+	    var url = "/Desk";
+	    this.props.history.push("/Books/book/" + bookToSend.ISBN13);
+	  },
+	  render: function render() {
+	    var customStyle;
+	    var placements = ["middle", "top", "bottom"];
+	    var placementStyle = { verticalAlign: placements[Math.floor(Math.random() * 3)], margin: Math.floor(Math.random() * 40) - 20 };
+	    var heights = ["200px", "250px", "300px", "350px"];
+	    var posH = this.props.book.title.length * 9;
+	    if (posH > 450) {
+	      customStyle = { height: "350px" };
+	    } else if (posH < 100) {
+	      customStyle = { height: heights[Math.floor(Math.random() * heights.length)] };
+	    } else {
+	      customStyle = { height: this.props.book.title.length * 9 };
+	    }
+	    return React.createElement(
+	      'div',
+	      { className: 'InitialBooks', style: placementStyle, onClick: this.onClick },
+	      React.createElement('img', { style: customStyle, src: this.props.book.image })
+	    );
+	  }
+	});
+	module.exports = IndexItem;
+
+/***/ },
+/* 420 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookSearchBar = __webpack_require__(421);
+	
+	var SearchArea = React.createClass({
+	  displayName: 'SearchArea',
+	
+	
+	  render: function render() {
+	    return React.createElement(
+	      'section',
+	      { id: 'popupbody' },
+	      React.createElement(BookSearchBar, { whenChosen: this.props.whenChosen })
+	    );
+	  }
+	});
+	
+	module.exports = SearchArea;
+
+/***/ },
+/* 421 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
 	var APIUtil = __webpack_require__(235);
-	var Dropdown = __webpack_require__(443);
-	var Select = __webpack_require__(445);
+	var BookSearchStore = __webpack_require__(247);
+	var BookConfirmation = __webpack_require__(422);
+	var SearchListItem = __webpack_require__(423);
+	var History = __webpack_require__(159).History;
+	var browserHistory = __webpack_require__(159).browserHistory;
+	
+	var BookSearchBar = React.createClass({
+	  displayName: 'BookSearchBar',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    this.leave = false;
+	    this.needToLoad = false;
+	    return { value: "", searchResults: [], showGuesses: false };
+	  },
+	  handleChange: function handleChange(event) {
+	    if (event.target.value.length > 0) {
+	      this.setState({ value: event.target.value, showGuesses: true });
+	    } else {
+	      this.setState({ value: event.target.value, showGuesses: false });
+	    }
+	
+	    if (this.state.value.length > 2 && !this.pending) {
+	      this.pending = true;
+	      this.loadBar.style.display = 'block';
+	      this.needToLoad = false;
+	      APIUtil.fetchBookResults(this.state.value);
+	      window.setTimeout(function () {
+	        this.pending = false;
+	        if (this.needToLoad) {
+	          this.pending = true;
+	          this.loadBar.style.display = 'block';
+	          this.needToLoad = false;
+	          APIUtil.fetchBookResults(this.state.value);
+	        }
+	      }.bind(this), 1800);
+	    } else if (this.state.value.length > 2) {
+	      this.needToLoad = true;
+	    } else {
+	      this.needToLoad = false;
+	      this.loadBar.style.display = 'none';
+	    }
+	  },
+	
+	  componentDidMount: function componentDidMount() {
+	    this.storeIndex = BookSearchStore.addListener(this._onChange);
+	    this.pending = false;
+	    this.loadBar = document.getElementById('loader');
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.storeIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    if (this.state.value.length > 0 && !this.leave) {
+	      this.loadBar.style.display = 'none';
+	      this.setState({ searchResults: BookSearchStore.all() });
+	    } else if (this.leave) {
+	      this.leave = false;
+	      var url = '/SearchResults';
+	      this.history.push({ pathname: url });
+	    } else {
+	      this.loadBar.style.display = 'none';
+	      this.setState({ searchResults: [] });
+	    }
+	  },
+	  clickOption: function clickOption(book) {
+	
+	    var theChosen = book;
+	    var chosen = APIUtil.makeBookObject(book);
+	    BookSearchStore.resetCurrentBook(chosen);
+	    this.props.whenChosen();
+	  },
+	  blur: function blur(event) {
+	    this.setState({ showGuesses: false });
+	  },
+	  click: function click(event) {
+	    event.preventDefault();
+	    this.leave = true;
+	    APIUtil.fetchBookResults(this.state.value);
+	  },
+	  removeSearchGuesses: function removeSearchGuesses() {
+	    this.setState({ showGuesses: false });
+	  },
+	  render: function render() {
+	    var that = this;
+	    if (this.state.showGuesses) {
+	      var guesses = this.state.searchResults.map(function (result, index) {
+	        return React.createElement(SearchListItem, { key: result.id, book: result, clickOption: this.clickOption });
+	      }, this);
+	    } else {
+	      guesses = null;
+	    }
+	    return React.createElement(
+	      'div',
+	      { id: 'landing-search-bar' },
+	      React.createElement('input', { id: 'BookSearchInput',
+	        type: 'text',
+	        value: this.state.value,
+	        onChange: this.handleChange,
+	        placeholder: 'find your next adventure',
+	        list: 'search-options',
+	        autoComplete: 'off',
+	        onBlur: this.blur
+	      }),
+	      React.createElement('button', { id: 'BookSearchButton', className: 'hvr-grow-shadow fa fa-search', onClick: this.click }),
+	      React.createElement('div', { id: 'loader', className: 'loader' }),
+	      React.createElement(
+	        'ul',
+	        { className: 'searchGuesses', id: 'search-options' },
+	        guesses
+	      )
+	    );
+	  }
+	
+	});
+	module.exports = BookSearchBar;
+
+/***/ },
+/* 422 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var History = __webpack_require__(159).History;
+	var APIUtil = __webpack_require__(235);
+	var RadioGroup = __webpack_require__(233);
+	
+	var BookConfirmation = React.createClass({
+	  displayName: 'BookConfirmation',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { selectedValue: 'reading' };
+	  },
+	  handleChange: function handleChange(value) {
+	    this.setState({ selectedValue: value });
+	  },
+	  yesClick: function yesClick(event) {
+	    event.preventDefault();
+	    var bookToSend = this.props.book;
+	    bookToSend.read = this.state.selectedValue;
+	    APIUtil.createBook(bookToSend);
+	    var url = "/Desk";
+	    this.history.push({ pathname: url });
+	    //reroute to User Show with Book Display
+	  },
+	  noClick: function noClick(event) {
+	    event.preventDefault();
+	    this.props.close();
+	    //closeWindow and reset state of parent
+	  },
+	  render: function render() {
+	    var chosen = this.props.book;
+	    return React.createElement(
+	      'section',
+	      { className: 'BookConfirmation' },
+	      React.createElement(
+	        'div',
+	        null,
+	        React.createElement(
+	          'h3',
+	          { className: 'confirmationQuestion' },
+	          'Is the following the correct book?'
+	        ),
+	        React.createElement(
+	          'h2',
+	          { className: 'confirmationTitle' },
+	          chosen.title
+	        ),
+	        React.createElement(
+	          'h3',
+	          { className: 'byLine' },
+	          ' by, ',
+	          chosen.author
+	        ),
+	        React.createElement('img', { className: 'confirmationImage', src: chosen.image }),
+	        React.createElement(
+	          RadioGroup,
+	          {
+	            name: 'fruit',
+	            selectedValue: this.state.selectedValue,
+	            onChange: this.handleChange },
+	          function (Radio) {
+	            return React.createElement(
+	              'div',
+	              null,
+	              React.createElement(
+	                'label',
+	                null,
+	                React.createElement(Radio, { value: 'read' }),
+	                'have read'
+	              ),
+	              React.createElement(
+	                'label',
+	                null,
+	                React.createElement(Radio, { value: 'toRead' }),
+	                'to read'
+	              ),
+	              React.createElement(
+	                'label',
+	                null,
+	                React.createElement(Radio, { value: 'reading' }),
+	                'reading'
+	              )
+	            );
+	          }
+	        )
+	      ),
+	      React.createElement(
+	        'button',
+	        { className: 'Confirmation', id: 'Yes', onClick: this.yesClick },
+	        'Yes'
+	      ),
+	      React.createElement(
+	        'button',
+	        { className: 'Confirmation', id: 'No', onClick: this.noClick },
+	        'Search Again'
+	      )
+	    );
+	  }
+	
+	});
+	module.exports = BookConfirmation;
+
+/***/ },
+/* 423 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	
+	var SearchListItem = React.createClass({
+	  displayName: "SearchListItem",
+	
+	  click: function click(event) {
+	    event.preventDefault();
+	    this.props.clickOption(this.props.book);
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      "li",
+	      { onClick: this.click, className: "searchGuess", value: this.props.book.volumeInfo.title },
+	      this.props.book.volumeInfo.title
+	    );
+	  }
+	
+	});
+	
+	module.exports = SearchListItem;
+
+/***/ },
+/* 424 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var LinkedStateMixin = __webpack_require__(229);
+	// var ReactRouter = require('react-router');
+	// var History = require('react-router').History;
+	var DropDown = __webpack_require__(425);
+	
+	var BookSearch = React.createClass({
+	  displayName: 'BookSearch',
+	
+	  // mixins: [LinkedStateMixin],
+	
+	  getInitialState: function getInitialState() {
+	    this.styleSheetShow = document.createElement('style');
+	    this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
+	    // this.styleSheetHide = document.createElement('style');
+	    // this.styleSheetHide.innerHTML = ".pac-container {display: none;}";
+	
+	    return {
+	      book: "",
+	      placeholder: "What book would you like to Explore?",
+	      showAutocomplete: false,
+	      showSpinner: false
+	    };
+	  },
+	
+	  searchBarMoveUp: function searchBarMoveUp() {
+	    // debugger;
+	    // this.refs.searchbar.style{{bottom: "10%"}}
+	    $("#landing-search-bar").css("bottom", "20%");
+	    setTimeout(function () {
+	      this.setState({
+	        showAutocomplete: true
+	      });
+	      // debugger;
+	    }.bind(this), 1800);
+	    // this.hideAutocomplete();
+	    // this.tempToken = setTimeout(this.showAutocomplete, 2000);
+	  },
+	
+	  // showAutocomplete: function() {
+	  //   // document.body.appendChild(this.styleSheetShow);
+	  //   document.body.appendChild(this.styleSheetShow);
+	  // },
+	  //
+	  // hideAutocomplete: function() {
+	  //   // clearTimeout(this.tempToken);
+	  //   // document.body.appendChild(this.styleSheetHide);
+	  // },
+	
+	  searchBarMoveBack: function searchBarMoveBack() {
+	    $("#landing-search-bar").css("bottom", "0%");
+	    // this.hideAutocomplete();
+	
+	    // setTimeout(function(){
+	    this.setState({
+	      showAutocomplete: false
+	    });
+	    //     // debugger;
+	    // }.bind(this), 500);
+	  },
+	
+	  handleSearch: function handleSearch(e) {
+	    if (arguments.length > 0) {
+	      e.preventDefault();
+	    }
+	
+	    // may use History mixins;
+	    // this.history.pushState(null, 'search/' + this.state.loc)
+	    // debugger;
+	
+	    if (this.state.loc === "") {
+	      this.setState({
+	        placeholder: "Please choose a book"
+	      });
+	    } else {
+	      setTimeout(this.redirectToSearch, 2000);
+	      this.setState({
+	        showSpinner: true
+	      });
+	    }
+	  },
+	
+	  redirectToSearch: function redirectToSearch() {
+	    // var loc = this.state.loc.replace(/\W+/g, "-");
+	    // console.log("pushStatefromsearch");
+	    // this.props.history.pushState(null, 'search/' + loc);
+	  },
+	
+	  handleLocChange: function handleLocChange(e) {
+	    // console.log(this.refs.locinput.value);
+	    this.setState({
+	      book: this.refs.locinput.value
+	    });
+	    if (this.refs.locinput.value > 0) {
+	      APIUtil.fetchBookResults(this.refs.locinput.value);
+	    }
+	    // autocomplete: needs to add a delay using setTimeout and clearTimeout to cancel if the user changes before timeout expires
+	  },
+	
+	  render: function render() {
+	    var org1 = React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'form',
+	        { className: 'form-horizontal', role: 'form', onSubmit: this.handleSearch },
+	        React.createElement(
+	          'div',
+	          { className: 'input-group input-group-lg' },
+	          React.createElement('input', {
+	            type: 'text',
+	            className: 'form-control',
+	
+	            placeholder: this.state.placeholder }),
+	          React.createElement(
+	            'span',
+	            { className: 'input-group-addon' },
+	            '@'
+	          )
+	        ),
+	        React.createElement(
+	          'button',
+	          null,
+	          'Search'
+	        )
+	      )
+	    );
+	
+	    var design1 = React.createElement(
+	      'div',
+	      { className: 'col-xs-12', id: 'landing-search-bar' },
+	      React.createElement(
+	        'div',
+	        { className: 'row' },
+	        React.createElement(
+	          'div',
+	          { className: 'col-xs-8 col-xs-offset-2' },
+	          React.createElement(
+	            'form',
+	            { role: 'form', onSubmit: this.handleSearch },
+	            React.createElement(
+	              'div',
+	              { className: 'input-group' },
+	              React.createElement('input', {
+	                type: 'text',
+	                className: 'form-control',
+	
+	                placeholder: this.state.placeholder }),
+	              React.createElement(
+	                'span',
+	                { className: 'input-group-button' },
+	                React.createElement(
+	                  'button',
+	                  { className: 'btn btn-default', type: 'button' },
+	                  'Search'
+	                )
+	              )
+	            )
+	          )
+	        )
+	      )
+	    );
+	    var buttonSubmit = React.createElement(
+	      'span',
+	      { className: 'input-group-btn' },
+	      React.createElement(
+	        'button',
+	        { className: 'btn btn-default', type: 'button', onClick: this.handleSearch },
+	        'Search'
+	      )
+	    );
+	
+	    var buttonProgress = React.createElement(
+	      'span',
+	      { className: 'input-group-btn' },
+	      React.createElement(
+	        'button',
+	        { className: 'btn btn-default', disabled: true },
+	        React.createElement(
+	          'div',
+	          { className: 'three-quarters-loader' },
+	          'Loading…'
+	        )
+	      )
+	    );
+	    var design2 = React.createElement(
+	      'div',
+	      { className: 'col-xs-12' },
+	      React.createElement(
+	        'div',
+	        { className: 'row' },
+	        React.createElement(
+	          'div',
+	          { className: 'col-xs-offset-2 col-xs-8' },
+	          React.createElement(
+	            'div',
+	            { className: 'col-xs-offset-2 col-xs-8' },
+	            React.createElement(
+	              'form',
+	              { className: 'input-group', role: 'form', onSubmit: this.handleSearch },
+	              React.createElement('input', {
+	                type: 'text',
+	                className: 'form-control center',
+	                id: 'landing-search-input',
+	                onChange: this.handleLocChange,
+	                placeholder: this.state.placeholder,
+	                ref: 'locinput',
+	                onFocus: this.searchBarMoveUp,
+	                onBlur: this.searchBarMoveBack }),
+	              this.state.showSpinner ? buttonProgress : buttonSubmit
+	            )
+	          )
+	        )
+	      )
+	    );
+	
+	    var showAutocomplete = this.state.loc !== "" && this.state.showAutocomplete;
+	    // console.log("toggle autocomplete: " + showAutocomplete)
+	    // var showAutocomplete = (this.state.loc !== "");
+	    return React.createElement(
+	      'div',
+	      { className: 'col-xs-12', id: 'landing-search-bar', ref: 'searchbar' },
+	      design2,
+	      showAutocomplete ? React.createElement(DropDown, {
+	        locinput: this.refs.locinput,
+	        handleSearch: this.handleSearch,
+	        handleLocChange: this.handleLocChange }) : ""
+	    );
+	  }
+	});
+	
+	module.exports = BookSearch;
+
+/***/ },
+/* 425 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(158);
+	
+	var DropDown = React.createClass({
+	  displayName: 'DropDown',
+	
+	
+	  _fillInAddress: function _fillInAddress() {
+	    // debugger;
+	    this.props.handleLocChange();
+	    this.props.handleSearch();
+	  },
+	
+	  componentWillUnmount: function componentWillUnmount() {
+	    document.getElementById('html-body').removeChild(document.getElementsByClassName("pac-container")[0]);
+	    // ReactDOM.unmountComponentAtNode(document.getElementsByClassName("pac-container")[0]);
+	  },
+	
+	  componentDidMount: function componentDidMount() {
+	    // using Google Maps Places Autocomplete client version
+	    this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
+	    this.autofillOptions = {
+	      types: ['geocode']
+	    };
+	    // this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
+	    // // debugger;
+	    // this.autofill.addListener('place_changed', this._fillInAddress);
+	  },
+	
+	  // componentWillReceiveProps: function() {
+	  //   console.log("new autofill")
+	  //   this.lautofill = ReactDOM.findDOMNode(this.props.locinput);
+	  //   this.autofillOptions = {
+	  //     types: ['geocode']
+	  //   };
+	  //   this.autofill = new google.maps.places.Autocomplete(this.lautofill, this.autofillOptions);
+	  //   this.autofill.addListener('place_changed', this._fillInAddress);
+	  // },
+	
+	  render: function render() {
+	    return React.createElement('div', null);
+	  }
+	});
+	
+	module.exports = DropDown;
+
+/***/ },
+/* 426 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	
+	// components
+	var BookDescription = __webpack_require__(427);
+	var BookImage = __webpack_require__(428);
+	var Note = __webpack_require__(429);
+	var UserArea = __webpack_require__(432);
+	var ReviewArea = __webpack_require__(441);
+	
+	//stores
+	
+	var Book = React.createClass({
+	  displayName: "Book",
+	
+	  render: function render() {
+	    return React.createElement(
+	      "div",
+	      { className: "book-main" },
+	      React.createElement(
+	        "div",
+	        { className: "book-area" },
+	        React.createElement(
+	          "div",
+	          { className: "book-block" },
+	          React.createElement(
+	            "div",
+	            { className: "book-column" },
+	            React.createElement(BookDescription, null)
+	          ),
+	          React.createElement(
+	            "div",
+	            { className: "book-column" },
+	            React.createElement(BookImage, null),
+	            React.createElement(ReviewArea, null)
+	          )
+	        ),
+	        React.createElement(
+	          "div",
+	          { className: "note-area" },
+	          React.createElement(
+	            "h1",
+	            null,
+	            "This is the note area"
+	          ),
+	          React.createElement(Note, null)
+	        )
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: "user-area" },
+	        React.createElement(UserArea, null)
+	      )
+	    );
+	  }
+	});
+	module.exports = Book;
+
+/***/ },
+/* 427 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	// components
+	//stores
+	var BookSearchStore = __webpack_require__(247);
+	
+	var BookDescription = React.createClass({
+	  displayName: 'BookDescription',
+	
+	  getInitialState: function getInitialState() {
+	    return { currentBook: BookSearchStore.currentBook(), modalIsOpen: false };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.BookIndex = BookSearchStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.BookIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    this.setState({ currentBook: BookSearchStore.currentBook() });
+	  },
+	  render: function render() {
+	    console.log(this.state.currentBook);
+	    return React.createElement(
+	      'div',
+	      { className: 'book-description' },
+	      React.createElement(
+	        'h1',
+	        null,
+	        this.state.currentBook.title
+	      ),
+	      React.createElement(
+	        'h2',
+	        null,
+	        this.state.currentBook.author
+	      ),
+	      React.createElement(
+	        'p',
+	        null,
+	        this.state.currentBook.description
+	      )
+	    );
+	  }
+	});
+	module.exports = BookDescription;
+
+/***/ },
+/* 428 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var RadioGroup = __webpack_require__(233);
+	var APIUtil = __webpack_require__(235);
+	var ApiActions = __webpack_require__(236);
+	var BookSearchStore = __webpack_require__(247);
+	var UserStore = __webpack_require__(265);
+	
+	var BookImage = React.createClass({
+	  displayName: 'BookImage',
+	
+	  getInitialState: function getInitialState() {
+	    var book = BookSearchStore.currentBook();
+	    var inDatabase = true;
+	    if (book.id === undefined) {
+	      inDatabase = false;
+	    }
+	    if (book.read === "read") {
+	      var finishedRead = true;
+	    } else {
+	      var finishedRead = false;
+	    }
+	    return { image: book.image, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.bookStoreIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    var book = BookSearchStore.currentBook();
+	    this.setState({ image: book.image, currentBook: BookSearchStore.currentBook() });
+	  },
+	  handleChange: function handleChange(value) {
+	    this.setState({ selectedValue: value });
+	  },
+	  render: function render() {
+	    var book = this.state.currentBook;
+	    return React.createElement(
+	      'section',
+	      { className: 'book-image', id: 'book-image-container' },
+	      React.createElement('img', { src: book.image, id: 'CoverPhoto' })
+	    );
+	  }
+	});
+	module.exports = BookImage;
+
+/***/ },
+/* 429 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	
+	var LinkedStateMixin = __webpack_require__(229);
+	var RadioGroup = __webpack_require__(233);
+	
+	var Modal = __webpack_require__(209);
+	var NoteItem = __webpack_require__(430);
+	var Editor = __webpack_require__(431);
+	
+	var APIUtil = __webpack_require__(235);
+	var NoteStore = __webpack_require__(267);
+	var BookSearchStore = __webpack_require__(247);
+	var UserStore = __webpack_require__(265);
+	
+	var Note = React.createClass({
+	  displayName: 'Note',
+	
+	  mixins: [LinkedStateMixin],
+	  getInitialState: function getInitialState() {
+	    return { noteText: "", title: "", pageNumber: null, selectedValue: true, allNotes: NoteStore.all(), chapter: null, modalIsOpen: false, loggedIn: UserStore.loggedIn(), currentBook: BookSearchStore.currentBook() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.userIndex = UserStore.addListener(this._onUserChange);
+	    this.noteIndex = NoteStore.addListener(this._onNotesChange);
+	    this.bookIndex = BookSearchStore.addListener(this._onBookChange);
+	    if (this.state.loggedIn && this.state.currentBook.id !== null && this.state.currentBook.id !== undefined) {
+	      APIUtil.fetchNotes(this.state.currentBook.id);
+	    }
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.noteIndex.remove();
+	    this.userIndex.remove();
+	    this.bookIndex.remove();
+	  },
+	  saveNote: function saveNote(event) {
+	    event.preventDefault();
+	    var pn = parseInt(this.state.pageNumber);
+	    var chap = parseInt(this.state.chapter);
+	    if (isNaN(pn)) {
+	      pn = null;
+	    }
+	    if (isNaN(chap)) {
+	      chap = null;
+	    }
+	    var noteHash = { body: this.state.noteText, page: pn, public: true, chapter: chap, book_id: this.props.currentBook.id };
+	    APIUtil.createNote(noteHash);
+	    this.state.noteText = "";
+	    this.state.title = "";
+	    this.state.pageNumber = null;
+	    this.state.chapter = null;
+	    this.closeModal();
+	  },
+	  submitNote: function submitNote(noteText) {
+	    var noteHash = { body: noteText, page: null, public: true, chapter: null, book_id: this.props.currentBook.id };
+	    APIUtil.createNote(noteHash);
+	    this.state.noteText = "";
+	    this.state.title = "";
+	    this.state.pageNumber = null;
+	    this.state.chapter = null;
+	  },
+	  addNote: function addNote(noteText) {
+	    debugger;
+	    var noteHash = { body: noteText, page: pn, public: true, chapter: chap, book_id: this.props.currentBook.id };
+	    this.state.noteText = "";
+	    this.state.title = "";
+	    this.state.pageNumber = null;
+	    this.state.chapter = null;
+	  },
+	  handleChange: function handleChange(value) {
+	    this.setState({ selectedValue: value });
+	  },
+	  _onNoteChange: function _onNoteChange() {
+	    this.setState({ allNotes: NoteStore.all() });
+	  },
+	  _onUserChange: function _onUserChange() {
+	    if (UserStore.loggedIn()) {
+	      APIUtil.fetchNotes(this.state.currentBook.id);
+	    }
+	    this.setState({ loggedIn: UserStore.loggedIn() });
+	  },
+	  _onBookChange: function _onBookChange() {
+	    this.setState({ currentBook: BookSearchStore.currentBook() });
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true });
+	  },
+	  closeModal: function closeModal() {
+	    this.setState({ modalIsOpen: false });
+	  },
+	  addNoteState: function addNoteState(content) {
+	    debugger;
+	  },
+	  passUpState: function passUpState(contentState) {
+	    this.currentNoteContent = contentState;
+	    debugger;
+	  },
+	  render: function render() {
+	
+	    if (this.state.loggedIn && this.state.currentBook.id !== null && this.state.currentBook.id !== undefined) {
+	      var noteDisplay = this.state.allNotes.map(function (note) {
+	        return React.createElement(NoteItem, { note: note, key: note.body });
+	      });
+	      if (this.state.allNotes.length === 0) {
+	        noteDisplay = React.createElement(
+	          'div',
+	          { className: 'individual-note-area' },
+	          'No Notes to display'
+	        );
+	      }
+	      var NoteStyle = {};
+	
+	      return React.createElement(
+	        'div',
+	        { className: 'NoteArea' },
+	        React.createElement(
+	          'div',
+	          { className: 'dispay-notes', style: NoteStyle },
+	          React.createElement(
+	            'div',
+	            { className: 'note-header' },
+	            React.createElement(
+	              'div',
+	              { className: 'NoteBookTitle', id: 'statement' },
+	              'Notes '
+	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'note-area' },
+	            React.createElement(
+	              'div',
+	              { className: 'inner-note' },
+	              React.createElement(
+	                'div',
+	                { className: 'notes' },
+	                noteDisplay
+	              ),
+	              React.createElement(Editor, { submitNote: this.submitNote, passUpState: this.passUpState })
+	            )
+	          )
+	        )
+	      );
+	    } else if (!this.state.loggedIn) {
+	      return React.createElement(
+	        'div',
+	        { className: 'NoteArea' },
+	        React.createElement(
+	          'h2',
+	          null,
+	          'Sign Up/Login to be able to add books to your shelf and write notes about them. '
+	        )
+	      );
+	    } else {
+	      return React.createElement(
+	        'div',
+	        { className: 'NoteArea' },
+	        React.createElement(
+	          'h2',
+	          null,
+	          'You can only add/edit notes that are on your shelf.'
+	        )
+	      );
+	    }
+	  }
+	
+	});
+	
+	module.exports = Note;
+
+/***/ },
+/* 430 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	var APIUtil = __webpack_require__(235);
+	
+	var NoteItem = React.createClass({
+	  displayName: 'NoteItem',
+	
+	
+	  deleteClick: function deleteClick() {
+	    APIUtil.deleteNote(this.props.note.id);
+	  },
+	  render: function render() {
+	    var chapterText, pageText;
+	    if (this.props.note.chapter === undefined || this.props.note.chapter === null) {
+	      chapterText = "";
+	    } else {
+	      chapterText = "Chapter: " + this.props.note.chapter;
+	    }
+	    if (this.props.note.page === undefined || this.props.note.page === null) {
+	      pageText = "";
+	    } else {
+	      pageText = "Page: " + this.props.note.page;
+	    }
+	    return React.createElement(
+	      'div',
+	      { className: 'IndividualNote' },
+	      React.createElement(
+	        'h4',
+	        { className: 'NoteTitle' },
+	        this.props.note.title
+	      ),
+	      React.createElement(
+	        'p',
+	        { className: 'NoteBody' },
+	        this.props.note.body
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'NoteFooter' },
+	        chapterText + " " + pageText
+	      ),
+	      React.createElement(
+	        'button',
+	        { className: 'NoteDelete', onClick: this.deleteClick },
+	        'Delete Note'
+	      )
+	    );
+	  }
+	
+	});
+	
+	module.exports = NoteItem;
+
+/***/ },
+/* 431 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var React = __webpack_require__(1);
+	
+	var _require = __webpack_require__(270);
+	
+	var Editor = _require.Editor;
+	var EditorState = _require.EditorState;
+	var RichUtils = _require.RichUtils;
+	
+	var RichTextEditor = function (_React$Component) {
+	  _inherits(RichTextEditor, _React$Component);
+	
+	  function RichTextEditor(props) {
+	    _classCallCheck(this, RichTextEditor);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RichTextEditor).call(this, props));
+	
+	    _this.state = { editorState: EditorState.createEmpty() };
+	
+	    _this.focus = function () {
+	      return _this.refs.editor.focus();
+	    };
+	    _this.onChange = function (editorState) {
+	      return _this.setState({ editorState: editorState });
+	    };
+	
+	    _this.handleKeyCommand = function (command) {
+	      return _this._handleKeyCommand(command);
+	    };
+	    _this.onTab = function (e) {
+	      return _this._onTab(e);
+	    };
+	    _this.toggleBlockType = function (type) {
+	      return _this._toggleBlockType(type);
+	    };
+	    _this.toggleInlineStyle = function (style) {
+	      return _this._toggleInlineStyle(style);
+	    };
+	    _this.addNote = function (e) {
+	      return _this._addNote(e);
+	    };
+	    _this.clearEditorState = function () {
+	      return _this._clearEditorState();
+	    };
+	    return _this;
+	  }
+	
+	  _createClass(RichTextEditor, [{
+	    key: '_handleKeyCommand',
+	    value: function _handleKeyCommand(command) {
+	      var editorState = this.state.editorState;
+	
+	      var newState = RichUtils.handleKeyCommand(editorState, command);
+	      if (newState) {
+	        this.onChange(newState);
+	        return true;
+	      }
+	      return false;
+	    }
+	  }, {
+	    key: '_onChange',
+	    value: function _onChange(es) {
+	
+	      this.setState({ es: es });
+	    }
+	  }, {
+	    key: '_onTab',
+	    value: function _onTab(e) {
+	      var maxDepth = 4;
+	      this.onChange(RichUtils.onTab(e, this.state.editorState, maxDepth));
+	    }
+	  }, {
+	    key: '_toggleBlockType',
+	    value: function _toggleBlockType(blockType) {
+	      this.onChange(RichUtils.toggleBlockType(this.state.editorState, blockType));
+	    }
+	  }, {
+	    key: '_toggleInlineStyle',
+	    value: function _toggleInlineStyle(inlineStyle) {
+	      this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, inlineStyle));
+	    }
+	  }, {
+	    key: '_addNote',
+	    value: function _addNote(event) {
+	      event.preventDefault();
+	      var noteText = this.state.editorState.getCurrentContent().getPlainText();
+	      this.props.submitNote(noteText);
+	      this.clearEditorState();
+	    }
+	  }, {
+	    key: '_clearEditorState',
+	    value: function _clearEditorState() {
+	      this.setState({ editorState: EditorState.createEmpty() });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var editorState = this.state.editorState;
+	
+	      // If the user changes block type before entering any text, we can
+	      // either style the placeholder or hide it. Let's just hide it now.
+	
+	      var className = 'RichEditor-editor';
+	      var contentState = editorState.getCurrentContent();
+	      if (!contentState.hasText()) {
+	        if (contentState.getBlockMap().first().getType() !== 'unstyled') {
+	          className += ' RichEditor-hidePlaceholder';
+	        }
+	      }
+	
+	      return React.createElement(
+	        'div',
+	        { className: 'RichEditor-root' },
+	        React.createElement(BlockStyleControls, {
+	          editorState: editorState,
+	          onToggle: this.toggleBlockType
+	        }),
+	        React.createElement(InlineStyleControls, {
+	          editorState: editorState,
+	          onToggle: this.toggleInlineStyle
+	        }),
+	        React.createElement(
+	          'div',
+	          { className: className, onClick: this.focus },
+	          React.createElement(Editor, {
+	            blockStyleFn: getBlockStyle,
+	            customStyleMap: styleMap,
+	            editorState: editorState,
+	            handleKeyCommand: this.handleKeyCommand,
+	            onChange: this.onChange,
+	            onTab: this.onTab,
+	            placeholder: 'write a note...',
+	            ref: 'editor',
+	            spellCheck: true
+	          })
+	        ),
+	        React.createElement(
+	          'button',
+	          { className: 'AddNoteButton', onClick: this.addNote },
+	          'Add Note'
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return RichTextEditor;
+	}(React.Component);
+	
+	// Custom overrides for "code" style.
+	
+	
+	var styleMap = {
+	  CODE: {
+	    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+	    fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
+	    fontSize: 16,
+	    padding: 2
+	  }
+	};
+	
+	function getBlockStyle(block) {
+	  switch (block.getType()) {
+	    case 'blockquote':
+	      return 'RichEditor-blockquote';
+	    default:
+	      return null;
+	  }
+	}
+	
+	var StyleButton = function (_React$Component2) {
+	  _inherits(StyleButton, _React$Component2);
+	
+	  function StyleButton() {
+	    _classCallCheck(this, StyleButton);
+	
+	    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(StyleButton).call(this));
+	
+	    _this2.onToggle = function (e) {
+	      e.preventDefault();
+	      _this2.props.onToggle(_this2.props.style);
+	    };
+	    return _this2;
+	  }
+	
+	  _createClass(StyleButton, [{
+	    key: 'render',
+	    value: function render() {
+	      var className = 'RichEditor-styleButton';
+	      if (this.props.active) {
+	        className += ' RichEditor-activeButton';
+	      }
+	
+	      return React.createElement(
+	        'span',
+	        { className: className, onMouseDown: this.onToggle },
+	        this.props.label
+	      );
+	    }
+	  }]);
+	
+	  return StyleButton;
+	}(React.Component);
+	
+	var BLOCK_TYPES = [{ label: 'H1', style: 'header-one' }, { label: 'H2', style: 'header-two' }, { label: 'H3', style: 'header-three' }, { label: 'H4', style: 'header-four' }, { label: 'H5', style: 'header-five' }, { label: 'H6', style: 'header-six' }, { label: 'Blockquote', style: 'blockquote' }, { label: 'UL', style: 'unordered-list-item' }, { label: 'OL', style: 'ordered-list-item' }, { label: 'Code Block', style: 'code-block' }];
+	
+	var BlockStyleControls = function BlockStyleControls(props) {
+	  var editorState = props.editorState;
+	
+	  var selection = editorState.getSelection();
+	  var blockType = editorState.getCurrentContent().getBlockForKey(selection.getStartKey()).getType();
+	
+	  return React.createElement(
+	    'div',
+	    { className: 'RichEditor-controls' },
+	    BLOCK_TYPES.map(function (type) {
+	      return React.createElement(StyleButton, {
+	        key: type.label,
+	        active: type.style === blockType,
+	        label: type.label,
+	        onToggle: props.onToggle,
+	        style: type.style
+	      });
+	    })
+	  );
+	};
+	
+	var INLINE_STYLES = [{ label: 'Bold', style: 'BOLD' }, { label: 'Italic', style: 'ITALIC' }, { label: 'Underline', style: 'UNDERLINE' }, { label: 'Monospace', style: 'CODE' }];
+	
+	var InlineStyleControls = function InlineStyleControls(props) {
+	  var currentStyle = props.editorState.getCurrentInlineStyle();
+	  return React.createElement(
+	    'div',
+	    { className: 'RichEditor-controls' },
+	    INLINE_STYLES.map(function (type) {
+	      return React.createElement(StyleButton, {
+	        key: type.label,
+	        active: currentStyle.has(type.style),
+	        label: type.label,
+	        onToggle: props.onToggle,
+	        style: type.style
+	      });
+	    })
+	  );
+	};
+	
+	module.exports = RichTextEditor;
+
+/***/ },
+/* 432 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	
+	// components
+	var BookShelf = __webpack_require__(433);
+	
+	var UserArea = React.createClass({
+	  displayName: "UserArea",
+	
+	
+	  render: function render() {
+	
+	    return React.createElement(
+	      "div",
+	      { className: "user-shelf-area" },
+	      React.createElement(
+	        "h1",
+	        null,
+	        "User Shelf Area"
+	      ),
+	      React.createElement(BookShelf, null)
+	    );
+	  }
+	});
+	module.exports = UserArea;
+
+/***/ },
+/* 433 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var APIUtil = __webpack_require__(235);
+	var Dropdown = __webpack_require__(434);
+	var Select = __webpack_require__(436);
 	var ApiActions = __webpack_require__(236);
 	var History = __webpack_require__(159).History;
 	
 	// components
 	//stores
-	var UserStore = __webpack_require__(264);
-	var BookShelfStore = __webpack_require__(412);
+	var UserStore = __webpack_require__(265);
+	var BookShelfStore = __webpack_require__(413);
 	
 	var BookShelf = React.createClass({
 	  displayName: 'BookShelf',
@@ -49831,64 +49866,7 @@
 	module.exports = BookShelf;
 
 /***/ },
-/* 439 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(1);
-	
-	// components
-	var BookShelf = __webpack_require__(438);
-	
-	//stores
-	var UserStore = __webpack_require__(264);
-	
-	var User = React.createClass({
-	  displayName: "User",
-	
-	  render: function render() {
-	
-	    return React.createElement(
-	      "div",
-	      { className: "container" },
-	      React.createElement(
-	        "div",
-	        { className: "comment-area" },
-	        React.createElement(
-	          "h1",
-	          null,
-	          "This is for comments"
-	        )
-	      ),
-	      React.createElement(
-	        "div",
-	        { className: "user-shelf-area" },
-	        React.createElement(
-	          "div",
-	          { className: "user-name" },
-	          React.createElement(
-	            "h1",
-	            null,
-	            UserStore.currentUser().username
-	          )
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "bookshelf-area" },
-	          React.createElement(BookShelf, null)
-	        )
-	      )
-	    );
-	  }
-	});
-	module.exports = User;
-
-/***/ },
-/* 440 */,
-/* 441 */,
-/* 442 */,
-/* 443 */
+/* 434 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -49907,7 +49885,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _classnames = __webpack_require__(444);
+	var _classnames = __webpack_require__(435);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -50107,7 +50085,7 @@
 
 
 /***/ },
-/* 444 */
+/* 435 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -50161,7 +50139,7 @@
 
 
 /***/ },
-/* 445 */
+/* 436 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* disable some rules until we refactor more completely; fixing them now would
@@ -50176,11 +50154,11 @@
 	
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(158);
-	var Input = __webpack_require__(446);
-	var classes = __webpack_require__(444);
-	var Value = __webpack_require__(447);
-	var SingleValue = __webpack_require__(448);
-	var Option = __webpack_require__(449);
+	var Input = __webpack_require__(437);
+	var classes = __webpack_require__(435);
+	var Value = __webpack_require__(438);
+	var SingleValue = __webpack_require__(439);
+	var Option = __webpack_require__(440);
 	
 	var requestId = 0;
 	
@@ -51113,7 +51091,7 @@
 	module.exports = Select;
 
 /***/ },
-/* 446 */
+/* 437 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51244,13 +51222,13 @@
 	module.exports = AutosizeInput;
 
 /***/ },
-/* 447 */
+/* 438 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var classes = __webpack_require__(444);
+	var classes = __webpack_require__(435);
 	
 	var Value = React.createClass({
 	
@@ -51332,13 +51310,13 @@
 	module.exports = Value;
 
 /***/ },
-/* 448 */
+/* 439 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var classes = __webpack_require__(444);
+	var classes = __webpack_require__(435);
 	
 	var SingleValue = React.createClass({
 		displayName: 'SingleValue',
@@ -51364,13 +51342,13 @@
 	module.exports = SingleValue;
 
 /***/ },
-/* 449 */
+/* 440 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var classes = __webpack_require__(444);
+	var classes = __webpack_require__(435);
 	
 	var Option = React.createClass({
 		displayName: 'Option',
@@ -51433,179 +51411,684 @@
 	module.exports = Option;
 
 /***/ },
-/* 450 */
+/* 441 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var React = __webpack_require__(1);
+	var ReviewUtil = __webpack_require__(442);
+	var ApiActions = __webpack_require__(236);
+	var BookSearchStore = __webpack_require__(247);
+	var ReviewStore = __webpack_require__(443);
 	
-	var LinkedStateMixin = __webpack_require__(229);
-	var RadioGroup = __webpack_require__(233);
+	var ReviewArea = React.createClass({
+	  displayName: 'ReviewArea',
 	
-	var Modal = __webpack_require__(209);
-	var NoteItem = __webpack_require__(451);
-	var Editor = __webpack_require__(452);
-	
-	var APIUtil = __webpack_require__(235);
-	var NoteStore = __webpack_require__(266);
-	var BookSearchStore = __webpack_require__(246);
-	var UserStore = __webpack_require__(264);
-	
-	var Note = React.createClass({
-	  displayName: 'Note',
-	
-	  mixins: [LinkedStateMixin],
 	  getInitialState: function getInitialState() {
-	    return { noteText: "", title: "", pageNumber: null, selectedValue: true, allNotes: NoteStore.all(), chapter: null, modalIsOpen: false, loggedIn: UserStore.loggedIn(), currentBook: BookSearchStore.currentBook() };
+	    return { currentBook: BookSearchStore.currentBook(), reviews: ReviewStore.all(), rating: ReviewStore.rating() };
 	  },
 	  componentDidMount: function componentDidMount() {
-	    this.userIndex = UserStore.addListener(this._onUserChange);
-	    this.noteIndex = NoteStore.addListener(this._onNotesChange);
-	    this.bookIndex = BookSearchStore.addListener(this._onBookChange);
-	    if (this.state.loggedIn && this.state.currentBook.id !== null && this.state.currentBook.id !== undefined) {
-	      APIUtil.fetchNotes(this.state.currentBook.id);
-	    }
+	    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
+	    this.reviewStoreIndex = ReviewStore.addListener(this._onChange);
+	    ReviewUtil.fetchReviews(this.state.currentBook.ISBN13);
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
-	    this.noteIndex.remove();
-	    this.userIndex.remove();
-	    this.bookIndex.remove();
+	    this.bookStoreIndex.remove();
+	    this.reviewStoreIndex.remove();
 	  },
-	  saveNote: function saveNote(event) {
-	    event.preventDefault();
-	    var pn = parseInt(this.state.pageNumber);
-	    var chap = parseInt(this.state.chapter);
-	    if (isNaN(pn)) {
-	      pn = null;
-	    }
-	    if (isNaN(chap)) {
-	      chap = null;
-	    }
-	    var noteHash = { body: this.state.noteText, page: pn, public: true, chapter: chap, book_id: this.props.currentBook.id };
-	    APIUtil.createNote(noteHash);
-	    this.state.noteText = "";
-	    this.state.title = "";
-	    this.state.pageNumber = null;
-	    this.state.chapter = null;
-	    this.closeModal();
-	  },
-	  submitNote: function submitNote(noteText) {
-	    var noteHash = { body: noteText, page: null, public: true, chapter: null, book_id: this.props.currentBook.id };
-	    APIUtil.createNote(noteHash);
-	    this.state.noteText = "";
-	    this.state.title = "";
-	    this.state.pageNumber = null;
-	    this.state.chapter = null;
-	  },
-	  addNote: function addNote(noteText) {
-	    debugger;
-	    var noteHash = { body: noteText, page: pn, public: true, chapter: chap, book_id: this.props.currentBook.id };
-	    this.state.noteText = "";
-	    this.state.title = "";
-	    this.state.pageNumber = null;
-	    this.state.chapter = null;
-	  },
-	  handleChange: function handleChange(value) {
-	    this.setState({ selectedValue: value });
-	  },
-	  _onNoteChange: function _onNoteChange() {
-	    this.setState({ allNotes: NoteStore.all() });
-	  },
-	  _onUserChange: function _onUserChange() {
-	    if (UserStore.loggedIn()) {
-	      APIUtil.fetchNotes(this.state.currentBook.id);
-	    }
-	    this.setState({ loggedIn: UserStore.loggedIn() });
-	  },
-	  _onBookChange: function _onBookChange() {
-	    this.setState({ currentBook: BookSearchStore.currentBook() });
-	  },
-	  openModal: function openModal() {
-	    this.setState({ modalIsOpen: true });
-	  },
-	  closeModal: function closeModal() {
-	    this.setState({ modalIsOpen: false });
-	  },
-	  addNoteState: function addNoteState(content) {
-	    debugger;
-	  },
-	  passUpState: function passUpState(contentState) {
-	    this.currentNoteContent = contentState;
-	    debugger;
+	  _onChange: function _onChange() {
+	    this.setState({ currentBook: BookSearchStore.currentBook(), reviews: ReviewStore.all(), rating: ReviewStore.rating() });
 	  },
 	  render: function render() {
-	
-	    if (this.state.loggedIn && this.state.currentBook.id !== null && this.state.currentBook.id !== undefined) {
-	      var noteDisplay = this.state.allNotes.map(function (note) {
-	        return React.createElement(NoteItem, { note: note, key: note.body });
-	      });
-	      if (this.state.allNotes.length === 0) {
-	        noteDisplay = React.createElement(
-	          'div',
-	          { className: 'individual-note-area' },
-	          'No Notes to display'
-	        );
-	      }
-	      var NoteStyle = {};
-	
+	    var book = this.state.currentBook;
+	    var rating = "Overall Rating: " + this.state.rating;
+	    var reviewList = this.state.reviews.map(function (r) {
 	      return React.createElement(
-	        'div',
-	        { className: 'NoteArea' },
-	        React.createElement(
-	          'div',
-	          { className: 'dispay-notes', style: NoteStyle },
-	          React.createElement(
-	            'div',
-	            { className: 'note-header' },
-	            React.createElement(
-	              'div',
-	              { className: 'NoteBookTitle', id: 'statement' },
-	              'Notes '
-	            )
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'note-area' },
-	            React.createElement(
-	              'div',
-	              { className: 'inner-note' },
-	              React.createElement(
-	                'div',
-	                { className: 'notes' },
-	                noteDisplay
-	              ),
-	              React.createElement(Editor, { submitNote: this.submitNote, passUpState: this.passUpState })
-	            )
-	          )
-	        )
+	        'li',
+	        null,
+	        r.body
 	      );
-	    } else if (!this.state.loggedIn) {
-	      return React.createElement(
+	    });
+	    return React.createElement(
+	      'section',
+	      { className: 'review-container' },
+	      React.createElement(
 	        'div',
-	        { className: 'NoteArea' },
+	        { className: 'rating' },
 	        React.createElement(
 	          'h2',
 	          null,
-	          'Sign Up/Login to be able to add books to your shelf and write notes about them. '
+	          rating
 	        )
-	      );
-	    } else {
-	      return React.createElement(
-	        'div',
-	        { className: 'NoteArea' },
-	        React.createElement(
-	          'h2',
-	          null,
-	          'You can only add/edit notes that are on your shelf.'
-	        )
-	      );
+	      ),
+	      React.createElement(
+	        'ul',
+	        { id: 'reviews' },
+	        reviewList
+	      )
+	    );
+	  }
+	});
+	module.exports = ReviewArea;
+
+/***/ },
+/* 442 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var ApiActions = __webpack_require__(236);
+	
+	var ReviewUtil = {
+	  createReview: function createReview(reviewObj) {
+	    $.post('/api/reviews', reviewObj, function (payload) {
+	      ApiActions.RecieveAddedReview(payload);
+	    });
+	  },
+	  fetchReviews: function fetchReviews(bookToFetch) {
+	    var data = { Review: { ISBN13: bookToFetch } };
+	    $.get('api/reviews', data, function (payload) {
+	      ApiActions.receiveBookReviews(payload);
+	    });
+	  },
+	  updateReviews: function updateReviews(reviewID) {
+	    $.patch('api/reviews/', reviewID, function (payload) {
+	      ApiActions.ReciveAddedReview(payload);
+	    });
+	  },
+	  fetchUserReviewa: function fetchUserReviewa(Review) {
+	    $.get('/api/user/revews', {}, function (reviews) {
+	      ApiActions.RecieveUserReviews(reviews);
+	    });
+	  },
+	  getCurrentBook: function getCurrentBook() {
+	    $.get('/api/user/revews', {}, function (book) {
+	      ApiActions.updateCurrentBook(book);
+	    });
+	  },
+	  updateUser: function updateUser(params) {
+	    $.ajax({
+	      url: '/api/user',
+	      type: 'PATCH',
+	      data: params,
+	      success: function success(book) {
+	        // Do something with the result
+	      } });
+	  },
+	  makeBookObject: function makeBookObject(bookData) {
+	    var chosen = bookData.volumeInfo;
+	    var newBook = { title: chosen.title,
+	      description: chosen.description,
+	      publishing: chosen.publisher,
+	      pages: chosen.pageCount,
+	      language: chosen.language,
+	      read: "toRead"
+	    };
+	    if (chosen.imageLinks !== undefined) {
+	      newBook.image = chosen.imageLinks.thumbnail;
 	    }
+	    if (chosen.authors !== undefined) {
+	      newBook.author = chosen.authors[0];
+	    }
+	    if (chosen.industryIdentifiers !== undefined) {
+	      if (chosen.industryIdentifiers[0] !== undefined) {
+	        newBook.ISBN13 = chosen.industryIdentifiers[0].identifier;
+	      }
+	      if (chosen.industryIdentifiers[1] !== undefined) {
+	        newBook.ISBN10 = chosen.industryIdentifiers[1].identifier;
+	      }
+	    }
+	    return newBook;
+	  },
+	  getUserBooks: function getUserBooks() {
+	    $.get('/api/books', {}, function (books) {
+	      ApiActions.receiveUserBooks(books);
+	    });
+	  },
+	  createNote: function createNote(noteHash) {
+	    $.post('/api/notes', { note: noteHash }, function (payload) {
+	      ApiActions.addNote(payload);
+	    });
+	  },
+	  fetchNotes: function fetchNotes(bookId) {
+	    $.get('api/notes', { book_id: bookId }, function (notes) {
+	      ApiActions.receiveNotes(notes);
+	    });
+	  },
+	  deleteNote: function deleteNote(noteId) {
+	    var uri = '/api/notes/' + noteId;
+	    $.ajax({
+	      url: uri,
+	      type: 'DELETE',
+	      success: function success(notes) {
+	        // Do something with the result
+	        ApiActions.receiveNotes(notes);
+	      } });
+	  },
+	  getCurrentUser: function getCurrentUser() {
+	    $.get('/api/session', {}, function (user) {
+	      ApiActions.receiveUser(user);
+	    });
+	  },
+	  signIn: function signIn(username, password) {
+	    $.post('/api/session', { username: username, password: password }, function (user) {
+	      ApiActions.receiveUser(user);
+	    });
+	  },
+	  createUser: function createUser(username, password) {
+	    $.post('/api/user', { username: username, password: password }, function (user) {
+	      ApiActions.receiveUser(user);
+	    });
+	  },
+	  createAnalysis: function createAnalysis(analysisParams) {
+	    $.post('/api/analyses', { analysis: analysisParams }, function (analysis) {
+	      ApiActions.receiveNewAnalysis(analysis);
+	    });
+	  },
+	  fetchAnalyses: function fetchAnalyses(analysisParams) {
+	
+	    $.get('/api/analyses', { analysis: {} }, function (analyses) {
+	      ApiActions.receiveAnalyses(analyses);
+	    });
+	  },
+	  fetchAnalysis: function fetchAnalysis(analysisId) {
+	    $.get('api/analyses', { id: analysisId }, function (analysis) {
+	      ApiActions.receiveAnalysis(analysis);
+	    });
+	  },
+	  updateAnalysis: function updateAnalysis(analysisParams) {
+	    $.ajax({
+	      url: '/api/analyses',
+	      type: 'PATCH',
+	      data: { analysis: analysisParams },
+	      success: function success(analysis) {
+	        // Do something with the result
+	        console.log(analysis);
+	      } });
+	  },
+	  updateBook: function updateBook(bookId, bookParams) {
+	    var uri = 'api/books/' + bookId;
+	
+	    $.ajax({
+	      url: uri,
+	      type: 'PATCH',
+	      data: bookParams,
+	      success: function success(books) {
+	        ApiActions.receiveUserBooks(books);
+	      } });
+	  },
+	  deleteBook: function deleteBook(bookId) {
+	    var uri = 'api/books/' + bookId;
+	    $.ajax({
+	      url: uri,
+	      type: 'DELETE',
+	      success: function success(books) {
+	        ApiActions.receiveUserBooks(books);
+	      } });
+	  }
+	};
+	module.exports = ReviewUtil;
+
+/***/ },
+/* 443 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var Store = __webpack_require__(248).Store;
+	var _reviews = [];
+	var ReviewConstants = __webpack_require__(246);
+	var AppDispatcher = __webpack_require__(237);
+	var ReviewStore = new Store(AppDispatcher);
+	var APIUtil = __webpack_require__(235);
+	var _rating = 0;
+	
+	var resetNotes = function resetNotes(reviews) {
+	  _reviews = [];
+	  if (reviews === null) {
+	    _reviews = [];
+	  } else {
+	    _reviews = reviews.slice(0);
+	  }
+	};
+	var resetRating = function resetRating(reviews) {
+	  if (reviews.length === 0) {
+	    _rating = 0;
+	    return 0;
+	  }
+	  var rating = 0;
+	  for (var i = 0; i < reviews.length; i++) {
+	    rating += reviews[i].rating;
+	  }
+	  _rating = rating / reviews.length / 2;
+	};
+	
+	var addReview = function addReview(review) {
+	  var rating = _rating * 2 * _reviews.length;
+	  _reviews.push(review);
+	  rating += review.rating;
+	  _rating = rating / _reviews.length / 2;
+	};
+	
+	ReviewStore.all = function () {
+	  return _reviews.slice(0);
+	};
+	
+	ReviewStore.rating = function () {
+	  return _rating;
+	};
+	
+	ReviewStore.empty = function () {
+	  _reviews = [];
+	};
+	
+	ReviewStore.__onDispatch = function (payload) {
+	  switch (payload.actionType) {
+	    case ReviewConstants.ReceiveBookReviews:
+	      var result = resetNotes(payload.results);
+	      var result2 = resetRating(payload.results);
+	      ReviewStore.__emitChange();
+	      break;
+	    case ReviewConstants.AddBookReview:
+	      var r2 = addReview(payload.result);
+	      ReviewStore.__emitChange();
+	      break;
+	  }
+	};
+	
+	module.exports = ReviewStore;
+
+/***/ },
+/* 444 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var SplashIndex = __webpack_require__(445);
+	var SearchArea = __webpack_require__(447);
+	var BookSearchStore = __webpack_require__(247);
+	var APIUtil = __webpack_require__(235);
+	var History = __webpack_require__(159).History;
+	var browserHistory = __webpack_require__(159).browserHistory;
+	
+	var customStyles = {
+	  overlay: {
+	    position: 'fixed',
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+	    zIndex: 20
+	  },
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    transform: 'translate(-50%, -50%)'
+	  }
+	};
+	
+	var MainPage = React.createClass({
+	  displayName: 'MainPage',
+	
+	  getInitialState: function getInitialState() {
+	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
+	  },
+	  bookChosen: function bookChosen() {
+	    event.preventDefault();
+	    var bookToSend = BookSearchStore.currentBook();
+	    bookToSend.read = "toRead";
+	    var url = "/Desk";
+	    browserHistory.push("/Books/" + bookToSend.ISBN13);
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      { className: 'homePage' },
+	      React.createElement(SearchArea, { whenChosen: this.bookChosen }),
+	      React.createElement(SplashIndex, { whenChosen: this.bookChosen })
+	    );
+	  }
+	});
+	
+	module.exports = MainPage;
+
+/***/ },
+/* 445 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(247);
+	var APIUtil = __webpack_require__(235);
+	var IndexItem = __webpack_require__(446);
+	
+	var SplashIndex = React.createClass({
+	  displayName: 'SplashIndex',
+	
+	  getInitialState: function getInitialState() {
+	    return { bookIndex: BookSearchStore.initialData() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    APIUtil.getInitialBookIndex();
+	    this.iIndex = BookSearchStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.iIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    this.setState({ bookIndex: BookSearchStore.initialData() });
+	  },
+	  shuffle: function shuffle(array) {
+	    var currentIndex = array.length,
+	        temporaryValue,
+	        randomIndex;
+	    while (0 !== currentIndex) {
+	      randomIndex = Math.floor(Math.random() * currentIndex);
+	      currentIndex -= 1;
+	      temporaryValue = array[currentIndex];
+	      array[currentIndex] = array[randomIndex];
+	      array[randomIndex] = temporaryValue;
+	    }
+	    return array;
+	  },
+	  render: function render() {
+	    var bookOptions;
+	    var that = this;
+	    bookOptions = this.state.bookIndex.map(function (book, index) {
+	      return React.createElement(IndexItem, { key: index, book: book, whenChosen: this.props.whenChosen });
+	    }, this);
+	    return React.createElement(
+	      'div',
+	      { id: 'BookArea' },
+	      React.createElement(
+	        'div',
+	        { className: 'book-list' },
+	        bookOptions
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = SplashIndex;
+
+/***/ },
+/* 446 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(247);
+	var ApiActions = __webpack_require__(236);
+	var History = __webpack_require__(159).History;
+	var browserHistory = __webpack_require__(159).browserHistory;
+	var APIUtil = __webpack_require__(235);
+	
+	var IndexItem = React.createClass({
+	  displayName: 'IndexItem',
+	
+	  mixins: [History],
+	  onClick: function onClick(event) {
+	    event.preventDefault();
+	    ApiActions.updateCurrentBook(this.props.book);
+	    var bookToSend = this.props.book;
+	    bookToSend.read = "toRead";
+	    var url = "/Desk";
+	    this.history.push("/Book/" + bookToSend.ISBN13);
+	  },
+	  render: function render() {
+	    var customStyle;
+	    var placements = ["middle", "top", "bottom"];
+	    var placementStyle = { verticalAlign: placements[Math.floor(Math.random() * 3)], margin: Math.floor(Math.random() * 40) - 20 };
+	    var heights = ["200px", "250px", "300px", "350px"];
+	    var posH = this.props.book.title.length * 9;
+	    if (posH > 450) {
+	      customStyle = { height: "350px" };
+	    } else if (posH < 100) {
+	      customStyle = { height: heights[Math.floor(Math.random() * heights.length)] };
+	    } else {
+	      customStyle = { height: this.props.book.title.length * 9 };
+	    }
+	    return React.createElement(
+	      'div',
+	      { className: 'InitialBooks', style: placementStyle, onClick: this.onClick },
+	      React.createElement('img', { style: customStyle, src: this.props.book.image })
+	    );
+	  }
+	});
+	module.exports = IndexItem;
+
+/***/ },
+/* 447 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var SearchBar = __webpack_require__(448);
+	
+	var SearchArea = React.createClass({
+	  displayName: 'SearchArea',
+	
+	  render: function render() {
+	    return React.createElement(
+	      'section',
+	      { id: 'popupbody' },
+	      React.createElement(SearchBar, { whenChosen: this.props.whenChosen })
+	    );
+	  }
+	});
+	
+	module.exports = SearchArea;
+
+/***/ },
+/* 448 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var APIUtil = __webpack_require__(235);
+	var BookSearchStore = __webpack_require__(247);
+	var SearchListItem = __webpack_require__(449);
+	var History = __webpack_require__(159).History;
+	var browserHistory = __webpack_require__(159).browserHistory;
+	var Navigation = __webpack_require__(159).Navigation;
+	
+	var SearchBar = React.createClass({
+	  displayName: 'SearchBar',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    this.leave = false;
+	    this.needToLoad = false;
+	    return { value: "", searchResults: [], showGuesses: false };
+	  },
+	  handleChange: function handleChange(event) {
+	    if (event.target.value.length > 0) {
+	      this.setState({ value: event.target.value, showGuesses: true });
+	    } else {
+	      this.setState({ value: event.target.value, showGuesses: false });
+	    }
+	    if (this.state.value.length > 2 && !this.pending) {
+	      this.pending = true;
+	      this.loadBar.style.display = 'block';
+	      this.needToLoad = false;
+	      APIUtil.fetchBookResults(this.state.value);
+	      window.setTimeout(function () {
+	        this.pending = false;
+	        if (this.needToLoad) {
+	          this.pending = true;
+	          this.loadBar.style.display = 'block';
+	          this.needToLoad = false;
+	          APIUtil.fetchBookResults(this.state.value);
+	        }
+	      }.bind(this), 1800);
+	    } else if (this.state.value.length > 2) {
+	      this.needToLoad = true;
+	    } else {
+	      this.needToLoad = false;
+	      this.loadBar.style.display = 'none';
+	    }
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.storeIndex = BookSearchStore.addListener(this._onChange);
+	    this.pending = false;
+	    this.loadBar = document.getElementById('loader');
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.storeIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    if (this.state.value.length > 0 && !this.leave) {
+	      this.loadBar.style.display = 'none';
+	      this.setState({ searchResults: BookSearchStore.all() });
+	    } else if (this.leave) {
+	      this.leave = false;
+	      var url = '/SearchResults';
+	      this.history.push({ pathname: url });
+	    } else {
+	      this.loadBar.style.display = 'none';
+	      this.setState({ searchResults: [] });
+	    }
+	  },
+	  clickOption: function clickOption(book) {
+	    var theChosen = book;
+	    var chosen = APIUtil.makeBookObject(book);
+	    BookSearchStore.resetCurrentBook(chosen);
+	    this.props.whenChosen();
+	  },
+	  blur: function blur(event) {
+	    this.setState({ showGuesses: false });
+	  },
+	  click: function click(event) {
+	    event.preventDefault();
+	    this.leave = true;
+	    APIUtil.fetchBookResults(this.state.value);
+	  },
+	  removeSearchGuesses: function removeSearchGuesses() {
+	    this.setState({ showGuesses: false });
+	  },
+	  render: function render() {
+	    var that = this;
+	    if (this.state.showGuesses) {
+	      var guesses = this.state.searchResults.map(function (result, index) {
+	        return React.createElement(SearchListItem, { key: result.id, book: result, clickOption: this.clickOption });
+	      }, this);
+	    } else {
+	      guesses = null;
+	    }
+	    return React.createElement(
+	      'div',
+	      { id: 'landing-search-bar' },
+	      React.createElement('input', { id: 'BookSearchInput',
+	        type: 'text',
+	        value: this.state.value,
+	        onChange: this.handleChange,
+	        placeholder: 'find your next adventure',
+	        list: 'search-options',
+	        autoComplete: 'off',
+	        onBlur: this.blur
+	      }),
+	      React.createElement('button', { id: 'BookSearchButton', className: 'hvr-grow-shadow fa fa-search', onClick: this.click }),
+	      React.createElement('div', { id: 'loader', className: 'loader' }),
+	      React.createElement(
+	        'ul',
+	        { className: 'searchGuesses', id: 'search-options' },
+	        guesses
+	      )
+	    );
 	  }
 	
 	});
+	module.exports = SearchBar;
+
+/***/ },
+/* 449 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
 	
-	module.exports = Note;
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	
+	var SearchListItem = React.createClass({
+	  displayName: "SearchListItem",
+	
+	  click: function click(event) {
+	    event.preventDefault();
+	    this.props.clickOption(this.props.book);
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      "li",
+	      { onClick: this.click, className: "searchGuess", value: this.props.book.volumeInfo.title },
+	      this.props.book.volumeInfo.title
+	    );
+	  }
+	});
+	
+	module.exports = SearchListItem;
+
+/***/ },
+/* 450 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	
+	// components
+	var BookShelf = __webpack_require__(433);
+	
+	//stores
+	var UserStore = __webpack_require__(265);
+	
+	var User = React.createClass({
+	  displayName: "User",
+	
+	  render: function render() {
+	
+	    return React.createElement(
+	      "div",
+	      { className: "container" },
+	      React.createElement(
+	        "div",
+	        { className: "comment-area" },
+	        React.createElement(
+	          "h1",
+	          null,
+	          "This is for comments"
+	        )
+	      ),
+	      React.createElement(
+	        "div",
+	        { className: "user-shelf-area" },
+	        React.createElement(
+	          "div",
+	          { className: "user-name" },
+	          React.createElement(
+	            "h1",
+	            null,
+	            UserStore.currentUser().username
+	          )
+	        ),
+	        React.createElement(
+	          "div",
+	          { className: "bookshelf-area" },
+	          React.createElement(BookShelf, null)
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = User;
 
 /***/ },
 /* 451 */
@@ -51614,57 +52097,59 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	var PropTypes = React.PropTypes;
+	var InitialBookIndex = __webpack_require__(418);
+	var SearchArea = __webpack_require__(420);
+	var BookSearchStore = __webpack_require__(247);
+	var BookConfirmation = __webpack_require__(422);
+	var Modal = __webpack_require__(209);
+	var BookSearch = __webpack_require__(424);
 	var APIUtil = __webpack_require__(235);
+	var SearchResultItem = __webpack_require__(452);
+	var History = __webpack_require__(159).History;
 	
-	var NoteItem = React.createClass({
-	  displayName: 'NoteItem',
+	var SearchResults = React.createClass({
+	  displayName: 'SearchResults',
 	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { chosen: BookSearchStore.currentBook(), currentBooks: BookSearchStore.all() };
+	  },
+	  bookChosen: function bookChosen() {
+	    // this.openModal();
+	    event.preventDefault();
+	    var bookToSend = BookSearchStore.currentBook();
+	    bookToSend.read = "toRead";
+	    // APIUtil.createBook(bookToSend);
+	    var url = "/Book/" + bookToSend.ISBN13;
+	    this.history.push({ pathname: url });
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
 	
-	  deleteClick: function deleteClick() {
-	    APIUtil.deleteNote(this.props.note.id);
+	  closeModal: function closeModal() {
+	    BookSearchStore.resetCurrentBook(null);
+	    this.setState({ modalIsOpen: false });
 	  },
 	  render: function render() {
-	    var chapterText, pageText;
-	    if (this.props.note.chapter === undefined || this.props.note.chapter === null) {
-	      chapterText = "";
-	    } else {
-	      chapterText = "Chapter: " + this.props.note.chapter;
+	
+	    var searchResults = [];
+	    for (var i = 0; i < this.state.currentBooks.length; i++) {
+	      searchResults.push(React.createElement(SearchResultItem, { book: this.state.currentBooks[i] }));
 	    }
-	    if (this.props.note.page === undefined || this.props.note.page === null) {
-	      pageText = "";
-	    } else {
-	      pageText = "Page: " + this.props.note.page;
-	    }
+	
 	    return React.createElement(
 	      'div',
-	      { className: 'IndividualNote' },
+	      { className: 'homePage' },
 	      React.createElement(
-	        'h4',
-	        { className: 'NoteTitle' },
-	        this.props.note.title
-	      ),
-	      React.createElement(
-	        'p',
-	        { className: 'NoteBody' },
-	        this.props.note.body
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'NoteFooter' },
-	        chapterText + " " + pageText
-	      ),
-	      React.createElement(
-	        'button',
-	        { className: 'NoteDelete', onClick: this.deleteClick },
-	        'Delete Note'
+	        'ul',
+	        { className: 'search-results-list' },
+	        searchResults
 	      )
 	    );
 	  }
-	
 	});
-	
-	module.exports = NoteItem;
+	module.exports = SearchResults;
 
 /***/ },
 /* 452 */
@@ -51672,259 +52157,92 @@
 
 	'use strict';
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
 	var React = __webpack_require__(1);
+	var InitialBookIndex = __webpack_require__(418);
+	var SearchArea = __webpack_require__(420);
+	var BookSearchStore = __webpack_require__(247);
+	var BookConfirmation = __webpack_require__(422);
+	var Modal = __webpack_require__(209);
+	var BookSearch = __webpack_require__(424);
+	var APIUtil = __webpack_require__(235);
+	var History = __webpack_require__(159).History;
 	
-	var _require = __webpack_require__(269);
+	var customStyles = {};
 	
-	var Editor = _require.Editor;
-	var EditorState = _require.EditorState;
-	var RichUtils = _require.RichUtils;
+	var SearchResultsItem = React.createClass({
+	  displayName: 'SearchResultsItem',
 	
-	var RichTextEditor = function (_React$Component) {
-	  _inherits(RichTextEditor, _React$Component);
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
+	  },
+	  bookChosen: function bookChosen() {
+	    // this.openModal();
+	    var chosen = APIUtil.makeBookObject(this.props.book);
+	    BookSearchStore.resetCurrentBook(chosen);
+	    event.preventDefault();
+	    var bookToSend = BookSearchStore.currentBook();
+	    bookToSend.read = "toRead";
+	    // APIUtil.createBook(bookToSend);
+	    var url = "/Book/" + bookToSend.ISBN13;
+	    this.history.push({ pathname: url });
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
 	
-	  function RichTextEditor(props) {
-	    _classCallCheck(this, RichTextEditor);
-	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(RichTextEditor).call(this, props));
-	
-	    _this.state = { editorState: EditorState.createEmpty() };
-	
-	    _this.focus = function () {
-	      return _this.refs.editor.focus();
-	    };
-	    _this.onChange = function (editorState) {
-	      return _this.setState({ editorState: editorState });
-	    };
-	
-	    _this.handleKeyCommand = function (command) {
-	      return _this._handleKeyCommand(command);
-	    };
-	    _this.onTab = function (e) {
-	      return _this._onTab(e);
-	    };
-	    _this.toggleBlockType = function (type) {
-	      return _this._toggleBlockType(type);
-	    };
-	    _this.toggleInlineStyle = function (style) {
-	      return _this._toggleInlineStyle(style);
-	    };
-	    _this.addNote = function (e) {
-	      return _this._addNote(e);
-	    };
-	    _this.clearEditorState = function () {
-	      return _this._clearEditorState();
-	    };
-	    return _this;
-	  }
-	
-	  _createClass(RichTextEditor, [{
-	    key: '_handleKeyCommand',
-	    value: function _handleKeyCommand(command) {
-	      var editorState = this.state.editorState;
-	
-	      var newState = RichUtils.handleKeyCommand(editorState, command);
-	      if (newState) {
-	        this.onChange(newState);
-	        return true;
-	      }
-	      return false;
+	  closeModal: function closeModal() {
+	    BookSearchStore.resetCurrentBook(null);
+	    this.setState({ modalIsOpen: false });
+	  },
+	  render: function render() {
+	    var imageLink, title, author, numPages, category;
+	    if (this.props.book.volumeInfo.imageLinks !== undefined) {
+	      imageLink = this.props.book.volumeInfo.imageLinks.thumbnail;
+	    } else {
+	      imageLink = "http://res.cloudinary.com/litlitves/image/upload/v1474661342/imageNotAvailable_fhql9f.jpg";
 	    }
-	  }, {
-	    key: '_onChange',
-	    value: function _onChange(es) {
+	    if (this.props.book.volumeInfo.categories !== undefined) {
+	      category = "category: " + this.props.book.volumeInfo.categories[0];
+	    } else {
+	      category = null;
+	    }
+	    if (this.props.book.volumeInfo.authors !== undefined) {
+	      author = "by, " + this.props.book.volumeInfo.authors[0];
+	    }
 	
-	      this.setState({ es: es });
-	    }
-	  }, {
-	    key: '_onTab',
-	    value: function _onTab(e) {
-	      var maxDepth = 4;
-	      this.onChange(RichUtils.onTab(e, this.state.editorState, maxDepth));
-	    }
-	  }, {
-	    key: '_toggleBlockType',
-	    value: function _toggleBlockType(blockType) {
-	      this.onChange(RichUtils.toggleBlockType(this.state.editorState, blockType));
-	    }
-	  }, {
-	    key: '_toggleInlineStyle',
-	    value: function _toggleInlineStyle(inlineStyle) {
-	      this.onChange(RichUtils.toggleInlineStyle(this.state.editorState, inlineStyle));
-	    }
-	  }, {
-	    key: '_addNote',
-	    value: function _addNote(event) {
-	      event.preventDefault();
-	      var noteText = this.state.editorState.getCurrentContent().getPlainText();
-	      this.props.submitNote(noteText);
-	      this.clearEditorState();
-	    }
-	  }, {
-	    key: '_clearEditorState',
-	    value: function _clearEditorState() {
-	      this.setState({ editorState: EditorState.createEmpty() });
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var editorState = this.state.editorState;
-	
-	      // If the user changes block type before entering any text, we can
-	      // either style the placeholder or hide it. Let's just hide it now.
-	
-	      var className = 'RichEditor-editor';
-	      var contentState = editorState.getCurrentContent();
-	      if (!contentState.hasText()) {
-	        if (contentState.getBlockMap().first().getType() !== 'unstyled') {
-	          className += ' RichEditor-hidePlaceholder';
-	        }
-	      }
-	
-	      return React.createElement(
+	    return React.createElement(
+	      'li',
+	      { className: 'search-result-item', onClick: this.bookChosen },
+	      React.createElement('img', { className: 'search-result-image', src: imageLink }),
+	      React.createElement(
 	        'div',
-	        { className: 'RichEditor-root' },
-	        React.createElement(BlockStyleControls, {
-	          editorState: editorState,
-	          onToggle: this.toggleBlockType
-	        }),
-	        React.createElement(InlineStyleControls, {
-	          editorState: editorState,
-	          onToggle: this.toggleInlineStyle
-	        }),
+	        { className: 'data-area' },
 	        React.createElement(
 	          'div',
-	          { className: className, onClick: this.focus },
-	          React.createElement(Editor, {
-	            blockStyleFn: getBlockStyle,
-	            customStyleMap: styleMap,
-	            editorState: editorState,
-	            handleKeyCommand: this.handleKeyCommand,
-	            onChange: this.onChange,
-	            onTab: this.onTab,
-	            placeholder: 'write a note...',
-	            ref: 'editor',
-	            spellCheck: true
-	          })
+	          { className: 'result-title' },
+	          this.props.book.volumeInfo.title
 	        ),
 	        React.createElement(
-	          'button',
-	          { className: 'AddNoteButton', onClick: this.addNote },
-	          'Add Note'
+	          'div',
+	          null,
+	          this.props.book.volumeInfo.subtitle
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'result-author' },
+	          author
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'result-category' },
+	          category
 	        )
-	      );
-	    }
-	  }]);
-	
-	  return RichTextEditor;
-	}(React.Component);
-	
-	// Custom overrides for "code" style.
-	
-	
-	var styleMap = {
-	  CODE: {
-	    backgroundColor: 'rgba(0, 0, 0, 0.05)',
-	    fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
-	    fontSize: 16,
-	    padding: 2
+	      )
+	    );
 	  }
-	};
-	
-	function getBlockStyle(block) {
-	  switch (block.getType()) {
-	    case 'blockquote':
-	      return 'RichEditor-blockquote';
-	    default:
-	      return null;
-	  }
-	}
-	
-	var StyleButton = function (_React$Component2) {
-	  _inherits(StyleButton, _React$Component2);
-	
-	  function StyleButton() {
-	    _classCallCheck(this, StyleButton);
-	
-	    var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(StyleButton).call(this));
-	
-	    _this2.onToggle = function (e) {
-	      e.preventDefault();
-	      _this2.props.onToggle(_this2.props.style);
-	    };
-	    return _this2;
-	  }
-	
-	  _createClass(StyleButton, [{
-	    key: 'render',
-	    value: function render() {
-	      var className = 'RichEditor-styleButton';
-	      if (this.props.active) {
-	        className += ' RichEditor-activeButton';
-	      }
-	
-	      return React.createElement(
-	        'span',
-	        { className: className, onMouseDown: this.onToggle },
-	        this.props.label
-	      );
-	    }
-	  }]);
-	
-	  return StyleButton;
-	}(React.Component);
-	
-	var BLOCK_TYPES = [{ label: 'H1', style: 'header-one' }, { label: 'H2', style: 'header-two' }, { label: 'H3', style: 'header-three' }, { label: 'H4', style: 'header-four' }, { label: 'H5', style: 'header-five' }, { label: 'H6', style: 'header-six' }, { label: 'Blockquote', style: 'blockquote' }, { label: 'UL', style: 'unordered-list-item' }, { label: 'OL', style: 'ordered-list-item' }, { label: 'Code Block', style: 'code-block' }];
-	
-	var BlockStyleControls = function BlockStyleControls(props) {
-	  var editorState = props.editorState;
-	
-	  var selection = editorState.getSelection();
-	  var blockType = editorState.getCurrentContent().getBlockForKey(selection.getStartKey()).getType();
-	
-	  return React.createElement(
-	    'div',
-	    { className: 'RichEditor-controls' },
-	    BLOCK_TYPES.map(function (type) {
-	      return React.createElement(StyleButton, {
-	        key: type.label,
-	        active: type.style === blockType,
-	        label: type.label,
-	        onToggle: props.onToggle,
-	        style: type.style
-	      });
-	    })
-	  );
-	};
-	
-	var INLINE_STYLES = [{ label: 'Bold', style: 'BOLD' }, { label: 'Italic', style: 'ITALIC' }, { label: 'Underline', style: 'UNDERLINE' }, { label: 'Monospace', style: 'CODE' }];
-	
-	var InlineStyleControls = function InlineStyleControls(props) {
-	  var currentStyle = props.editorState.getCurrentInlineStyle();
-	  return React.createElement(
-	    'div',
-	    { className: 'RichEditor-controls' },
-	    INLINE_STYLES.map(function (type) {
-	      return React.createElement(StyleButton, {
-	        key: type.label,
-	        active: currentStyle.has(type.style),
-	        label: type.label,
-	        onToggle: props.onToggle,
-	        style: type.style
-	      });
-	    })
-	  );
-	};
-	
-	module.exports = RichTextEditor;
+	});
+	module.exports = SearchResultsItem;
 
 /***/ }
 /******/ ]);

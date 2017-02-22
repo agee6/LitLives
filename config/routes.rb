@@ -3,8 +3,6 @@ Rails.application.routes.draw do
   root to: "static_pages#home"
   # get '/home', to: "static_pages#home"
 
-
-
   resource :session, only: [:create, :destroy, :new]
   resources :users, only: [:create, :new]
   namespace :api, defaults: {format: :json} do
@@ -16,11 +14,8 @@ Rails.application.routes.draw do
     end
     resource :session, only: [:show, :create, :destroy]
     resources :analyses, only: [:show, :index, :create, :update, :destroy]
-
-
   end
-  get '*path', to: "static_pages#home"
-
+  # get '*path', to: "static_pages#home"
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

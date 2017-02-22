@@ -18,7 +18,6 @@ class Api::ReviewsController < ApplicationController
       render json: nil
     end
   end
-
   def destroy
     @review=Review.find_by_id(params[:id]);
     @review.destroy
@@ -26,17 +25,19 @@ class Api::ReviewsController < ApplicationController
   end
 
   def show
-    @review = Review.find_by_id(params[:id])
+    @review = Review.where({ISBN13:review_params[:ISBN13]});
+    p @review
     render json: @review
   end
 
   def index
-    render json: Review.where({ISBN13:review_params.ISBN13})
+    p review_params[:ISBN13]
+    render json: Review.where({ISBN13:review_params[:ISBN13]})
   end
 
   private
   def review_params
-    params.permit(:ISBN13, :ISBN10, :rating, :body,:rich, :title, :user_id)
+    params.require(:Review).permit(:ISBN13, :ISBN10, :rating, :body,:rich, :title, :user_id)
   end
 
 

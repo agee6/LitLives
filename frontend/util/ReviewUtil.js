@@ -2,17 +2,18 @@ var ApiActions = require('../actions/api_actions');
 
 var ReviewUtil = {
   createReview: function(reviewObj){
-    $post('/api/reviews', reviewObj, function(payload){
+    $.post('/api/reviews', reviewObj, function(payload){
       ApiActions.RecieveAddedReview(payload)
-    })
+    });
   },
   fetchReviews: function(bookToFetch){
-    $get('api/reviews', bookToFetch, function(payload){
-      ApiActions.ReceiveBookReviews(payload)
+    var data = {Review:{ISBN13: bookToFetch}};
+    $.get('api/reviews', data, function(payload){
+      ApiActions.receiveBookReviews(payload)
     })
   },
   updateReviews: function(reviewID){
-    $patch('api/reviews/', reviewID, function(payload){
+    $.patch('api/reviews/', reviewID, function(payload){
       ApiActions.ReciveAddedReview(payload)
     })
   },
@@ -23,7 +24,6 @@ var ReviewUtil = {
   },
   getCurrentBook: function() {
     $.get('/api/user/revews', {}, function(book){
-
       ApiActions.updateCurrentBook(book);
     });
   },
@@ -71,13 +71,11 @@ var ReviewUtil = {
       ApiActions.addNote(payload);
     });
   },
-
   fetchNotes: function(bookId){
     $.get('api/notes', {book_id: bookId}, function(notes){
       ApiActions.receiveNotes(notes);
     });
   },
-  
   deleteNote: function(noteId){
       var uri = '/api/notes/'+noteId;
     $.ajax({
@@ -138,23 +136,17 @@ var ReviewUtil = {
       type: 'PATCH',
       data: bookParams,
       success: function(books) {
-          // Do something with the result
-
           ApiActions.receiveUserBooks(books);
     }});
-
   },
   deleteBook: function(bookId){
     var uri = 'api/books/' + bookId;
     $.ajax({
       url: uri,
       type: 'DELETE',
-
       success: function(books) {
-          // Do something with the result
-
-
           ApiActions.receiveUserBooks(books);
     }});
   }
 };
+module.exports = ReviewUtil;

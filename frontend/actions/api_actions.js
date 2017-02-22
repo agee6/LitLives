@@ -4,26 +4,23 @@ var BookShelfConstants = require('../constants/BookShelfConstants');
 var NoteConstants = require('../constants/NoteConstants');
 var UserConstants = require('../constants/UserConstants');
 var AnalysisConstants = require('../constants/AnalysisConstants');
+var ReviewConstants = require('../constants/ReviewConstants');
 
 var ApiActions = {
 
   ReceiveActions: function(bookList){
-
     AppDispatcher.dispatch({
       actionType: BookSearchConstants.SearchResultsReceived,
       results: bookList.items
     });
   },
   ReceiveInitial: function(bookList){
-
-
     AppDispatcher.dispatch({
       actionType: BookSearchConstants.InitialResultsReceived,
       results: bookList
     });
   },
   receiveUserBooks: function(books){
-
     AppDispatcher.dispatch({
       actionType: BookShelfConstants.ReceiveUserBooks,
       books: books
@@ -37,14 +34,12 @@ var ApiActions = {
 
   },
   updateCurrentBook: function(book){
-
     AppDispatcher.dispatch({
       actionType: BookSearchConstants.ReceiveCurrentBook,
       book: book
     });
   },
   emptyShelves: function(){
-
     AppDispatcher.dispatch({
       actionType: BookShelfConstants.EmptyShelves
     });
@@ -100,6 +95,24 @@ var ApiActions = {
     AppDispatcher.dispatch({
       actionType: UserConstants.UpdateNeeds,
       need: need
+    })
+  },
+  receiveBookReviews: function(reviews){
+    AppDispatcher.dispatch({
+      actionType: ReviewConstants.RecieveBookReviews,
+      reviews: reviews
+    })
+  },
+  recieveUserReviews: function(reviews){
+    AppDispatcher.dispatch({
+      actionType: ReviewConstants.RecieveUserReviews,
+      reviews: reviews
+    })
+  },
+  addBookReview: function(review){
+    AppDispatcher.dispatch({
+      actionType: ReviewConstants.AddBookReview,
+      review: review
     })
   }
 };

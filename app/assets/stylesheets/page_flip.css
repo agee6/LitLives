@@ -4,17 +4,6 @@
     position:relative;
     height: 800px;
 }
-/*
-#page-flip {
-
-    position: absolute;
-    padding: 40px 40px 40px 340px;
-    width: 300px;
-    height: 400px;
-    overflow: hidden;
-}
-*/
-
 #r1 {
     position: absolute;
     z-index: 2;
@@ -23,13 +12,11 @@
     -webkit-transition-property: -webkit-transform, -webkit-transform-origin;
     -webkit-transition-duration: 1s;
 }
-
 #p1 {
     width: 1285px;
     height: 1388px;
     overflow: hidden;
 }
-
 #p1 > div {
     -webkit-transform-origin: 285px 0;
     -webkit-transform: translate(1030px, 500px) rotate(32deg);
@@ -39,13 +26,11 @@
     height: 388px;
     background-image: url(http://cssdeck.com/uploads/media/items/8/87WOlJH.jpg);
 }
-
 #p1 > div > div {
     width: 10px;
     height: 388px;
     background: -webkit-gradient(linear, left top, right top, from(rgba(0, 0, 0, .25)), to(rgba(0,0,0,0)));
 }
-
 #p2 > div {
     width: 285px;
     height: 388px;
@@ -54,7 +39,6 @@
     z-index: 1;
     background-image: url(http://cssdeck.com/uploads/media/items/4/4FpEEbu.jpg);
 }
-
 #r3 {
     -webkit-transform-origin: 1315px 500px;
     -webkit-transform: translate(-1030px, -500px) rotate(-32deg);
@@ -168,28 +152,10 @@
     -webkit-transform-origin: 0 0;
     -webkit-transform: translate(1000px, 500px) rotate(0deg);
 }
-/*
-a {
-    display: block;
-    position: absolute;
-    margin: -20000px 0 0 0;
-    padding: 1px;
-    z-index: 3;
-    -webkit-transition-property: margin;
-    -webkit-transition-duration: 0.01s;
-}
-*/
 #coke {
     width: 253px;
     height: 158px;
 }
-/*
-a:hover {
-    padding: 0;
-    border: 1px dotted #92C7C1;
-}
-*/
-
 #page-flip:hover #coke {
     -webkit-transition-delay: .8s;
     margin: 33px 0 0 14px;

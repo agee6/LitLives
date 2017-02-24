@@ -8,6 +8,7 @@ var UserArea = require("./UserArea.jsx");
 var ReviewArea = require("./ReviewArea.jsx");
 
 //stores
+var BookSearchStore = require("../../stores/BookSearchStore.js");
 
 var Book = React.createClass({
   render: function(){

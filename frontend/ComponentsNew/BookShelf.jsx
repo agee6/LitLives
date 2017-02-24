@@ -40,6 +40,7 @@ var BookShelf = React.createClass({
   },
   render: function(){
     var page;
+    var customStyle = {width: "100%"};
     var options = [{value: "read", label: "read"}, {value: "toRead", label: "to read"}, {value: "reading", label: "reading"}];
     var bookList = this.state.books[this.state.currentShelf].map(function(b){
       console.log(b.title)
@@ -52,6 +53,7 @@ var BookShelf = React.createClass({
                       value={this.state.currentShelf}
                       options={options}
                       onChange={this._onSelect}
+                      style={customStyle}
                   />
 
               <ul>{bookList}</ul>

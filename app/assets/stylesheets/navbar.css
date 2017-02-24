@@ -8,40 +8,31 @@
 .loginMessage{
   text-align: center;
 }
-
-
 .Navbar {
-  border-top: 1px solid #E0C8AE;
-  border-bottom: 1px solid #E0C8AE;
+  border-top: 1px solid var(--d-color);
+  border-bottom: 1px solid var(--d-color);
   border-radius: 2px;
   margin-bottom: 5px;
+  background-color:var(--d-color);
 }
-
-
 .nav-right {
   display: block;
   height: 100%;
-  /*margin: 10px 10px;*/
   padding-left: 20px;
   padding-right: 20px;
   padding-top: 15px;
   padding-bottom: 17px;
   text-align: center;
-  color: #E0C8AE;
+  color: var(--l-color);
   border-radius: 2px;
   z-index: 2;
-
 }
-
-
 .header-nav {
   margin: 0 auto;
-  /*width: 900px;*/
   border-left: 1px solid #E0C8AE;
   border-right: 1px solid #E0C8AE;
   height: 50px;
 }
-
 .header-logo {
   float: left;
   border-right: 1px solid #E0C8AE;
@@ -62,24 +53,20 @@
   margin-left: auto;
   margin-right: auto;
 }
-
 .header-logo:hover {
   background: #E0C8AE;
   cursor: pointer;
   color:#261a0d;
   transition: 1s;
 }
-
 .header-list {
   float: right;
   padding: 0px;
   margin: 0px;
 }
-
 .header-list > li {
   float: left;
   border-left: 1px solid #ccc;
-
 }
 .headerButton {
   float: right;
@@ -91,18 +78,12 @@
   position: absolute;
   top: 12px;
   right: 12px;
-  /*margin-left: 100px;
-  margin-right: 100px;*/
-
-
 }
-
 .headerButton:hover {
   background-color: #E0C8AE;
   color: #261a0d;
   transition: 1s;
 }
-
 .header-list > li:hover {
   cursor: pointer;
   color: #261a0d;
@@ -112,15 +93,6 @@
 .SignButton {
   width: 95%;
   height:auto;
-  /*margin-top: 10px;
-  margin-bottom: 10px;*/
-  /*padding: 10px; */
-
-  /*margin: auto 10px;*/
-  /*margin: 10px auto;*/
-
-
-  /*left: 20px; */
 }
 .SignButton {
 	-moz-box-shadow:inset 0px 1px 10px 5px #ffffff;
@@ -168,29 +140,20 @@
   color: white;
 }
 .PasswordInputLabel{
-
-  /*margin: 10px;*/
   padding: 10px;
   position: absolute;
   margin-left: 100px;
-  /*top: 70px;*/
 }
 .PasswordInput {
-
   width: 100%;
   height: 30px;
   margin: auto;
   border-radius:4px;
   font-size: 18px;
-
-
 }
 .UserNameLabel {
   float: left;
-  /*margin: 10px;*/
   padding: 10px;
-  /*position: absolute;*/
-  /*top: 10%;*/
   margin-left: 100px;
 }
 .userNameLabel{
@@ -216,18 +179,12 @@
     display: none;
   }
 }
-
-
-
 .UserNameInput{
-
   width: 100%;
   margin: auto;
   height:30px;
   border-radius: 4px;
   font-size: 18px;
-
-
 }
 .PasswordArea {
   width: 100%;
@@ -238,7 +195,6 @@
   width: 100%;
   position: relative;
   height: 50px;
-
 }
 .LoginButtonArea {
   position: relative;

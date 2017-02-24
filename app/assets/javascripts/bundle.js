@@ -24102,7 +24102,6 @@
 	var Tabs = __webpack_require__(409);
 	var Note = __webpack_require__(266);
 	var Reviews = __webpack_require__(411);
-	
 	var Notebook = React.createClass({
 	  displayName: 'Notebook',
 	
@@ -24136,7 +24135,6 @@
 	    }
 	    this.setState({ tabs: this.tabs });
 	  },
-	
 	  render: function render() {
 	    if (this.state.currentBook) {
 	      var customStyle = {
@@ -24144,7 +24142,6 @@
 	      };
 	      var currentTab;
 	      currentTab = React.createElement(BookPage, { currentBook: this.state.currentBook, changeTabs: this.changeTabOptions });
-	
 	      return React.createElement(
 	        'section',
 	        { className: 'Notebook', id: 'page-flip' },
@@ -24162,7 +24159,6 @@
 	      );
 	    }
 	  }
-	
 	});
 	
 	module.exports = Notebook;
@@ -24287,14 +24283,12 @@
 	  },
 	  deleteBook: function deleteBook(event) {
 	    event.preventDefault();
-	
 	    APIUtil.deleteBook(this.state.currentBook.id);
 	    this.props.changeTabs(false);
 	    this.setState({ onShelf: false });
 	  },
 	  addToShelf: function addToShelf(event) {
 	    event.preventDefault();
-	
 	    if (UserStore.loggedIn()) {
 	      APIUtil.createBook(this.state.currentBook);
 	      this.props.changeTabs(true);
@@ -49098,6 +49092,7 @@
 	var ReviewArea = __webpack_require__(441);
 	
 	//stores
+	var BookSearchStore = __webpack_require__(247);
 	
 	var Book = React.createClass({
 	  displayName: "Book",
@@ -49152,49 +49147,412 @@
 	'use strict';
 	
 	var React = __webpack_require__(1);
-	// components
-	//stores
+	var Modal = __webpack_require__(209);
+	var LinkedStateMixin = __webpack_require__(229);
+	var RadioGroup = __webpack_require__(233);
+	var APIUtil = __webpack_require__(235);
+	var ApiActions = __webpack_require__(236);
 	var BookSearchStore = __webpack_require__(247);
+	var UserStore = __webpack_require__(265);
 	
-	var BookDescription = React.createClass({
-	  displayName: 'BookDescription',
+	var customStyles = {
+	  overlay: {
+	    position: 'fixed',
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+	    zIndex: 20,
+	    backgroundImage: 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
+	    backgroundSize: 'cover'
+	  },
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    marginRight: '-50%',
+	    transform: 'translate(-50%, -50%)',
+	    width: '500px',
+	    backgroundImage: 'url(\'https://images.unsplash.com/photo-1457298483369-0a95d2b17fcd?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&s=f4fd0823787f85fcb27fd05027766a41\')',
+	    backgroundSize: 'cover',
+	    borderRadius: '10px'
+	  }
+	};
 	
+	var BookPage = React.createClass({
+	  displayName: 'BookPage',
+	
+	  mixins: [LinkedStateMixin],
 	  getInitialState: function getInitialState() {
-	    return { currentBook: BookSearchStore.currentBook(), modalIsOpen: false };
+	    var book = BookSearchStore.currentBook();
+	    var inDatabase = true;
+	    if (book.id === undefined) {
+	      inDatabase = false;
+	    }
+	    if (book.read === "read") {
+	      var finishedRead = true;
+	    } else {
+	      var finishedRead = false;
+	    }
+	    return { modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
+	      ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
+	      description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase, finished: finishedRead };
 	  },
 	  componentDidMount: function componentDidMount() {
-	    this.BookIndex = BookSearchStore.addListener(this._onChange);
+	    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
 	  },
 	  componentWillUnmount: function componentWillUnmount() {
-	    this.BookIndex.remove();
+	    this.bookStoreIndex.remove();
 	  },
 	  _onChange: function _onChange() {
-	    this.setState({ currentBook: BookSearchStore.currentBook() });
+	    var book = BookSearchStore.currentBook();
+	    this.setState({ modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
+	      ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
+	      description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: true
+	    });
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true });
+	  },
+	  closeModal: function closeModal() {
+	    this.setState({ modalIsOpen: false });
+	  },
+	  markAsRead: function markAsRead(event) {
+	    event.preventDefault();
+	    APIUtil.updateBook(this.props.currentBook.id, { read: "read" });
+	    this.setState({ selectedValue: "read" });
+	  },
+	  markAsUnread: function markAsUnread(event) {
+	    event.preventDefault();
+	    APIUtil.updateBook(this.props.currentBook.id, { read: "toRead" });
+	    this.setState({ selectedValue: "toRead" });
+	  },
+	  checkRead: function checkRead(event) {
+	    event.preventDefault();
+	    if (this.state.selectedValue === "read") {
+	      APIUtil.updateBook(this.props.currentBook.id, { read: "toRead" });
+	      this.setState({ selectedValue: "toRead", finished: false });
+	    } else {
+	      APIUtil.updateBook(this.props.currentBook.id, { read: "read" });
+	      this.setState({ selectedValue: "read", finished: true });
+	    }
+	  },
+	  editClick: function editClick(event) {
+	    event.preventDefault();
+	    this.openModal();
+	  },
+	  deleteBook: function deleteBook(event) {
+	    event.preventDefault();
+	    APIUtil.deleteBook(this.state.currentBook.id);
+	    this.setState({ onShelf: false });
+	  },
+	  addToShelf: function addToShelf(event) {
+	    event.preventDefault();
+	    if (UserStore.loggedIn()) {
+	      APIUtil.createBook(this.state.currentBook);
+	      this.setState({ onShelf: true });
+	    } else {
+	      ApiActions.demandLogin();
+	    }
+	  },
+	  updateBook: function updateBook(event) {
+	    event.preventDefault();
+	    var pages, chapters, year;
+	    pages = parseInt(this.state.pages);
+	    if (this.state.chapters !== null && this.statechapters !== undefined && this.state.chapters.length > 0) {
+	      chapters = parseInt(this.state.chapters);
+	    }
+	    year = parseInt(this.state.year);
+	    var oldBook = this.props.currentBook;
+	    var newBook = {
+	      publishing: this.state.publisher,
+	      genre: this.state.genre,
+	      year: year,
+	      read: this.state.selectedValue,
+	      ISBN13: this.state.ISBN13,
+	      ISBN10: this.state.ISBN10,
+	      author: this.state.author,
+	      image: this.state.image,
+	      language: this.state.language,
+	      pages: pages,
+	      chapters: chapters,
+	      description: this.state.description
+	    };
+	    APIUtil.updateBook(this.props.currentBook.id, newBook);
+	    this.closeModal();
+	    newBook.title = this.props.currentBook.title;
+	    newBook.id = this.props.currentBook.id;
+	    ApiActions.updateCurrentBook(newBook);
+	  },
+	  handleChange: function handleChange(value) {
+	    this.setState({ selectedValue: value });
 	  },
 	  render: function render() {
-	    console.log(this.state.currentBook);
+	    var book = this.state.currentBook;
+	    var pages, language, publisher;
+	    if (book.pages === null) {
+	      pages = "N/A";
+	    } else {
+	      pages = book.pages;
+	    }
+	    if (book.language === null) {
+	      language = "N/A";
+	    } else {
+	      language = book.language;
+	    }
+	    if (book.publishing === null) {
+	      publisher = "N/A";
+	    } else {
+	      publisher = book.publishing;
+	    }
+	    var deleteButton, addButton, markButton, editButton, addDeleteButton, notes;
+	    if (this.state.onShelf) {
+	      deleteButton = false;
+	      addButton = true;
+	      markButton = false;
+	      editButton = true;
+	      addDeleteButton = React.createElement(
+	        'button',
+	        { className: 'book-button-area', id: 'delete-book', onClick: this.deleteBook, disabled: deleteButton },
+	        '-'
+	      );
+	    } else {
+	      deleteButton = true;
+	      addButton = false;
+	      markButton = true;
+	      editButton = true;
+	      addDeleteButton = React.createElement(
+	        'button',
+	        { className: 'book-button-area', id: 'add-to-shelf', onClick: this.addToShelf, disabled: addButton },
+	        '+'
+	      );
+	    }
+	    var markFunction, markText, markValue;
+	    if (this.state.selectedValue === "read") {
+	      markFunction = this.markAsUnread;
+	      markText = "Mark as Unread";
+	      markValue = true;
+	    } else {
+	      markFunction = this.markAsRead;
+	      markText = "Mark as Read";
+	      markValue = "false";
+	    }
 	    return React.createElement(
-	      'div',
-	      { className: 'book-description' },
+	      'section',
+	      { className: 'BookPage', id: 'book-page-area' },
 	      React.createElement(
-	        'h1',
-	        null,
-	        this.state.currentBook.title
+	        'div',
+	        { id: 'book-button-area' },
+	        React.createElement('button', { className: 'book-button-area', id: 'edit-book-button', onClick: this.editClick, disabled: deleteButton }),
+	        addDeleteButton
 	      ),
 	      React.createElement(
-	        'h2',
-	        null,
-	        this.state.currentBook.author
+	        'div',
+	        { className: 'BookTitleArea' },
+	        React.createElement(
+	          'div',
+	          { className: 'BookTitle' },
+	          book.title
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'Author' },
+	          'by, ',
+	          book.author
+	        )
 	      ),
 	      React.createElement(
-	        'p',
-	        null,
-	        this.state.currentBook.description
+	        'div',
+	        { className: 'BookPage', id: 'BookDescriptionBox' },
+	        React.createElement(
+	          'p',
+	          { id: 'BookDescription' },
+	          book.description
+	        )
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'BookPage', id: 'BookFooter' },
+	        React.createElement(
+	          'div',
+	          { className: 'BookFooter', id: 'pages' },
+	          'pages: ',
+	          pages
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'BookFooter', id: 'language' },
+	          'language: ',
+	          language
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'BookFooter', id: 'publisher' },
+	          'publisher: ',
+	          publisher
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'BookFooter', id: 'read-check' },
+	          React.createElement(
+	            'input',
+	            { type: 'checkbox', checked: this.state.finished, onChange: this.checkRead },
+	            'Finished Reading?'
+	          )
+	        )
+	      ),
+	      React.createElement(
+	        Modal,
+	        {
+	          isOpen: this.state.modalIsOpen,
+	          onRequestClose: this.closeModal,
+	          style: customStyles },
+	        React.createElement(
+	          'div',
+	          { className: 'book-edit-title' },
+	          ' ',
+	          this.state.currentBook.title
+	        ),
+	        React.createElement(
+	          'form',
+	          { className: 'book-edit-form' },
+	          React.createElement('textarea', { className: 'book-edit-description', rows: '15', cols: '60', name: 'comment',
+	            placeholder: 'Enter note here...', valueLink: this.linkState('description') }),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections', id: 'book-edit-basic' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'genre: '
+	            ),
+	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('genre') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'publisher: '
+	            ),
+	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('publisher') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'year published: '
+	            ),
+	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('year') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'author: '
+	            ),
+	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('author') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'language: '
+	            ),
+	            React.createElement('input', { className: 'book-edit book-edit-input', valueLink: this.linkState('language') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections', id: 'book-edit-image' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'image url: '
+	            ),
+	            React.createElement('input', { className: 'book-edit book-edit-input', id: 'book-edit-image', valueLink: this.linkState('image') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections', id: 'book-edit-isbn' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'ISBN13: '
+	            ),
+	            React.createElement('input', { className: 'book-edit ISBN13-input', valueLink: this.linkState('ISBN13') }),
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'ISBN10: '
+	            ),
+	            React.createElement('input', { className: 'book-edit ISBN10-input', valueLink: this.linkState('ISBN10') })
+	          ),
+	          React.createElement(
+	            'div',
+	            { className: 'book-edit-sections', id: 'book-edit-length' },
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              '# of pages: '
+	            ),
+	            React.createElement('input', { className: 'book-edit pages-input', valueLink: this.linkState('pages') }),
+	            React.createElement(
+	              'label',
+	              { className: 'book-edit label' },
+	              'chapters: '
+	            ),
+	            React.createElement('input', { className: 'book-edit publisher-input', valueLink: this.linkState('chapters') })
+	          ),
+	          React.createElement(
+	            RadioGroup,
+	            {
+	              name: 'read',
+	              selectedValue: this.state.selectedValue,
+	              onChange: this.handleChange },
+	            function (Radio) {
+	              return React.createElement(
+	                'div',
+	                null,
+	                React.createElement(
+	                  'label',
+	                  null,
+	                  React.createElement(Radio, { value: "read" }),
+	                  'Read'
+	                ),
+	                React.createElement(
+	                  'label',
+	                  null,
+	                  React.createElement(Radio, { value: "toRead" }),
+	                  'To Read'
+	                )
+	              );
+	            }
+	          ),
+	          React.createElement(
+	            'button',
+	            { className: 'book-update-button', onClick: this.updateBook },
+	            'Update'
+	          )
+	        ),
+	        React.createElement(
+	          'button',
+	          { onClick: this.closeModal },
+	          'cancel'
+	        )
 	      )
 	    );
 	  }
 	});
-	module.exports = BookDescription;
+	module.exports = BookPage;
 
 /***/ },
 /* 428 */
@@ -49240,10 +49598,11 @@
 	  },
 	  render: function render() {
 	    var book = this.state.currentBook;
+	    var customStyle = { width: "70%" };
 	    return React.createElement(
 	      'section',
 	      { className: 'book-image', id: 'book-image-container' },
-	      React.createElement('img', { src: book.image, id: 'CoverPhoto' })
+	      React.createElement('img', { src: book.image, id: 'book-cover', style: customStyle })
 	    );
 	  }
 	});
@@ -49824,6 +50183,7 @@
 	  },
 	  render: function render() {
 	    var page;
+	    var customStyle = { width: "100%" };
 	    var options = [{ value: "read", label: "read" }, { value: "toRead", label: "to read" }, { value: "reading", label: "reading" }];
 	    var bookList = this.state.books[this.state.currentShelf].map(function (b) {
 	      console.log(b.title);
@@ -49841,7 +50201,8 @@
 	          name: 'form-field-name',
 	          value: this.state.currentShelf,
 	          options: options,
-	          onChange: this._onSelect
+	          onChange: this._onSelect,
+	          style: customStyle
 	        }),
 	        React.createElement(
 	          'ul',
@@ -51843,21 +52204,11 @@
 	    this.history.push("/Book/" + bookToSend.ISBN13);
 	  },
 	  render: function render() {
-	    var customStyle;
-	    var placements = ["middle", "top", "bottom"];
-	    var placementStyle = { verticalAlign: placements[Math.floor(Math.random() * 3)], margin: Math.floor(Math.random() * 40) - 20 };
-	    var heights = ["200px", "250px", "300px", "350px"];
-	    var posH = this.props.book.title.length * 9;
-	    if (posH > 450) {
-	      customStyle = { height: "350px" };
-	    } else if (posH < 100) {
-	      customStyle = { height: heights[Math.floor(Math.random() * heights.length)] };
-	    } else {
-	      customStyle = { height: this.props.book.title.length * 9 };
-	    }
+	    var placementStyle = { verticalAlign: "middle" };
+	    var customStyle = { width: "250px", borderRadius: "10px" };
 	    return React.createElement(
 	      'div',
-	      { className: 'InitialBooks', style: placementStyle, onClick: this.onClick },
+	      { className: 'initial-books', style: placementStyle, onClick: this.onClick },
 	      React.createElement('img', { style: customStyle, src: this.props.book.image })
 	    );
 	  }

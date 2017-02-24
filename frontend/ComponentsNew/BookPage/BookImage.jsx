@@ -34,9 +34,10 @@ var BookImage = React.createClass({
   },
   render: function(){
     var book = this.state.currentBook;
+    var customStyle = {width: "70%"}
     return(
       <section className="book-image" id="book-image-container">
-        <img src={book.image} id="CoverPhoto"></img>
+        <img src={book.image} id="book-cover" style={customStyle}></img>
       </section>
     )
   }

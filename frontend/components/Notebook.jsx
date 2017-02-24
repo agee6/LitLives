@@ -4,7 +4,6 @@ var BookSearchStore = require('../stores/BookSearchStore.js');
 var Tabs = require('./NoteBook/Tabs.jsx');
 var Note = require('./NoteBook/Note.jsx');
 var Reviews = require('./NoteBook/Reviews.jsx');
-
 var Notebook = React.createClass({
   getInitialState: function(){
     this.tabs = ["Book Page", "Notes"]
@@ -12,7 +11,6 @@ var Notebook = React.createClass({
   },
   componentDidMount: function(){
     this.storeIndex = BookSearchStore.addListener(this._onChange);
-
   },
   componentWillUnmount: function(){
     this.storeIndex.remove();
@@ -36,9 +34,7 @@ var Notebook = React.createClass({
       this.tabs = [];
     }
     this.setState({tabs: this.tabs});
-
   },
-
   render: function(){
     if(this.state.currentBook){
       var customStyle = {
@@ -46,16 +42,11 @@ var Notebook = React.createClass({
       };
       var currentTab;
       currentTab = <BookPage currentBook={this.state.currentBook} changeTabs={this.changeTabOptions}/>;
-
       return(
-
         <section className="Notebook" id="page-flip">
           <div id="page-area">
             {currentTab}
-
           </div>
-
-
         </section>
       )
     }else{
@@ -64,7 +55,6 @@ var Notebook = React.createClass({
       )
     }
   }
-
 });
 
 module.exports = Notebook;

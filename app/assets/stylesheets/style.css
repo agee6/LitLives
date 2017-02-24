@@ -1,81 +1,50 @@
 html, input {
   font-family: "Baskerville";
+  color: #261a0d;
+  --d-color: #261a0d;
+  --l-color: #ecd9c5;
+  box-sizing: border-box;
 }
-
+*{
+  box-sizing: border-box;
+}
 button {
   height: auto;
   width: auto;
 }
-
 body {
-  background-color: #261a0d;
-  /*margin: -10px; */
+  background-color: var(--l-color);
 }
-
 span{
   color: inherit;
   font-weight: inherit;
 }
-
 .logo{
   background-image: url("Drawing.png");
   background-size: cover;
   width: 45px;
   height: 40px;
 }
-
 .logo-corner{
   width: 50px;
   height: 50px;
 }
-
 .book-list{
   padding:0px;
   margin: 0px;
 }
-
 .logo:hover{
   cursor: pointer;
 }
-
 #bookTitle {
   left: 150px;
-}
-
-button{
-  /*background-image: url("BookButton.jpg");*/
-  /*height: 40px;*/
-  /*background-size: cover;*/
-  /*border: 5px;*/
-  border-color: #e4cdb4;
-
-
 }
 button:hover{
   cursor: pointer;
 }
-
 ul {
   list-style-type: none;
 }
-
-.InitialBooks {
-  /*z-index: 9;*/
-  margin: 4px;
-  display: inline-block;
-  /*vertical-align: middle;*/
-  transition-duration: 0.3s;
-  transition-property: transform;
-
-}
-.InitialBooks:hover,
-.InitialBooks:focus,
-.InitialBooks:active {
-    transform: scale(1.1);
-}
-
-
-
 #username {
   float: left;
   position: absolute;
@@ -83,7 +52,6 @@ ul {
   left: 100px;
   color:#e4cdb4;
 }
-
 .hvr-grow-shadow {
   display: inline-block;
   vertical-align: middle;
@@ -113,7 +81,6 @@ ul {
  .SignButton {
    margin: 10px;
  }
-
  .RichEditor-root {
    background: #fff;
    border: 1px solid #ddd;
@@ -122,28 +89,23 @@ ul {
    padding: 15px;
    border-radius: 5px;
  }
-
  .RichEditor-editor {
    border-top: 1px solid #ddd;
    cursor: text;
    font-size: 16px;
    margin-top: 10px;
  }
-
  .RichEditor-editor .public-DraftEditorPlaceholder-root,
  .RichEditor-editor .public-DraftEditor-content {
    margin: 0 -15px -15px;
    padding: 15px;
  }
-
  .RichEditor-editor .public-DraftEditor-content {
    min-height: 100px;
  }
-
  .RichEditor-hidePlaceholder .public-DraftEditorPlaceholder-root {
    display: none;
  }
-
  .RichEditor-editor .RichEditor-blockquote {
    border-left: 5px solid #eee;
    color: #666;
@@ -152,21 +114,18 @@ ul {
    margin: 16px 0;
    padding: 10px 20px;
  }
-
  .RichEditor-editor .public-DraftStyleDefault-pre {
    background-color: rgba(0, 0, 0, 0.05);
    font-family: 'Inconsolata', 'Menlo', 'Consolas', monospace;
    font-size: 16px;
    padding: 20px;
  }
-
  .RichEditor-controls {
    font-family: 'Helvetica', sans-serif;
    font-size: 14px;
    margin-bottom: 5px;
    user-select: none;
  }
-
  .RichEditor-styleButton {
    color: #999;
    cursor: pointer;
@@ -174,16 +133,6 @@ ul {
    padding: 2px 0;
    display: inline-block;
  }
-
  .RichEditor-activeButton {
    color: #5890ff;
  }
-
-
-
-
-
-
-/* * Copyright (c) 2012 Thibaut Courouble
- * Licensed under the MIT License
-   ================================================== */

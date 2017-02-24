@@ -116,21 +116,16 @@ var BookPage = React.createClass({
   },
   deleteBook: function(event){
     event.preventDefault();
-
     APIUtil.deleteBook(this.state.currentBook.id);
     this.props.changeTabs(false);
     this.setState({onShelf:false});
-
   },
   addToShelf: function(event){
     event.preventDefault();
-
-
     if(UserStore.loggedIn()){
       APIUtil.createBook(this.state.currentBook);
       this.props.changeTabs(true);
       this.setState({onShelf:true});
-
     }else{
       ApiActions.demandLogin();
     }

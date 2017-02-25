@@ -9,7 +9,6 @@ var UserArea = React.createClass({
 
     return(
       <div className="user-shelf-area">
-        <h1>User Shelf Area</h1>
         <BookShelf />
       </div>
     )

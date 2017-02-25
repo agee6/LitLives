@@ -25,7 +25,6 @@ var Book = React.createClass({
             </div>
           </div>
           <div className='note-area'>
-            <h1>This is the note area</h1>
             <Note />
           </div>
         </div>

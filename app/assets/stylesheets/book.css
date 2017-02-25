@@ -19,13 +19,12 @@
 }
 .user-area{
   width: 33%;
-  background-color: blue;
+  text-align: center;
+  padding: 20px;
+  margin: 100px 20px 20px 20px;
 }
 .book-area{
   width: 66.67%;
-}
-.user-shelf-area{
-  width: 33.3%;
 }
 #book-cover{
   padding:5px;
@@ -40,8 +39,32 @@
 #book-page-area{
   padding: 10px;
 }
-.book-button-area{
-  position: absolute;
-  bottom:10px;
-  left:10px;
+.review-container{
+  text-align: center;
+}
+.note-area{
+  padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+  text-align: center;
+}
+.bookshelf{
+  border-color: var(--d-color);
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 2px;
+}
+.bookshelf-list{
+  width:90%;
+  margin-left: 5%;
+  border-style: solid;
+  border-color: var(--d-color);
+  border-width:2px;
+  padding:5px;
+}
+.bookshelf-item{
+  margin-top: 2px;
+}
+.bookshelf-item:hover{
+  cursor: pointer;
 }

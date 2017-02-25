@@ -25,7 +25,6 @@ var BookShelf = React.createClass({
     this.userIndex.remove();
   },
   bookClick:function(event){
-    console.log(event.target.data)
     ApiActions.updateCurrentBook(event.target.data);
     this.history.push({pathname: "Book/" + event.target.data.ISBN13});
   },
@@ -43,8 +42,7 @@ var BookShelf = React.createClass({
     var customStyle = {width: "100%"};
     var options = [{value: "read", label: "read"}, {value: "toRead", label: "to read"}, {value: "reading", label: "reading"}];
     var bookList = this.state.books[this.state.currentShelf].map(function(b){
-      console.log(b.title)
-      return <li onClick={this.bookClick} data={b}>{b.title}</li>;
+      return <li className="bookshelf-item" onClick={this.bookClick} data={b}>{b.title}</li>;
     }, this)
     if(this.state.loggedIn){
       page = <div className="bookshelf">
@@ -54,9 +52,10 @@ var BookShelf = React.createClass({
                       options={options}
                       onChange={this._onSelect}
                       style={customStyle}
+                      clearable={false}
                   />
 
-              <ul>{bookList}</ul>
+                <ul className="bookshelf-list">{bookList}</ul>
             </div>;
     }else{
       page = <h2>Login to see your bookshelf</h2>;

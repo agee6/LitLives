@@ -34137,7 +34137,6 @@
 	  return needsToLogin;
 	};
 	UserStore.bookshelves = function () {
-	  console.log("work on this!");
 	  return "banana";
 	};
 	UserStore.currentUser = function () {
@@ -48303,11 +48302,6 @@
 	              'Login as Guest'
 	            )
 	          )
-	        ),
-	        React.createElement(
-	          'button',
-	          { onClick: this.closeModal },
-	          'close'
 	        )
 	      )
 	    );
@@ -49122,11 +49116,6 @@
 	        React.createElement(
 	          "div",
 	          { className: "note-area" },
-	          React.createElement(
-	            "h1",
-	            null,
-	            "This is the note area"
-	          ),
 	          React.createElement(Note, null)
 	        )
 	      ),
@@ -49723,37 +49712,19 @@
 	          'No Notes to display'
 	        );
 	      }
-	      var NoteStyle = {};
 	
 	      return React.createElement(
 	        'div',
 	        { className: 'NoteArea' },
 	        React.createElement(
 	          'div',
-	          { className: 'dispay-notes', style: NoteStyle },
+	          { className: 'inner-note' },
 	          React.createElement(
 	            'div',
-	            { className: 'note-header' },
-	            React.createElement(
-	              'div',
-	              { className: 'NoteBookTitle', id: 'statement' },
-	              'Notes '
-	            )
+	            { className: 'notes' },
+	            noteDisplay
 	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'note-area' },
-	            React.createElement(
-	              'div',
-	              { className: 'inner-note' },
-	              React.createElement(
-	                'div',
-	                { className: 'notes' },
-	                noteDisplay
-	              ),
-	              React.createElement(Editor, { submitNote: this.submitNote, passUpState: this.passUpState })
-	            )
-	          )
+	          React.createElement(Editor, { submitNote: this.submitNote, passUpState: this.passUpState })
 	        )
 	      );
 	    } else if (!this.state.loggedIn) {
@@ -50122,11 +50093,6 @@
 	    return React.createElement(
 	      "div",
 	      { className: "user-shelf-area" },
-	      React.createElement(
-	        "h1",
-	        null,
-	        "User Shelf Area"
-	      ),
 	      React.createElement(BookShelf, null)
 	    );
 	  }
@@ -50168,7 +50134,6 @@
 	    this.userIndex.remove();
 	  },
 	  bookClick: function bookClick(event) {
-	    console.log(event.target.data);
 	    ApiActions.updateCurrentBook(event.target.data);
 	    this.history.push({ pathname: "Book/" + event.target.data.ISBN13 });
 	  },
@@ -50186,10 +50151,9 @@
 	    var customStyle = { width: "100%" };
 	    var options = [{ value: "read", label: "read" }, { value: "toRead", label: "to read" }, { value: "reading", label: "reading" }];
 	    var bookList = this.state.books[this.state.currentShelf].map(function (b) {
-	      console.log(b.title);
 	      return React.createElement(
 	        'li',
-	        { onClick: this.bookClick, data: b },
+	        { className: 'bookshelf-item', onClick: this.bookClick, data: b },
 	        b.title
 	      );
 	    }, this);
@@ -50202,11 +50166,12 @@
 	          value: this.state.currentShelf,
 	          options: options,
 	          onChange: this._onSelect,
-	          style: customStyle
+	          style: customStyle,
+	          clearable: false
 	        }),
 	        React.createElement(
 	          'ul',
-	          null,
+	          { className: 'bookshelf-list' },
 	          bookList
 	        )
 	      );

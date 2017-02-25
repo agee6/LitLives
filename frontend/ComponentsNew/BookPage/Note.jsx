@@ -101,23 +101,15 @@ var Note = React.createClass({
       if (this.state.allNotes.length === 0){
         noteDisplay = (<div className="individual-note-area">No Notes to display</div> )
       }
-      var NoteStyle = {};
 
       return (
         <div className="NoteArea">
-          <div className="dispay-notes" style={NoteStyle}>
-            <div className="note-header">
-              <div className="NoteBookTitle" id="statement">Notes </div>
-            </div>
-            <div className="note-area" >
               <div className="inner-note">
                 <div className="notes">
                   {noteDisplay}
                 </div>
                 <Editor submitNote={this.submitNote} passUpState={this.passUpState}/>
               </div>
-            </div>
-          </div>
         </div>
       );
     }else if(!this.state.loggedIn){

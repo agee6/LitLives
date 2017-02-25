@@ -174,7 +174,7 @@ var Navbar = React.createClass({
                 <button className="SignButton" onClick={this.logInAsGuest}>Login as Guest</button>
               </div>
               </form>
-            <button onClick={this.closeModal}>close</button>
+
           </Modal>
       </div>
     );

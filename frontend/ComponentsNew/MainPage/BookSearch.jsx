@@ -10,9 +10,6 @@ var BookSearch = React.createClass({
   getInitialState: function() {
     this.styleSheetShow = document.createElement('style');
     this.styleSheetShow.innerHTML = ".pac-container {display: block;}";
-    // this.styleSheetHide = document.createElement('style');
-    // this.styleSheetHide.innerHTML = ".pac-container {display: none;}";
-
     return ({
       book: "",
       placeholder: "What book would you like to Explore?",
@@ -76,29 +73,19 @@ var BookSearch = React.createClass({
       this.setState({
         showSpinner: true
       })
-
     }
   },
-
   redirectToSearch: function() {
-    // var loc = this.state.loc.replace(/\W+/g, "-");
-    // console.log("pushStatefromsearch");
-    // this.props.history.pushState(null, 'search/' + loc);
+
   },
-
-
-
   handleLocChange: function(e) {
-    // console.log(this.refs.locinput.value);
     this.setState({
       book: this.refs.locinput.value
     });
     if (this.refs.locinput.value > 0 ){
       APIUtil.fetchBookResults(this.refs.locinput.value);
     }
-    // autocomplete: needs to add a delay using setTimeout and clearTimeout to cancel if the user changes before timeout expires
   },
-
   render: function() {
     var org1 = (
       <div>
@@ -115,7 +102,6 @@ var BookSearch = React.createClass({
         </form>
       </div>
     );
-
     var design1 = (
       <div className="col-xs-12" id="landing-search-bar">
         <div className="row">
@@ -177,8 +163,6 @@ var BookSearch = React.createClass({
     );
 
     var showAutocomplete = (this.state.loc !== "") && this.state.showAutocomplete;
-    // console.log("toggle autocomplete: " + showAutocomplete)
-    // var showAutocomplete = (this.state.loc !== "");
     return (
 
       <div className="col-xs-12" id="landing-search-bar" ref="searchbar">

@@ -24,8 +24,7 @@ UserStore.needsToLogin = function(){
   return needsToLogin;
 };
 UserStore.bookshelves = function(){
-  console.log("work on this!");
-  return "banana"; 
+  return "banana";
 }
 UserStore.currentUser = function () {
   return _users[0];

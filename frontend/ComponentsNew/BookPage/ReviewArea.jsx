@@ -11,7 +11,9 @@ var ReviewArea = React.createClass({
   componentDidMount: function(){
     this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
     this.reviewStoreIndex = ReviewStore.addListener(this._onChange);
-    ReviewUtil.fetchReviews(this.state.currentBook.ISBN13);
+    if(this.state.currentBook){
+      ReviewUtil.fetchReviews(this.state.currentBook.ISBN13);
+    }
   },
   componentWillUnmount:function(){
     this.bookStoreIndex.remove();

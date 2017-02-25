@@ -5,20 +5,16 @@ var AppDispatcher = require('../dispatcher/dispatcher');
 var NoteStore = new Store(AppDispatcher);
 var APIUtil = require('../util/APIUtil.js');
 
-
 var resetNotes = function(notes){
-
   _notes = [];
   if(notes === null){
     _notes = [];
   }else {
     _notes = notes.slice(0);
-
   }
-  
+  console.log(_notes); 
 };
 var addNote = function(note){
-
   _notes.push(note);
 };
 
@@ -28,9 +24,7 @@ NoteStore.all = function () {
 NoteStore.empty = function(){
   _notes = [];
 };
-
 NoteStore.__onDispatch = function (payload) {
-
   switch(payload.actionType) {
     case NoteConstants.ReceiveNotes:
       var result = resetNotes(payload.results);
@@ -40,7 +34,6 @@ NoteStore.__onDispatch = function (payload) {
       var r2 = addNote(payload.result);
       NoteStore.__emitChange();
       break;
-
   }
 };
 

@@ -40,6 +40,11 @@ var SearchBar = React.createClass({
       this.loadBar.style.display = 'none';
     }
   },
+  check: function(event){
+    if(event.keyCode === 13){
+      this.click();
+    }
+  },
   componentDidMount: function(){
     this.storeIndex = BookSearchStore.addListener(this._onChange);
     this.pending = false;
@@ -68,10 +73,9 @@ var SearchBar = React.createClass({
     this.props.whenChosen();
   },
   blur: function(event){
-    this.setState({showGuesses:false});
+
   },
   click: function(event){
-    event.preventDefault();
     this.leave = true;
     APIUtil.fetchBookResults(this.state.value);
   },
@@ -89,8 +93,9 @@ var SearchBar = React.createClass({
     }
     return (
       <div id="landing-search-bar">
-          <input id="BookSearchInput"
+          <input id="book-search-input"
             type="text"
+            onKeyDown={this.check}
             value={this.state.value}
             onChange={this.handleChange}
             placeholder="find your next adventure"

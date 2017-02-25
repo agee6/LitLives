@@ -3,18 +3,21 @@ var ApiActions = require('../actions/api_actions');
 
 var APIUtil = {
   fetchBookResults: function(query){
-    var uri = "https://www.googleapis.com/books/v1/volumes?q="+query ;
+    var uri = "https://www.googleapis.com/books/v1/volumes?q="+"ISBN:" + query ;
     $.get(uri, {}, function(bookList){
-
       ApiActions.ReceiveActions(bookList);
     });
-
+  },
+  getBookByISBN: function(query){
+    var uri = "https://www.googleapis.com/books/v1/volumes?q="+query ;
+    $.get(uri, {maxResults: 1}, function(book){
+      var bookObj = APIUtil.makeBookObject(book.items[0]);
+      ApiActions.updateCurrentBook(bookObj);
+    });
   },
   getInitialBookIndex: function(){
-
     var uri = "https://www.googleapis.com/books/v1/volumes?q=best+selling+novels+all+time";
     $.get(uri, {maxResults: 40}, function(bookList){
-
       var newBookList = bookList.items.map(function(book, index){
         return(APIUtil.makeBookObject(book));
       });
@@ -22,7 +25,6 @@ var APIUtil = {
     });
   },
   logoutUser: function(){
-
     $.ajax({
       url: '/api/session',
       type: 'DELETE',
@@ -31,7 +33,6 @@ var APIUtil = {
         ApiActions.receiveUser(payload);
       }
     });
-
   },
   addToInitial: function(){
     var uri = "https://www.googleapis.com/books/v1/volumes?q=best+classic+novels";
@@ -43,12 +44,9 @@ var APIUtil = {
     });
   },
   createBook: function(bookItem){
-
     $.post('/api/books', bookItem, function(payload){
-
       ApiActions.ReceiveAddedBook(payload);
     });
-
   },
   createReview: function(data) {
     $.post('/api/reviews', { review: data }, function (bench) {
@@ -56,20 +54,16 @@ var APIUtil = {
     });
   },
   getCurrentBook: function() {
-
     $.get('/api/user', {}, function(book){
-
       ApiActions.updateCurrentBook(book);
     });
   },
   updateUser: function(params){
-
     $.ajax({
       url: '/api/user',
       type: 'PATCH',
       data: params,
       success: function(book) {
-          // Do something with the result
 
     }});
   },
@@ -104,11 +98,8 @@ var APIUtil = {
     });
   },
   createNote: function(noteHash){
-
     $.post('/api/notes', {note: noteHash}, function(payload){
-
       ApiActions.addNote(payload);
-
     });
   },
   fetchNotes: function(bookId){
@@ -117,12 +108,11 @@ var APIUtil = {
     });
   },
   deleteNote: function(noteId){
-      var uri = '/api/notes/'+noteId;
+      var uri = '/api/notes/' + noteId;
     $.ajax({
       url: uri,
       type: 'DELETE',
       success: function(notes) {
-          // Do something with the result
           ApiActions.receiveNotes(notes);
     }});
   },

@@ -37,18 +37,28 @@ var BookPage = React.createClass({
   mixins: [LinkedStateMixin],
   getInitialState: function(){
     var book = BookSearchStore.currentBook();
-    var inDatabase = true;
-    if(book.id === undefined){
-      inDatabase = false;
-    }
-    if(book.read === "read"){
-      var finishedRead = true;
+    if(book){
+      var inDatabase = true;
+      if(book){
+
+      }
+      if(book.id === undefined){
+        inDatabase = false;
+      }
+      if(book.read === "read"){
+        var finishedRead = true;
+      }else{
+        var finishedRead = false;
+      }
+      return({modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
+                ISBN10: book.ISBN10, author: book.author, pages: book.pages, language: book.language, chapters: book.chapters,
+                description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase, finished: finishedRead} );
     }else{
-      var finishedRead = false;
+
+      return({modalIsOpen: false, publisher: null, genre: null, year: null, selectedValue: "read", ISBN13: null,
+                ISBN10: null, author: null, pages: null, language: null, chapters: null,
+                description: "unavailable", currentBook: null, onShelf: false, finished: false} );
     }
-    return({modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
-              ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
-              description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase, finished: finishedRead} );
   },
   componentDidMount: function(){
     this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
@@ -141,147 +151,153 @@ var BookPage = React.createClass({
   },
   render: function(){
     var book = this.state.currentBook;
-    var pages, language, publisher;
-    if(book.pages === null){
-      pages = "N/A";
-    }else {
-      pages = book.pages;
+    if(book){
+      var pages, language, publisher;
+      if(book.pages === null){
+        pages = "N/A";
+      }else {
+        pages = book.pages;
+      }
+      if(book.language === null){
+        language = "N/A";
+      }
+      else {
+        language = book.language;
+      }
+      if(book.publishing === null){
+        publisher = "N/A";
+      }else {
+        publisher = book.publishing;
+      }
+      var deleteButton, addButton, markButton, editButton, addDeleteButton, notes;
+      if(this.state.onShelf){
+        deleteButton = false;
+        addButton = true;
+        markButton = false;
+        editButton = true;
+        addDeleteButton = <button className="book-button-area" id="delete-book" onClick={this.deleteBook} disabled={deleteButton}>-</button>;
+        }else {
+          deleteButton = true;
+          addButton = false;
+          markButton = true;
+          editButton = true;
+          addDeleteButton = <button className="book-button-area" id="add-to-shelf" onClick={this.addToShelf} disabled={addButton}>+</button>;
+          }
+          var markFunction, markText, markValue;
+          if(this.state.selectedValue === "read"){
+            markFunction = this.markAsUnread;
+            markText = "Mark as Unread";
+            markValue = true;
+          }else {
+            markFunction=this.markAsRead;
+            markText = "Mark as Read";
+            markValue = "false";
+          }
+          return(
+            <section className="BookPage" id="book-page-area">
+              <div id="book-button-area">
+                <button className="book-button-area" id="edit-book-button" onClick={this.editClick} disabled={deleteButton}></button>
+                {addDeleteButton}
+              </div>
+              <div className="BookTitleArea">
+                <div className="BookTitle">{book.title}</div>
+                <div className="Author">by, {book.author}</div>
+              </div>
+              <div className="BookPage" id="BookDescriptionBox">
+                <p id="BookDescription">{book.description}</p>
+              </div>
+              <div className="BookPage" id="BookFooter">
+                <div className="BookFooter" id="pages">pages: {pages}</div>
+                <div className="BookFooter" id="language">language: {language}</div>
+                <div className="BookFooter" id="publisher">publisher: {publisher}</div>
+                <div className="BookFooter" id="read-check">
+                  <input type="checkbox" checked={this.state.finished} onChange={this.checkRead}>Finished Reading?</input>
+                </div>
+              </div>
+
+              <Modal
+                isOpen={this.state.modalIsOpen}
+                onRequestClose={this.closeModal}
+                style={customStyles} >
+
+                <div className="book-edit-title"> {this.state.currentBook.title}</div>
+                <form className="book-edit-form">
+
+                  <textarea className="book-edit-description" rows="15" cols="60" name="comment"
+                    placeholder="Enter note here..." valueLink={this.linkState('description')}/>
+                  <div className="book-edit-sections" id = "book-edit-basic">
+                    <label className="book-edit label">genre: </label>
+                    <input className="book-edit book-edit-input" valueLink={this.linkState('genre')}/>
+                  </div>
+                  <div className="book-edit-sections">
+                    <label className="book-edit label">publisher: </label>
+                    <input className="book-edit book-edit-input" valueLink={this.linkState('publisher')} />
+
+                  </div>
+                  <div className="book-edit-sections">
+                    <label className="book-edit label">year published: </label>
+                    <input className="book-edit book-edit-input" valueLink={this.linkState('year')} />
+
+                  </div>
+                  <div className="book-edit-sections">
+                    <label className="book-edit label">author: </label>
+                    <input className="book-edit book-edit-input" valueLink={this.linkState('author')} />
+
+                  </div>
+                  <div className="book-edit-sections">
+                    <label className="book-edit label">language: </label>
+                    <input className="book-edit book-edit-input" valueLink={this.linkState('language')} />
+
+                  </div>
+                  <div className="book-edit-sections" id="book-edit-image">
+                    <label className="book-edit label">image url: </label>
+                    <input className="book-edit book-edit-input" id="book-edit-image" valueLink={this.linkState('image')} />
+
+                  </div>
+
+                  <div className="book-edit-sections" id="book-edit-isbn">
+                    <label className="book-edit label">ISBN13: </label>
+                    <input className="book-edit ISBN13-input" valueLink={this.linkState('ISBN13')} />
+                    <label className="book-edit label">ISBN10: </label>
+                    <input className="book-edit ISBN10-input" valueLink={this.linkState('ISBN10')} />
+                  </div>
+                  <div className="book-edit-sections" id="book-edit-length">
+                    <label className="book-edit label"># of pages: </label>
+                    <input className="book-edit pages-input" valueLink={this.linkState('pages')} />
+                    <label className="book-edit label">chapters: </label>
+                    <input className="book-edit publisher-input" valueLink={this.linkState('chapters')} />
+                  </div>
+
+                  <RadioGroup
+                    name="read"
+                    selectedValue={this.state.selectedValue}
+                    onChange={this.handleChange}>
+                    {Radio => (
+                      <div>
+                        <label>
+                          <Radio value={"read"} />Read
+                          </label>
+                          <label>
+                            <Radio value={"toRead"} />To Read
+                            </label>
+
+                          </div>
+                        )}
+                      </RadioGroup>
+                      <button className="book-update-button" onClick={this.updateBook}>Update</button>
+                    </form>
+
+                    <button onClick={this.closeModal}>cancel</button>
+
+                  </Modal>
+
+                </section>
+              )
+    }else{
+      return(
+        <div>No book to display</div>
+      )
     }
-    if(book.language === null){
-      language = "N/A";
-    }
-    else {
-      language = book.language;
-    }
-    if(book.publishing === null){
-      publisher = "N/A";
-    }else {
-      publisher = book.publishing;
-    }
-    var deleteButton, addButton, markButton, editButton, addDeleteButton, notes;
-    if(this.state.onShelf){
-      deleteButton = false;
-      addButton = true;
-      markButton = false;
-      editButton = true;
-      addDeleteButton = <button className="book-button-area" id="delete-book" onClick={this.deleteBook} disabled={deleteButton}>-</button>;
-    }else {
-      deleteButton = true;
-      addButton = false;
-      markButton = true;
-      editButton = true;
-      addDeleteButton = <button className="book-button-area" id="add-to-shelf" onClick={this.addToShelf} disabled={addButton}>+</button>;
-    }
-    var markFunction, markText, markValue;
-    if(this.state.selectedValue === "read"){
-      markFunction = this.markAsUnread;
-      markText = "Mark as Unread";
-      markValue = true;
-    }else {
-      markFunction=this.markAsRead;
-      markText = "Mark as Read";
-      markValue = "false";
-    }
-    return(
-      <section className="BookPage" id="book-page-area">
-        <div id="book-button-area">
-          <button className="book-button-area" id="edit-book-button" onClick={this.editClick} disabled={deleteButton}></button>
-          {addDeleteButton}
-        </div>
-        <div className="BookTitleArea">
-          <div className="BookTitle">{book.title}</div>
-          <div className="Author">by, {book.author}</div>
-        </div>
-        <div className="BookPage" id="BookDescriptionBox">
-          <p id="BookDescription">{book.description}</p>
-        </div>
-        <div className="BookPage" id="BookFooter">
-          <div className="BookFooter" id="pages">pages: {pages}</div>
-          <div className="BookFooter" id="language">language: {language}</div>
-          <div className="BookFooter" id="publisher">publisher: {publisher}</div>
-          <div className="BookFooter" id="read-check">
-            <input type="checkbox" checked={this.state.finished} onChange={this.checkRead}>Finished Reading?</input>
-          </div>
-        </div>
-
-        <Modal
-           isOpen={this.state.modalIsOpen}
-           onRequestClose={this.closeModal}
-           style={customStyles} >
-
-           <div className="book-edit-title"> {this.state.currentBook.title}</div>
-           <form className="book-edit-form">
-
-             <textarea className="book-edit-description" rows="15" cols="60" name="comment"
-               placeholder="Enter note here..." valueLink={this.linkState('description')}/>
-             <div className="book-edit-sections" id = "book-edit-basic">
-               <label className="book-edit label">genre: </label>
-               <input className="book-edit book-edit-input" valueLink={this.linkState('genre')}/>
-             </div>
-             <div className="book-edit-sections">
-               <label className="book-edit label">publisher: </label>
-               <input className="book-edit book-edit-input" valueLink={this.linkState('publisher')} />
-
-             </div>
-             <div className="book-edit-sections">
-               <label className="book-edit label">year published: </label>
-               <input className="book-edit book-edit-input" valueLink={this.linkState('year')} />
-
-             </div>
-             <div className="book-edit-sections">
-               <label className="book-edit label">author: </label>
-               <input className="book-edit book-edit-input" valueLink={this.linkState('author')} />
-
-             </div>
-             <div className="book-edit-sections">
-               <label className="book-edit label">language: </label>
-               <input className="book-edit book-edit-input" valueLink={this.linkState('language')} />
-
-             </div>
-             <div className="book-edit-sections" id="book-edit-image">
-               <label className="book-edit label">image url: </label>
-               <input className="book-edit book-edit-input" id="book-edit-image" valueLink={this.linkState('image')} />
-
-             </div>
-
-             <div className="book-edit-sections" id="book-edit-isbn">
-               <label className="book-edit label">ISBN13: </label>
-               <input className="book-edit ISBN13-input" valueLink={this.linkState('ISBN13')} />
-               <label className="book-edit label">ISBN10: </label>
-               <input className="book-edit ISBN10-input" valueLink={this.linkState('ISBN10')} />
-             </div>
-             <div className="book-edit-sections" id="book-edit-length">
-               <label className="book-edit label"># of pages: </label>
-               <input className="book-edit pages-input" valueLink={this.linkState('pages')} />
-               <label className="book-edit label">chapters: </label>
-               <input className="book-edit publisher-input" valueLink={this.linkState('chapters')} />
-             </div>
-
-             <RadioGroup
-               name="read"
-               selectedValue={this.state.selectedValue}
-               onChange={this.handleChange}>
-               {Radio => (
-                 <div>
-                   <label>
-                     <Radio value={"read"} />Read
-                     </label>
-                     <label>
-                       <Radio value={"toRead"} />To Read
-                     </label>
-
-                     </div>
-                   )}
-                 </RadioGroup>
-                 <button className="book-update-button" onClick={this.updateBook}>Update</button>
-               </form>
-
-           <button onClick={this.closeModal}>cancel</button>
-
-         </Modal>
-
-      </section>
-    )
   }
 })
 module.exports = BookPage;

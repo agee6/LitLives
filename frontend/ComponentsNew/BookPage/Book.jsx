@@ -1,4 +1,5 @@
 var React = require('react');
+var APIUtil = require('../../util/APIUtil.js');
 
 // components
 var BookDescription = require("./BookDescription.jsx");
@@ -11,7 +12,14 @@ var ReviewArea = require("./ReviewArea.jsx");
 var BookSearchStore = require("../../stores/BookSearchStore.js");
 
 var Book = React.createClass({
+  componentDidMount: function(){
+    if(!BookSearchStore.currentBook()){
+      var ISBN13 = this.props.location.pathname.split("/")[2];
+      APIUtil.getBookByISBN(ISBN13);
+    }
+  },
   render: function(){
+    // var ISBN13 = this.props.location.pathname.split("/")[2];
     return(
       <div className="book-main">
         <div className="book-area">

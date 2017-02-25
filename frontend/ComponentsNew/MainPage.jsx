@@ -26,6 +26,7 @@ var customStyles = {
 };
 
 var MainPage = React.createClass({
+  mixins:[History],
   getInitialState: function(){
     return({chosen: BookSearchStore.currentBook(), modalIsOpen: false});
   },
@@ -34,7 +35,7 @@ var MainPage = React.createClass({
     var bookToSend = BookSearchStore.currentBook();
     bookToSend.read = "toRead";
     var url = "/Desk";
-    browserHistory.push("/Books/" + bookToSend.ISBN13);
+    this.history.push("/Book/" + bookToSend.ISBN13);
   },
   render: function(){
     return(

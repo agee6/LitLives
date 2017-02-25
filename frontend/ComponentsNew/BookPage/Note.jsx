@@ -21,7 +21,7 @@ var Note = React.createClass({
     this.userIndex = UserStore.addListener(this._onUserChange);
     this.noteIndex = NoteStore.addListener(this._onNotesChange);
     this.bookIndex = BookSearchStore.addListener(this._onBookChange);
-    if(this.state.loggedIn && this.state.currentBook.id !== null && this.state.currentBook.id !== undefined){
+    if(this.state.loggedIn && this.state.currentBook && this.state.currentBook.id !== undefined){
       APIUtil.fetchNotes(this.state.currentBook.id);
     }
   },
@@ -49,7 +49,7 @@ var Note = React.createClass({
     this.closeModal();
   },
   submitNote: function(noteText){
-    var noteHash = { body: noteText, page: null, public: true,chapter: null, book_id: this.props.currentBook.id};
+    var noteHash = { body: noteText, page: null, public: true,chapter: null, book_id: this.state.currentBook.id};
     APIUtil.createNote(noteHash);
     this.state.noteText = "";
     this.state.title = "";
@@ -58,7 +58,7 @@ var Note = React.createClass({
   },
   addNote: function(noteText){
     debugger;
-    var noteHash = { body: noteText, page: pn, public: true,chapter: chap, book_id: this.props.currentBook.id};
+    var noteHash = { body: noteText, page: pn, public: true,chapter: chap, book_id: this.state.currentBook.id};
     this.state.noteText = "";
     this.state.title = "";
     this.state.pageNumber = null;
@@ -67,16 +67,18 @@ var Note = React.createClass({
   handleChange: function(value){
     this.setState({selectedValue: value});
   },
-  _onNoteChange: function(){
+  _onNotesChange: function(){
+    console.log("what???");
     this.setState({allNotes: NoteStore.all()})
   },
   _onUserChange: function(){
-    if(UserStore.loggedIn()){
+    if(UserStore.loggedIn() && this.state.currentBook && this.state.currentBook.id){
       APIUtil.fetchNotes(this.state.currentBook.id);
     }
     this.setState({loggedIn: UserStore.loggedIn()});
   },
   _onBookChange: function(){
+    APIUtil.fetchNotes(BookSearchStore.currentBook().id);
     this.setState({currentBook: BookSearchStore.currentBook()});
   },
   openModal: function() {
@@ -93,8 +95,7 @@ var Note = React.createClass({
     debugger;
   },
   render: function() {
-
-    if(this.state.loggedIn && this.state.currentBook.id !== null && this.state.currentBook.id !== undefined){
+    if(this.state.loggedIn && this.state.currentBook && this.state.currentBook.id){
       var noteDisplay = this.state.allNotes.map(function(note){
         return(<NoteItem note={note} key={note.body} />);
       });

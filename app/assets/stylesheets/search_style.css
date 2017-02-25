@@ -23,7 +23,7 @@
   transition: bottom 2s, transform 2s;
 }
 
-#BookSearchInput {
+#book-search-input {
   width:80%;
   height: 30px;
   margin: 0px;
@@ -37,10 +37,10 @@
   background-color: rgba(0,0,0,0);
   border-radius: 2px;
   border-width: 1px;
-  border-color:#e4cdb4;
+  border-color:var(--d-color);
   border-style: solid;
   box-sizing: border-box;
-  color:#e4cdb4;
+  color:var(--d-color);
 
 }
 
@@ -65,9 +65,8 @@
 }
 
 .searchGuesses{
-  background-color: rgba(50, 50, 50, 0.8);
+  background-color: rgba(50,50,50,0.8);
   position: relative;
-  z-index: 9;
 }
 
 .searchGuesses{
@@ -75,13 +74,14 @@
   width:80%;
   margin: 0px;
   padding:0px;
+
 }
 
 .searchGuess{
-  height: 15px;
+  height: 20px;
   overflow: hidden;
-  background-color: #261a0d;
-  color: #e4cdb4;
+  background-color: var(--d-color);
+  color: var(--l-color);
   padding: 2px;
   margin: 2px;
   z-index: 9;
@@ -202,7 +202,7 @@
   }
 }
 @media(max-width:495px){
-  #BookSearchInput{
+  #book-search-input{
     width: 70%;
   }
   .searchGuesses{

@@ -150,7 +150,7 @@ var Navbar = React.createClass({
 
            <ul className="header-list group">
 
-             <li className="nav-right" id="NavSearch" onClick={this.homeClick}>Search</li>
+             <li className="nav-right" id="NavSearch" onClick={this.homeClick}>Home</li>
              <li className="nav-right" id="NavDesk" onClick={this.userClick}>User</li>
              {signB}
            </ul>

@@ -3,7 +3,6 @@ var _notes = [];
 var NoteConstants = require('../constants/NoteConstants');
 var AppDispatcher = require('../dispatcher/dispatcher');
 var NoteStore = new Store(AppDispatcher);
-var APIUtil = require('../util/APIUtil.js');
 
 var resetNotes = function(notes){
   _notes = [];
@@ -12,7 +11,7 @@ var resetNotes = function(notes){
   }else {
     _notes = notes.slice(0);
   }
-  console.log(_notes); 
+  console.log(_notes);
 };
 var addNote = function(note){
   _notes.push(note);

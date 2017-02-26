@@ -10,7 +10,7 @@ var BookUtil = {
   getBookByISBN: function(query){
     var uri = "https://www.googleapis.com/books/v1/volumes?q="+query ;
     $.get(uri, {maxResults: 1}, function(book){
-      var bookObj = APIUtil.makeBookObject(book.items[0]);
+      var bookObj = BookUtil.makeBookObject(book.items[0]);
       ApiActions.updateCurrentBook(bookObj);
     });
   },
@@ -18,7 +18,7 @@ var BookUtil = {
     var uri = "https://www.googleapis.com/books/v1/volumes?q=best+selling+novels+all+time";
     $.get(uri, {maxResults: 40}, function(bookList){
       var newBookList = bookList.items.map(function(book, index){
-        return(APIUtil.makeBookObject(book));
+        return(BookUtil.makeBookObject(book));
       });
       ApiActions.ReceiveInitial(newBookList);
     });
@@ -27,7 +27,7 @@ var BookUtil = {
     var uri = "https://www.googleapis.com/books/v1/volumes?q=best+classic+novels";
     $.get(uri, {maxResults: 40}, function(bookList){
       var newBookList = bookList.items.map(function(book, index){
-        return(APIUtil.makeBookObject(book));
+        return(BookUtil.makeBookObject(book));
       });
       ApiActions.AddToInitial(newBookList);
     });
@@ -36,7 +36,7 @@ var BookUtil = {
     $.get('api/book', {ISBN13:ISBN13}, function(payload){
       if(payload === false){
         if(getFromGoogle){
-          APIUtil.getBookByISBN(ISBN13);
+          BookUtil.getBookByISBN(ISBN13);
         }
       }else{
         ApiActions.updateCurrentBook(payload);

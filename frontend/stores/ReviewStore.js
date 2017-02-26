@@ -3,9 +3,7 @@ var _reviews = [];
 var ReviewConstants = require('../constants/ReviewConstants');
 var AppDispatcher = require('../dispatcher/dispatcher');
 var ReviewStore = new Store(AppDispatcher);
-var APIUtil = require('../util/APIUtil.js');
 var _rating = 0;
-
 var resetNotes = function(reviews){
   _reviews = [];
   if(reviews === null){
@@ -25,26 +23,21 @@ var resetRating = function(reviews){
   }
   _rating = (rating/reviews.length) / 2;
 }
-
 var addReview = function(review){
   var rating = _rating * 2 * _reviews.length;
   _reviews.push(review);
   rating += review.rating;
   _rating = (rating / _reviews.length) / 2;
 };
-
 ReviewStore.all = function () {
   return _reviews.slice(0);
 };
-
 ReviewStore.rating = function(){
   return _rating;
 }
-
 ReviewStore.empty = function(){
   _reviews = [];
 };
-
 ReviewStore.__onDispatch = function (payload) {
   switch(payload.actionType) {
     case ReviewConstants.ReceiveBookReviews:

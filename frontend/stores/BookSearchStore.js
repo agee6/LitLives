@@ -5,7 +5,7 @@ var _currentBook = null;
 var BookSearchConstants = require('../constants/BookSearchConstants');
 var AppDispatcher = require('../dispatcher/dispatcher');
 var BookSearchStore = new Store(AppDispatcher);
-var APIUtil = require('../util/APIUtil.js');
+var BookUtil = require('../util/BookUtil.js');
 
 
 var resetSearchResults = function(results){
@@ -17,7 +17,7 @@ var resetCurrentBook = function(book){
 };
 var loadInitial = function(results){
   _initialResults = results.slice();
-  APIUtil.addToInitial();
+  BookUtil.addToInitial();
 };
 var addToInitial = function(results){
   _initialResults = _initialResults.concat(results.slice());

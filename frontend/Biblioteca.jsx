@@ -15,12 +15,12 @@ var BookUtil = require('./util/BookUtil.js');
 var root = document.getElementById('reactContent');
 
 //components
-var Navbar = require('./ComponentsNew/Navbar/Navbar.jsx');
-var Book = require('./ComponentsNew/BookPage/Book.jsx');
-var MainPage = require('./ComponentsNew/MainPage.jsx');
-var User = require('./ComponentsNew/UserPage/User.jsx');
-var Books = require('./ComponentsNew/Books.jsx');
-var SearchResults = require('./ComponentsNew/SearchResults/SearchResults.jsx');
+var Navbar = require('./components/Navbar/Navbar.jsx');
+var Book = require('./components/BookPage/Book.jsx');
+var MainPage = require('./components/MainPage.jsx');
+var User = require('./components/UserPage/User.jsx');
+var Books = require('./components/Books.jsx');
+var SearchResults = require('./components/SearchResults/SearchResults.jsx');
 
 //stores
 var UserStore = require('./stores/UserStore.js');

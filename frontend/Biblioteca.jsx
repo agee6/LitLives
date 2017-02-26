@@ -6,24 +6,27 @@ var browserHistory = ReactRouter.browserHistory;
 var Router = ReactRouter.Router;
 var Route = ReactRouter.Route;
 var IndexRoute = ReactRouter.IndexRoute;
-// var Search = require('./components/Search.jsx');
-var Desk = require('./components/Desk.jsx');
-var APIUtil = require('./util/APIUtil.js');
+var History = ReactRouter.Histoary;
+//util
+var UserUtil = require('./util/UserUtil.js');
+var BookUtil = require('./util/BookUtil.js');
+
+//root
 var root = document.getElementById('reactContent');
-// var cb = root.getAttribute("data-has-book");
-var History = require('react-router').History;
+
+//components
 var Navbar = require('./ComponentsNew/Navbar/Navbar.jsx');
-var UserStore = require('./stores/UserStore.js');
-var ApiActions = require('./actions/api_actions');
-// var Books = require('./components/Books.jsx');
 var Book = require('./ComponentsNew/BookPage/Book.jsx');
 var MainPage = require('./ComponentsNew/MainPage.jsx');
 var User = require('./ComponentsNew/UserPage/User.jsx');
-var Books = require('./ComponentsNew/Books.jsx'); 
+var Books = require('./ComponentsNew/Books.jsx');
+var SearchResults = require('./ComponentsNew/SearchResults/SearchResults.jsx');
 
-// var Analyses = require('./components/AnalysesComponents/Analyses.jsx');
-// var AnalysisShow = require('./components/AnalysesComponents/AnalysisShow.jsx');
-var SearchResults = require('./components/SearchResults.jsx');
+//stores
+var UserStore = require('./stores/UserStore.js');
+
+//ApiActions
+var ApiActions = require('./actions/api_actions');
 
 var App = React.createClass({
   mixins:[History],
@@ -31,19 +34,15 @@ var App = React.createClass({
     return({loggedIn: UserStore.loggedIn()});
   },
   componentDidMount: function(){
-    APIUtil.getCurrentUser();
+    UserUtil.getCurrentUser();
     if(this.state.loggedIn){
-      APIUtil.getUserBooks();
-      APIUtil.getCurrentBook();
+      BookUtil.getUserBooks();
     }
     UserStore.addListener(this._onChange);
-    // this.history.push({pathname: "/Search"});
-
   },
   _onChange: function(){
     if(UserStore.loggedIn()){
-      APIUtil.getUserBooks();
-      APIUtil.getCurrentBook();
+      BookUtil.getUserBooks();
     }else{
       // ApiActions.emptyShelves();
       // ApiActions.deleteCurrentBook();

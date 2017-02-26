@@ -10,12 +10,10 @@ class Api::BooksController < ApplicationController
       flash.now[:errors] = @book.errors.full_messages
       render json: @book.errors, status: 422
     end
-
   end
   def update
     @book = Book.find_by_id(params[:id])
     if @book.update(book_params)
-
       self.index
     else
       render json: nil
@@ -29,8 +27,8 @@ class Api::BooksController < ApplicationController
   end
 
   def show
-    @book = Book.find_by_id(params[:id])
-    render json: @book
+    @book = Book.where({ISBN13:params[:ISBN13], user_id: current_user.id})
+    @book ? render json: @book : render json: false
   end
 
   def index

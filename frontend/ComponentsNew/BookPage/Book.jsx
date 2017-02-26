@@ -10,12 +10,17 @@ var ReviewArea = require("./ReviewArea.jsx");
 
 //stores
 var BookSearchStore = require("../../stores/BookSearchStore.js");
+var UserStore = require("../../stores/UserStore.js");
 
 var Book = React.createClass({
   componentDidMount: function(){
     if(!BookSearchStore.currentBook()){
       var ISBN13 = this.props.location.pathname.split("/")[2];
-      APIUtil.getBookByISBN(ISBN13);
+      if(UserStore.loggedIn()){
+        APIUtil.getUserBook(ISBN13, true);
+      }else{
+        APIUtil.getBookByISBN(ISBN13);
+      }
     }
   },
   render: function(){

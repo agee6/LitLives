@@ -1,6 +1,6 @@
 var React = require('react');
-var BookSearchStore = require('../stores/BookSearchStore.js');
-var APIUtil = require('../util/APIUtil.js');
+var BookSearchStore = require('../../stores/BookSearchStore.js');
+var APIUtil = require('../../util/APIUtil.js');
 var SearchResultItem = require('./SearchResultItem.jsx');
 var History = require('react-router').History;
 

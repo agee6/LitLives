@@ -1,7 +1,6 @@
 var ApiActions = require('../actions/api_actions');
 
-
-var APIUtil = {
+var BookUtil = {
   fetchBookResults: function(query){
     var uri = "https://www.googleapis.com/books/v1/volumes?q="+"ISBN:" + query ;
     $.get(uri, {}, function(bookList){
@@ -22,16 +21,6 @@ var APIUtil = {
         return(APIUtil.makeBookObject(book));
       });
       ApiActions.ReceiveInitial(newBookList);
-    });
-  },
-  logoutUser: function(){
-    $.ajax({
-      url: '/api/session',
-      type: 'DELETE',
-      success: function(payload){
-        console.log("deleted");
-        ApiActions.receiveUser(payload);
-      }
     });
   },
   addToInitial: function(){
@@ -59,23 +48,10 @@ var APIUtil = {
       ApiActions.ReceiveAddedBook(payload);
     });
   },
-  createReview: function(data) {
-    $.post('/api/reviews', { review: data }, function (bench) {
-      ApiActions.receiveAll([bench]);
-    });
-  },
   getCurrentBook: function() {
     $.get('/api/user', {}, function(book){
       ApiActions.updateCurrentBook(book);
     });
-  },
-  updateUser: function(params){
-    $.ajax({
-      url: '/api/user',
-      type: 'PATCH',
-      data: params,
-      success: function(book) {
-    }});
   },
   makeBookObject: function(bookData){
     var chosen = bookData.volumeInfo;
@@ -107,66 +83,6 @@ var APIUtil = {
       ApiActions.receiveUserBooks(books);
     });
   },
-  createNote: function(noteHash){
-    $.post('/api/notes', {note: noteHash}, function(payload){
-      ApiActions.addNote(payload);
-    });
-  },
-  fetchNotes: function(bookId){
-    $.get('api/notes', {book_id: bookId}, function(notes){
-      ApiActions.receiveNotes(notes);
-    });
-  },
-  deleteNote: function(noteId){
-      var uri = '/api/notes/' + noteId;
-    $.ajax({
-      url: uri,
-      type: 'DELETE',
-      success: function(notes) {
-          ApiActions.receiveNotes(notes);
-    }});
-  },
-  getCurrentUser: function(){
-    $.get('/api/session', {}, function(user){
-      ApiActions.receiveUser(user);
-    });
-  },
-  signIn: function(username, password) {
-    $.post('/api/session', {username: username, password: password}, function(user){
-      ApiActions.receiveUser(user);
-    });
-  },
-  createUser: function(username, password){
-    $.post('/api/user',{username: username, password: password}, function(user){
-      ApiActions.receiveUser(user);
-    });
-  },
-  createAnalysis: function(analysisParams){
-    $.post('/api/analyses', {analysis:analysisParams}, function(analysis){
-      ApiActions.receiveNewAnalysis(analysis);
-    });
-  },
-  fetchAnalyses: function(analysisParams){
-
-    $.get('/api/analyses', {analysis: {}}, function(analyses){
-      ApiActions.receiveAnalyses(analyses);
-    });
-  },
-  fetchAnalysis: function(analysisId){
-    $.get('api/analyses', {id: analysisId}, function(analysis){
-      ApiActions.receiveAnalysis(analysis);
-    });
-  },
-  updateAnalysis: function(analysisParams){
-    $.ajax({
-      url: '/api/analyses',
-      type: 'PATCH',
-      data: {analysis: analysisParams},
-      success: function(analysis) {
-          // Do something with the result
-          console.log(analysis);
-    }});
-  },
   updateBook: function(bookId, bookParams){
     var uri = 'api/books/'+ bookId;
     $.ajax({
@@ -188,4 +104,4 @@ var APIUtil = {
   }
 };
 
-module.exports = APIUtil;
+module.exports = BookUtil;

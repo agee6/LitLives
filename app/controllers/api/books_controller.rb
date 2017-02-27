@@ -28,7 +28,11 @@ class Api::BooksController < ApplicationController
 
   def show
     @book = Book.where({ISBN13:params[:ISBN13], user_id: current_user.id})
-    @book ? render json: @book : render json: false
+    if(@book)
+      render json: @book 
+    else
+      render json: false
+    end
   end
 
   def index

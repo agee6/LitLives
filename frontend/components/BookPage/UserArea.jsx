@@ -1,7 +1,7 @@
 var React = require('react');
 
 // components
-var BookShelf = require("../Bookshelf.jsx");
+var BookShelf = require("../BookShelf.jsx");
 
 var UserArea = React.createClass({
 

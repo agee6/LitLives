@@ -1,7 +1,6 @@
 var React = require('react');
-
 // components
-var BookShelf = require("../Bookshelf.jsx");
+var BookShelf = require("../BookShelf.jsx");
 
 //stores
 var UserStore = require("../../stores/UserStore.js");

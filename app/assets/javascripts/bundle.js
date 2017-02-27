@@ -49840,7 +49840,7 @@
 	var React = __webpack_require__(1);
 	
 	// components
-	var BookShelf = __webpack_require__(465);
+	var BookShelf = __webpack_require__(478);
 	
 	var UserArea = React.createClass({
 	  displayName: "UserArea",
@@ -49858,98 +49858,7 @@
 	module.exports = UserArea;
 
 /***/ },
-/* 465 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookUtil = __webpack_require__(454);
-	var Dropdown = __webpack_require__(426);
-	var Select = __webpack_require__(428);
-	var ApiActions = __webpack_require__(236);
-	var History = __webpack_require__(159).History;
-	
-	// components
-	//stores
-	var UserStore = __webpack_require__(265);
-	var BookShelfStore = __webpack_require__(413);
-	
-	var BookShelf = React.createClass({
-	  displayName: 'BookShelf',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	    return { loggedIn: UserStore.loggedIn(), bookshelves: UserStore.bookshelves(), currentShelf: "read", books: BookShelfStore.all() };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.bookshelfIndex = BookShelfStore.addListener(this._onChange);
-	    this.userIndex = UserStore.addListener(this._onUserChange);
-	    BookUtil.getUserBooks();
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.bookshelfIndex.remove();
-	    this.userIndex.remove();
-	  },
-	  bookClick: function bookClick(event) {
-	    ApiActions.updateCurrentBook(event.target.data);
-	    this.history.push({ pathname: "Book/" + event.target.data.ISBN13 });
-	  },
-	  _onChange: function _onChange() {
-	    this.setState({ books: BookShelfStore.all() });
-	  },
-	  _onUserChange: function _onUserChange() {
-	    this.setState({ loggedIn: UserStore.loggedIn(), bookshelves: UserStore.bookshelves() });
-	  },
-	  _onSelect: function _onSelect(option) {
-	    this.setState({ currentShelf: option });
-	  },
-	  render: function render() {
-	    var page;
-	    var customStyle = { width: "100%" };
-	    var options = [{ value: "read", label: "read" }, { value: "toRead", label: "to read" }, { value: "reading", label: "reading" }];
-	    var bookList = this.state.books[this.state.currentShelf].map(function (b) {
-	      return React.createElement(
-	        'li',
-	        { className: 'bookshelf-item', onClick: this.bookClick, data: b },
-	        b.title
-	      );
-	    }, this);
-	    if (this.state.loggedIn) {
-	      page = React.createElement(
-	        'div',
-	        { className: 'bookshelf' },
-	        React.createElement(Select, {
-	          name: 'form-field-name',
-	          value: this.state.currentShelf,
-	          options: options,
-	          onChange: this._onSelect,
-	          style: customStyle,
-	          clearable: false
-	        }),
-	        React.createElement(
-	          'ul',
-	          { className: 'bookshelf-list' },
-	          bookList
-	        )
-	      );
-	    } else {
-	      page = React.createElement(
-	        'h2',
-	        null,
-	        'Login to see your bookshelf'
-	      );
-	    }
-	    return React.createElement(
-	      'div',
-	      { className: 'container' },
-	      page
-	    );
-	  }
-	});
-	module.exports = BookShelf;
-
-/***/ },
+/* 465 */,
 /* 466 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -50350,9 +50259,8 @@
 	"use strict";
 	
 	var React = __webpack_require__(1);
-	
 	// components
-	var BookShelf = __webpack_require__(465);
+	var BookShelf = __webpack_require__(478);
 	
 	//stores
 	var UserStore = __webpack_require__(265);
@@ -50605,6 +50513,98 @@
 	};
 	
 	module.exports = NoteUtil;
+
+/***/ },
+/* 478 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookUtil = __webpack_require__(454);
+	var Dropdown = __webpack_require__(426);
+	var Select = __webpack_require__(428);
+	var ApiActions = __webpack_require__(236);
+	var History = __webpack_require__(159).History;
+	
+	// components
+	//stores
+	var UserStore = __webpack_require__(265);
+	var BookShelfStore = __webpack_require__(413);
+	
+	var BookShelf = React.createClass({
+	  displayName: 'BookShelf',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { loggedIn: UserStore.loggedIn(), bookshelves: UserStore.bookshelves(), currentShelf: "read", books: BookShelfStore.all() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.bookshelfIndex = BookShelfStore.addListener(this._onChange);
+	    this.userIndex = UserStore.addListener(this._onUserChange);
+	    BookUtil.getUserBooks();
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.bookshelfIndex.remove();
+	    this.userIndex.remove();
+	  },
+	  bookClick: function bookClick(event) {
+	    ApiActions.updateCurrentBook(event.target.data);
+	    this.history.push({ pathname: "Book/" + event.target.data.ISBN13 });
+	  },
+	  _onChange: function _onChange() {
+	    this.setState({ books: BookShelfStore.all() });
+	  },
+	  _onUserChange: function _onUserChange() {
+	    this.setState({ loggedIn: UserStore.loggedIn(), bookshelves: UserStore.bookshelves() });
+	  },
+	  _onSelect: function _onSelect(option) {
+	    this.setState({ currentShelf: option });
+	  },
+	  render: function render() {
+	    var page;
+	    var customStyle = { width: "100%" };
+	    var options = [{ value: "read", label: "read" }, { value: "toRead", label: "to read" }, { value: "reading", label: "reading" }];
+	    var bookList = this.state.books[this.state.currentShelf].map(function (b) {
+	      return React.createElement(
+	        'li',
+	        { className: 'bookshelf-item', onClick: this.bookClick, data: b },
+	        b.title
+	      );
+	    }, this);
+	    if (this.state.loggedIn) {
+	      page = React.createElement(
+	        'div',
+	        { className: 'bookshelf' },
+	        React.createElement(Select, {
+	          name: 'form-field-name',
+	          value: this.state.currentShelf,
+	          options: options,
+	          onChange: this._onSelect,
+	          style: customStyle,
+	          clearable: false
+	        }),
+	        React.createElement(
+	          'ul',
+	          { className: 'bookshelf-list' },
+	          bookList
+	        )
+	      );
+	    } else {
+	      page = React.createElement(
+	        'h2',
+	        null,
+	        'Login to see your bookshelf'
+	      );
+	    }
+	    return React.createElement(
+	      'div',
+	      { className: 'container' },
+	      page
+	    );
+	  }
+	});
+	module.exports = BookShelf;
 
 /***/ }
 /******/ ]);

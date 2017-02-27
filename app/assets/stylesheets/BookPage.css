@@ -99,10 +99,8 @@
 #BookDescriptionBox {
   width: 100%;
   box-sizing: border-box;
-
 }
 #BookDescription {
-  /*float: left;*/
   margin: 20px;
   box-sizing: border-box;
 }
@@ -166,7 +164,6 @@
 .book-button-area:disabled {
   opacity: 0.3;
 }
-
 #edit-book-button {
   background-image: url("https://www.picaflor-azul.com/images/edit1.png");
   background-size:cover;

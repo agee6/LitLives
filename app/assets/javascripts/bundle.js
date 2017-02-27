@@ -49071,12 +49071,6 @@
 	        { className: 'BookPage', id: 'book-page-area' },
 	        React.createElement(
 	          'div',
-	          { id: 'book-button-area' },
-	          React.createElement('button', { className: 'book-button-area', id: 'edit-book-button', onClick: this.editClick, disabled: deleteButton }),
-	          addDeleteButton
-	        ),
-	        React.createElement(
-	          'div',
 	          { className: 'BookTitleArea' },
 	          React.createElement(
 	            'div',
@@ -49128,6 +49122,12 @@
 	              { type: 'checkbox', checked: this.state.finished, onChange: this.checkRead },
 	              'Finished Reading?'
 	            )
+	          ),
+	          React.createElement(
+	            'div',
+	            { id: 'book-button-area' },
+	            React.createElement('button', { className: 'book-button-area', id: 'edit-book-button', onClick: this.editClick, disabled: deleteButton }),
+	            addDeleteButton
 	          )
 	        ),
 	        React.createElement(

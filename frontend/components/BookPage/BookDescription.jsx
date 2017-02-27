@@ -195,10 +195,6 @@ var BookPage = React.createClass({
           }
           return(
             <section className="BookPage" id="book-page-area">
-              <div id="book-button-area">
-                <button className="book-button-area" id="edit-book-button" onClick={this.editClick} disabled={deleteButton}></button>
-                {addDeleteButton}
-              </div>
               <div className="BookTitleArea">
                 <div className="BookTitle">{book.title}</div>
                 <div className="Author">by, {book.author}</div>
@@ -212,6 +208,10 @@ var BookPage = React.createClass({
                 <div className="BookFooter" id="publisher">publisher: {publisher}</div>
                 <div className="BookFooter" id="read-check">
                   <input type="checkbox" checked={this.state.finished} onChange={this.checkRead}>Finished Reading?</input>
+                </div>
+                <div id="book-button-area">
+                  <button className="book-button-area" id="edit-book-button" onClick={this.editClick} disabled={deleteButton}></button>
+                  {addDeleteButton}
                 </div>
               </div>
 

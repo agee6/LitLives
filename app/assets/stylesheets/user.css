@@ -1,5 +1,16 @@
 .no-user{
   text-align: center;
   width: 100%;
-  padding: 100px; 
+  padding: 100px;
+}
+.user-user-shelf-area{
+  width: 50%;
+}
+.bookshelf-title{
+  width: 100%;
+  font-size: 20px;
+  padding: 3px;
+}
+.review-open-button{
+
 }

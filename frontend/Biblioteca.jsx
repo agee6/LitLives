@@ -43,9 +43,6 @@ var App = React.createClass({
   _onChange: function(){
     if(UserStore.loggedIn()){
       BookUtil.getUserBooks();
-    }else{
-      // ApiActions.emptyShelves();
-      // ApiActions.deleteCurrentBook();
     }
     this.setState({loggedIn: UserStore.loggedIn()});
   },

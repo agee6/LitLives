@@ -118,7 +118,11 @@
 }
 .book-button-area{
   margin: 10px 11%;
-  width: 150px;
+  width: auto;
+  height: auto;
+  font-size: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 .book-button-area {
 	-moz-box-shadow:inset 0px 1px 0px -13px #ffffff;
@@ -165,26 +169,18 @@
   opacity: 0.3;
 }
 #edit-book-button {
-  background-image: url("https://www.picaflor-azul.com/images/edit1.png");
+  /*background-image: url("https://www.picaflor-azul.com/images/edit1.png");*/
   background-size:cover;
-  width: 50px;
-  height: 50px;
   border-radius: 10px;
   margin: 5px;
   box-sizing: border-box;
 }
 #add-to-shelf {
-  width: 50px;
-  height: 50px;
-  font-size: 40px;
   border-radius: 10px;
   margin: 5px;
   box-sizing: border-box;
 }
 #delete-book {
-  width: 50px;
-  height: 50px;
-  font-size: 40px;
   border-radius: 10px;
   box-sizing: border-box;
   margin: 5px;

@@ -23,13 +23,15 @@ var User = React.createClass({
       return(
         <div className="container">
           <div className="comment-area">
-          </div>
-          <div className="user-shelf-area">
             <div className="user-name">
               <h1>{UserStore.currentUser().username}</h1>
             </div>
-            <div className="bookshelf-area">
-              <BookShelf />
+          </div>
+          <div className="user-user-shelf-area" >
+            <div className="user-shelf-area">
+              <div className="bookshelf-area">
+                <BookShelf />
+              </div>
             </div>
           </div>
         </div>

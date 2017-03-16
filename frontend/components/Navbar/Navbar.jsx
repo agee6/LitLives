@@ -1,8 +1,8 @@
 var React = require('react');
 var History = require('react-router').History;
-var UserUtil = require('../../util/UserUtil.js');
 var Modal = require('react-modal');
 var LinkedStateMixin = require('react-addons-linked-state-mixin');
+var UserUtil = require('../../util/UserUtil.js');
 var UserStore = require('../../stores/UserStore.js');
 var ApiActions = require('../../actions/api_actions.js');
 var BookSearchStore = require('../../stores/BookSearchStore.js');
@@ -15,7 +15,6 @@ var customStyles = {
     right             : 0,
     bottom            : 0,
     backgroundColor   : 'rgba(255, 255, 255, 0.75)',
-    backgroundImage   : 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
     zIndex            : 20,
     backgroundSize    : 'cover'
   },
@@ -136,20 +135,16 @@ var Navbar = React.createClass({
     else{
       signB = <li className="nav-right" id="NavUser" onClick={this.openModal}>Sign in/up!</li>
     }
-    var quoteToUse = quotes[Math.floor(Math.random() * quotes.length)];
-
+    // var quoteToUse = quotes[Math.floor(Math.random() * quotes.length)];
+    var quoteToUse = "Read, make notes, and review books";
     return (
       <div className="Navbar">
         <nav className="header-nav group" >
-
            <div className="header-logo" onClick={this.homeClick}>
-             <div className="logo-image">LL</div>
-
+             <div className="logo-image"></div>
            </div>
            <div className='quote'>{quoteToUse}</div>
-
            <ul className="header-list group">
-
              <li className="nav-right" id="NavSearch" onClick={this.homeClick}>Home</li>
              <li className="nav-right" id="NavDesk" onClick={this.userClick}>User</li>
              {signB}
@@ -180,7 +175,5 @@ var Navbar = React.createClass({
     );
   }
 });
-// to add
-//<li className="nav-right" id="NavAnal" onClick={this.analysesClick}>Essays</li>
 
 module.exports = Navbar;

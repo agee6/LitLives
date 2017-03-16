@@ -4,7 +4,6 @@ var Dropdown = require('react-dropdown');
 var Select = require('react-select');
 var ApiActions = require('../actions/api_actions.js');
 var History = require("react-router").History;
-
 // components
 //stores
 var UserStore = require("../stores/UserStore.js");
@@ -46,6 +45,9 @@ var BookShelf = React.createClass({
     }, this)
     if(this.state.loggedIn){
       page = <div className="bookshelf">
+                <div className="bookshelf-title">
+                  <div>{UserStore.currentUser().username + "'s bookshelf"}</div>
+                </div>
                 <Select
                       name="form-field-name"
                       value={this.state.currentShelf}
@@ -54,7 +56,6 @@ var BookShelf = React.createClass({
                       style={customStyle}
                       clearable={false}
                   />
-
                 <ul className="bookshelf-list">{bookList}</ul>
             </div>;
     }else{

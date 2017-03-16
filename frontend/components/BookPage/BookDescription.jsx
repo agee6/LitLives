@@ -140,13 +140,15 @@ var BookPage = React.createClass({
       chapters: chapters,
       description: this.state.description
     }
-    BookUtil.updateBook(this.props.currentBook.id, newBook);
+    debugger;
+    BookUtil.updateBook(this.state.currentBook.id, newBook);
     this.closeModal();
-    newBook.title = this.props.currentBook.title;
-    newBook.id = this.props.currentBook.id;
+    newBook.title = this.state.currentBook.title;
+    newBook.id = this.state.currentBook.id;
     ApiActions.updateCurrentBook(newBook);
   },
   handleChange: function(value){
+    BookUtil.updateBook(this.state.currentBook.id, {read: value}); 
     this.setState({selectedValue: value});
   },
   render: function(){
@@ -175,13 +177,13 @@ var BookPage = React.createClass({
         addButton = true;
         markButton = false;
         editButton = true;
-        addDeleteButton = <button className="book-button-area" id="delete-book" onClick={this.deleteBook} disabled={deleteButton}>-</button>;
+        addDeleteButton = <button className="book-button-area" id="delete-book" onClick={this.deleteBook} disabled={deleteButton}>remove</button>;
         }else {
           deleteButton = true;
           addButton = false;
           markButton = true;
           editButton = true;
-          addDeleteButton = <button className="book-button-area" id="add-to-shelf" onClick={this.addToShelf} disabled={addButton}>+</button>;
+          addDeleteButton = <button className="book-button-area" id="add-to-shelf" onClick={this.addToShelf} disabled={addButton}>add</button>;
           }
           var markFunction, markText, markValue;
           if(this.state.selectedValue === "read"){
@@ -207,10 +209,27 @@ var BookPage = React.createClass({
                 <div className="BookFooter" id="language">language: {language}</div>
                 <div className="BookFooter" id="publisher">publisher: {publisher}</div>
                 <div className="BookFooter" id="read-check">
-                  <input type="checkbox" checked={this.state.finished} onChange={this.checkRead}>Finished Reading?</input>
+                  <RadioGroup
+                    name="read"
+                    selectedValue={this.state.selectedValue}
+                    onChange={this.handleChange}>
+                    {Radio => (
+                      <div>
+                        <label>
+                          <Radio value={"read"} />Read
+                        </label>
+                        <label>
+                          <Radio value={"toRead"} />To Read
+                        </label>
+                        <label>
+                          <Radio value={"reading"} />reading
+                        </label>
+                      </div>
+                        )}
+                      </RadioGroup>
                 </div>
                 <div id="book-button-area">
-                  <button className="book-button-area" id="edit-book-button" onClick={this.editClick} disabled={deleteButton}></button>
+                  <button className="book-button-area" id="edit-book-button" onClick={this.editClick} disabled={deleteButton}>edit</button>
                   {addDeleteButton}
                 </div>
               </div>
@@ -286,11 +305,7 @@ var BookPage = React.createClass({
                       </RadioGroup>
                       <button className="book-update-button" onClick={this.updateBook}>Update</button>
                     </form>
-
-                    <button onClick={this.closeModal}>cancel</button>
-
                   </Modal>
-
                 </section>
               )
     }else{

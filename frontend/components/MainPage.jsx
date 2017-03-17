@@ -32,8 +32,7 @@ var MainPage = React.createClass({
   bookChosen: function(){
     event.preventDefault();
     var bookToSend = BookSearchStore.currentBook();
-    bookToSend.read = "toRead";
-    var url = "/Desk";
+    bookToSend.read = "reading";
     this.history.push("/Book/" + bookToSend.ISBN13);
   },
   render: function(){

@@ -3,7 +3,6 @@
   height: 100px;
   position:relative;
 }
-
 #landing-search-bar {
   margin-left: auto;
   margin-right: auto;
@@ -11,20 +10,17 @@
   background-color: rgba(0, 0, 0, 0);
   background-size: 100%;
   overflow: visible;
-  width: 50%;
+  width: 60%;
 }
-
 .homePage {
   margin: 0px;
 }
-
 #landing-search-bar {
   -webkit-transition: top 2s, -webkit-transform 2s;
   transition: bottom 2s, transform 2s;
 }
-
 #book-search-input {
-  width:80%;
+  width:90%;
   height: 30px;
   margin: 0px;
   padding: 0px;
@@ -41,14 +37,11 @@
   border-style: solid;
   box-sizing: border-box;
   color:var(--d-color);
-
 }
-
 #BookSearchLabel {
   font-size: 30px;
   color: #996633;
 }
-
 #BookSearchButton {
   margin: 0px;
   width: 10%;
@@ -60,23 +53,16 @@
   padding-bottom: 0px;
   box-sizing: border-box;
 }
-
-.SearchForm{
-}
-
 .searchGuesses{
   background-color: rgba(50,50,50,0.8);
   position: relative;
 }
-
 .searchGuesses{
   overflow:visible;
   width:80%;
   margin: 0px;
   padding:0px;
-
 }
-
 .searchGuess{
   height: 20px;
   overflow: hidden;
@@ -115,12 +101,6 @@
   height: 30px;
   width: auto;
   margin: 10px;
-}
-#Yes{
-
-}
-#No{
-
 }
 #searchGuess{
   color:  #261a0d;
@@ -164,14 +144,12 @@
   width:10%;
   float:right;
 }
-
 .loader,
 .loader:after {
   border-radius: 50%;
   width: 10px;
   height: 10px;
 }
-
 @-webkit-keyframes load8 {
   0% {
     -webkit-transform: rotate(0deg);
@@ -195,7 +173,6 @@
 .book-list{
   text-align: center;
 }
-
 @media(max-width: 766px){
   #landing-search-bar{
     width:80%;

@@ -31,7 +31,9 @@ var BookImage = React.createClass({
   },
   _onChange:function(){
     var book = BookSearchStore.currentBook();
-    this.setState({image: book.image, currentBook: BookSearchStore.currentBook()});
+    if(book){
+      this.setState({image: book.image, currentBook: BookSearchStore.currentBook()});
+    }
   },
   handleChange: function(value){
     this.setState({selectedValue: value});
@@ -39,7 +41,7 @@ var BookImage = React.createClass({
   render: function(){
     var book = this.state.currentBook;
     if(book){
-      var customStyle = {width: "70%"}
+      var customStyle = {width: "100%"}
       return(
         <section className="book-image" id="book-image-container">
           <img src={book.image} id="book-cover" style={customStyle}></img>

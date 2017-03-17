@@ -60,7 +60,7 @@ var BookUtil = {
                 publishing: chosen.publisher,
                 pages: chosen.pageCount,
                 language: chosen.language,
-                read: "toRead",
+                read: "reading",
               };
       if(chosen.imageLinks !== undefined){
         newBook.image = chosen.imageLinks.thumbnail;

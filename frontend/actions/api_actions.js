@@ -31,7 +31,6 @@ var ApiActions = {
       actionType: BookShelfConstants.ReceiveAddedBook,
       book: book
     });
-
   },
   updateCurrentBook: function(book){
     AppDispatcher.dispatch({
@@ -114,7 +113,8 @@ var ApiActions = {
       actionType: ReviewConstants.AddBookReview,
       review: review
     })
-  }
+  },
+
 };
 
 module.exports = ApiActions;

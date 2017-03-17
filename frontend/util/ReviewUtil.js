@@ -1,9 +1,11 @@
 var ApiActions = require('../actions/api_actions');
 
 var ReviewUtil = {
-  createReview: function(reviewObj){
+  createReview: function(review){
+    var reviewObj = {Review: review};
     $.post('/api/reviews', reviewObj, function(payload){
-      ApiActions.RecieveAddedReview(payload)
+      console.log(payload); 
+      ApiActions.addBookReview(payload)
     });
   },
   fetchReviews: function(bookToFetch){

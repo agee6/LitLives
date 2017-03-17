@@ -17,7 +17,6 @@ var modalStyle = {
     right             : 0,
     bottom            : 0,
     backgroundColor   : 'rgba(255, 255, 255, 0.75)',
-    backgroundImage   : 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
     zIndex            : 20,
     backgroundSize    : 'cover'
   },
@@ -32,7 +31,7 @@ var modalStyle = {
     backgroundSize        : 'cover',
     borderRadius          : '10px',
     filter                : 'blur(\'4px\')',
-    width                 : '300px',
+    width                 : '50%',
     backgroundBlendMode   : 'darken'
   }
 };
@@ -40,7 +39,7 @@ var modalStyle = {
 var ReviewArea = React.createClass({
   mixins:[LinkedStateMixin],
   getInitialState: function(){
-    return({currentBook: BookSearchStore.currentBook(), reviews:ReviewStore.all(), rating: ReviewStore.rating(), modalIsOpen: false, loggedIn: UserStore.loggedIn(), newReview: "", newRating: 0} );
+    return({currentBook: BookSearchStore.currentBook(), reviews:ReviewStore.all(), rating: ReviewStore.rating(), modalIsOpen: false, loggedIn: UserStore.loggedIn(), newReview: "", newRating: -1, newTitle:""} );
   },
   componentDidMount: function(){
     this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
@@ -69,36 +68,48 @@ var ReviewArea = React.createClass({
   submitReview: function(event){
     event.preventDefault();
     var reviewObj = {
-      review: this.state.newReview,
+      body: this.state.newReview,
       rating: this.state.newRating,
-      book_id: this.state.currentBook.id,
+      ISBN13: this.state.currentBook.ISBN13,
       user_id: UserStore.currentUser().id
     };
     ReviewUtil.createReview(reviewObj);
+    this.closeModal();
+  },
+  onStarClick: function(nextVal){
+    this.setState({newRating:nextVal})
   },
   render: function(){
     var book = this.state.currentBook;
-    var rating = "Overall Rating: " + this.state.rating;
-    var reviewList = this.state.reviews.map(function(r){
-      return(<li>{r.body}</li>);
-    });
+    if(this.state.reviews.length > 0){
+      var reviewList = this.state.reviews.map(function(r){
+        return(<li>{r.body}</li>);
+      });
+    }else{
+      var reviewList = <li>no reviews yet</li>;
+    }
     var reviewButton;
     if(this.state.loggedIn){
       reviewButton = <button onClick={this.openModal} className="review-open-button">Review this book!</button>;
     }else{
       reviewButton = <div></div>;
     }
+    if(book){
+      var placeholder = "Reveiw of " + book.title;
+    }else{
+      var placeholder = "";
+    }
     return(
       <section className="review-container">
         <div className="rating">
-          <h2>{rating}</h2>
+          <h3>current rating:</h3>
             <StarRatingComponent
-                      name="rate2"
-                      editing={false}
-                      starCount={5}
-                      value={3.5}
-                      style={{fontSize: "100px"}}
-                  />
+                name="currrentRating"
+                editing={false}
+                starCount={5}
+                value={this.state.rating}
+                style={{fontSize: "200px"}}
+            />
         </div>
         <ul id="reviews">
           {reviewList}
@@ -108,18 +119,24 @@ var ReviewArea = React.createClass({
            isOpen={this.state.modalIsOpen}
            onRequestClose={this.closeModal}
            style={modalStyle} >
-          <h1>What did you think?</h1>
+          <h1>{placeholder}</h1>
             <form className="NoteForm">
-              <div className="UserNameArea">
-                <input type="text" className="UserNameInput" valueLink={this.linkState('review')} placeholder="enter a valid username"/>
-              </div>
               <div className="PasswordArea">
-
+                <StarRatingComponent
+                  name="rate2"
+                  editing={true}
+                  starCount={5}
+                  value={this.state.newRating}
+                  onStarClick={this.onStarClick}
+                  style={{fontSize: "200px"}}
+                />
               </div>
-              <div className="LoginButtonArea">
-                <button className="SignButton" onClick={this.submitReview}>Submit Review!</button>
+              <div className="UserNameArea">
+                <input type="textarea" rows="5"className="review-input" valueLink={this.linkState('newTitle')} placeholder="title of your review"/>
               </div>
-              </form>
+              <textarea rows="5" className='review-input' valueLink={this.linkState('newReview')} placeholder={placeholder}></textarea>
+              <button className="SignButton" onClick={this.submitReview}>Submit Review!</button>
+            </form>
          </Modal>
       </section>
     )

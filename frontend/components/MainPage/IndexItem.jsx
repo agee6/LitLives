@@ -8,10 +8,9 @@ var IndexItem = React.createClass({
   mixins:[History],
   onClick: function(event){
     event.preventDefault();
-    ApiActions.updateCurrentBook(this.props.book); 
+    ApiActions.updateCurrentBook(this.props.book);
     var bookToSend = this.props.book;
-    bookToSend.read = "toRead";
-    var url = "/Desk"
+    bookToSend.read = "reading";
     this.history.push("/Book/" + bookToSend.ISBN13)
   },
   render: function(){

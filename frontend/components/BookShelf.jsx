@@ -12,7 +12,7 @@ var BookShelfStore = require("../stores/BookShelfStore.js")
 var BookShelf = React.createClass({
   mixins:[History],
   getInitialState: function(){
-    return({loggedIn: UserStore.loggedIn(), bookshelves: UserStore.bookshelves(), currentShelf: "read", books: BookShelfStore.all()})
+    return({loggedIn: UserStore.loggedIn(), bookshelves: UserStore.bookshelves(), currentShelf: "reading", books: BookShelfStore.all()})
   },
   componentDidMount:function(){
     this.bookshelfIndex = BookShelfStore.addListener(this._onChange);
@@ -39,7 +39,7 @@ var BookShelf = React.createClass({
   render: function(){
     var page;
     var customStyle = {width: "100%"};
-    var options = [{value: "read", label: "read"}, {value: "toRead", label: "to read"}, {value: "reading", label: "reading"}];
+    var options = [{value: "reading", label: "Currently Reading"}, {value: "read", label: "Finished Reading"}, {value: "toRead", label: "Want to Read"}];
     var bookList = this.state.books[this.state.currentShelf].map(function(b){
       return <li className="bookshelf-item" onClick={this.bookClick} data={b}>{b.title}</li>;
     }, this)

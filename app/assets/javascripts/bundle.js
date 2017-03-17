@@ -65,10 +65,10 @@
 	//components
 	var Navbar = __webpack_require__(219);
 	var Book = __webpack_require__(263);
-	var MainPage = __webpack_require__(426);
-	var User = __webpack_require__(432);
-	var Books = __webpack_require__(433);
-	var SearchResults = __webpack_require__(434);
+	var MainPage = __webpack_require__(456);
+	var User = __webpack_require__(462);
+	var Books = __webpack_require__(463);
+	var SearchResults = __webpack_require__(464);
 	
 	//stores
 	var UserStore = __webpack_require__(244);
@@ -24237,6 +24237,7 @@
 	      review: review
 	    });
 	  }
+	
 	};
 	
 	module.exports = ApiActions;
@@ -24718,7 +24719,7 @@
 	      publishing: chosen.publisher,
 	      pages: chosen.pageCount,
 	      language: chosen.language,
-	      read: "toRead"
+	      read: "reading"
 	    };
 	    if (chosen.imageLinks !== undefined) {
 	      newBook.image = chosen.imageLinks.thumbnail;
@@ -33758,14 +33759,14 @@
 	
 	var React = __webpack_require__(1);
 	var BookUtil = __webpack_require__(218);
-	
 	// components
 	var BookDescription = __webpack_require__(264);
 	var BookImage = __webpack_require__(267);
 	var Note = __webpack_require__(268);
 	var UserArea = __webpack_require__(412);
 	var ReviewArea = __webpack_require__(422);
-	
+	var SearchArea = __webpack_require__(459);
+	var BookDetails = __webpack_require__(466);
 	//stores
 	var BookSearchStore = __webpack_require__(262);
 	var UserStore = __webpack_require__(244);
@@ -33783,38 +33784,42 @@
 	      }
 	    }
 	  },
+	  bookChosen: function bookChosen() {
+	    event.preventDefault();
+	    var bookToSend = BookSearchStore.currentBook();
+	    bookToSend.read = "toRead";
+	    this.history.push("/Book/" + bookToSend.ISBN13);
+	  },
 	  render: function render() {
 	    return React.createElement(
 	      'div',
-	      { className: 'book-main' },
+	      { className: 'page-frame' },
 	      React.createElement(
 	        'div',
-	        { className: 'book-area' },
+	        { className: 'book-main' },
 	        React.createElement(
 	          'div',
-	          { className: 'book-block' },
-	          React.createElement(
-	            'div',
-	            { className: 'book-column' },
-	            React.createElement(BookDescription, null)
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'book-column' },
-	            React.createElement(BookImage, null),
-	            React.createElement(ReviewArea, null)
-	          )
+	          { className: 'book-search-area' },
+	          React.createElement(SearchArea, { whenChosen: this.bookChosen })
 	        ),
 	        React.createElement(
 	          'div',
-	          { className: 'note-area' },
-	          React.createElement(Note, null)
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'user-area' },
-	        React.createElement(UserArea, null)
+	          { className: 'book-details' },
+	          React.createElement(BookImage, null),
+	          React.createElement(BookDetails, null),
+	          React.createElement(ReviewArea, null)
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'book-area' },
+	          React.createElement(BookDescription, null)
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'user-area' },
+	          React.createElement(UserArea, null)
+	        ),
+	        React.createElement(Note, null)
 	      )
 	    );
 	  }
@@ -33884,7 +33889,7 @@
 	        description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase, finished: finishedRead };
 	    } else {
 	
-	      return { modalIsOpen: false, publisher: null, genre: null, year: null, selectedValue: "read", ISBN13: null,
+	      return { modalIsOpen: false, publisher: null, genre: null, year: null, selectedValue: "reading", ISBN13: null,
 	        ISBN10: null, author: null, pages: null, language: null, chapters: null,
 	        description: "unavailable", currentBook: null, onShelf: false, finished: false };
 	    }
@@ -33917,16 +33922,6 @@
 	    event.preventDefault();
 	    BookUtil.updateBook(this.props.currentBook.id, { read: "toRead" });
 	    this.setState({ selectedValue: "toRead" });
-	  },
-	  checkRead: function checkRead(event) {
-	    event.preventDefault();
-	    if (this.state.selectedValue === "read") {
-	      BookUtil.updateBook(this.props.currentBook.id, { read: "toRead" });
-	      this.setState({ selectedValue: "toRead", finished: false });
-	    } else {
-	      BookUtil.updateBook(this.props.currentBook.id, { read: "read" });
-	      this.setState({ selectedValue: "read", finished: true });
-	    }
 	  },
 	  editClick: function editClick(event) {
 	    event.preventDefault();
@@ -33969,7 +33964,6 @@
 	      chapters: chapters,
 	      description: this.state.description
 	    };
-	    debugger;
 	    BookUtil.updateBook(this.state.currentBook.id, newBook);
 	    this.closeModal();
 	    newBook.title = this.state.currentBook.title;
@@ -33983,22 +33977,6 @@
 	  render: function render() {
 	    var book = this.state.currentBook;
 	    if (book) {
-	      var pages, language, publisher;
-	      if (book.pages === null) {
-	        pages = "N/A";
-	      } else {
-	        pages = book.pages;
-	      }
-	      if (book.language === null) {
-	        language = "N/A";
-	      } else {
-	        language = book.language;
-	      }
-	      if (book.publishing === null) {
-	        publisher = "N/A";
-	      } else {
-	        publisher = book.publishing;
-	      }
 	      var deleteButton, addButton, markButton, editButton, addDeleteButton, notes;
 	      if (this.state.onShelf) {
 	        deleteButton = false;
@@ -34008,7 +33986,7 @@
 	        addDeleteButton = React.createElement(
 	          'button',
 	          { className: 'book-button-area', id: 'delete-book', onClick: this.deleteBook, disabled: deleteButton },
-	          'remove'
+	          'remove from shelf'
 	        );
 	      } else {
 	        deleteButton = true;
@@ -34018,19 +33996,10 @@
 	        addDeleteButton = React.createElement(
 	          'button',
 	          { className: 'book-button-area', id: 'add-to-shelf', onClick: this.addToShelf, disabled: addButton },
-	          'add'
+	          'add to shelf'
 	        );
 	      }
 	      var markFunction, markText, markValue;
-	      if (this.state.selectedValue === "read") {
-	        markFunction = this.markAsUnread;
-	        markText = "Mark as Unread";
-	        markValue = true;
-	      } else {
-	        markFunction = this.markAsRead;
-	        markText = "Mark as Read";
-	        markValue = "false";
-	      }
 	      return React.createElement(
 	        'section',
 	        { className: 'BookPage', id: 'book-page-area' },
@@ -34063,25 +34032,7 @@
 	          { className: 'BookPage', id: 'BookFooter' },
 	          React.createElement(
 	            'div',
-	            { className: 'BookFooter', id: 'pages' },
-	            'pages: ',
-	            pages
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'BookFooter', id: 'language' },
-	            'language: ',
-	            language
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'BookFooter', id: 'publisher' },
-	            'publisher: ',
-	            publisher
-	          ),
-	          React.createElement(
-	            'div',
-	            { className: 'BookFooter', id: 'read-check' },
+	            { className: 'radio-area', id: 'read-check' },
 	            React.createElement(
 	              RadioGroup,
 	              {
@@ -34091,24 +34042,26 @@
 	              function (Radio) {
 	                return React.createElement(
 	                  'div',
-	                  null,
+	                  { id: 'radio-area' },
 	                  React.createElement(
 	                    'label',
 	                    null,
 	                    React.createElement(Radio, { value: "read" }),
-	                    'Read'
+	                    ' Finished Reading'
 	                  ),
+	                  React.createElement('br', null),
 	                  React.createElement(
 	                    'label',
 	                    null,
 	                    React.createElement(Radio, { value: "toRead" }),
-	                    'To Read'
+	                    ' Want to Read'
 	                  ),
+	                  React.createElement('br', null),
 	                  React.createElement(
 	                    'label',
 	                    null,
 	                    React.createElement(Radio, { value: "reading" }),
-	                    'reading'
+	                    ' Currently Reading'
 	                  )
 	                );
 	              }
@@ -34120,7 +34073,7 @@
 	            React.createElement(
 	              'button',
 	              { className: 'book-button-area', id: 'edit-book-button', onClick: this.editClick, disabled: deleteButton },
-	              'edit'
+	              'edit book info'
 	            ),
 	            addDeleteButton
 	          )
@@ -34255,6 +34208,12 @@
 	                    null,
 	                    React.createElement(Radio, { value: "toRead" }),
 	                    'To Read'
+	                  ),
+	                  React.createElement(
+	                    'label',
+	                    null,
+	                    React.createElement(Radio, { value: "reading" }),
+	                    'Currently Reading'
 	                  )
 	                );
 	              }
@@ -34395,7 +34354,9 @@
 	  },
 	  _onChange: function _onChange() {
 	    var book = BookSearchStore.currentBook();
-	    this.setState({ image: book.image, currentBook: BookSearchStore.currentBook() });
+	    if (book) {
+	      this.setState({ image: book.image, currentBook: BookSearchStore.currentBook() });
+	    }
 	  },
 	  handleChange: function handleChange(value) {
 	    this.setState({ selectedValue: value });
@@ -34403,7 +34364,7 @@
 	  render: function render() {
 	    var book = this.state.currentBook;
 	    if (book) {
-	      var customStyle = { width: "70%" };
+	      var customStyle = { width: "100%" };
 	      return React.createElement(
 	        'section',
 	        { className: 'book-image', id: 'book-image-container' },
@@ -34522,7 +34483,6 @@
 	  },
 	  passUpState: function passUpState(contentState) {
 	    this.currentNoteContent = contentState;
-	    debugger;
 	  },
 	  render: function render() {
 	    if (this.state.loggedIn && this.state.currentBook && this.state.currentBook.id) {
@@ -48089,7 +48049,7 @@
 	
 	  mixins: [History],
 	  getInitialState: function getInitialState() {
-	    return { loggedIn: UserStore.loggedIn(), bookshelves: UserStore.bookshelves(), currentShelf: "read", books: BookShelfStore.all() };
+	    return { loggedIn: UserStore.loggedIn(), bookshelves: UserStore.bookshelves(), currentShelf: "reading", books: BookShelfStore.all() };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.bookshelfIndex = BookShelfStore.addListener(this._onChange);
@@ -48116,7 +48076,7 @@
 	  render: function render() {
 	    var page;
 	    var customStyle = { width: "100%" };
-	    var options = [{ value: "read", label: "read" }, { value: "toRead", label: "to read" }, { value: "reading", label: "reading" }];
+	    var options = [{ value: "reading", label: "Currently Reading" }, { value: "read", label: "Finished Reading" }, { value: "toRead", label: "Want to Read" }];
 	    var bookList = this.state.books[this.state.currentShelf].map(function (b) {
 	      return React.createElement(
 	        'li',
@@ -49796,7 +49756,7 @@
 	var ReviewStore = __webpack_require__(424);
 	var UserStore = __webpack_require__(244);
 	// var StarRating = require('react-star-rating');
-	var StarRatingComponent = __webpack_require__(436);
+	var StarRatingComponent = __webpack_require__(425);
 	
 	var modalStyle = {
 	  overlay: {
@@ -49806,7 +49766,6 @@
 	    right: 0,
 	    bottom: 0,
 	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
-	    backgroundImage: 'url(\'http://res.cloudinary.com/litlitves/image/upload/v1458170635/crazyVines_gqglg8.png\')',
 	    zIndex: 20,
 	    backgroundSize: 'cover'
 	  },
@@ -49821,7 +49780,7 @@
 	    backgroundSize: 'cover',
 	    borderRadius: '10px',
 	    filter: 'blur(\'4px\')',
-	    width: '300px',
+	    width: '50%',
 	    backgroundBlendMode: 'darken'
 	  }
 	};
@@ -49831,7 +49790,7 @@
 	
 	  mixins: [LinkedStateMixin],
 	  getInitialState: function getInitialState() {
-	    return { currentBook: BookSearchStore.currentBook(), reviews: ReviewStore.all(), rating: ReviewStore.rating(), modalIsOpen: false, loggedIn: UserStore.loggedIn(), newReview: "", newRating: 0 };
+	    return { currentBook: BookSearchStore.currentBook(), reviews: ReviewStore.all(), rating: ReviewStore.rating(), modalIsOpen: false, loggedIn: UserStore.loggedIn(), newReview: "", newRating: -1, newTitle: "" };
 	  },
 	  componentDidMount: function componentDidMount() {
 	    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
@@ -49860,23 +49819,34 @@
 	  submitReview: function submitReview(event) {
 	    event.preventDefault();
 	    var reviewObj = {
-	      review: this.state.newReview,
+	      body: this.state.newReview,
 	      rating: this.state.newRating,
-	      book_id: this.state.currentBook.id,
+	      ISBN13: this.state.currentBook.ISBN13,
 	      user_id: UserStore.currentUser().id
 	    };
 	    ReviewUtil.createReview(reviewObj);
+	    this.closeModal();
+	  },
+	  onStarClick: function onStarClick(nextVal) {
+	    this.setState({ newRating: nextVal });
 	  },
 	  render: function render() {
 	    var book = this.state.currentBook;
-	    var rating = "Overall Rating: " + this.state.rating;
-	    var reviewList = this.state.reviews.map(function (r) {
-	      return React.createElement(
+	    if (this.state.reviews.length > 0) {
+	      var reviewList = this.state.reviews.map(function (r) {
+	        return React.createElement(
+	          'li',
+	          null,
+	          r.body
+	        );
+	      });
+	    } else {
+	      var reviewList = React.createElement(
 	        'li',
 	        null,
-	        r.body
+	        'no reviews yet'
 	      );
-	    });
+	    }
 	    var reviewButton;
 	    if (this.state.loggedIn) {
 	      reviewButton = React.createElement(
@@ -49887,6 +49857,11 @@
 	    } else {
 	      reviewButton = React.createElement('div', null);
 	    }
+	    if (book) {
+	      var placeholder = "Reveiw of " + book.title;
+	    } else {
+	      var placeholder = "";
+	    }
 	    return React.createElement(
 	      'section',
 	      { className: 'review-container' },
@@ -49894,16 +49869,16 @@
 	        'div',
 	        { className: 'rating' },
 	        React.createElement(
-	          'h2',
+	          'h3',
 	          null,
-	          rating
+	          'current rating:'
 	        ),
 	        React.createElement(StarRatingComponent, {
-	          name: 'rate2',
+	          name: 'currrentRating',
 	          editing: false,
 	          starCount: 5,
-	          value: 3.5,
-	          style: { fontSize: "100px" }
+	          value: this.state.rating,
+	          style: { fontSize: "200px" }
 	        })
 	      ),
 	      React.createElement(
@@ -49921,25 +49896,33 @@
 	        React.createElement(
 	          'h1',
 	          null,
-	          'What did you think?'
+	          placeholder
 	        ),
 	        React.createElement(
 	          'form',
 	          { className: 'NoteForm' },
 	          React.createElement(
 	            'div',
-	            { className: 'UserNameArea' },
-	            React.createElement('input', { type: 'text', className: 'UserNameInput', valueLink: this.linkState('review'), placeholder: 'enter a valid username' })
+	            { className: 'PasswordArea' },
+	            React.createElement(StarRatingComponent, {
+	              name: 'rate2',
+	              editing: true,
+	              starCount: 5,
+	              value: this.state.newRating,
+	              onStarClick: this.onStarClick,
+	              style: { fontSize: "200px" }
+	            })
 	          ),
-	          React.createElement('div', { className: 'PasswordArea' }),
 	          React.createElement(
 	            'div',
-	            { className: 'LoginButtonArea' },
-	            React.createElement(
-	              'button',
-	              { className: 'SignButton', onClick: this.submitReview },
-	              'Submit Review!'
-	            )
+	            { className: 'UserNameArea' },
+	            React.createElement('input', { type: 'textarea', rows: '5', className: 'review-input', valueLink: this.linkState('newTitle'), placeholder: 'title of your review' })
+	          ),
+	          React.createElement('textarea', { rows: '5', className: 'review-input', valueLink: this.linkState('newReview'), placeholder: placeholder }),
+	          React.createElement(
+	            'button',
+	            { className: 'SignButton', onClick: this.submitReview },
+	            'Submit Review!'
 	          )
 	        )
 	      )
@@ -49957,9 +49940,11 @@
 	var ApiActions = __webpack_require__(207);
 	
 	var ReviewUtil = {
-	  createReview: function createReview(reviewObj) {
+	  createReview: function createReview(review) {
+	    var reviewObj = { Review: review };
 	    $.post('/api/reviews', reviewObj, function (payload) {
-	      ApiActions.RecieveAddedReview(payload);
+	      console.log(payload);
+	      ApiActions.addBookReview(payload);
 	    });
 	  },
 	  fetchReviews: function fetchReviews(bookToFetch) {
@@ -50010,13 +49995,13 @@
 	  for (var i = 0; i < reviews.length; i++) {
 	    rating += reviews[i].rating;
 	  }
-	  _rating = rating / reviews.length / 2;
+	  _rating = rating / reviews.length;
 	};
 	var addReview = function addReview(review) {
-	  var rating = _rating * 2 * _reviews.length;
+	  var rating = _rating * _reviews.length;
 	  _reviews.push(review);
 	  rating += review.rating;
-	  _rating = rating / _reviews.length / 2;
+	  _rating = rating / _reviews.length;
 	};
 	ReviewStore.all = function () {
 	  return _reviews.slice(0);
@@ -50028,6 +50013,7 @@
 	  _reviews = [];
 	};
 	ReviewStore.__onDispatch = function (payload) {
+	  console.log(payload);
 	  switch (payload.actionType) {
 	    case ReviewConstants.ReceiveBookReviews:
 	      var result = resetNotes(payload.results);
@@ -50035,7 +50021,7 @@
 	      ReviewStore.__emitChange();
 	      break;
 	    case ReviewConstants.AddBookReview:
-	      var r2 = addReview(payload.result);
+	      var r2 = addReview(payload.review);
 	      ReviewStore.__emitChange();
 	      break;
 	  }
@@ -50044,575 +50030,7 @@
 	module.exports = ReviewStore;
 
 /***/ },
-/* 425 */,
-/* 426 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var SplashIndex = __webpack_require__(427);
-	var SearchArea = __webpack_require__(429);
-	var BookSearchStore = __webpack_require__(262);
-	var History = __webpack_require__(159).History;
-	var browserHistory = __webpack_require__(159).browserHistory;
-	
-	var customStyles = {
-	  overlay: {
-	    position: 'fixed',
-	    top: 0,
-	    left: 0,
-	    right: 0,
-	    bottom: 0,
-	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
-	    zIndex: 20
-	  },
-	  content: {
-	    top: '50%',
-	    left: '50%',
-	    right: 'auto',
-	    bottom: 'auto',
-	    transform: 'translate(-50%, -50%)'
-	  }
-	};
-	
-	var MainPage = React.createClass({
-	  displayName: 'MainPage',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
-	  },
-	  bookChosen: function bookChosen() {
-	    event.preventDefault();
-	    var bookToSend = BookSearchStore.currentBook();
-	    bookToSend.read = "toRead";
-	    var url = "/Desk";
-	    this.history.push("/Book/" + bookToSend.ISBN13);
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      { className: 'homePage' },
-	      React.createElement(SearchArea, { whenChosen: this.bookChosen }),
-	      React.createElement(SplashIndex, { whenChosen: this.bookChosen })
-	    );
-	  }
-	});
-	
-	module.exports = MainPage;
-
-/***/ },
-/* 427 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(262);
-	var BookUtil = __webpack_require__(218);
-	var IndexItem = __webpack_require__(428);
-	
-	var SplashIndex = React.createClass({
-	  displayName: 'SplashIndex',
-	
-	  getInitialState: function getInitialState() {
-	    return { bookIndex: BookSearchStore.initialData() };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    BookUtil.getInitialBookIndex();
-	    this.iIndex = BookSearchStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.iIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    this.setState({ bookIndex: BookSearchStore.initialData() });
-	  },
-	  shuffle: function shuffle(array) {
-	    var currentIndex = array.length,
-	        temporaryValue,
-	        randomIndex;
-	    while (0 !== currentIndex) {
-	      randomIndex = Math.floor(Math.random() * currentIndex);
-	      currentIndex -= 1;
-	      temporaryValue = array[currentIndex];
-	      array[currentIndex] = array[randomIndex];
-	      array[randomIndex] = temporaryValue;
-	    }
-	    return array;
-	  },
-	  render: function render() {
-	    var bookOptions;
-	    var that = this;
-	    bookOptions = this.state.bookIndex.map(function (book, index) {
-	      return React.createElement(IndexItem, { key: index, book: book, whenChosen: this.props.whenChosen });
-	    }, this);
-	    return React.createElement(
-	      'div',
-	      { id: 'BookArea' },
-	      React.createElement(
-	        'div',
-	        { className: 'book-list' },
-	        bookOptions
-	      )
-	    );
-	  }
-	});
-	
-	module.exports = SplashIndex;
-
-/***/ },
-/* 428 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(262);
-	var ApiActions = __webpack_require__(207);
-	var History = __webpack_require__(159).History;
-	var browserHistory = __webpack_require__(159).browserHistory;
-	
-	var IndexItem = React.createClass({
-	  displayName: 'IndexItem',
-	
-	  mixins: [History],
-	  onClick: function onClick(event) {
-	    event.preventDefault();
-	    ApiActions.updateCurrentBook(this.props.book);
-	    var bookToSend = this.props.book;
-	    bookToSend.read = "toRead";
-	    var url = "/Desk";
-	    this.history.push("/Book/" + bookToSend.ISBN13);
-	  },
-	  render: function render() {
-	    var placementStyle = { verticalAlign: "middle" };
-	    var customStyle = { width: "250px", borderRadius: "10px" };
-	    return React.createElement(
-	      'div',
-	      { className: 'initial-books', style: placementStyle, onClick: this.onClick },
-	      React.createElement('img', { style: customStyle, src: this.props.book.image })
-	    );
-	  }
-	});
-	module.exports = IndexItem;
-
-/***/ },
-/* 429 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var SearchBar = __webpack_require__(430);
-	
-	var SearchArea = React.createClass({
-	  displayName: 'SearchArea',
-	
-	  render: function render() {
-	    return React.createElement(
-	      'section',
-	      { id: 'popupbody' },
-	      React.createElement(SearchBar, { whenChosen: this.props.whenChosen })
-	    );
-	  }
-	});
-	
-	module.exports = SearchArea;
-
-/***/ },
-/* 430 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookUtil = __webpack_require__(218);
-	var BookSearchStore = __webpack_require__(262);
-	var SearchListItem = __webpack_require__(431);
-	var History = __webpack_require__(159).History;
-	var browserHistory = __webpack_require__(159).browserHistory;
-	var Navigation = __webpack_require__(159).Navigation;
-	
-	var SearchBar = React.createClass({
-	  displayName: 'SearchBar',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	    this.leave = false;
-	    this.needToLoad = false;
-	    return { value: "", searchResults: [], showGuesses: false };
-	  },
-	  handleChange: function handleChange(event) {
-	    if (event.target.value.length > 0) {
-	      this.setState({ value: event.target.value, showGuesses: true });
-	    } else {
-	      this.setState({ value: event.target.value, showGuesses: false });
-	    }
-	    if (this.state.value.length > 2 && !this.pending) {
-	      this.pending = true;
-	      this.loadBar.style.display = 'block';
-	      this.needToLoad = false;
-	      BookUtil.fetchBookResults(this.state.value);
-	      window.setTimeout(function () {
-	        this.pending = false;
-	        if (this.needToLoad) {
-	          this.pending = true;
-	          this.loadBar.style.display = 'block';
-	          this.needToLoad = false;
-	          BookUtil.fetchBookResults(this.state.value);
-	        }
-	      }.bind(this), 1800);
-	    } else if (this.state.value.length > 2) {
-	      this.needToLoad = true;
-	    } else {
-	      this.needToLoad = false;
-	      this.loadBar.style.display = 'none';
-	    }
-	  },
-	  check: function check(event) {
-	    if (event.keyCode === 13) {
-	      this.click();
-	    }
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.storeIndex = BookSearchStore.addListener(this._onChange);
-	    this.pending = false;
-	    this.loadBar = document.getElementById('loader');
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.storeIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    if (this.state.value.length > 0 && !this.leave) {
-	      this.loadBar.style.display = 'none';
-	      this.setState({ searchResults: BookSearchStore.all() });
-	    } else if (this.leave) {
-	      this.leave = false;
-	      var url = '/SearchResults';
-	      this.history.push({ pathname: url });
-	    } else {
-	      this.loadBar.style.display = 'none';
-	      this.setState({ searchResults: [] });
-	    }
-	  },
-	  clickOption: function clickOption(book) {
-	    var theChosen = book;
-	    var chosen = BookUtil.makeBookObject(book);
-	    BookSearchStore.resetCurrentBook(chosen);
-	    this.props.whenChosen();
-	  },
-	  blur: function blur(event) {},
-	  click: function click(event) {
-	    this.leave = true;
-	    BookUtil.fetchBookResults(this.state.value);
-	  },
-	  removeSearchGuesses: function removeSearchGuesses() {
-	    this.setState({ showGuesses: false });
-	  },
-	  render: function render() {
-	    var that = this;
-	    if (this.state.showGuesses) {
-	      var guesses = this.state.searchResults.map(function (result, index) {
-	        return React.createElement(SearchListItem, { key: result.id, book: result, clickOption: this.clickOption });
-	      }, this);
-	    } else {
-	      guesses = null;
-	    }
-	    return React.createElement(
-	      'div',
-	      { id: 'landing-search-bar' },
-	      React.createElement('input', { id: 'book-search-input',
-	        type: 'text',
-	        onKeyDown: this.check,
-	        value: this.state.value,
-	        onChange: this.handleChange,
-	        placeholder: 'enter a book title/author',
-	        list: 'search-options',
-	        autoComplete: 'off',
-	        onBlur: this.blur
-	      }),
-	      React.createElement('button', { id: 'BookSearchButton', className: 'hvr-grow-shadow fa fa-search', onClick: this.click }),
-	      React.createElement('div', { id: 'loader', className: 'loader' }),
-	      React.createElement(
-	        'ul',
-	        { className: 'searchGuesses', id: 'search-options' },
-	        guesses
-	      )
-	    );
-	  }
-	
-	});
-	module.exports = SearchBar;
-
-/***/ },
-/* 431 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(1);
-	var PropTypes = React.PropTypes;
-	
-	var SearchListItem = React.createClass({
-	  displayName: "SearchListItem",
-	
-	  click: function click(event) {
-	    console.log("What the heck????");
-	    event.preventDefault();
-	    this.props.clickOption(this.props.book);
-	  },
-	  render: function render() {
-	    return React.createElement(
-	      "li",
-	      { onClick: this.click, className: "searchGuess", value: this.props.book.volumeInfo.title },
-	      this.props.book.volumeInfo.title
-	    );
-	  }
-	});
-	
-	module.exports = SearchListItem;
-
-/***/ },
-/* 432 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(1);
-	// components
-	var BookShelf = __webpack_require__(413);
-	
-	//stores
-	var UserStore = __webpack_require__(244);
-	
-	var User = React.createClass({
-	  displayName: "User",
-	
-	  getInitialState: function getInitialState() {
-	    return { currentUser: UserStore.currentUser() };
-	  },
-	  componentDidMount: function componentDidMount() {
-	    this.userIndex = UserStore.addListener(this._onChange);
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    this.userIndex.remove();
-	  },
-	  _onChange: function _onChange() {
-	    this.setState({ currentUser: UserStore.currentUser() });
-	  },
-	  render: function render() {
-	    if (this.state.currentUser) {
-	      return React.createElement(
-	        "div",
-	        { className: "container" },
-	        React.createElement(
-	          "div",
-	          { className: "comment-area" },
-	          React.createElement(
-	            "div",
-	            { className: "user-name" },
-	            React.createElement(
-	              "h1",
-	              null,
-	              UserStore.currentUser().username
-	            )
-	          )
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "user-user-shelf-area" },
-	          React.createElement(
-	            "div",
-	            { className: "user-shelf-area" },
-	            React.createElement(
-	              "div",
-	              { className: "bookshelf-area" },
-	              React.createElement(BookShelf, null)
-	            )
-	          )
-	        )
-	      );
-	    } else {
-	      return React.createElement(
-	        "div",
-	        { className: "no-user" },
-	        React.createElement(
-	          "h1",
-	          null,
-	          "Log in or sign up to view your profile"
-	        )
-	      );
-	    }
-	  }
-	});
-	module.exports = User;
-
-/***/ },
-/* 433 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var History = __webpack_require__(159).History;
-	
-	var Books = React.createClass({
-	  displayName: 'Books',
-	
-	  render: function render() {
-	    return React.createElement(
-	      'div',
-	      null,
-	      this.props.children
-	    );
-	  }
-	});
-	
-	module.exports = Books;
-
-/***/ },
-/* 434 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(262);
-	var SearchResultItem = __webpack_require__(435);
-	var History = __webpack_require__(159).History;
-	
-	var SearchResults = React.createClass({
-	  displayName: 'SearchResults',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	    return { chosen: BookSearchStore.currentBook(), currentBooks: BookSearchStore.all() };
-	  },
-	  bookChosen: function bookChosen() {
-	    // this.openModal();
-	    event.preventDefault();
-	    var bookToSend = BookSearchStore.currentBook();
-	    bookToSend.read = "toRead";
-	    var url = "/Book/" + bookToSend.ISBN13;
-	    this.history.push({ pathname: url });
-	  },
-	  openModal: function openModal() {
-	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
-	  },
-	
-	  closeModal: function closeModal() {
-	    BookSearchStore.resetCurrentBook(null);
-	    this.setState({ modalIsOpen: false });
-	  },
-	  render: function render() {
-	
-	    var searchResults = [];
-	    for (var i = 0; i < this.state.currentBooks.length; i++) {
-	      searchResults.push(React.createElement(SearchResultItem, { book: this.state.currentBooks[i] }));
-	    }
-	
-	    return React.createElement(
-	      'div',
-	      { className: 'homePage' },
-	      React.createElement(
-	        'ul',
-	        { className: 'search-results-list' },
-	        searchResults
-	      )
-	    );
-	  }
-	});
-	module.exports = SearchResults;
-
-/***/ },
-/* 435 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(1);
-	var BookSearchStore = __webpack_require__(262);
-	var BookUtil = __webpack_require__(218);
-	var History = __webpack_require__(159).History;
-	
-	var customStyles = {};
-	
-	var SearchResultsItem = React.createClass({
-	  displayName: 'SearchResultsItem',
-	
-	  mixins: [History],
-	  getInitialState: function getInitialState() {
-	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
-	  },
-	  bookChosen: function bookChosen() {
-	    // this.openModal();
-	    var chosen = BookUtil.makeBookObject(this.props.book);
-	    BookSearchStore.resetCurrentBook(chosen);
-	    event.preventDefault();
-	    var bookToSend = BookSearchStore.currentBook();
-	    bookToSend.read = "toRead";
-	    var url = "/Book/" + bookToSend.ISBN13;
-	    this.history.push({ pathname: url });
-	  },
-	  openModal: function openModal() {
-	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
-	  },
-	  closeModal: function closeModal() {
-	    BookSearchStore.resetCurrentBook(null);
-	    this.setState({ modalIsOpen: false });
-	  },
-	  render: function render() {
-	    var imageLink, title, author, numPages, category;
-	    if (this.props.book.volumeInfo.imageLinks !== undefined) {
-	      imageLink = this.props.book.volumeInfo.imageLinks.thumbnail;
-	    } else {
-	      imageLink = "http://res.cloudinary.com/litlitves/image/upload/v1474661342/imageNotAvailable_fhql9f.jpg";
-	    }
-	    if (this.props.book.volumeInfo.categories !== undefined) {
-	      category = "category: " + this.props.book.volumeInfo.categories[0];
-	    } else {
-	      category = null;
-	    }
-	    if (this.props.book.volumeInfo.authors !== undefined) {
-	      author = "by, " + this.props.book.volumeInfo.authors[0];
-	    }
-	    return React.createElement(
-	      'li',
-	      { className: 'search-result-item', onClick: this.bookChosen },
-	      React.createElement('img', { className: 'search-result-image', src: imageLink }),
-	      React.createElement(
-	        'div',
-	        { className: 'data-area' },
-	        React.createElement(
-	          'div',
-	          { className: 'result-title' },
-	          this.props.book.volumeInfo.title
-	        ),
-	        React.createElement(
-	          'div',
-	          null,
-	          this.props.book.volumeInfo.subtitle
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'result-author' },
-	          author
-	        ),
-	        React.createElement(
-	          'div',
-	          { className: 'result-category' },
-	          category
-	        )
-	      )
-	    );
-	  }
-	});
-	module.exports = SearchResultsItem;
-
-/***/ },
-/* 436 */
+/* 425 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50623,7 +50041,7 @@
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _react = __webpack_require__(437);
+	var _react = __webpack_require__(426);
 	
 	var _react2 = _interopRequireDefault(_react);
 	
@@ -50812,16 +50230,16 @@
 
 
 /***/ },
-/* 437 */
+/* 426 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	module.exports = __webpack_require__(438);
+	module.exports = __webpack_require__(427);
 
 
 /***/ },
-/* 438 */
+/* 427 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -50836,26 +50254,26 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(439);
+	var _assign = __webpack_require__(428);
 	
-	var ReactChildren = __webpack_require__(440);
-	var ReactComponent = __webpack_require__(453);
-	var ReactPureComponent = __webpack_require__(456);
-	var ReactClass = __webpack_require__(457);
-	var ReactDOMFactories = __webpack_require__(459);
-	var ReactElement = __webpack_require__(444);
-	var ReactPropTypes = __webpack_require__(464);
-	var ReactVersion = __webpack_require__(465);
+	var ReactChildren = __webpack_require__(429);
+	var ReactComponent = __webpack_require__(442);
+	var ReactPureComponent = __webpack_require__(445);
+	var ReactClass = __webpack_require__(446);
+	var ReactDOMFactories = __webpack_require__(448);
+	var ReactElement = __webpack_require__(433);
+	var ReactPropTypes = __webpack_require__(453);
+	var ReactVersion = __webpack_require__(454);
 	
-	var onlyChild = __webpack_require__(466);
-	var warning = __webpack_require__(446);
+	var onlyChild = __webpack_require__(455);
+	var warning = __webpack_require__(435);
 	
 	var createElement = ReactElement.createElement;
 	var createFactory = ReactElement.createFactory;
 	var cloneElement = ReactElement.cloneElement;
 	
 	if (process.env.NODE_ENV !== 'production') {
-	  var ReactElementValidator = __webpack_require__(460);
+	  var ReactElementValidator = __webpack_require__(449);
 	  createElement = ReactElementValidator.createElement;
 	  createFactory = ReactElementValidator.createFactory;
 	  cloneElement = ReactElementValidator.cloneElement;
@@ -50915,7 +50333,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 439 */
+/* 428 */
 /***/ function(module, exports) {
 
 	/*
@@ -51011,7 +50429,7 @@
 
 
 /***/ },
-/* 440 */
+/* 429 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -51026,11 +50444,11 @@
 	
 	'use strict';
 	
-	var PooledClass = __webpack_require__(441);
-	var ReactElement = __webpack_require__(444);
+	var PooledClass = __webpack_require__(430);
+	var ReactElement = __webpack_require__(433);
 	
-	var emptyFunction = __webpack_require__(447);
-	var traverseAllChildren = __webpack_require__(450);
+	var emptyFunction = __webpack_require__(436);
+	var traverseAllChildren = __webpack_require__(439);
 	
 	var twoArgumentPooler = PooledClass.twoArgumentPooler;
 	var fourArgumentPooler = PooledClass.fourArgumentPooler;
@@ -51206,7 +50624,7 @@
 	module.exports = ReactChildren;
 
 /***/ },
-/* 441 */
+/* 430 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -51222,9 +50640,9 @@
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(442);
+	var _prodInvariant = __webpack_require__(431);
 	
-	var invariant = __webpack_require__(443);
+	var invariant = __webpack_require__(432);
 	
 	/**
 	 * Static poolers. Several custom versions for each potential number of
@@ -51323,7 +50741,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 442 */
+/* 431 */
 /***/ function(module, exports) {
 
 	/**
@@ -51366,7 +50784,7 @@
 	module.exports = reactProdInvariant;
 
 /***/ },
-/* 443 */
+/* 432 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -51427,7 +50845,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 444 */
+/* 433 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -51442,15 +50860,15 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(439);
+	var _assign = __webpack_require__(428);
 	
-	var ReactCurrentOwner = __webpack_require__(445);
+	var ReactCurrentOwner = __webpack_require__(434);
 	
-	var warning = __webpack_require__(446);
-	var canDefineProperty = __webpack_require__(448);
+	var warning = __webpack_require__(435);
+	var canDefineProperty = __webpack_require__(437);
 	var hasOwnProperty = Object.prototype.hasOwnProperty;
 	
-	var REACT_ELEMENT_TYPE = __webpack_require__(449);
+	var REACT_ELEMENT_TYPE = __webpack_require__(438);
 	
 	var RESERVED_PROPS = {
 	  key: true,
@@ -51773,7 +51191,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 445 */
+/* 434 */
 /***/ function(module, exports) {
 
 	/**
@@ -51808,7 +51226,7 @@
 	module.exports = ReactCurrentOwner;
 
 /***/ },
-/* 446 */
+/* 435 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -51823,7 +51241,7 @@
 	
 	'use strict';
 	
-	var emptyFunction = __webpack_require__(447);
+	var emptyFunction = __webpack_require__(436);
 	
 	/**
 	 * Similar to invariant but only logs a warning if the condition is not met.
@@ -51880,7 +51298,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 447 */
+/* 436 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -51923,7 +51341,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 448 */
+/* 437 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -51954,7 +51372,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 449 */
+/* 438 */
 /***/ function(module, exports) {
 
 	/**
@@ -51978,7 +51396,7 @@
 	module.exports = REACT_ELEMENT_TYPE;
 
 /***/ },
-/* 450 */
+/* 439 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -51993,15 +51411,15 @@
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(442);
+	var _prodInvariant = __webpack_require__(431);
 	
-	var ReactCurrentOwner = __webpack_require__(445);
-	var REACT_ELEMENT_TYPE = __webpack_require__(449);
+	var ReactCurrentOwner = __webpack_require__(434);
+	var REACT_ELEMENT_TYPE = __webpack_require__(438);
 	
-	var getIteratorFn = __webpack_require__(451);
-	var invariant = __webpack_require__(443);
-	var KeyEscapeUtils = __webpack_require__(452);
-	var warning = __webpack_require__(446);
+	var getIteratorFn = __webpack_require__(440);
+	var invariant = __webpack_require__(432);
+	var KeyEscapeUtils = __webpack_require__(441);
+	var warning = __webpack_require__(435);
 	
 	var SEPARATOR = '.';
 	var SUBSEPARATOR = ':';
@@ -52159,7 +51577,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 451 */
+/* 440 */
 /***/ function(module, exports) {
 
 	/**
@@ -52204,7 +51622,7 @@
 	module.exports = getIteratorFn;
 
 /***/ },
-/* 452 */
+/* 441 */
 /***/ function(module, exports) {
 
 	/**
@@ -52267,7 +51685,7 @@
 	module.exports = KeyEscapeUtils;
 
 /***/ },
-/* 453 */
+/* 442 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -52282,14 +51700,14 @@
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(442);
+	var _prodInvariant = __webpack_require__(431);
 	
-	var ReactNoopUpdateQueue = __webpack_require__(454);
+	var ReactNoopUpdateQueue = __webpack_require__(443);
 	
-	var canDefineProperty = __webpack_require__(448);
-	var emptyObject = __webpack_require__(455);
-	var invariant = __webpack_require__(443);
-	var warning = __webpack_require__(446);
+	var canDefineProperty = __webpack_require__(437);
+	var emptyObject = __webpack_require__(444);
+	var invariant = __webpack_require__(432);
+	var warning = __webpack_require__(435);
 	
 	/**
 	 * Base class helpers for the updating state of a component.
@@ -52390,7 +51808,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 454 */
+/* 443 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -52405,7 +51823,7 @@
 	
 	'use strict';
 	
-	var warning = __webpack_require__(446);
+	var warning = __webpack_require__(435);
 	
 	function warnNoop(publicInstance, callerName) {
 	  if (process.env.NODE_ENV !== 'production') {
@@ -52491,7 +51909,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 455 */
+/* 444 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -52516,7 +51934,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 456 */
+/* 445 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -52531,12 +51949,12 @@
 	
 	'use strict';
 	
-	var _assign = __webpack_require__(439);
+	var _assign = __webpack_require__(428);
 	
-	var ReactComponent = __webpack_require__(453);
-	var ReactNoopUpdateQueue = __webpack_require__(454);
+	var ReactComponent = __webpack_require__(442);
+	var ReactNoopUpdateQueue = __webpack_require__(443);
 	
-	var emptyObject = __webpack_require__(455);
+	var emptyObject = __webpack_require__(444);
 	
 	/**
 	 * Base class helpers for the updating state of a component.
@@ -52562,7 +51980,7 @@
 	module.exports = ReactPureComponent;
 
 /***/ },
-/* 457 */
+/* 446 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -52577,17 +51995,17 @@
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(442),
-	    _assign = __webpack_require__(439);
+	var _prodInvariant = __webpack_require__(431),
+	    _assign = __webpack_require__(428);
 	
-	var ReactComponent = __webpack_require__(453);
-	var ReactElement = __webpack_require__(444);
-	var ReactPropTypeLocationNames = __webpack_require__(458);
-	var ReactNoopUpdateQueue = __webpack_require__(454);
+	var ReactComponent = __webpack_require__(442);
+	var ReactElement = __webpack_require__(433);
+	var ReactPropTypeLocationNames = __webpack_require__(447);
+	var ReactNoopUpdateQueue = __webpack_require__(443);
 	
-	var emptyObject = __webpack_require__(455);
-	var invariant = __webpack_require__(443);
-	var warning = __webpack_require__(446);
+	var emptyObject = __webpack_require__(444);
+	var invariant = __webpack_require__(432);
+	var warning = __webpack_require__(435);
 	
 	var MIXINS_KEY = 'mixins';
 	
@@ -53284,7 +52702,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 458 */
+/* 447 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -53314,7 +52732,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 459 */
+/* 448 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -53329,7 +52747,7 @@
 	
 	'use strict';
 	
-	var ReactElement = __webpack_require__(444);
+	var ReactElement = __webpack_require__(433);
 	
 	/**
 	 * Create a factory that creates HTML tag elements.
@@ -53338,7 +52756,7 @@
 	 */
 	var createDOMFactory = ReactElement.createFactory;
 	if (process.env.NODE_ENV !== 'production') {
-	  var ReactElementValidator = __webpack_require__(460);
+	  var ReactElementValidator = __webpack_require__(449);
 	  createDOMFactory = ReactElementValidator.createFactory;
 	}
 	
@@ -53489,7 +52907,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 460 */
+/* 449 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -53511,15 +52929,15 @@
 	
 	'use strict';
 	
-	var ReactCurrentOwner = __webpack_require__(445);
-	var ReactComponentTreeHook = __webpack_require__(461);
-	var ReactElement = __webpack_require__(444);
+	var ReactCurrentOwner = __webpack_require__(434);
+	var ReactComponentTreeHook = __webpack_require__(450);
+	var ReactElement = __webpack_require__(433);
 	
-	var checkReactTypeSpec = __webpack_require__(462);
+	var checkReactTypeSpec = __webpack_require__(451);
 	
-	var canDefineProperty = __webpack_require__(448);
-	var getIteratorFn = __webpack_require__(451);
-	var warning = __webpack_require__(446);
+	var canDefineProperty = __webpack_require__(437);
+	var getIteratorFn = __webpack_require__(440);
+	var warning = __webpack_require__(435);
 	
 	function getDeclarationErrorAddendum() {
 	  if (ReactCurrentOwner.current) {
@@ -53728,7 +53146,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 461 */
+/* 450 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -53744,12 +53162,12 @@
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(442);
+	var _prodInvariant = __webpack_require__(431);
 	
-	var ReactCurrentOwner = __webpack_require__(445);
+	var ReactCurrentOwner = __webpack_require__(434);
 	
-	var invariant = __webpack_require__(443);
-	var warning = __webpack_require__(446);
+	var invariant = __webpack_require__(432);
+	var warning = __webpack_require__(435);
 	
 	function isNative(fn) {
 	  // Based on isNative() from Lodash
@@ -54067,7 +53485,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 462 */
+/* 451 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -54082,13 +53500,13 @@
 	
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(442);
+	var _prodInvariant = __webpack_require__(431);
 	
-	var ReactPropTypeLocationNames = __webpack_require__(458);
-	var ReactPropTypesSecret = __webpack_require__(463);
+	var ReactPropTypeLocationNames = __webpack_require__(447);
+	var ReactPropTypesSecret = __webpack_require__(452);
 	
-	var invariant = __webpack_require__(443);
-	var warning = __webpack_require__(446);
+	var invariant = __webpack_require__(432);
+	var warning = __webpack_require__(435);
 	
 	var ReactComponentTreeHook;
 	
@@ -54098,7 +53516,7 @@
 	  // https://github.com/facebook/react/issues/7240
 	  // Remove the inline requires when we don't need them anymore:
 	  // https://github.com/facebook/react/pull/7178
-	  ReactComponentTreeHook = __webpack_require__(461);
+	  ReactComponentTreeHook = __webpack_require__(450);
 	}
 	
 	var loggedTypeFailures = {};
@@ -54140,7 +53558,7 @@
 	
 	        if (process.env.NODE_ENV !== 'production') {
 	          if (!ReactComponentTreeHook) {
-	            ReactComponentTreeHook = __webpack_require__(461);
+	            ReactComponentTreeHook = __webpack_require__(450);
 	          }
 	          if (debugID !== null) {
 	            componentStackInfo = ReactComponentTreeHook.getStackAddendumByID(debugID);
@@ -54159,7 +53577,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 463 */
+/* 452 */
 /***/ function(module, exports) {
 
 	/**
@@ -54180,7 +53598,7 @@
 	module.exports = ReactPropTypesSecret;
 
 /***/ },
-/* 464 */
+/* 453 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -54195,13 +53613,13 @@
 	
 	'use strict';
 	
-	var ReactElement = __webpack_require__(444);
-	var ReactPropTypeLocationNames = __webpack_require__(458);
-	var ReactPropTypesSecret = __webpack_require__(463);
+	var ReactElement = __webpack_require__(433);
+	var ReactPropTypeLocationNames = __webpack_require__(447);
+	var ReactPropTypesSecret = __webpack_require__(452);
 	
-	var emptyFunction = __webpack_require__(447);
-	var getIteratorFn = __webpack_require__(451);
-	var warning = __webpack_require__(446);
+	var emptyFunction = __webpack_require__(436);
+	var getIteratorFn = __webpack_require__(440);
+	var warning = __webpack_require__(435);
 	
 	/**
 	 * Collection of methods that allow declaration and validation of props that are
@@ -54619,7 +54037,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 465 */
+/* 454 */
 /***/ function(module, exports) {
 
 	/**
@@ -54637,7 +54055,7 @@
 	module.exports = '15.4.2';
 
 /***/ },
-/* 466 */
+/* 455 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -54651,11 +54069,11 @@
 	 */
 	'use strict';
 	
-	var _prodInvariant = __webpack_require__(442);
+	var _prodInvariant = __webpack_require__(431);
 	
-	var ReactElement = __webpack_require__(444);
+	var ReactElement = __webpack_require__(433);
 	
-	var invariant = __webpack_require__(443);
+	var invariant = __webpack_require__(432);
 	
 	/**
 	 * Returns the first child in a collection of children and verifies that there
@@ -54678,6 +54096,677 @@
 	
 	module.exports = onlyChild;
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+
+/***/ },
+/* 456 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var SplashIndex = __webpack_require__(457);
+	var SearchArea = __webpack_require__(459);
+	var BookSearchStore = __webpack_require__(262);
+	var History = __webpack_require__(159).History;
+	var browserHistory = __webpack_require__(159).browserHistory;
+	
+	var customStyles = {
+	  overlay: {
+	    position: 'fixed',
+	    top: 0,
+	    left: 0,
+	    right: 0,
+	    bottom: 0,
+	    backgroundColor: 'rgba(255, 255, 255, 0.75)',
+	    zIndex: 20
+	  },
+	  content: {
+	    top: '50%',
+	    left: '50%',
+	    right: 'auto',
+	    bottom: 'auto',
+	    transform: 'translate(-50%, -50%)'
+	  }
+	};
+	
+	var MainPage = React.createClass({
+	  displayName: 'MainPage',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
+	  },
+	  bookChosen: function bookChosen() {
+	    event.preventDefault();
+	    var bookToSend = BookSearchStore.currentBook();
+	    bookToSend.read = "reading";
+	    this.history.push("/Book/" + bookToSend.ISBN13);
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      { className: 'homePage' },
+	      React.createElement(SearchArea, { whenChosen: this.bookChosen }),
+	      React.createElement(SplashIndex, { whenChosen: this.bookChosen })
+	    );
+	  }
+	});
+	
+	module.exports = MainPage;
+
+/***/ },
+/* 457 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(262);
+	var BookUtil = __webpack_require__(218);
+	var IndexItem = __webpack_require__(458);
+	
+	var SplashIndex = React.createClass({
+	  displayName: 'SplashIndex',
+	
+	  getInitialState: function getInitialState() {
+	    return { bookIndex: BookSearchStore.initialData() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    BookUtil.getInitialBookIndex();
+	    this.iIndex = BookSearchStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.iIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    this.setState({ bookIndex: BookSearchStore.initialData() });
+	  },
+	  shuffle: function shuffle(array) {
+	    var currentIndex = array.length,
+	        temporaryValue,
+	        randomIndex;
+	    while (0 !== currentIndex) {
+	      randomIndex = Math.floor(Math.random() * currentIndex);
+	      currentIndex -= 1;
+	      temporaryValue = array[currentIndex];
+	      array[currentIndex] = array[randomIndex];
+	      array[randomIndex] = temporaryValue;
+	    }
+	    return array;
+	  },
+	  render: function render() {
+	    var bookOptions;
+	    var that = this;
+	    bookOptions = this.state.bookIndex.map(function (book, index) {
+	      return React.createElement(IndexItem, { key: index, book: book, whenChosen: this.props.whenChosen });
+	    }, this);
+	    return React.createElement(
+	      'div',
+	      { id: 'BookArea' },
+	      React.createElement(
+	        'div',
+	        { className: 'book-list' },
+	        bookOptions
+	      )
+	    );
+	  }
+	});
+	
+	module.exports = SplashIndex;
+
+/***/ },
+/* 458 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(262);
+	var ApiActions = __webpack_require__(207);
+	var History = __webpack_require__(159).History;
+	var browserHistory = __webpack_require__(159).browserHistory;
+	
+	var IndexItem = React.createClass({
+	  displayName: 'IndexItem',
+	
+	  mixins: [History],
+	  onClick: function onClick(event) {
+	    event.preventDefault();
+	    ApiActions.updateCurrentBook(this.props.book);
+	    var bookToSend = this.props.book;
+	    bookToSend.read = "reading";
+	    this.history.push("/Book/" + bookToSend.ISBN13);
+	  },
+	  render: function render() {
+	    var placementStyle = { verticalAlign: "middle" };
+	    var customStyle = { width: "250px", borderRadius: "10px" };
+	    return React.createElement(
+	      'div',
+	      { className: 'initial-books', style: placementStyle, onClick: this.onClick },
+	      React.createElement('img', { style: customStyle, src: this.props.book.image })
+	    );
+	  }
+	});
+	module.exports = IndexItem;
+
+/***/ },
+/* 459 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var SearchBar = __webpack_require__(460);
+	
+	var SearchArea = React.createClass({
+	  displayName: 'SearchArea',
+	
+	  render: function render() {
+	    return React.createElement(
+	      'section',
+	      { id: 'popupbody' },
+	      React.createElement(SearchBar, { whenChosen: this.props.whenChosen })
+	    );
+	  }
+	});
+	
+	module.exports = SearchArea;
+
+/***/ },
+/* 460 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookUtil = __webpack_require__(218);
+	var BookSearchStore = __webpack_require__(262);
+	var SearchListItem = __webpack_require__(461);
+	var History = __webpack_require__(159).History;
+	var browserHistory = __webpack_require__(159).browserHistory;
+	var Navigation = __webpack_require__(159).Navigation;
+	
+	var SearchBar = React.createClass({
+	  displayName: 'SearchBar',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    this.leave = false;
+	    this.needToLoad = false;
+	    return { value: "", searchResults: [], showGuesses: false };
+	  },
+	  handleChange: function handleChange(event) {
+	    if (event.target.value.length > 0) {
+	      this.setState({ value: event.target.value, showGuesses: true });
+	    } else {
+	      this.setState({ value: event.target.value, showGuesses: false });
+	    }
+	    if (this.state.value.length > 2 && !this.pending) {
+	      this.pending = true;
+	      this.loadBar.style.display = 'block';
+	      this.needToLoad = false;
+	      BookUtil.fetchBookResults(this.state.value);
+	      window.setTimeout(function () {
+	        this.pending = false;
+	        if (this.needToLoad) {
+	          this.pending = true;
+	          this.loadBar.style.display = 'block';
+	          this.needToLoad = false;
+	          BookUtil.fetchBookResults(this.state.value);
+	        }
+	      }.bind(this), 1800);
+	    } else if (this.state.value.length > 2) {
+	      this.needToLoad = true;
+	    } else {
+	      this.needToLoad = false;
+	      this.loadBar.style.display = 'none';
+	    }
+	  },
+	  check: function check(event) {
+	    if (event.keyCode === 13) {
+	      this.click();
+	    }
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.storeIndex = BookSearchStore.addListener(this._onChange);
+	    this.pending = false;
+	    this.loadBar = document.getElementById('loader');
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.storeIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    if (this.state.value.length > 0 && !this.leave) {
+	      this.loadBar.style.display = 'none';
+	      this.setState({ searchResults: BookSearchStore.all() });
+	    } else if (this.leave) {
+	      this.leave = false;
+	      var url = '/SearchResults';
+	      this.history.push({ pathname: url });
+	    } else {
+	      this.loadBar.style.display = 'none';
+	      this.setState({ searchResults: [] });
+	    }
+	  },
+	  clickOption: function clickOption(book) {
+	    var theChosen = book;
+	    var chosen = BookUtil.makeBookObject(book);
+	    BookSearchStore.resetCurrentBook(chosen);
+	    this.props.whenChosen();
+	  },
+	  blur: function blur(event) {},
+	  click: function click(event) {
+	    this.leave = true;
+	    BookUtil.fetchBookResults(this.state.value);
+	  },
+	  removeSearchGuesses: function removeSearchGuesses() {
+	    this.setState({ showGuesses: false });
+	  },
+	  render: function render() {
+	    var that = this;
+	    if (this.state.showGuesses) {
+	      var guesses = this.state.searchResults.map(function (result, index) {
+	        return React.createElement(SearchListItem, { key: result.id, book: result, clickOption: this.clickOption });
+	      }, this);
+	    } else {
+	      guesses = null;
+	    }
+	    return React.createElement(
+	      'div',
+	      { id: 'landing-search-bar' },
+	      React.createElement('input', { id: 'book-search-input',
+	        type: 'text',
+	        onKeyDown: this.check,
+	        value: this.state.value,
+	        onChange: this.handleChange,
+	        placeholder: 'enter a book title/author',
+	        list: 'search-options',
+	        autoComplete: 'off',
+	        onBlur: this.blur
+	      }),
+	      React.createElement('button', { id: 'BookSearchButton', className: 'hvr-grow-shadow fa fa-search', onClick: this.click }),
+	      React.createElement('div', { id: 'loader', className: 'loader' }),
+	      React.createElement(
+	        'ul',
+	        { className: 'searchGuesses', id: 'search-options' },
+	        guesses
+	      )
+	    );
+	  }
+	
+	});
+	module.exports = SearchBar;
+
+/***/ },
+/* 461 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	var PropTypes = React.PropTypes;
+	
+	var SearchListItem = React.createClass({
+	  displayName: "SearchListItem",
+	
+	  click: function click(event) {
+	    console.log("What the heck????");
+	    event.preventDefault();
+	    this.props.clickOption(this.props.book);
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      "li",
+	      { onClick: this.click, className: "searchGuess", value: this.props.book.volumeInfo.title },
+	      this.props.book.volumeInfo.title
+	    );
+	  }
+	});
+	
+	module.exports = SearchListItem;
+
+/***/ },
+/* 462 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	// components
+	var BookShelf = __webpack_require__(413);
+	
+	//stores
+	var UserStore = __webpack_require__(244);
+	
+	var User = React.createClass({
+	  displayName: "User",
+	
+	  getInitialState: function getInitialState() {
+	    return { currentUser: UserStore.currentUser() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.userIndex = UserStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.userIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    this.setState({ currentUser: UserStore.currentUser() });
+	  },
+	  render: function render() {
+	    if (this.state.currentUser) {
+	      return React.createElement(
+	        "div",
+	        { className: "container" },
+	        React.createElement(
+	          "div",
+	          { className: "comment-area" },
+	          React.createElement(
+	            "div",
+	            { className: "user-name" },
+	            React.createElement(
+	              "h1",
+	              null,
+	              UserStore.currentUser().username
+	            )
+	          )
+	        ),
+	        React.createElement(
+	          "div",
+	          { className: "user-user-shelf-area" },
+	          React.createElement(
+	            "div",
+	            { className: "user-shelf-area" },
+	            React.createElement(
+	              "div",
+	              { className: "bookshelf-area" },
+	              React.createElement(BookShelf, null)
+	            )
+	          )
+	        )
+	      );
+	    } else {
+	      return React.createElement(
+	        "div",
+	        { className: "no-user" },
+	        React.createElement(
+	          "h1",
+	          null,
+	          "Log in or sign up to view your profile"
+	        )
+	      );
+	    }
+	  }
+	});
+	module.exports = User;
+
+/***/ },
+/* 463 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var History = __webpack_require__(159).History;
+	
+	var Books = React.createClass({
+	  displayName: 'Books',
+	
+	  render: function render() {
+	    return React.createElement(
+	      'div',
+	      null,
+	      this.props.children
+	    );
+	  }
+	});
+	
+	module.exports = Books;
+
+/***/ },
+/* 464 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(262);
+	var SearchResultItem = __webpack_require__(465);
+	var History = __webpack_require__(159).History;
+	
+	var SearchResults = React.createClass({
+	  displayName: 'SearchResults',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { chosen: BookSearchStore.currentBook(), currentBooks: BookSearchStore.all() };
+	  },
+	  bookChosen: function bookChosen() {
+	    // this.openModal();
+	    event.preventDefault();
+	    var bookToSend = BookSearchStore.currentBook();
+	    bookToSend.read = "toRead";
+	    var url = "/Book/" + bookToSend.ISBN13;
+	    this.history.push({ pathname: url });
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
+	
+	  closeModal: function closeModal() {
+	    BookSearchStore.resetCurrentBook(null);
+	    this.setState({ modalIsOpen: false });
+	  },
+	  render: function render() {
+	
+	    var searchResults = [];
+	    for (var i = 0; i < this.state.currentBooks.length; i++) {
+	      searchResults.push(React.createElement(SearchResultItem, { book: this.state.currentBooks[i] }));
+	    }
+	
+	    return React.createElement(
+	      'div',
+	      { className: 'homePage' },
+	      React.createElement(
+	        'ul',
+	        { className: 'search-results-list' },
+	        searchResults
+	      )
+	    );
+	  }
+	});
+	module.exports = SearchResults;
+
+/***/ },
+/* 465 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var React = __webpack_require__(1);
+	var BookSearchStore = __webpack_require__(262);
+	var BookUtil = __webpack_require__(218);
+	var History = __webpack_require__(159).History;
+	
+	var customStyles = {};
+	
+	var SearchResultsItem = React.createClass({
+	  displayName: 'SearchResultsItem',
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { chosen: BookSearchStore.currentBook(), modalIsOpen: false };
+	  },
+	  bookChosen: function bookChosen() {
+	    // this.openModal();
+	    var chosen = BookUtil.makeBookObject(this.props.book);
+	    BookSearchStore.resetCurrentBook(chosen);
+	    event.preventDefault();
+	    var bookToSend = BookSearchStore.currentBook();
+	    bookToSend.read = "toRead";
+	    var url = "/Book/" + bookToSend.ISBN13;
+	    this.history.push({ pathname: url });
+	  },
+	  openModal: function openModal() {
+	    this.setState({ modalIsOpen: true, chosen: BookSearchStore.currentBook() });
+	  },
+	  closeModal: function closeModal() {
+	    BookSearchStore.resetCurrentBook(null);
+	    this.setState({ modalIsOpen: false });
+	  },
+	  render: function render() {
+	    var imageLink, title, author, numPages, category;
+	    if (this.props.book.volumeInfo.imageLinks !== undefined) {
+	      imageLink = this.props.book.volumeInfo.imageLinks.thumbnail;
+	    } else {
+	      imageLink = "http://res.cloudinary.com/litlitves/image/upload/v1474661342/imageNotAvailable_fhql9f.jpg";
+	    }
+	    if (this.props.book.volumeInfo.categories !== undefined) {
+	      category = "category: " + this.props.book.volumeInfo.categories[0];
+	    } else {
+	      category = null;
+	    }
+	    if (this.props.book.volumeInfo.authors !== undefined) {
+	      author = "by, " + this.props.book.volumeInfo.authors[0];
+	    }
+	    return React.createElement(
+	      'li',
+	      { className: 'search-result-item', onClick: this.bookChosen },
+	      React.createElement('img', { className: 'search-result-image', src: imageLink }),
+	      React.createElement(
+	        'div',
+	        { className: 'data-area' },
+	        React.createElement(
+	          'div',
+	          { className: 'result-title' },
+	          this.props.book.volumeInfo.title
+	        ),
+	        React.createElement(
+	          'div',
+	          null,
+	          this.props.book.volumeInfo.subtitle
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'result-author' },
+	          author
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'result-category' },
+	          category
+	        )
+	      )
+	    );
+	  }
+	});
+	module.exports = SearchResultsItem;
+
+/***/ },
+/* 466 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	//stores
+	var BookSearchStore = __webpack_require__(262);
+	//util
+	var BookUtil = __webpack_require__(218);
+	
+	var BookDetails = React.createClass({
+	  displayName: "BookDetails",
+	
+	  getInitialState: function getInitialState() {
+	    return { chosen: BookSearchStore.currentBook() };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
+	  },
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.bookStoreIndex.remove();
+	  },
+	  _onChange: function _onChange() {
+	    this.setState({ chosen: BookSearchStore.currentBook() });
+	  },
+	  render: function render() {
+	    var book = this.state.chosen;
+	    if (book) {
+	      var pages, language, publisher, genre, year, chapters;
+	      if (book.pages === null) {
+	        pages = "N/A";
+	      } else {
+	        pages = book.pages;
+	      }
+	      if (book.language === null) {
+	        language = "N/A";
+	      } else {
+	        language = book.language;
+	      }
+	      if (book.publishing === null) {
+	        publisher = "N/A";
+	      } else {
+	        publisher = book.publishing;
+	      }
+	      genre = book.genre === undefined ? "N/A" : book.genre;
+	      year = book.year === undefined ? "N/A" : book.year;
+	      chapters = book.chapters === undefined ? "N/A" : book.chapters;
+	      console.log(chapters);
+	      return React.createElement(
+	        "div",
+	        { className: "book-info" },
+	        React.createElement(
+	          "div",
+	          { id: "BookFooter" },
+	          React.createElement(
+	            "div",
+	            { className: "book-footer", id: "pages" },
+	            "pages: ",
+	            pages
+	          ),
+	          React.createElement(
+	            "div",
+	            { className: "book-footer", id: "language" },
+	            "language: ",
+	            language
+	          ),
+	          React.createElement(
+	            "div",
+	            { className: "book-footer", id: "publisher" },
+	            "publisher: ",
+	            publisher
+	          ),
+	          React.createElement(
+	            "div",
+	            { className: "book-footer", id: "year" },
+	            " year: ",
+	            year
+	          ),
+	          React.createElement(
+	            "div",
+	            { className: "book-footer", id: "genre" },
+	            "genre: ",
+	            genre
+	          ),
+	          React.createElement(
+	            "div",
+	            { className: "book-footer", id: "chapter" },
+	            "chapters: ",
+	            chapters
+	          )
+	        )
+	      );
+	    } else {
+	      return React.createElement(
+	        "div",
+	        null,
+	        "no book info"
+	      );
+	    }
+	  }
+	});
+	
+	module.exports = BookDetails;
 
 /***/ }
 /******/ ]);

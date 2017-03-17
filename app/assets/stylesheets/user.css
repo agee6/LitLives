@@ -11,6 +11,10 @@
   font-size: 20px;
   padding: 3px;
 }
-.review-open-button{
-
+.bookshelf-item{
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 2px; 
+  background-color: var(--d-color);
+  color: var(--l-color);
 }

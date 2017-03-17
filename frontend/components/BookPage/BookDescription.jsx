@@ -55,7 +55,7 @@ var BookPage = React.createClass({
                 description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: inDatabase, finished: finishedRead} );
     }else{
 
-      return({modalIsOpen: false, publisher: null, genre: null, year: null, selectedValue: "read", ISBN13: null,
+      return({modalIsOpen: false, publisher: null, genre: null, year: null, selectedValue: "reading", ISBN13: null,
                 ISBN10: null, author: null, pages: null, language: null, chapters: null,
                 description: "unavailable", currentBook: null, onShelf: false, finished: false} );
     }
@@ -88,16 +88,6 @@ var BookPage = React.createClass({
     event.preventDefault();
     BookUtil.updateBook(this.props.currentBook.id, {read:"toRead"});
     this.setState({selectedValue: "toRead"});
-  },
-  checkRead: function(event){
-    event.preventDefault();
-    if(this.state.selectedValue === "read"){
-      BookUtil.updateBook(this.props.currentBook.id, {read:"toRead"});
-      this.setState({selectedValue:"toRead", finished: false});
-    }else{
-      BookUtil.updateBook(this.props.currentBook.id, {read: "read"});
-      this.setState({selectedValue: "read", finished: true});
-    }
   },
   editClick: function(event){
     event.preventDefault();
@@ -140,7 +130,6 @@ var BookPage = React.createClass({
       chapters: chapters,
       description: this.state.description
     }
-    debugger;
     BookUtil.updateBook(this.state.currentBook.id, newBook);
     this.closeModal();
     newBook.title = this.state.currentBook.title;
@@ -148,53 +137,27 @@ var BookPage = React.createClass({
     ApiActions.updateCurrentBook(newBook);
   },
   handleChange: function(value){
-    BookUtil.updateBook(this.state.currentBook.id, {read: value}); 
+    BookUtil.updateBook(this.state.currentBook.id, {read: value});
     this.setState({selectedValue: value});
   },
   render: function(){
     var book = this.state.currentBook;
     if(book){
-      var pages, language, publisher;
-      if(book.pages === null){
-        pages = "N/A";
-      }else {
-        pages = book.pages;
-      }
-      if(book.language === null){
-        language = "N/A";
-      }
-      else {
-        language = book.language;
-      }
-      if(book.publishing === null){
-        publisher = "N/A";
-      }else {
-        publisher = book.publishing;
-      }
       var deleteButton, addButton, markButton, editButton, addDeleteButton, notes;
       if(this.state.onShelf){
         deleteButton = false;
         addButton = true;
         markButton = false;
         editButton = true;
-        addDeleteButton = <button className="book-button-area" id="delete-book" onClick={this.deleteBook} disabled={deleteButton}>remove</button>;
+        addDeleteButton = <button className="book-button-area" id="delete-book" onClick={this.deleteBook} disabled={deleteButton}>remove from shelf</button>;
         }else {
           deleteButton = true;
           addButton = false;
           markButton = true;
           editButton = true;
-          addDeleteButton = <button className="book-button-area" id="add-to-shelf" onClick={this.addToShelf} disabled={addButton}>add</button>;
+          addDeleteButton = <button className="book-button-area" id="add-to-shelf" onClick={this.addToShelf} disabled={addButton}>add to shelf</button>;
           }
           var markFunction, markText, markValue;
-          if(this.state.selectedValue === "read"){
-            markFunction = this.markAsUnread;
-            markText = "Mark as Unread";
-            markValue = true;
-          }else {
-            markFunction=this.markAsRead;
-            markText = "Mark as Read";
-            markValue = "false";
-          }
           return(
             <section className="BookPage" id="book-page-area">
               <div className="BookTitleArea">
@@ -205,31 +168,30 @@ var BookPage = React.createClass({
                 <p id="BookDescription">{book.description}</p>
               </div>
               <div className="BookPage" id="BookFooter">
-                <div className="BookFooter" id="pages">pages: {pages}</div>
-                <div className="BookFooter" id="language">language: {language}</div>
-                <div className="BookFooter" id="publisher">publisher: {publisher}</div>
-                <div className="BookFooter" id="read-check">
+                <div className="radio-area" id="read-check">
                   <RadioGroup
                     name="read"
                     selectedValue={this.state.selectedValue}
                     onChange={this.handleChange}>
                     {Radio => (
-                      <div>
+                      <div id='radio-area'>
                         <label>
-                          <Radio value={"read"} />Read
+                          <Radio value={"read"} /> Finished Reading
                         </label>
+                        <br />
                         <label>
-                          <Radio value={"toRead"} />To Read
+                          <Radio value={"toRead"} /> Want to Read
                         </label>
+                        <br />
                         <label>
-                          <Radio value={"reading"} />reading
+                          <Radio value={"reading"} /> Currently Reading
                         </label>
                       </div>
                         )}
                       </RadioGroup>
                 </div>
                 <div id="book-button-area">
-                  <button className="book-button-area" id="edit-book-button" onClick={this.editClick} disabled={deleteButton}>edit</button>
+                  <button className="book-button-area" id="edit-book-button" onClick={this.editClick} disabled={deleteButton}>edit book info</button>
                   {addDeleteButton}
                 </div>
               </div>
@@ -241,7 +203,6 @@ var BookPage = React.createClass({
 
                 <div className="book-edit-title"> {this.state.currentBook.title}</div>
                 <form className="book-edit-form">
-
                   <textarea className="book-edit-description" rows="15" cols="60" name="comment"
                     placeholder="Enter note here..." valueLink={this.linkState('description')}/>
                   <div className="book-edit-sections" id = "book-edit-basic">
@@ -298,8 +259,10 @@ var BookPage = React.createClass({
                           </label>
                           <label>
                             <Radio value={"toRead"} />To Read
-                            </label>
-
+                          </label>
+                          <label>
+                            <Radio value={"reading"} />Currently Reading
+                          </label>
                           </div>
                         )}
                       </RadioGroup>

@@ -21,13 +21,13 @@ var resetRating = function(reviews){
   for (var i = 0; i < reviews.length; i++) {
     rating += reviews[i].rating;
   }
-  _rating = (rating/reviews.length) / 2;
+  _rating = (rating/reviews.length);
 }
 var addReview = function(review){
-  var rating = _rating * 2 * _reviews.length;
+  var rating = _rating * _reviews.length;
   _reviews.push(review);
   rating += review.rating;
-  _rating = (rating / _reviews.length) / 2;
+  _rating = (rating / _reviews.length);
 };
 ReviewStore.all = function () {
   return _reviews.slice(0);
@@ -39,6 +39,7 @@ ReviewStore.empty = function(){
   _reviews = [];
 };
 ReviewStore.__onDispatch = function (payload) {
+  console.log(payload);
   switch(payload.actionType) {
     case ReviewConstants.ReceiveBookReviews:
       var result = resetNotes(payload.results);
@@ -46,7 +47,7 @@ ReviewStore.__onDispatch = function (payload) {
       ReviewStore.__emitChange();
       break;
     case ReviewConstants.AddBookReview:
-      var r2 = addReview(payload.result);
+      var r2 = addReview(payload.review);
       ReviewStore.__emitChange();
       break;
   }

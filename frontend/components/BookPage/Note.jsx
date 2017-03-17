@@ -92,7 +92,6 @@ var Note = React.createClass({
   },
   passUpState: function(contentState){
     this.currentNoteContent = contentState;
-    debugger;
   },
   render: function() {
     if(this.state.loggedIn && this.state.currentBook && this.state.currentBook.id){

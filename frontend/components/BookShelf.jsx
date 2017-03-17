@@ -5,9 +5,13 @@ var Select = require('react-select');
 var ApiActions = require('../actions/api_actions.js');
 var History = require("react-router").History;
 // components
+var BookShelfItem = require("./BookShelfItem.jsx");
 //stores
 var UserStore = require("../stores/UserStore.js");
 var BookShelfStore = require("../stores/BookShelfStore.js")
+
+//util
+var ReviewUtil = require('../util/ReviewUtil.js');
 
 var BookShelf = React.createClass({
   mixins:[History],
@@ -24,8 +28,13 @@ var BookShelf = React.createClass({
     this.userIndex.remove();
   },
   bookClick:function(event){
-    ApiActions.updateCurrentBook(event.target.data);
-    this.history.push({pathname: "Book/" + event.target.data.ISBN13});
+    if(event.target.data){
+      ApiActions.updateCurrentBook(event.target.data);
+      ReviewUtil.fetchReviews(event.target.data.ISBN13);
+      this.history.push({pathname: "Book/" + event.target.data.ISBN13});
+    }else{
+
+    }
   },
   _onChange:function(){
     this.setState({books:BookShelfStore.all()});
@@ -41,8 +50,8 @@ var BookShelf = React.createClass({
     var customStyle = {width: "100%"};
     var options = [{value: "reading", label: "Currently Reading"}, {value: "read", label: "Finished Reading"}, {value: "toRead", label: "Want to Read"}];
     var bookList = this.state.books[this.state.currentShelf].map(function(b){
-      return <li className="bookshelf-item" onClick={this.bookClick} data={b}>{b.title}</li>;
-    }, this)
+      return <BookShelfItem book={b} />;
+    })
     if(this.state.loggedIn){
       page = <div className="bookshelf">
                 <div className="bookshelf-title">

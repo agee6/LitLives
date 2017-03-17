@@ -68,7 +68,6 @@ var Note = React.createClass({
     this.setState({selectedValue: value});
   },
   _onNotesChange: function(){
-    console.log("what???");
     this.setState({allNotes: NoteStore.all()})
   },
   _onUserChange: function(){
@@ -115,13 +114,11 @@ var Note = React.createClass({
     }else if(!this.state.loggedIn){
       return(
         <div className="NoteArea">
-          <h2>Sign Up/Login to be able to add books to your shelf and write notes about them. </h2>
         </div>
       )
     }else{
       return(
         <div className="NoteArea">
-          <h2>You can only add/edit notes that are on your shelf.</h2>
         </div>
       )
     }

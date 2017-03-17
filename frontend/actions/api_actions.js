@@ -98,7 +98,7 @@ var ApiActions = {
   },
   receiveBookReviews: function(reviews){
     AppDispatcher.dispatch({
-      actionType: ReviewConstants.RecieveBookReviews,
+      actionType: ReviewConstants.ReceiveBookReviews,
       reviews: reviews
     })
   },
@@ -114,7 +114,6 @@ var ApiActions = {
       review: review
     })
   },
-
 };
 
 module.exports = ApiActions;

@@ -11,7 +11,6 @@ var resetNotes = function(notes){
   }else {
     _notes = notes.slice(0);
   }
-  console.log(_notes);
 };
 var addNote = function(note){
   _notes.push(note);

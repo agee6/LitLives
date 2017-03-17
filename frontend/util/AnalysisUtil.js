@@ -23,7 +23,6 @@ var AnalysisUtil = {
       data: {analysis: analysisParams},
       success: function(analysis) {
           // Do something with the result
-          console.log(analysis);
     }});
   }
 };

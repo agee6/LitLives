@@ -24221,7 +24221,7 @@
 	  },
 	  receiveBookReviews: function receiveBookReviews(reviews) {
 	    AppDispatcher.dispatch({
-	      actionType: ReviewConstants.RecieveBookReviews,
+	      actionType: ReviewConstants.ReceiveBookReviews,
 	      reviews: reviews
 	    });
 	  },
@@ -24237,7 +24237,6 @@
 	      review: review
 	    });
 	  }
-	
 	};
 	
 	module.exports = ApiActions;
@@ -24642,8 +24641,8 @@
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
 	var ReviewConstants = _defineProperty({
-	  RecieveBookReviews: "RECEIVE_BOOK_REVIEWS",
-	  RecieveUserReviews: "RECIEVE_USER_REVIEWS",
+	  ReceiveBookReviews: "RECEIVE_BOOK_REVIEWS",
+	  ReceiveUserReviews: "RECEIVE_USER_REVIEWS",
 	  AddBookReview: "ADD_BOOK_REVIEW",
 	  ReceiveNewComment: "RECEIVE_NEW_REVIEW",
 	  ReceiveReview: "RECEIVE_REVIEWS"
@@ -33902,10 +33901,12 @@
 	  },
 	  _onChange: function _onChange() {
 	    var book = BookSearchStore.currentBook();
-	    this.setState({ modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
-	      ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
-	      description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: true
-	    });
+	    if (book) {
+	      this.setState({ modalIsOpen: false, publisher: book.publishing, genre: book.genre, year: book.year, selectedValue: book.read, ISBN13: book.ISBN13,
+	        ISBN10: book.ISBN10, author: book.author, image: book.image, pages: book.pages, language: book.language, chapters: book.chapters,
+	        description: book.description, currentBook: BookSearchStore.currentBook(), onShelf: true
+	      });
+	    }
 	  },
 	  openModal: function openModal() {
 	    this.setState({ modalIsOpen: true });
@@ -33999,7 +34000,12 @@
 	          'add to shelf'
 	        );
 	      }
-	      var markFunction, markText, markValue;
+	      var description;
+	      if (book.description) {
+	        description = book.description;
+	      } else {
+	        description = "There is no description available";
+	      }
 	      return React.createElement(
 	        'section',
 	        { className: 'BookPage', id: 'book-page-area' },
@@ -34024,7 +34030,7 @@
 	          React.createElement(
 	            'p',
 	            { id: 'BookDescription' },
-	            book.description
+	            description
 	          )
 	        ),
 	        React.createElement(
@@ -34459,7 +34465,6 @@
 	    this.setState({ selectedValue: value });
 	  },
 	  _onNotesChange: function _onNotesChange() {
-	    console.log("what???");
 	    this.setState({ allNotes: NoteStore.all() });
 	  },
 	  _onUserChange: function _onUserChange() {
@@ -34512,25 +34517,9 @@
 	        )
 	      );
 	    } else if (!this.state.loggedIn) {
-	      return React.createElement(
-	        'div',
-	        { className: 'NoteArea' },
-	        React.createElement(
-	          'h2',
-	          null,
-	          'Sign Up/Login to be able to add books to your shelf and write notes about them. '
-	        )
-	      );
+	      return React.createElement('div', { className: 'NoteArea' });
 	    } else {
-	      return React.createElement(
-	        'div',
-	        { className: 'NoteArea' },
-	        React.createElement(
-	          'h2',
-	          null,
-	          'You can only add/edit notes that are on your shelf.'
-	        )
-	      );
+	      return React.createElement('div', { className: 'NoteArea' });
 	    }
 	  }
 	
@@ -47973,7 +47962,6 @@
 	  } else {
 	    _notes = notes.slice(0);
 	  }
-	  console.log(_notes);
 	};
 	var addNote = function addNote(note) {
 	  _notes.push(note);
@@ -48040,9 +48028,13 @@
 	var ApiActions = __webpack_require__(207);
 	var History = __webpack_require__(159).History;
 	// components
+	var BookShelfItem = __webpack_require__(467);
 	//stores
 	var UserStore = __webpack_require__(244);
 	var BookShelfStore = __webpack_require__(421);
+	
+	//util
+	var ReviewUtil = __webpack_require__(423);
 	
 	var BookShelf = React.createClass({
 	  displayName: 'BookShelf',
@@ -48061,8 +48053,11 @@
 	    this.userIndex.remove();
 	  },
 	  bookClick: function bookClick(event) {
-	    ApiActions.updateCurrentBook(event.target.data);
-	    this.history.push({ pathname: "Book/" + event.target.data.ISBN13 });
+	    if (event.target.data) {
+	      ApiActions.updateCurrentBook(event.target.data);
+	      ReviewUtil.fetchReviews(event.target.data.ISBN13);
+	      this.history.push({ pathname: "Book/" + event.target.data.ISBN13 });
+	    } else {}
 	  },
 	  _onChange: function _onChange() {
 	    this.setState({ books: BookShelfStore.all() });
@@ -48078,12 +48073,8 @@
 	    var customStyle = { width: "100%" };
 	    var options = [{ value: "reading", label: "Currently Reading" }, { value: "read", label: "Finished Reading" }, { value: "toRead", label: "Want to Read" }];
 	    var bookList = this.state.books[this.state.currentShelf].map(function (b) {
-	      return React.createElement(
-	        'li',
-	        { className: 'bookshelf-item', onClick: this.bookClick, data: b },
-	        b.title
-	      );
-	    }, this);
+	      return React.createElement(BookShelfItem, { book: b });
+	    });
 	    if (this.state.loggedIn) {
 	      page = React.createElement(
 	        'div',
@@ -49793,7 +49784,7 @@
 	    return { currentBook: BookSearchStore.currentBook(), reviews: ReviewStore.all(), rating: ReviewStore.rating(), modalIsOpen: false, loggedIn: UserStore.loggedIn(), newReview: "", newRating: -1, newTitle: "" };
 	  },
 	  componentDidMount: function componentDidMount() {
-	    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
+	    this.bookStoreIndex = BookSearchStore.addListener(this._onBookChange);
 	    this.reviewStoreIndex = ReviewStore.addListener(this._onChange);
 	    this.userStoreIndex = UserStore.addListener(this._onUserChange);
 	    if (this.state.currentBook) {
@@ -49810,6 +49801,13 @@
 	  _onUserChange: function _onUserChange() {
 	    this.setState({ loggedIn: UserStore.loggedIn() });
 	  },
+	  _onBookChange: function _onBookChange() {
+	    var book = BookSearchStore.currentBook();
+	    if (book) {
+	      ReviewUtil.fetchReviews(book.ISBN13);
+	    }
+	    this.setState({ currentBook: book });
+	  },
 	  openModal: function openModal() {
 	    this.setState({ modalIsOpen: true });
 	  },
@@ -49818,14 +49816,19 @@
 	  },
 	  submitReview: function submitReview(event) {
 	    event.preventDefault();
-	    var reviewObj = {
-	      body: this.state.newReview,
-	      rating: this.state.newRating,
-	      ISBN13: this.state.currentBook.ISBN13,
-	      user_id: UserStore.currentUser().id
-	    };
-	    ReviewUtil.createReview(reviewObj);
-	    this.closeModal();
+	    if (this.state.newRating === -1 || this.state.newReview === "") {
+	      alert("you must set a star rating and write a review to submit!");
+	    } else {
+	      var reviewObj = {
+	        body: this.state.newReview,
+	        rating: this.state.newRating,
+	        ISBN13: this.state.currentBook.ISBN13,
+	        title: this.state.newTitle,
+	        user_id: UserStore.currentUser().id
+	      };
+	      ReviewUtil.createReview(reviewObj);
+	      this.closeModal();
+	    }
 	  },
 	  onStarClick: function onStarClick(nextVal) {
 	    this.setState({ newRating: nextVal });
@@ -49869,12 +49872,12 @@
 	        'div',
 	        { className: 'rating' },
 	        React.createElement(
-	          'h3',
+	          'div',
 	          null,
 	          'current rating:'
 	        ),
 	        React.createElement(StarRatingComponent, {
-	          name: 'currrentRating',
+	          name: 'currentRating',
 	          editing: false,
 	          starCount: 5,
 	          value: this.state.rating,
@@ -49943,7 +49946,6 @@
 	  createReview: function createReview(review) {
 	    var reviewObj = { Review: review };
 	    $.post('/api/reviews', reviewObj, function (payload) {
-	      console.log(payload);
 	      ApiActions.addBookReview(payload);
 	    });
 	  },
@@ -49959,7 +49961,7 @@
 	    });
 	  },
 	  fetchUserReviews: function fetchUserReviews(Review) {
-	    $.get('/api/user/revews', {}, function (reviews) {
+	    $.get('/api/user/reviews', {}, function (reviews) {
 	      ApiActions.RecieveUserReviews(reviews);
 	    });
 	  }
@@ -50013,11 +50015,10 @@
 	  _reviews = [];
 	};
 	ReviewStore.__onDispatch = function (payload) {
-	  console.log(payload);
 	  switch (payload.actionType) {
 	    case ReviewConstants.ReceiveBookReviews:
-	      var result = resetNotes(payload.results);
-	      var result2 = resetRating(payload.results);
+	      var result = resetNotes(payload.reviews);
+	      var result2 = resetRating(payload.reviews);
 	      ReviewStore.__emitChange();
 	      break;
 	    case ReviewConstants.AddBookReview:
@@ -54410,7 +54411,6 @@
 	  displayName: "SearchListItem",
 	
 	  click: function click(event) {
-	    console.log("What the heck????");
 	    event.preventDefault();
 	    this.props.clickOption(this.props.book);
 	  },
@@ -54711,7 +54711,6 @@
 	      genre = book.genre === undefined ? "N/A" : book.genre;
 	      year = book.year === undefined ? "N/A" : book.year;
 	      chapters = book.chapters === undefined ? "N/A" : book.chapters;
-	      console.log(chapters);
 	      return React.createElement(
 	        "div",
 	        { className: "book-info" },
@@ -54767,6 +54766,39 @@
 	});
 	
 	module.exports = BookDetails;
+
+/***/ },
+/* 467 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(1);
+	var History = __webpack_require__(159).History;
+	var ReviewUtil = __webpack_require__(423);
+	var ApiActions = __webpack_require__(207);
+	
+	var BookShelfItem = React.createClass({
+	  displayName: "BookShelfItem",
+	
+	  mixins: [History],
+	  getInitialState: function getInitialState() {
+	    return { currentBook: this.props.book };
+	  },
+	  onClick: function onClick() {
+	    ApiActions.updateCurrentBook(this.state.currentBook);
+	    ReviewUtil.fetchReviews(this.state.currentBook.ISBN13);
+	    this.history.push({ pathname: "Book/" + this.state.currentBook.ISBN13 });
+	  },
+	  render: function render() {
+	    return React.createElement(
+	      "li",
+	      { className: "bookshelf-item", onClick: this.onClick },
+	      this.state.currentBook.title
+	    );
+	  }
+	});
+	module.exports = BookShelfItem;
 
 /***/ }
 /******/ ]);

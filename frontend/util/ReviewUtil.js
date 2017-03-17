@@ -4,7 +4,6 @@ var ReviewUtil = {
   createReview: function(review){
     var reviewObj = {Review: review};
     $.post('/api/reviews', reviewObj, function(payload){
-      console.log(payload); 
       ApiActions.addBookReview(payload)
     });
   },
@@ -20,7 +19,7 @@ var ReviewUtil = {
     })
   },
   fetchUserReviews: function(Review){
-    $.get('/api/user/revews', {}, function(reviews){
+    $.get('/api/user/reviews', {}, function(reviews){
       ApiActions.RecieveUserReviews(reviews);
     });
   }

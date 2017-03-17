@@ -42,7 +42,7 @@ var ReviewArea = React.createClass({
     return({currentBook: BookSearchStore.currentBook(), reviews:ReviewStore.all(), rating: ReviewStore.rating(), modalIsOpen: false, loggedIn: UserStore.loggedIn(), newReview: "", newRating: -1, newTitle:""} );
   },
   componentDidMount: function(){
-    this.bookStoreIndex = BookSearchStore.addListener(this._onChange);
+    this.bookStoreIndex = BookSearchStore.addListener(this._onBookChange);
     this.reviewStoreIndex = ReviewStore.addListener(this._onChange);
     this.userStoreIndex = UserStore.addListener(this._onUserChange);
     if(this.state.currentBook){
@@ -59,6 +59,13 @@ var ReviewArea = React.createClass({
   _onUserChange: function(){
     this.setState({loggedIn: UserStore.loggedIn()});
   },
+  _onBookChange:function(){
+    var book = BookSearchStore.currentBook();
+    if(book){
+      ReviewUtil.fetchReviews(book.ISBN13);
+    }
+    this.setState({currentBook:book})
+  },
   openModal: function(){
     this.setState({modalIsOpen: true});
   },
@@ -67,14 +74,19 @@ var ReviewArea = React.createClass({
   },
   submitReview: function(event){
     event.preventDefault();
-    var reviewObj = {
-      body: this.state.newReview,
-      rating: this.state.newRating,
-      ISBN13: this.state.currentBook.ISBN13,
-      user_id: UserStore.currentUser().id
-    };
-    ReviewUtil.createReview(reviewObj);
-    this.closeModal();
+    if(this.state.newRating === -1 || this.state.newReview === ""){
+      alert("you must set a star rating and write a review to submit!")
+    }else{
+      var reviewObj = {
+        body: this.state.newReview,
+        rating: this.state.newRating,
+        ISBN13: this.state.currentBook.ISBN13,
+        title: this.state.newTitle,
+        user_id: UserStore.currentUser().id
+      };
+      ReviewUtil.createReview(reviewObj);
+      this.closeModal();
+    }
   },
   onStarClick: function(nextVal){
     this.setState({newRating:nextVal})
@@ -102,9 +114,9 @@ var ReviewArea = React.createClass({
     return(
       <section className="review-container">
         <div className="rating">
-          <h3>current rating:</h3>
+          <div>current rating:</div>
             <StarRatingComponent
-                name="currrentRating"
+                name="currentRating"
                 editing={false}
                 starCount={5}
                 value={this.state.rating}

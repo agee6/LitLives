@@ -1,6 +1,6 @@
 var ReviewConstants = {
-  RecieveBookReviews: "RECEIVE_BOOK_REVIEWS",
-  RecieveUserReviews: "RECIEVE_USER_REVIEWS",
+  ReceiveBookReviews: "RECEIVE_BOOK_REVIEWS",
+  ReceiveUserReviews: "RECEIVE_USER_REVIEWS",
   AddBookReview: "ADD_BOOK_REVIEW",
   ReceiveNewComment: "RECEIVE_NEW_REVIEW",
   ReceiveReview: "RECEIVE_REVIEWS",

@@ -39,11 +39,10 @@ ReviewStore.empty = function(){
   _reviews = [];
 };
 ReviewStore.__onDispatch = function (payload) {
-  console.log(payload);
   switch(payload.actionType) {
     case ReviewConstants.ReceiveBookReviews:
-      var result = resetNotes(payload.results);
-      var result2 = resetRating(payload.results);
+      var result = resetNotes(payload.reviews);
+      var result2 = resetRating(payload.reviews);
       ReviewStore.__emitChange();
       break;
     case ReviewConstants.AddBookReview:

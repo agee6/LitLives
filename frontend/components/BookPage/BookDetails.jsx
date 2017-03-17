@@ -41,7 +41,6 @@ var BookDetails = React.createClass({
       genre = book.genre === undefined ? "N/A" : book.genre;
       year = book.year === undefined ? "N/A" : book.year;
       chapters = book.chapters === undefined ? "N/A" : book.chapters;
-      console.log(chapters);
       return(
         <div className='book-info'>
           <div id="BookFooter">
